@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/services.dart';
 import 'package:selleri/config/lang/lang.dart';
 import 'package:selleri/config/theme.dart';
+import 'package:selleri/modules/auth/auth.dart';
 import 'package:selleri/routes/routes.dart';
 
 class App extends StatelessWidget {
@@ -39,7 +39,8 @@ class App extends StatelessWidget {
         ],
         child: child!,
       ),
-      initialRoute: hasToken ? Routes.home : Routes.login,
+      initialRoute: Routes.root,
+      initialBinding: AuthBindings(),
       getPages: routes,
       translations: Languages(),
       locale: Get.deviceLocale,

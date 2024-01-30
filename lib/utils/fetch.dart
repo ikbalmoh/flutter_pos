@@ -2,13 +2,21 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
 import 'package:validators/validators.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final GetStorage box = GetStorage();
 
 Dio fetch({bool ignoreBaseUrl = false}) {
-  Dio dio = Dio();
+  final baseOption = BaseOptions(
+    baseUrl: dotenv.env['HOST']!,
+    contentType: Headers.jsonContentType,
+    validateStatus: (int? status) => status != null,
+  );
+
+  Dio dio = Dio(baseOption);
 
   dio.interceptors
       .add(CustomInterceptors(dio: dio, ignoreBaseUrl: ignoreBaseUrl));
@@ -24,18 +32,17 @@ class CustomInterceptors extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    options.headers['device'] = box.read('deviceId');
+
+    String? accessToken = box.read('access_token');
+    if (accessToken != null) {
+      options.headers['Authorization'] = 'Bearer $accessToken';
+    }
+
     if (kDebugMode) {
       print(
-          'REQUEST[${options.method}]\n => PATH: ${options.path}\n => DATA: ${options.data}');
+          'REQUEST[${options.method}]\n => HEAEDER: ${options.headers} \n => URI: ${options.uri}\n => DATA: ${options.data}');
     }
-
-    String? token = box.read('token');
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
-
-    // options.followRedirects = false;
-    // options.validateStatus = (status) => status != null && status < 500;
 
     return super.onRequest(options, handler);
   }
@@ -44,7 +51,16 @@ class CustomInterceptors extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
       print(
-          'RESPONSE[${response.statusCode}]\n => PATH: ${response.requestOptions.path}\n => DATA: ${response.data}');
+          'RESPONSE[${response.statusCode}]\n => URI: ${response.requestOptions.uri}\n => DATA: ${response.data}');
+    }
+    final status = response.statusCode;
+    final isValid = status != null && status >= 200 && status < 300;
+    if (!isValid) {
+      throw DioException.badResponse(
+        statusCode: status!,
+        requestOptions: response.requestOptions,
+        response: response,
+      );
     }
     super.onResponse(response, handler);
   }
@@ -56,11 +72,11 @@ class CustomInterceptors extends Interceptor {
         ? isJSON(jsonEncode(err.response?.data))
         : false;
     if (!json) {
-      err.response?.data = {'message': 'Tidak dapat terhubung ke server'};
+      err.response?.data = {'message': 'connection_error'.tr};
     }
     if (kDebugMode) {
       print(
-          'ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> PATH: ${err.requestOptions.path}\n => DATA: $originalData');
+          'ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> URI: ${err.requestOptions.uri}\n => DATA: $originalData');
     }
 
     if (err.response?.statusCode == 401) {
