@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:selleri/models/user.dart';
+import 'package:selleri/models/outlet.dart';
 import 'package:selleri/modules/auth/auth.dart';
+import 'package:selleri/modules/outlet/outlet.dart';
 import 'package:selleri/routes/routes.dart';
 import 'package:selleri/utils/app.dart';
 
@@ -13,8 +15,9 @@ class AuthController extends GetxController {
   final GetStorage box = GetStorage();
 
   final AuthService _service;
+  final OutletController _outletController;
 
-  AuthController(this._service);
+  AuthController(this._service, this._outletController);
 
   final _authState = const AuthState().obs;
 
@@ -30,8 +33,13 @@ class AuthController extends GetxController {
         if (state is Authenticated) {
           if (Get.currentRoute != Routes.home) {
             await Future.delayed(const Duration(seconds: 1));
+            if (box.hasData('outlet')) {
+              _outletController
+                  .selectOutlet(Outlet.fromJson(box.read('outlet')));
+            }
+
             Get.offAllNamed(
-              Routes.home,
+              box.hasData('outlet') ? Routes.home : Routes.outlet,
               predicate: (route) =>
                   [Routes.login, Routes.root].contains(Get.currentRoute),
             );
@@ -120,6 +128,7 @@ class AuthController extends GetxController {
 
     box.remove('user');
     box.remove('access_token');
+    box.remove('outlet');
   }
 
   Future logout() async {

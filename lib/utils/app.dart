@@ -46,4 +46,23 @@ class App {
       ),
     );
   }
+
+  static void showConfirmDialog(
+      {required String title, String? subtitle, void Function()? onConfirm}) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(title),
+        content: subtitle != null ? Text(subtitle) : null,
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
+            child: Text('cancel'.tr),
+          ),
+          TextButton(onPressed: onConfirm, child: Text('continue'.tr)),
+        ],
+      ),
+    );
+  }
 }
