@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/modules/auth/auth.dart';
 import 'package:get/get.dart';
@@ -14,8 +15,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController =
+      TextEditingController(text: kDebugMode ? 'admin.staging@dgti.com' : '');
+  final TextEditingController _passwordController =
+      TextEditingController(text: kDebugMode ? '12345678' : '');
 
   final FocusNode _passwordNode = FocusNode();
 
