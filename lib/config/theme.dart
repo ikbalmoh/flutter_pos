@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 ThemeData appTheme(BuildContext context) {
   return ThemeData(
+    scaffoldBackgroundColor: Colors.white,
     primaryColor: Colors.teal,
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.teal,
@@ -13,13 +14,13 @@ ThemeData appTheme(BuildContext context) {
     ),
     useMaterial3: true,
     appBarTheme: AppBarTheme(
-      backgroundColor: Colors.white,
-      titleTextStyle: TextStyle(
-        color: Colors.teal.shade400,
+      backgroundColor: Colors.teal.shade400,
+      titleTextStyle: const TextStyle(
+        color: Colors.white,
         fontWeight: FontWeight.w600,
       ),
-      actionsIconTheme: IconThemeData(
-        color: Colors.teal.shade400,
+      actionsIconTheme: const IconThemeData(
+        color: Colors.white,
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.teal.shade400,

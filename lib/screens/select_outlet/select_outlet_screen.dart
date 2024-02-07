@@ -120,18 +120,19 @@ class _SelectOutletScreenState extends State<SelectOutletScreen> {
                           style: textTheme.bodyLarge
                               ?.copyWith(fontWeight: FontWeight.w500)),
                     ),
-                    controller.state is OutletLoading ||
-                            controller.state is OutletSelected
+                    controller.outletList is OutletLoading
                         ? const Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: 40, horizontal: 20),
                             child: CircularProgressIndicator(),
                           )
-                        : controller.state is OutletListLoaded
-                            ? buildOutletLists(context,
-                                (controller.state as OutletListLoaded).outlets)
-                            : Text(controller.state is OutletListFailure
-                                ? (controller.state as OutletListFailure)
+                        : controller.outletList is OutletListLoaded
+                            ? buildOutletLists(
+                                context,
+                                (controller.outletList as OutletListLoaded)
+                                    .outlets)
+                            : Text(controller.outletList is OutletListFailure
+                                ? (controller.outletList as OutletListFailure)
                                     .message
                                 : 'error'.tr)
                   ],

@@ -14,34 +14,34 @@ class OutletController extends GetxController {
 
   OutletController(this._service);
 
-  final _outletState = const OutletState().obs;
+  final _outletListState = const OutletListState().obs;
+  final activeOutlet = Rxn<Outlet>();
+
+  OutletListState get outletList => _outletListState.value;
 
   @override
   void onInit() {
     if (box.hasData('outlet')) {
-      _outletState.value =
-          OutletSelected(outlet: Outlet.fromJson(box.read('outlet')));
+      activeOutlet.value = Outlet.fromJson(box.read('outlet'));
     } else {
-      _outletState.value = OutletLoading();
+      _outletListState.value = OutletLoading();
     }
     super.onInit();
   }
 
-  OutletState get state => _outletState.value;
-
   Future loadOutlets() async {
-    _outletState.value = OutletLoading();
+    _outletListState.value = OutletLoading();
     try {
       final data = await _service.outlets();
       List<Outlet> outlets =
           List<Outlet>.from(data['data'].map((o) => Outlet.fromJson(o)));
 
-      _outletState.value = OutletListLoaded(outlets: outlets);
+      _outletListState.value = OutletListLoaded(outlets: outlets);
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? e.message;
-      _outletState.value = OutletListFailure(message: message);
+      _outletListState.value = OutletListFailure(message: message);
     } on PlatformException catch (e) {
-      _outletState.value =
+      _outletListState.value =
           OutletListFailure(message: e.message ?? e.toString());
     }
   }
@@ -55,7 +55,7 @@ class OutletController extends GetxController {
       );
     } else {
       box.write('outlet', outlet.toJson());
-      _outletState.value = OutletSelected(outlet: outlet);
+      activeOutlet.value = outlet;
       Get.offAllNamed(Routes.home);
     }
   }

@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:selleri/app.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:selleri/data/objectbox.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -13,6 +14,8 @@ Future initServices() async {
   if (kDebugMode) {
     print('INITIALIZING APP ...');
   }
+
+  await initObjectBox();
 
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
