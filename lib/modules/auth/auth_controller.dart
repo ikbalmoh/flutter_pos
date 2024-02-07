@@ -15,9 +15,9 @@ class AuthController extends GetxController {
   final GetStorage box = GetStorage();
 
   final AuthService _service;
-  final OutletController _outletController;
+  OutletController outletController = Get.find();
 
-  AuthController(this._service, this._outletController);
+  AuthController(this._service);
 
   final _authState = const AuthState().obs;
 
@@ -27,6 +27,7 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
 
+    // Route Redirection
     ever(_authState, (state) async {
       if (kDebugMode) {
         print('AUTH STATE CHANGED: $state');
@@ -34,14 +35,13 @@ class AuthController extends GetxController {
           if (Get.currentRoute != Routes.home) {
             await Future.delayed(const Duration(seconds: 1));
             if (box.hasData('outlet')) {
-              _outletController
+              outletController
                   .selectOutlet(Outlet.fromJson(box.read('outlet')));
             }
 
             Get.offAllNamed(
               box.hasData('outlet') ? Routes.home : Routes.outlet,
-              predicate: (route) =>
-                  [Routes.login, Routes.root].contains(Get.currentRoute),
+              predicate: (route) => true,
             );
           }
         } else if (state is UnAuthenticated || state is AuthFailure) {

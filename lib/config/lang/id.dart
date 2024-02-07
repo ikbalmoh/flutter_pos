@@ -9,4 +9,5 @@ Map<String, String> id = {
   'select_outlet_confirm': 'Pilih outlet ini?',
   'cancel': 'Batal',
   'continue': 'Lanjutkan',
+  'all': 'Semua',
 };

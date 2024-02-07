@@ -9,4 +9,5 @@ Map<String, String> en = {
   'select_outlet_confirm': 'Select this outlet?',
   'cancel': 'Cancel',
   'continue': 'Contine',
+  'all': 'All',
 };

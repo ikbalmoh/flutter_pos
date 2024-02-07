@@ -30,6 +30,8 @@ Future initServices() async {
 
   await initObjectBox();
 
+  await initObjectBox();
+
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     log('ERROR DETAILS: $details');

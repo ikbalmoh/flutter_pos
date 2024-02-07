@@ -1,7 +1,8 @@
 import 'package:get/get.dart' show GetPage;
 
-import 'package:selleri/modules/auth/auth.dart' show AuthBindings;
-import 'package:selleri/modules/outlet/outlet_bindings.dart';
+import 'package:selleri/modules/auth/auth.dart';
+import 'package:selleri/modules/outlet/outlet.dart';
+import 'package:selleri/modules/item/item.dart';
 
 import 'package:selleri/screens/splash/splash_screen.dart';
 import 'package:selleri/screens/login/login_screen.dart';
@@ -19,11 +20,12 @@ List<GetPage> routes = [
   GetPage(
     name: Routes.root,
     page: () => const SplashScreen(),
-    bindings: [AuthBindings()],
+    bindings: [OutletBindings(), AuthBindings()],
   ),
   GetPage(
     name: Routes.login,
     page: () => const LoginScreen(),
+    bindings: [OutletBindings(), AuthBindings()],
   ),
   GetPage(
     name: Routes.outlet,
@@ -33,5 +35,6 @@ List<GetPage> routes = [
   GetPage(
     name: Routes.home,
     page: () => const HomeScreen(),
+    bindings: [OutletBindings(), ItemBindings()],
   ),
 ];
