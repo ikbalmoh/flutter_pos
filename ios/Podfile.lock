@@ -184,6 +184,10 @@ SPEC REPOS:
     - PromisesObjC
     - Toast
 
+SPEC REPOS:
+  trunk:
+    - ObjectBox
+
 EXTERNAL SOURCES:
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
