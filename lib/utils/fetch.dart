@@ -41,7 +41,7 @@ class CustomInterceptors extends Interceptor {
 
     if (kDebugMode) {
       print(
-          'REQUEST[${options.method}]\n => HEAEDER: ${options.headers} \n => URI: ${options.uri}\n => DATA: ${options.data}');
+          'REQUEST[${options.method}]\n => URI: ${options.uri}\n => DATA: ${options.data}');
     }
 
     return super.onRequest(options, handler);

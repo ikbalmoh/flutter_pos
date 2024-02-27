@@ -15,6 +15,9 @@ import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'models/category.dart';
+import 'models/item.dart';
+import 'models/item_package.dart';
+import 'models/item_variant.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -53,6 +56,210 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(2, 182247591934260991),
+      name: 'ItemPackage',
+      lastPropertyId: const IdUid(6, 4330234215894824037),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 6796156321174168626),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 5331961364789321388),
+            name: 'idItem',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(2, 1091707878294889886)),
+        ModelProperty(
+            id: const IdUid(3, 612084223017594678),
+            name: 'itemName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 2845638088661437652),
+            name: 'variantId',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 1675908538818483920),
+            name: 'quantityItem',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 4330234215894824037),
+            name: 'itemPrice',
+            type: 8,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(3, 4358767868100185192),
+      name: 'ItemVariant',
+      lastPropertyId: const IdUid(11, 8407400109989957200),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 3871300596949785317),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 1147385139796794403),
+            name: 'idVariant',
+            type: 6,
+            flags: 8,
+            indexId: const IdUid(3, 5406333433538432010)),
+        ModelProperty(
+            id: const IdUid(3, 7888385819018698225),
+            name: 'variantName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 6928048220957804443),
+            name: 'itemPrice',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 3745543518942209875),
+            name: 'stockItem',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 3487152192485516044),
+            name: 'skuNumber',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 3157270472246314433),
+            name: 'barcodeNumber',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 1360342434210505337),
+            name: 'promotions',
+            type: 30,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(5, 1166897459912520224),
+      name: 'Item',
+      lastPropertyId: const IdUid(19, 4222066207772647964),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 8992820008613876448),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 1542912270316258703),
+            name: 'idItem',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(4, 1240910611640086350)),
+        ModelProperty(
+            id: const IdUid(3, 4317306195535945048),
+            name: 'itemName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 4763375201495018458),
+            name: 'itemPrice',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 8075452207938021225),
+            name: 'isActive',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 4506509392451184831),
+            name: 'obsolete',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 5237958705227334204),
+            name: 'isPackage',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 5771981969123071712),
+            name: 'manualDiscount',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 229550051909560886),
+            name: 'isManualPrice',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 5765845091440420855),
+            name: 'stockControl',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 3378384863634485583),
+            name: 'idCategory',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 7883589399064394301),
+            name: 'stockItem',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 927924552915369238),
+            name: 'sku',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 3426065220939393555),
+            name: 'barcode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 2836790725752673047),
+            name: 'categoryName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 8164503982260194336),
+            name: 'image',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 1291892344623309815),
+            name: 'lastAdjustment',
+            type: 12,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 8538847107548712130),
+            name: 'promotions',
+            type: 30,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 4222066207772647964),
+            name: 'packageCategories',
+            type: 30,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[
+        ModelRelation(
+            id: const IdUid(1, 8755826672230174999),
+            name: 'variants',
+            targetId: const IdUid(3, 4358767868100185192)),
+        ModelRelation(
+            id: const IdUid(2, 8646590383799585272),
+            name: 'packageItems',
+            targetId: const IdUid(2, 182247591934260991))
+      ],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -83,12 +290,12 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(1, 5401018273546124526),
-      lastIndexId: const IdUid(1, 4905264527371129061),
-      lastRelationId: const IdUid(0, 0),
+      lastEntityId: const IdUid(5, 1166897459912520224),
+      lastIndexId: const IdUid(5, 7883267410381292325),
+      lastRelationId: const IdUid(2, 8646590383799585272),
       lastSequenceId: const IdUid(0, 0),
-      retiredEntityUids: const [],
-      retiredIndexUids: const [],
+      retiredEntityUids: const [1635103525226085433],
+      retiredIndexUids: const [7883267410381292325],
       retiredPropertyUids: const [
         2528578218671652427,
         2500372705215824124,
@@ -101,7 +308,16 @@ ModelDefinition getObjectBoxModel() {
         322274413497052247,
         4522183406119997871,
         5905542364470143800,
-        4281070565156541539
+        4281070565156541539,
+        1060182228529851554,
+        3967465453323153362,
+        954678443802198985,
+        7263508011843470340,
+        5556849760840144723,
+        4472040544065130066,
+        7680705044695976136,
+        8407400109989957200,
+        4333639740043622259
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -153,6 +369,261 @@ ModelDefinition getObjectBoxModel() {
               isActive: isActiveParam);
 
           return object;
+        }),
+    ItemPackage: EntityDefinition<ItemPackage>(
+        model: _entities[1],
+        toOneRelations: (ItemPackage object) => [],
+        toManyRelations: (ItemPackage object) => {},
+        getId: (ItemPackage object) => object.id,
+        setId: (ItemPackage object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ItemPackage object, fb.Builder fbb) {
+          final idItemOffset = fbb.writeString(object.idItem);
+          final itemNameOffset = fbb.writeString(object.itemName);
+          fbb.startTable(7);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, idItemOffset);
+          fbb.addOffset(2, itemNameOffset);
+          fbb.addInt64(3, object.variantId);
+          fbb.addInt64(4, object.quantityItem);
+          fbb.addFloat64(5, object.itemPrice);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idItemParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final itemNameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final variantIdParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final quantityItemParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          final itemPriceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          final object = ItemPackage(
+              id: idParam,
+              idItem: idItemParam,
+              itemName: itemNameParam,
+              variantId: variantIdParam,
+              quantityItem: quantityItemParam,
+              itemPrice: itemPriceParam);
+
+          return object;
+        }),
+    ItemVariant: EntityDefinition<ItemVariant>(
+        model: _entities[2],
+        toOneRelations: (ItemVariant object) => [],
+        toManyRelations: (ItemVariant object) => {},
+        getId: (ItemVariant object) => object.id,
+        setId: (ItemVariant object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ItemVariant object, fb.Builder fbb) {
+          final variantNameOffset = fbb.writeString(object.variantName);
+          final skuNumberOffset = object.skuNumber == null
+              ? null
+              : fbb.writeString(object.skuNumber!);
+          final barcodeNumberOffset = object.barcodeNumber == null
+              ? null
+              : fbb.writeString(object.barcodeNumber!);
+          final promotionsOffset = object.promotions == null
+              ? null
+              : fbb.writeList(object.promotions!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          fbb.startTable(12);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.idVariant);
+          fbb.addOffset(2, variantNameOffset);
+          fbb.addFloat64(3, object.itemPrice);
+          fbb.addFloat64(4, object.stockItem);
+          fbb.addOffset(5, skuNumberOffset);
+          fbb.addOffset(6, barcodeNumberOffset);
+          fbb.addOffset(7, promotionsOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idVariantParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          final itemPriceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final skuNumberParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 14);
+          final barcodeNumberParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 16);
+          final variantNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, '');
+          final stockItemParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          final promotionsParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 18);
+          final object = ItemVariant(
+              id: idParam,
+              idVariant: idVariantParam,
+              itemPrice: itemPriceParam,
+              skuNumber: skuNumberParam,
+              barcodeNumber: barcodeNumberParam,
+              variantName: variantNameParam,
+              stockItem: stockItemParam,
+              promotions: promotionsParam);
+
+          return object;
+        }),
+    Item: EntityDefinition<Item>(
+        model: _entities[3],
+        toOneRelations: (Item object) => [],
+        toManyRelations: (Item object) => {
+              RelInfo<Item>.toMany(1, object.id): object.variants,
+              RelInfo<Item>.toMany(2, object.id): object.packageItems
+            },
+        getId: (Item object) => object.id,
+        setId: (Item object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Item object, fb.Builder fbb) {
+          final idItemOffset = fbb.writeString(object.idItem);
+          final itemNameOffset = fbb.writeString(object.itemName);
+          final idCategoryOffset = fbb.writeString(object.idCategory);
+          final skuOffset =
+              object.sku == null ? null : fbb.writeString(object.sku!);
+          final barcodeOffset =
+              object.barcode == null ? null : fbb.writeString(object.barcode!);
+          final categoryNameOffset = object.categoryName == null
+              ? null
+              : fbb.writeString(object.categoryName!);
+          final imageOffset =
+              object.image == null ? null : fbb.writeString(object.image!);
+          final promotionsOffset = object.promotions == null
+              ? null
+              : fbb.writeList(object.promotions!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          final packageCategoriesOffset = object.packageCategories == null
+              ? null
+              : fbb.writeList(object.packageCategories!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          fbb.startTable(20);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, idItemOffset);
+          fbb.addOffset(2, itemNameOffset);
+          fbb.addFloat64(3, object.itemPrice);
+          fbb.addBool(4, object.isActive);
+          fbb.addBool(5, object.obsolete);
+          fbb.addBool(6, object.isPackage);
+          fbb.addBool(7, object.manualDiscount);
+          fbb.addBool(8, object.isManualPrice);
+          fbb.addBool(9, object.stockControl);
+          fbb.addOffset(10, idCategoryOffset);
+          fbb.addFloat64(11, object.stockItem);
+          fbb.addOffset(12, skuOffset);
+          fbb.addOffset(13, barcodeOffset);
+          fbb.addOffset(14, categoryNameOffset);
+          fbb.addOffset(15, imageOffset);
+          fbb.addInt64(
+              16,
+              object.lastAdjustment == null
+                  ? null
+                  : object.lastAdjustment!.microsecondsSinceEpoch * 1000);
+          fbb.addOffset(17, promotionsOffset);
+          fbb.addOffset(18, packageCategoriesOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final lastAdjustmentValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 36);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idItemParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final itemNameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final itemPriceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final isActiveParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false);
+          final obsoleteParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 14, false);
+          final isPackageParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 16, false);
+          final skuParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 28);
+          final barcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 30);
+          final manualDiscountParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
+          final isManualPriceParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false);
+          final stockControlParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false);
+          final idCategoryParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 24, '');
+          final categoryNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 32);
+          final stockItemParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0);
+          final imageParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 34);
+          final lastAdjustmentParam = lastAdjustmentValue == null
+              ? null
+              : DateTime.fromMicrosecondsSinceEpoch(
+                  (lastAdjustmentValue / 1000).round());
+          final packageCategoriesParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 40);
+          final promotionsParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 38);
+          final variantsParam = ToMany<ItemVariant>();
+          final packageItemsParam = ToMany<ItemPackage>();
+          final object = Item(
+              id: idParam,
+              idItem: idItemParam,
+              itemName: itemNameParam,
+              itemPrice: itemPriceParam,
+              isActive: isActiveParam,
+              obsolete: obsoleteParam,
+              isPackage: isPackageParam,
+              sku: skuParam,
+              barcode: barcodeParam,
+              manualDiscount: manualDiscountParam,
+              isManualPrice: isManualPriceParam,
+              stockControl: stockControlParam,
+              idCategory: idCategoryParam,
+              categoryName: categoryNameParam,
+              stockItem: stockItemParam,
+              image: imageParam,
+              lastAdjustment: lastAdjustmentParam,
+              packageCategories: packageCategoriesParam,
+              promotions: promotionsParam,
+              variants: variantsParam,
+              packageItems: packageItemsParam);
+          InternalToManyAccess.setRelInfo<Item>(
+              object.variants, store, RelInfo<Item>.toMany(1, object.id));
+          InternalToManyAccess.setRelInfo<Item>(
+              object.packageItems, store, RelInfo<Item>.toMany(2, object.id));
+          return object;
         })
   };
 
@@ -178,4 +649,147 @@ class Category_ {
 
   /// see [Category.code]
   static final code = QueryStringProperty<Category>(_entities[0].properties[4]);
+}
+
+/// [ItemPackage] entity fields to define ObjectBox queries.
+class ItemPackage_ {
+  /// see [ItemPackage.id]
+  static final id =
+      QueryIntegerProperty<ItemPackage>(_entities[1].properties[0]);
+
+  /// see [ItemPackage.idItem]
+  static final idItem =
+      QueryStringProperty<ItemPackage>(_entities[1].properties[1]);
+
+  /// see [ItemPackage.itemName]
+  static final itemName =
+      QueryStringProperty<ItemPackage>(_entities[1].properties[2]);
+
+  /// see [ItemPackage.variantId]
+  static final variantId =
+      QueryIntegerProperty<ItemPackage>(_entities[1].properties[3]);
+
+  /// see [ItemPackage.quantityItem]
+  static final quantityItem =
+      QueryIntegerProperty<ItemPackage>(_entities[1].properties[4]);
+
+  /// see [ItemPackage.itemPrice]
+  static final itemPrice =
+      QueryDoubleProperty<ItemPackage>(_entities[1].properties[5]);
+}
+
+/// [ItemVariant] entity fields to define ObjectBox queries.
+class ItemVariant_ {
+  /// see [ItemVariant.id]
+  static final id =
+      QueryIntegerProperty<ItemVariant>(_entities[2].properties[0]);
+
+  /// see [ItemVariant.idVariant]
+  static final idVariant =
+      QueryIntegerProperty<ItemVariant>(_entities[2].properties[1]);
+
+  /// see [ItemVariant.variantName]
+  static final variantName =
+      QueryStringProperty<ItemVariant>(_entities[2].properties[2]);
+
+  /// see [ItemVariant.itemPrice]
+  static final itemPrice =
+      QueryDoubleProperty<ItemVariant>(_entities[2].properties[3]);
+
+  /// see [ItemVariant.stockItem]
+  static final stockItem =
+      QueryDoubleProperty<ItemVariant>(_entities[2].properties[4]);
+
+  /// see [ItemVariant.skuNumber]
+  static final skuNumber =
+      QueryStringProperty<ItemVariant>(_entities[2].properties[5]);
+
+  /// see [ItemVariant.barcodeNumber]
+  static final barcodeNumber =
+      QueryStringProperty<ItemVariant>(_entities[2].properties[6]);
+
+  /// see [ItemVariant.promotions]
+  static final promotions =
+      QueryStringVectorProperty<ItemVariant>(_entities[2].properties[7]);
+}
+
+/// [Item] entity fields to define ObjectBox queries.
+class Item_ {
+  /// see [Item.id]
+  static final id = QueryIntegerProperty<Item>(_entities[3].properties[0]);
+
+  /// see [Item.idItem]
+  static final idItem = QueryStringProperty<Item>(_entities[3].properties[1]);
+
+  /// see [Item.itemName]
+  static final itemName = QueryStringProperty<Item>(_entities[3].properties[2]);
+
+  /// see [Item.itemPrice]
+  static final itemPrice =
+      QueryDoubleProperty<Item>(_entities[3].properties[3]);
+
+  /// see [Item.isActive]
+  static final isActive =
+      QueryBooleanProperty<Item>(_entities[3].properties[4]);
+
+  /// see [Item.obsolete]
+  static final obsolete =
+      QueryBooleanProperty<Item>(_entities[3].properties[5]);
+
+  /// see [Item.isPackage]
+  static final isPackage =
+      QueryBooleanProperty<Item>(_entities[3].properties[6]);
+
+  /// see [Item.manualDiscount]
+  static final manualDiscount =
+      QueryBooleanProperty<Item>(_entities[3].properties[7]);
+
+  /// see [Item.isManualPrice]
+  static final isManualPrice =
+      QueryBooleanProperty<Item>(_entities[3].properties[8]);
+
+  /// see [Item.stockControl]
+  static final stockControl =
+      QueryBooleanProperty<Item>(_entities[3].properties[9]);
+
+  /// see [Item.idCategory]
+  static final idCategory =
+      QueryStringProperty<Item>(_entities[3].properties[10]);
+
+  /// see [Item.stockItem]
+  static final stockItem =
+      QueryDoubleProperty<Item>(_entities[3].properties[11]);
+
+  /// see [Item.sku]
+  static final sku = QueryStringProperty<Item>(_entities[3].properties[12]);
+
+  /// see [Item.barcode]
+  static final barcode = QueryStringProperty<Item>(_entities[3].properties[13]);
+
+  /// see [Item.categoryName]
+  static final categoryName =
+      QueryStringProperty<Item>(_entities[3].properties[14]);
+
+  /// see [Item.image]
+  static final image = QueryStringProperty<Item>(_entities[3].properties[15]);
+
+  /// see [Item.lastAdjustment]
+  static final lastAdjustment =
+      QueryIntegerProperty<Item>(_entities[3].properties[16]);
+
+  /// see [Item.promotions]
+  static final promotions =
+      QueryStringVectorProperty<Item>(_entities[3].properties[17]);
+
+  /// see [Item.packageCategories]
+  static final packageCategories =
+      QueryStringVectorProperty<Item>(_entities[3].properties[18]);
+
+  /// see [Item.variants]
+  static final variants =
+      QueryRelationToMany<Item, ItemVariant>(_entities[3].relations[0]);
+
+  /// see [Item.packageItems]
+  static final packageItems =
+      QueryRelationToMany<Item, ItemPackage>(_entities[3].relations[1]);
 }

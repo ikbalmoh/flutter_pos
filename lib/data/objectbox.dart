@@ -1,13 +1,23 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:selleri/models/category.dart';
+import 'package:selleri/models/item.dart';
+import 'package:selleri/models/item_package.dart';
+import 'package:selleri/models/item_variant.dart';
 import 'package:selleri/objectbox.g.dart';
 
 class ObjectBox {
   late final Store store;
 
   late final Box<Category> categoryBox;
+  late final Box<Item> itemBox;
+  late final Box<ItemVariant> itemVariantBox;
+  late final Box<ItemPackage> itemPackageBox;
 
   ObjectBox._create(this.store) {
     categoryBox = Box<Category>(store);
+    itemBox = Box<Item>(store);
+    itemVariantBox = Box<ItemVariant>(store);
+    itemPackageBox = Box<ItemPackage>(store);
   }
 
   static Future<ObjectBox> create() async {
@@ -16,7 +26,11 @@ class ObjectBox {
   }
 
   List<Category> categories() {
-    return categoryBox.getAll();
+    return categoryBox.query(Category_.isActive.equals(true)).build().find();
+  }
+
+  List<Item> items() {
+    return itemBox.getAll();
   }
 
   Stream<List<Category>> categoriesStream() {
@@ -24,9 +38,36 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
+  Stream<List<Item>> itemsStream({String categoryId = ''}) {
+    final builder = itemBox.query(categoryId.isNotEmpty ? Item_.idCategory.equals(categoryId) : null)..order(Item_.itemName);
+    return builder.watch(triggerImmediately: true).map((query) => query.find());
+  }
+
   void putCategories(List<Category> categories) {
     categoryBox.removeAll();
     categoryBox.putMany(categories);
+  }
+
+  Item? getItem(String idItem) => itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
+
+  void putItems(List<Item> items) {
+    Condition<Item>? condition = Item_.isActive.equals(false);
+    for (var i = 0; i < items.length; i++) {
+      condition.or(Item_.idItem.equals(items[i].idItem));
+    }
+    Query<Item> existItems = itemBox.query(condition).build();
+    existItems.remove();
+    itemBox.putMany(items);
+    if (kDebugMode) {
+      print('${items.length} ITEMS HAS BEEN STORED');
+    }
+  }
+
+  void clearAll() {
+    categoryBox.removeAll();
+    itemBox.removeAll();
+    itemVariantBox.removeAll();
+    itemPackageBox.removeAll();
   }
 }
 
