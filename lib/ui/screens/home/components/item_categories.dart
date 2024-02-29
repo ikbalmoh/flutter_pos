@@ -5,7 +5,10 @@ import 'package:selleri/models/category.dart';
 import 'package:selleri/modules/item/item.dart';
 
 class ItemCategories extends StatefulWidget {
-  const ItemCategories({super.key});
+  final String active;
+  final void Function(String idCategory) onChange;
+
+  const ItemCategories({required this.active, required this.onChange, super.key});
 
   @override
   State<ItemCategories> createState() => _ItemCategoriesState();
@@ -32,19 +35,20 @@ class _ItemCategoriesState extends State<ItemCategories> {
                         idCategory: '',
                         code: 'all',
                         categoryName: 'all'.tr,
-                        isActive: true)
+                        isActive: widget.active == '',
+                        )
                     : categories[idx - 1];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () => widget.onChange(category.idCategory),
                     style: TextButton.styleFrom(
                       foregroundColor:
-                          controller.activeCategory == category.idCategory
+                          widget.active == category.idCategory
                               ? Colors.white
                               : Colors.teal.shade400,
                       backgroundColor:
-                          controller.activeCategory == category.idCategory
+                          widget.active == category.idCategory
                               ? Colors.teal.shade400
                               : Colors.teal.shade50.withOpacity(0.5),
                     ),

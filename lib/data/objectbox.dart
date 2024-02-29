@@ -29,17 +29,17 @@ class ObjectBox {
     return categoryBox.query(Category_.isActive.equals(true)).build().find();
   }
 
-  List<Item> items() {
-    return itemBox.getAll();
-  }
-
   Stream<List<Category>> categoriesStream() {
     final builder = categoryBox.query()..order(Category_.categoryName);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
-  Stream<List<Item>> itemsStream({String categoryId = ''}) {
-    final builder = itemBox.query(categoryId.isNotEmpty ? Item_.idCategory.equals(categoryId) : null)..order(Item_.itemName);
+  Stream<List<Item>> itemsStream({String idCategory = ''}) {
+    Condition<Item> itemQuery = Item_.isActive.equals(true);
+    if (idCategory != '') {
+      itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
+    }
+    QueryBuilder<Item> builder = itemBox.query(itemQuery)..order(Item_.itemName);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
@@ -51,12 +51,6 @@ class ObjectBox {
   Item? getItem(String idItem) => itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 
   void putItems(List<Item> items) {
-    Condition<Item>? condition = Item_.isActive.equals(false);
-    for (var i = 0; i < items.length; i++) {
-      condition.or(Item_.idItem.equals(items[i].idItem));
-    }
-    Query<Item> existItems = itemBox.query(condition).build();
-    existItems.remove();
     itemBox.putMany(items);
     if (kDebugMode) {
       print('${items.length} ITEMS HAS BEEN STORED');

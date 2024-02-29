@@ -10,4 +10,5 @@ Map<String, String> en = {
   'cancel': 'Cancel',
   'continue': 'Contine',
   'all': 'All',
+  'no_items': 'No Items',
 };
