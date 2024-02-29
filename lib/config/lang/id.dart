@@ -10,4 +10,5 @@ Map<String, String> id = {
   'cancel': 'Batal',
   'continue': 'Lanjutkan',
   'all': 'Semua',
+  'no_items': 'Tidak Ada Barang',
 };

@@ -4,10 +4,10 @@ import 'package:selleri/modules/auth/auth.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
 import 'package:selleri/modules/item/item.dart';
 
-import 'package:selleri/screens/splash/splash_screen.dart';
-import 'package:selleri/screens/login/login_screen.dart';
-import 'package:selleri/screens/select_outlet/select_outlet_screen.dart';
-import 'package:selleri/screens/home/home_screen.dart';
+import 'package:selleri/ui/screens/splash/splash_screen.dart';
+import 'package:selleri/ui/screens/login/login_screen.dart';
+import 'package:selleri/ui/screens/select_outlet/select_outlet_screen.dart';
+import 'package:selleri/ui/screens/home/home_screen.dart';
 
 class Routes {
   static const String root = '/';

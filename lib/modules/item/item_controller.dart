@@ -18,11 +18,9 @@ class ItemController extends GetxController {
 
   final _categoryState = CategoryState().obs;
   final _itemState = ItemState().obs;
-  final _activeCategory = ''.obs;
 
   CategoryState get category => _categoryState.value;
   ItemState get item => _itemState.value;
-  String get activeCategory => _activeCategory.value;
 
   @override
   void onInit() async {
