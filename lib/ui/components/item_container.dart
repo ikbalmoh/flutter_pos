@@ -7,8 +7,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 class ItemContainer extends StatelessWidget {
   final Stream<List<Item>> stream;
+  final ScrollController? scrollController;
 
-  const ItemContainer({required this.stream, super.key});
+  const ItemContainer({required this.stream, this.scrollController, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class ItemContainer extends StatelessWidget {
                 padding: const EdgeInsets.all(7.5),
                 crossAxisSpacing: 7.5,
                 mainAxisSpacing: 7.5,
+                controller: scrollController,
                 children: List.generate(
                   items.length,
                   (index) => ShopItem(item: items[index]),
@@ -32,27 +34,32 @@ class ItemContainer extends StatelessWidget {
               );
             }
 
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Icon(
-                    CupertinoIcons.bag,
-                    size: 60,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'no_items'.tr,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(color: Colors.grey),
-                  )
-                ],
+            return SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 200),
+              controller: scrollController,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      CupertinoIcons.bag,
+                      size: 60,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      'no_items'.tr,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(color: Colors.grey),
+                    )
+                  ],
+                ),
               ),
             );
           }
