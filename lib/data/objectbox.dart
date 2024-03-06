@@ -34,12 +34,17 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
-  Stream<List<Item>> itemsStream({String idCategory = ''}) {
+  Stream<List<Item>> itemsStream({String idCategory = '', String search = ''}) {
     Condition<Item> itemQuery = Item_.isActive.equals(true);
     if (idCategory != '') {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
-    QueryBuilder<Item> builder = itemBox.query(itemQuery)..order(Item_.itemName);
+    if (search != '') {
+      itemQuery =
+          itemQuery.and(Item_.itemName.contains(search, caseSensitive: false));
+    }
+    QueryBuilder<Item> builder = itemBox.query(itemQuery)
+      ..order(Item_.itemName);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
@@ -48,7 +53,8 @@ class ObjectBox {
     categoryBox.putMany(categories);
   }
 
-  Item? getItem(String idItem) => itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
+  Item? getItem(String idItem) =>
+      itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 
   void putItems(List<Item> items) {
     itemBox.putMany(items);

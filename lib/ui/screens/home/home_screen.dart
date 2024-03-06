@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide SearchBar;
 import 'package:get/get.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/models/item.dart';
@@ -7,6 +7,7 @@ import 'package:selleri/modules/item/item.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/components/item_container.dart';
+import 'package:selleri/ui/components/search_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,38 +22,77 @@ class _HomeScreenState extends State<HomeScreen> {
   final OutletController outletController = Get.find();
 
   String idCategory = '';
+  bool searchVisible = false;
+  TextEditingController textEditingController = TextEditingController();
+  ScrollController scrollController = ScrollController();
+
   Stream<List<Item>> itemStrem = objectBox.itemsStream();
 
-  void onChangeCategory(String id) => setState(() {
-        idCategory = id;
-        itemStrem = objectBox.itemsStream(idCategory: id);
-      });
+  void onChangeCategory(String id) {
+    setState(() {
+      idCategory = id;
+      itemStrem = objectBox.itemsStream(idCategory: id);
+    });
+    scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  void onSearch(String search) {
+    setState(() {
+      itemStrem = objectBox.itemsStream(search: search);
+    });
+    scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (authController.state is Authenticated) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(outletController.activeOutlet.value?.outletName ?? ''),
-            automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.more_vert_rounded),
-              )
-            ],
-          ),
+          appBar: searchVisible
+              ? SearchAppBar(
+                  onBack: () => setState(() {
+                    searchVisible = false;
+                    textEditingController.text = '';
+                    itemStrem = objectBox.itemsStream(idCategory: idCategory);
+                  }),
+                  controller: textEditingController,
+                  onChanged: onSearch,
+                )
+              : AppBar(
+                  title: Text(
+                      outletController.activeOutlet.value?.outletName ?? ''),
+                  automaticallyImplyLeading: false,
+                  actions: [
+                    IconButton(
+                      onPressed: () => setState(() {
+                        searchVisible = true;
+                      }),
+                      icon: const Icon(Icons.search),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.more_vert_rounded),
+                    )
+                  ],
+                ),
           body: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              ItemCategories(
-                active: idCategory,
-                onChange: onChangeCategory,
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut,
+                height: searchVisible ? 0 : 56,
+                child: ItemCategories(
+                  active: idCategory,
+                  onChange: onChangeCategory,
+                ),
               ),
               Expanded(
                 child: ItemContainer(
                   stream: itemStrem,
+                  scrollController: scrollController,
                 ),
               ),
             ],

@@ -14,6 +14,8 @@ ThemeData appTheme(BuildContext context) {
     ),
     useMaterial3: true,
     appBarTheme: AppBarTheme(
+      scrolledUnderElevation: 0,
+      foregroundColor: Colors.white,
       backgroundColor: Colors.teal.shade400,
       titleTextStyle: const TextStyle(
         color: Colors.white,
@@ -24,7 +26,7 @@ ThemeData appTheme(BuildContext context) {
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.teal.shade400,
-        statusBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.light,
       ),
     ),
