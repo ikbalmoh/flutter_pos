@@ -11,4 +11,13 @@ Map<String, String> en = {
   'continue': 'Contine',
   'all': 'All',
   'no_items': 'No Items',
+  'delete': 'Delete',
+  'remove_from_cart': 'Remove from cart',
+  'are_you_sure': 'Are you sure?',
+  'pay_finish': 'Finish Transaction',
+  'order_summary': 'Order Summary',
+  'discount_&_promotion': 'Discount & Promotions',
+  'discount_transaction': 'Discount Transaction',
+  'add_promotion_code': 'Add Promotion Code',
+  'payments': 'Payments'
 };

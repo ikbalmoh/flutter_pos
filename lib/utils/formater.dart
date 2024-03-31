@@ -83,4 +83,14 @@ class GeneralFormater {
   static String stripHtmlIfNeeded(String text) {
     return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '\n');
   }
+
+  static num reverse(String formated,
+      {int decimalDigit = 0, bool symbol = false}) {
+    NumberFormat currencyFormatter = NumberFormat.currency(
+      locale: 'id',
+      symbol: symbol ? 'Rp' : '',
+      decimalDigits: decimalDigit,
+    );
+    return currencyFormatter.parse(formated);
+  }
 }
