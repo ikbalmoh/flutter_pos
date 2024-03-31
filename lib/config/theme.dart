@@ -19,15 +19,16 @@ ThemeData appTheme(BuildContext context) {
       backgroundColor: Colors.teal.shade400,
       titleTextStyle: const TextStyle(
         color: Colors.white,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
+        fontSize: 20
       ),
       actionsIconTheme: const IconThemeData(
         color: Colors.white,
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.teal.shade400,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
       ),
     ),
     textTheme: const TextTheme(
@@ -35,8 +36,17 @@ ThemeData appTheme(BuildContext context) {
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
-      bodyLarge: TextStyle(fontWeight: FontWeight.bold),
+      bodyLarge: TextStyle(fontWeight: FontWeight.w600),
+      bodyMedium: TextStyle(fontWeight: FontWeight.w400),
+      bodySmall: TextStyle(fontWeight: FontWeight.w200, fontSize: 14),
       labelLarge: TextStyle(fontWeight: FontWeight.w600),
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: Colors.teal,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(999))
+      )
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(

@@ -2,20 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selleri/models/item.dart';
+import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/ui/components/shop_item.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-class ItemContainer extends StatelessWidget {
+class ItemContainer extends StatefulWidget {
   final Stream<List<Item>> stream;
   final ScrollController? scrollController;
 
   const ItemContainer({required this.stream, this.scrollController, super.key});
 
   @override
+  State<ItemContainer> createState() => _ItemContainerState();
+}
+
+class _ItemContainerState extends State<ItemContainer> {
+  final CartController cartController = Get.find();
+
+  @override
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET);
     return StreamBuilder<List<Item>>(
-        stream: stream,
+        stream: widget.stream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
@@ -26,17 +34,26 @@ class ItemContainer extends StatelessWidget {
                 padding: const EdgeInsets.all(7.5),
                 crossAxisSpacing: 7.5,
                 mainAxisSpacing: 7.5,
-                controller: scrollController,
+                controller: widget.scrollController,
                 children: List.generate(
                   items.length,
-                  (index) => ShopItem(item: items[index]),
+                  (index) => ShopItem(
+                    item: items[index],
+                    qtyOnCart: cartController.cart?.items
+                            .firstWhereOrNull(
+                                (i) => i.idItem == items[index].idItem)
+                            ?.quantity ??
+                        0,
+                    onAddToCart: (item) => cartController.addToCart(item),
+                    addQty: (idItem) => cartController.addQty(idItem),
+                  ),
                 ),
               );
             }
 
             return SingleChildScrollView(
               padding: const EdgeInsets.only(top: 200),
-              controller: scrollController,
+              controller: widget.scrollController,
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,

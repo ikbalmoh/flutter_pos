@@ -47,8 +47,14 @@ class App {
     );
   }
 
-  static void showConfirmDialog(
-      {required String title, String? subtitle, void Function()? onConfirm}) {
+  static void showConfirmDialog({
+    required String title,
+    String? subtitle,
+    void Function()? onConfirm,
+    String? confirmLabel,
+    bool? danger
+  }) {
+    Get.back();
     Get.dialog(
       AlertDialog(
         backgroundColor: Colors.white,
@@ -60,7 +66,9 @@ class App {
             style: TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
             child: Text('cancel'.tr),
           ),
-          TextButton(onPressed: onConfirm, child: Text('continue'.tr)),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: danger != null && danger ? Colors.red : Colors.teal),
+              onPressed: onConfirm, child: Text(confirmLabel ?? 'continue'.tr)),
         ],
       ),
     );

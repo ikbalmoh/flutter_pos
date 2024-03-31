@@ -11,4 +11,13 @@ Map<String, String> id = {
   'continue': 'Lanjutkan',
   'all': 'Semua',
   'no_items': 'Tidak Ada Barang',
+  'delete': 'Hapus',
+  'remove_from_cart': 'Buang dari keranjang',
+  'are_you_sure': 'Yakin hapus?',
+  'pay_finish': 'Selesaikan Transaksi',
+  'order_summary': 'Ringkasan Pesanan',
+  'discount_&_promotion': 'Diskon & Promosi',
+  'discount_transaction': 'Diskon Transaksi',
+  'add_promotion_code': 'Masukan Kode Promosi',
+  'payments': 'Pembayaran'
 };
