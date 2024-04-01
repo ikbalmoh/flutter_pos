@@ -54,7 +54,6 @@ class App {
     String? confirmLabel,
     bool? danger
   }) {
-    Get.back();
     Get.dialog(
       AlertDialog(
         backgroundColor: Colors.white,

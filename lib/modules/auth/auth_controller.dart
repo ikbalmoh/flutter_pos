@@ -139,7 +139,10 @@ class AuthController extends GetxController {
       title: 'Logout',
       content: const Text('Apakah Anda ingin keluar dari aplikasi?'),
       confirm: TextButton(
-        onPressed: () => _clearAuth(),
+        onPressed: () {
+          Get.back();
+          _clearAuth();
+        },
         style: TextButton.styleFrom(foregroundColor: Colors.red),
         child: const Text('Logout'),
       ),
