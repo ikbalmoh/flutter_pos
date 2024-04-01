@@ -1,4 +1,4 @@
-import 'package:get/get.dart' show GetPage;
+import 'package:get/get.dart' show GetPage, Transition;
 
 import 'package:selleri/modules/auth/auth.dart';
 import 'package:selleri/modules/cart/cart.dart';
@@ -26,30 +26,36 @@ List<GetPage> routes = [
     name: Routes.root,
     page: () => const SplashScreen(),
     bindings: [OutletBindings(), AuthBindings()],
+    transition: Transition.fade,
   ),
   GetPage(
     name: Routes.login,
     page: () => const LoginScreen(),
     bindings: [OutletBindings(), AuthBindings()],
+    transition: Transition.rightToLeft,
   ),
   GetPage(
     name: Routes.outlet,
     page: () => const SelectOutletScreen(),
     binding: OutletBindings(),
+    transition: Transition.rightToLeft,
   ),
   GetPage(
     name: Routes.home,
     page: () => const HomeScreen(),
     bindings: [OutletBindings(), ItemBindings(), CartBindings()],
+    transition: Transition.rightToLeft,
   ),
   GetPage(
     name: Routes.cart,
     page: () => const CartScreen(),
     bindings: [CartBindings()],
+    transition: Transition.rightToLeft,
   ),
   GetPage(
     name: Routes.checkout,
     page: () => const CheckoutScreen(),
-    bindings: [CartBindings()],
+    transition: Transition.rightToLeft,
+    bindings: [CartBindings()]
   ),
 ];
