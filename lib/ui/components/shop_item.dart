@@ -68,8 +68,8 @@ class ShopItem extends StatelessWidget {
                 ),
                 Container(
                   decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(10)),
+                    borderRadius:
+                        BorderRadius.vertical(bottom: Radius.circular(10)),
                     color: Colors.white,
                   ),
                   width: double.infinity,
@@ -86,7 +86,21 @@ class ShopItem extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                             ),
                       ),
-                      Text(CurrencyFormat.currency(item.itemPrice))
+                      item.variants.isNotEmpty
+                          ? Row(
+                              children: [
+                                Icon(
+                                  Icons.list,
+                                  size: 18,
+                                  color: Colors.amber.shade700,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text('${item.variants.length} variants')
+                              ],
+                            )
+                          : Text(CurrencyFormat.currency(item.itemPrice))
                     ],
                   ),
                 )

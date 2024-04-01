@@ -42,7 +42,7 @@ class ItemVariant {
 
   @override
   String toString() {
-    return '{id_variant: $idVariant, variant_name: $variantName}';
+    return '{id_variant: $idVariant, variant_name: $variantName, item_price: $itemPrice}';
   }
 
 }

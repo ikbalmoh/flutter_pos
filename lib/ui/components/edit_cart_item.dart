@@ -112,6 +112,7 @@ class _EditCartItemState extends State<EditCartItem> {
         confirmLabel: 'delete'.tr,
         danger: true,
         onConfirm: () {
+          Get.back();
           ItemCart item = widget.item;
           item.quantity = 0;
           submitUpdate(item);

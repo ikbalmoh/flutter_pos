@@ -52,11 +52,15 @@ class CartController extends GetxController {
   }
 
   void calculateCart() {
-    double subtotal = cart?.items
+    double? subtotal = cart!.items.isNotEmpty
+        ? cart?.items
             .map((i) => i.total)
-            .reduce((value, total) => value + total) ??
-        0;
-    double total = subtotal - (cart?.discOverallTotal ?? 0);
+            .reduce((value, total) => value + total)
+        : 0;
+    double total = 0;
+    if (subtotal != null) {
+      total = subtotal - (cart?.discOverallTotal ?? 0);
+    }
     _cart.value?.subtotal = subtotal;
     _cart.value?.total = total;
     _cart.value?.grandTotal = total;
