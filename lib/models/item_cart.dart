@@ -12,6 +12,7 @@ class ItemCart {
   String note;
   DateTime addedAt;
   double total;
+  num? idVariant;
 
   ItemCart({
     required this.idItem,
@@ -27,5 +28,6 @@ class ItemCart {
     required this.note,
     required this.addedAt,
     required this.total,
+    this.idVariant,
   });
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selleri/models/item.dart';
 import 'package:selleri/modules/cart/cart.dart';
+import 'package:selleri/ui/components/item_variant_picker.dart';
 import 'package:selleri/ui/components/shop_item.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -18,6 +19,10 @@ class ItemContainer extends StatefulWidget {
 
 class _ItemContainerState extends State<ItemContainer> {
   final CartController cartController = Get.find();
+
+  void showVariants(Item item) {
+    Get.bottomSheet(ItemVariantPicker(item: item));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +49,7 @@ class _ItemContainerState extends State<ItemContainer> {
                                 (i) => i.idItem == items[index].idItem)
                             ?.quantity ??
                         0,
-                    onAddToCart: (item) => cartController.addToCart(item),
+                    onAddToCart: (item) => item.variants.isNotEmpty ? showVariants(item) : cartController.addToCart(item),
                     addQty: (idItem) => cartController.addQty(idItem),
                   ),
                 ),

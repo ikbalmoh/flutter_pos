@@ -9,8 +9,10 @@ class DiscountPromotion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Container(
+    return Card(
+      margin: const EdgeInsets.all(10),
       color: Colors.white,
+      elevation: 0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,6 +50,9 @@ class DiscountItem extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Material(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(30))
+      ),
       child: InkWell(
         onTap: () {},
         splashColor: Colors.blueGrey.shade50,
@@ -105,6 +110,9 @@ class PromotionItem extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Material(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(30))
+      ),
       child: InkWell(
         splashColor: Colors.blueGrey.shade50,
         highlightColor: Colors.blueGrey.shade100,
