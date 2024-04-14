@@ -47,9 +47,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       height: 7,
                     ),
                     const DiscountPromotion(),
-                    const SizedBox(
-                      height: 7,
-                    ),
                     PaymentDetails(grandTotal: controller.cart!.grandTotal ?? 0,)
                   ],
                 ),

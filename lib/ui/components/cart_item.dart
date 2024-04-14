@@ -42,20 +42,40 @@ class _CartItemState extends State<CartItem> {
                 Text(
                   widget.item.itemName,
                 ),
-                widget.item.variantName != ''
-                    ? Container(
-                        margin: const EdgeInsets.only(top: 5),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          widget.item.variantName ?? '',
-                          style: textTheme.bodyMedium,
-                        ),
-                      )
-                    : Container(),
+                Row(
+                  children: [
+                    widget.item.variantName != ''
+                        ? Container(
+                            margin: const EdgeInsets.only(top: 5, right: 5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              widget.item.variantName ?? '',
+                              style: textTheme.bodyMedium,
+                            ),
+                          )
+                        : Container(),
+                    widget.item.discountTotal > 0
+                        ? Container(
+                            margin: const EdgeInsets.only(top: 5, right: 5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              '-${CurrencyFormat.currency(widget.item.discount, symbol: !widget.item.discountIsPercent)}${widget.item.discountIsPercent ? '%' : ''}',
+                              style: textTheme.bodyMedium?.copyWith(color: Colors.red.shade600),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
                 widget.item.note != ''
                     ? Text(
                         widget.item.note,

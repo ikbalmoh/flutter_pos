@@ -26,6 +26,7 @@ class DiscountPromotion extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
               border: Border(
                 bottom: BorderSide(width: 1, color: Colors.blueGrey.shade100),
               ),
