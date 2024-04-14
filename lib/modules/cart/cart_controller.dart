@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:selleri/models/item.dart';
 import 'package:selleri/models/item_cart.dart';
 import 'package:selleri/models/cart.dart';
+import 'package:selleri/models/item_variant.dart';
 import 'package:selleri/models/outlet.dart';
 import 'package:selleri/models/user.dart';
 import 'package:selleri/modules/auth/auth.dart';
@@ -67,10 +68,22 @@ class CartController extends GetxController {
     _cart.refresh();
   }
 
-  void addToCart(Item item) {
+  void addToCart(Item item, {ItemVariant? variant}) {
+    String identifier = item.idItem;
+    String itemName = item.itemName;
+    if (item.isPackage) {
+      identifier += (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    } else if (variant != null) {
+      identifier += '-v${variant.idVariant.toString()}';
+    }
+    int idx = _cart.value!.items.indexWhere((i) => i.identifier == identifier);
+
+    if (idx > -1) return addQty(identifier);
+
     ItemCart itemCart = ItemCart(
+      identifier: identifier,
       idItem: item.idItem,
-      itemName: item.itemName,
+      itemName: itemName,
       price: item.itemPrice,
       isPackage: item.isPackage,
       manualDiscount: item.manualDiscount,
@@ -82,14 +95,16 @@ class CartController extends GetxController {
       note: '',
       total: item.itemPrice,
       addedAt: DateTime.now(),
+      idVariant: variant?.idVariant,
+      variantName: variant?.variantName ?? '',
     );
     _cart.value!.items.add(itemCart);
     _cart.refresh();
     calculateCart();
   }
 
-  void addQty(String idItem) {
-    int idx = _cart.value!.items.indexWhere((i) => i.idItem == idItem);
+  void addQty(String identifier) {
+    int idx = _cart.value!.items.indexWhere((i) => i.identifier == identifier);
     ItemCart item = _cart.value!.items[idx];
     int quantity = item.quantity + 1;
     item.quantity = quantity;
@@ -101,7 +116,8 @@ class CartController extends GetxController {
 
   Future<int> updateCartItem(ItemCart item) {
     int idx =
-        _cart.value?.items.indexWhere((i) => i.idItem == item.idItem) ?? -1;
+        _cart.value?.items.indexWhere((i) => i.identifier == item.identifier) ??
+            -1;
     if (idx >= 0) {
       if (item.quantity > 0) {
         _cart.value?.items[idx] = item;
@@ -112,5 +128,16 @@ class CartController extends GetxController {
       calculateCart();
     }
     return Future(() => _cart.value!.items.length);
+  }
+
+  int qtyOnCart(String idItem) {
+    List<int> qtyItems = cart?.items
+            .where((i) => i.idItem == idItem)
+            .map((i) => i.quantity)
+            .toList() ??
+        [];
+    return qtyItems.isNotEmpty
+        ? qtyItems.reduce((qty, total) => qty + total)
+        : 0;
   }
 }

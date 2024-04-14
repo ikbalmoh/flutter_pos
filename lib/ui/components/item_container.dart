@@ -43,15 +43,11 @@ class _ItemContainerState extends State<ItemContainer> {
                 children: List.generate(
                   items.length,
                   (index) => ShopItem(
-                    item: items[index],
-                    qtyOnCart: cartController.cart?.items
-                            .firstWhereOrNull(
-                                (i) => i.idItem == items[index].idItem)
-                            ?.quantity ??
-                        0,
-                    onAddToCart: (item) => item.variants.isNotEmpty ? showVariants(item) : cartController.addToCart(item),
-                    addQty: (idItem) => cartController.addQty(idItem),
-                  ),
+                      item: items[index],
+                      qtyOnCart: cartController.qtyOnCart(items[index].idItem),
+                      onAddToCart: (item) => cartController.addToCart(item),
+                      addQty: (idItem) => cartController.addQty(idItem),
+                      showVariants: (item) => showVariants(item)),
                 ),
               );
             }

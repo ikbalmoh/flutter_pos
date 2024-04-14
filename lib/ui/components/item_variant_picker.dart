@@ -19,9 +19,9 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
   ItemVariant? selected;
 
   void onAddToCart() {
-    controller.addToCart(widget.item);
+    controller.addToCart(widget.item, variant: selected);
     Get.back();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +52,22 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                     ),
                   ),
                 ),
-                child: Text(
-                  widget.item.itemName,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.item.itemName,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey.shade500,
+                        size: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(
@@ -120,6 +133,7 @@ class VariantItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color textColor = selected ? Colors.teal : Colors.black;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
@@ -141,14 +155,18 @@ class VariantItem extends StatelessWidget {
                 Expanded(
                   child: Text(
                     variant.variantName,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: textColor),
                   ),
                 ),
                 Text(
                   CurrencyFormat.currency(variant.itemPrice),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600, color: textColor),
                 ),
                 const SizedBox(
                   width: 10,

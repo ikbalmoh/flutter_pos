@@ -1,4 +1,5 @@
 class ItemCart {
+  final String identifier;
   final String idItem;
   final String itemName;
   final bool isPackage;
@@ -13,8 +14,10 @@ class ItemCart {
   DateTime addedAt;
   double total;
   num? idVariant;
+  String? variantName;
 
   ItemCart({
+    required this.identifier,
     required this.idItem,
     required this.itemName,
     required this.price,
@@ -29,5 +32,6 @@ class ItemCart {
     required this.addedAt,
     required this.total,
     this.idVariant,
+    this.variantName,
   });
 }
