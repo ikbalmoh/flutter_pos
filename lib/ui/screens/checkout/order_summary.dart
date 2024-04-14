@@ -10,6 +10,12 @@ class OrderItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+
+    String itemName = item.itemName;
+    if (item.variantName != '') {
+      itemName += ' - ${item.variantName}';
+    }
+
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 12),
@@ -30,7 +36,7 @@ class OrderItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.itemName,
+                    itemName,
                     style: textTheme.bodyMedium,
                   ),
                   Text(

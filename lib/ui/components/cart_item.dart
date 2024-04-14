@@ -25,7 +25,7 @@ class _CartItemState extends State<CartItem> {
             bottom: BorderSide(width: 1, color: Colors.grey.shade100),
           ),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,6 +42,20 @@ class _CartItemState extends State<CartItem> {
                 Text(
                   widget.item.itemName,
                 ),
+                widget.item.variantName != ''
+                    ? Container(
+                        margin: const EdgeInsets.only(top: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          widget.item.variantName ?? '',
+                          style: textTheme.bodyMedium,
+                        ),
+                      )
+                    : Container(),
                 widget.item.note != ''
                     ? Text(
                         widget.item.note,

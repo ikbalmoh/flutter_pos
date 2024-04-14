@@ -5,19 +5,27 @@ import 'package:selleri/utils/formater.dart';
 class ShopItem extends StatelessWidget {
   final Item item;
   final Function(Item) onAddToCart;
+  final Function(Item) showVariants;
   final Function(String) addQty;
   final int qtyOnCart;
-  const ShopItem(
-      {required this.item,
-      required this.onAddToCart,
-      super.key,
-      required this.addQty,
-      required this.qtyOnCart});
+
+  const ShopItem({
+    required this.item,
+    required this.onAddToCart,
+    required this.showVariants,
+    super.key,
+    required this.addQty,
+    required this.qtyOnCart,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => qtyOnCart > 0 ? addQty(item.idItem) : onAddToCart(item),
+      onTap: () => item.variants.isNotEmpty
+          ? showVariants(item)
+          : qtyOnCart > 0
+              ? addQty(item.idItem)
+              : onAddToCart(item),
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(

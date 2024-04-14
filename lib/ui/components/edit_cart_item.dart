@@ -125,6 +125,11 @@ class _EditCartItemState extends State<EditCartItem> {
         .textTheme
         .bodyMedium
         ?.copyWith(color: Colors.blueGrey.shade600);
+
+    String itemName = widget.item.itemName;
+    if (widget.item.variantName != '') {
+      itemName += ' - ${widget.item.variantName}';
+    }
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -153,7 +158,7 @@ class _EditCartItemState extends State<EditCartItem> {
                   ),
                 ),
                 child: Text(
-                  widget.item.itemName,
+                  itemName,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
