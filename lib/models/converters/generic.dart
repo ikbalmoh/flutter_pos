@@ -13,6 +13,8 @@ class Converters {
   static bool dynamicToBool(dynamic value) {
     if (value is String) {
       return bool.parse(value);
+    } else if (value is num) {
+      return value == 1 ? true : false;
     }
     return false;
   }

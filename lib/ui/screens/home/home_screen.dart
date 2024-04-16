@@ -66,8 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   onChanged: onSearch,
                 )
               : AppBar(
-                  title: Text(
-                      outletController.activeOutlet.value?.outletName ?? ''),
+                  title: Text(outletController.outlet is OutletSelected
+                      ? (outletController.outlet as OutletSelected)
+                          .outlet
+                          .outletName
+                      : ''),
                   automaticallyImplyLeading: false,
                   actions: [
                     IconButton(

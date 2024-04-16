@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:selleri/models/outlet.dart';
+import 'package:selleri/models/outlet_config.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
 import 'package:selleri/routes/routes.dart';
 import 'package:selleri/utils/app.dart';
@@ -15,22 +17,24 @@ class OutletController extends GetxController {
   OutletController(this._service);
 
   final _outletListState = const OutletListState().obs;
-  final activeOutlet = Rxn<Outlet>();
+  final _outletState = const OutletState().obs;
 
   OutletListState get outletList => _outletListState.value;
+  OutletState get outlet => _outletState.value;
 
   @override
   void onInit() {
     if (box.hasData('outlet')) {
-      activeOutlet.value = Outlet.fromJson(box.read('outlet'));
+      selectOutlet(Outlet.fromJson(box.read('outlet')), confirm: false);
     } else {
-      _outletListState.value = OutletLoading();
+      _outletListState.value = OutletListLoading();
+      _outletState.value = OutletInitial();
     }
     super.onInit();
   }
 
   Future loadOutlets() async {
-    _outletListState.value = OutletLoading();
+    _outletListState.value = OutletListLoading();
     try {
       final data = await _service.outlets();
       List<Outlet> outlets =
@@ -46,17 +50,29 @@ class OutletController extends GetxController {
     }
   }
 
-  void selectOutlet(Outlet outlet, {bool confirm = false}) {
+  void selectOutlet(Outlet outlet, {bool confirm = false}) async {
     if (confirm) {
-      App.showConfirmDialog(
+      return App.showConfirmDialog(
         title: outlet.outletName,
         subtitle: 'select_outlet_confirm'.tr,
         onConfirm: () => selectOutlet(outlet, confirm: false),
       );
-    } else {
+    }
+    _outletState.value = OutletLoading();
+    try {
+      OutletConfig? config = await _service.configs(outlet.idOutlet);
+      if (kDebugMode) {
+        print('Config $config');
+      }
+      _outletState.value = OutletSelected(outlet: outlet, config: config);
       box.write('outlet', outlet.toJson());
-      activeOutlet.value = outlet;
-      Get.offAllNamed(Routes.home);
+      box.write('outlet_config', config.toJson());
+      Get.offAllNamed(Routes.home, predicate: (route) => true);
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? e.message;
+      _outletState.value = OutletFailure(message: message);
+    } on PlatformException catch (e) {
+      _outletState.value = OutletFailure(message: e.message ?? e.toString());
     }
   }
 }

@@ -8,4 +8,9 @@ class OutletApi {
     final res = await api.get(ApiUrl.outlets, queryParameters: {'is_app': 1});
     return res.data;
   }
+
+  Future configs(String id) async {
+    final res = await api.get('${ApiUrl.outletConfig}/$id');
+    return res.data;
+  }
 }

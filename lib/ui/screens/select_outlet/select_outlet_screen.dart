@@ -120,7 +120,7 @@ class _SelectOutletScreenState extends State<SelectOutletScreen> {
                           style: textTheme.bodyLarge
                               ?.copyWith(fontWeight: FontWeight.w500)),
                     ),
-                    controller.outletList is OutletLoading
+                    controller.outletList is OutletListLoading
                         ? const Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: 40, horizontal: 20),

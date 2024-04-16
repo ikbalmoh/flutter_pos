@@ -32,21 +32,23 @@ class AuthController extends GetxController {
       if (kDebugMode) {
         print('AUTH STATE CHANGED: $state');
         if (state is Authenticated) {
+          print('TOKEN: ${box.read('access_token')}');
           if (Get.currentRoute != Routes.home) {
             await Future.delayed(const Duration(seconds: 1));
             if (box.hasData('outlet')) {
               outletController
                   .selectOutlet(Outlet.fromJson(box.read('outlet')));
+            } else {
+              Get.offAllNamed(
+                Routes.outlet,
+                predicate: (route) => true,
+              );
             }
-
-            Get.offAllNamed(
-              box.hasData('outlet') ? Routes.home : Routes.outlet,
-              predicate: (route) => true,
-            );
           }
         } else if (state is UnAuthenticated || state is AuthFailure) {
           if (Get.currentRoute != Routes.login) {
             await Future.delayed(const Duration(seconds: 1));
+            _clearAuth();
             Get.offAllNamed(
               Routes.login,
               predicate: (route) => Get.currentRoute == Routes.root,
