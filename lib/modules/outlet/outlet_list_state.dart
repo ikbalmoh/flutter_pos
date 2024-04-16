@@ -11,7 +11,7 @@ class OutletListState extends Equatable {
   bool get stringify => true;
 }
 
-class OutletLoading extends OutletListState {}
+class OutletListLoading extends OutletListState {}
 
 class OutletListLoaded extends OutletListState {
   final List<Outlet> outlets;

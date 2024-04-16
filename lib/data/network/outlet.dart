@@ -80,4 +80,9 @@ class OutletApi {
       rethrow;
     }
   }
+
+  Future configs(String id) async {
+    final res = await api.get('${ApiUrl.outletConfig}/$id');
+    return res.data;
+  }
 }

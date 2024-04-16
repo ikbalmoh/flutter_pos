@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:selleri/models/category.dart';
 import 'package:selleri/models/item.dart';
+import 'package:selleri/models/outlet.dart';
 import 'package:selleri/modules/item/item.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
 import 'package:selleri/data/objectbox.dart' show objectBox;
@@ -39,9 +40,13 @@ class ItemController extends GetxController {
 
   Future loadCategories() async {
     try {
+      Outlet? outlet = outletController.outlet is OutletSelected ? (outletController.outlet as OutletSelected).outlet : null;
+      if (outlet == null) {
+        return;
+      }
       _categoryState.value = CategoryLoading();
       List<Category> categories = await _itemService
-          .categories(outletController.activeOutlet.value!.idOutlet);
+          .categories(outlet.idOutlet);
       _categoryState.value = CategoryLoaded();
       objectBox.putCategories(categories);
     } on Exception catch (e) {
@@ -51,7 +56,11 @@ class ItemController extends GetxController {
 
   Future loadItems({int page = 1}) async {
     try {
-      String idOutlet = outletController.activeOutlet.value!.idOutlet;
+      Outlet? outlet = outletController.outlet is OutletSelected ? (outletController.outlet as OutletSelected).outlet : null;
+      if (outlet == null) {
+        return;
+      }
+      String idOutlet = outlet.idOutlet;
       List<Category> categories = objectBox.categories();
       for (var i = 0; i < categories.length; i++) {
         Category category = categories[i];

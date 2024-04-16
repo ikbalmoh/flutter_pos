@@ -29,16 +29,19 @@ class CartController extends GetxController {
   }
 
   void initNewCart() {
+    if (outletController.outlet is! OutletSelected) {
+      return;
+    }
     int timestamp = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toInt();
     UserAccount user = (authController.state as Authenticated).user.user;
-    Outlet outlet = outletController.activeOutlet.value!;
+    Outlet? outlet = (outletController.outlet as OutletSelected).outlet;
     String transactionNo =
         'BILL-${outlet.outletCode}-${user.idUser.substring(9, 13)}-$timestamp';
     _cart.value = Cart(
       transactionDate: DateTime.now(),
       transactionNo: transactionNo,
-      idOutlet: outletController.activeOutlet.value!.idOutlet,
-      outletName: outletController.activeOutlet.value!.outletName,
+      idOutlet: outlet.idOutlet,
+      outletName: outlet.outletName,
       createdBy: user.idUser,
       createdName: user.name,
       items: [],
