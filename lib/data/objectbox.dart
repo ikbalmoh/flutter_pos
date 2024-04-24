@@ -296,6 +296,13 @@ class ObjectBox {
     log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
   }
 
+  void putPromotions(List<Promotion> promotions) {
+    promotionBox.putMany(promotions);
+    if (kDebugMode) {
+      print('${promotions.length} PROMOTIONS HAS BEEN STORED');
+    }
+  }
+
   void clearAll() {
     categoryBox.removeAll();
     itemBox.removeAll();

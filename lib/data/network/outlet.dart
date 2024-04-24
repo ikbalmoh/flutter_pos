@@ -81,7 +81,7 @@ class OutletApi {
     }
   }
 
-  Future configs(String id) async {
+  Future<Map<String, dynamic>> configs(String id) async {
     final res = await api.get('${ApiUrl.outletConfig}/$id');
     return res.data;
   }

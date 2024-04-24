@@ -25,25 +25,25 @@ List<GetPage> routes = [
   GetPage(
     name: Routes.root,
     page: () => const SplashScreen(),
-    bindings: [OutletBindings(), AuthBindings()],
+    binding: AuthBindings(),
     transition: Transition.fade,
   ),
   GetPage(
     name: Routes.login,
     page: () => const LoginScreen(),
-    bindings: [OutletBindings(), AuthBindings()],
+    bindings: [AuthBindings()],
     transition: Transition.rightToLeft,
   ),
   GetPage(
     name: Routes.outlet,
     page: () => const SelectOutletScreen(),
-    binding: OutletBindings(),
+    bindings: [AuthBindings()],
     transition: Transition.rightToLeft,
   ),
   GetPage(
     name: Routes.home,
     page: () => const HomeScreen(),
-    bindings: [OutletBindings(), ItemBindings(), CartBindings()],
+    bindings: [AuthBindings(), ItemBindings(), CartBindings()],
     transition: Transition.rightToLeft,
   ),
   GetPage(

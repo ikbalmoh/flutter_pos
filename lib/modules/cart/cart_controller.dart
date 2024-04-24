@@ -24,14 +24,11 @@ class CartController extends GetxController {
 
   @override
   void onInit() {
-    initNewCart();
+    // initNewCart();
     super.onInit();
   }
 
-  void initNewCart() {
-    if (outletController.outlet is! OutletSelected) {
-      return;
-    }
+  Future<Cart> initNewCart() {
     int timestamp = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toInt();
     UserAccount user = (authController.state as Authenticated).user.user;
     Outlet? outlet = (outletController.outlet as OutletSelected).outlet;
@@ -53,6 +50,8 @@ class CartController extends GetxController {
     if (kDebugMode) {
       print('CART INITIALIZED $cart');
     }
+
+    return Future.value(_cart.value);
   }
 
   void calculateCart() {
@@ -71,7 +70,10 @@ class CartController extends GetxController {
     _cart.refresh();
   }
 
-  void addToCart(Item item, {ItemVariant? variant}) {
+  void addToCart(Item item, {ItemVariant? variant}) async {
+    if (cart == null) {
+      await initNewCart();
+    }
     String identifier = item.idItem;
     String itemName = item.itemName;
     if (item.isPackage) {

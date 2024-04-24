@@ -21,5 +21,6 @@ Map<String, String> en = {
   'add_promotion_code': 'Add Promotion Code',
   'payments': 'Payments',
   'logout_confirmation': 'are you sure want to logout?',
-  'add_to_cart': 'Add to Cart'
+  'add_to_cart': 'Add to Cart',
+  'preparing_outlet': 'Preparing your outlet'
 };

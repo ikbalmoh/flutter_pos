@@ -21,5 +21,6 @@ Map<String, String> id = {
   'add_promotion_code': 'Masukan Kode Promosi',
   'payments': 'Pembayaran',
   'logout_confirmation': 'Yaking ingin keluar?',
-  'add_to_cart': 'Tambah ke Keranjang'
+  'add_to_cart': 'Tambah ke Keranjang',
+  'preparing_outlet': 'Menyiapkan outlet anda'
 };
