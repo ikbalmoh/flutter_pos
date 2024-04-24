@@ -44,10 +44,6 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
       nominalCash: (json['nominal_cash'] as List<dynamic>?)
           ?.map((e) => e as int)
           .toList(),
-      vouchers: json['vouchers'] as List<dynamic>?,
-      promotions: (json['promotions'] as List<dynamic>?)
-          ?.map((e) => Promotion.fromJson(e as Map<String, dynamic>))
-          .toList(),
       refundReasons: (json['refund_reasons'] as List<dynamic>?)
           ?.map((e) => RefundReason.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -66,8 +62,6 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
       akunSetoran: (json['akun_setoran'] as List<dynamic>?)
           ?.map((e) => Akun.fromJson(e as Map<String, dynamic>))
           .toList(),
-      shift: json['shift'] as List<dynamic>?,
-      cashFlows: json['cash_flows'] as List<dynamic>?,
       listUser: (json['list_user'] as List<dynamic>?)
           ?.map((e) => ListUser.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -104,16 +98,12 @@ Map<String, dynamic> _$OutletConfigToJson(OutletConfig instance) =>
       'user_has_pin': instance.userHasPin,
       'payment_methods': instance.paymentMethods,
       'nominal_cash': instance.nominalCash,
-      'vouchers': instance.vouchers,
-      'promotions': instance.promotions,
       'refund_reasons': instance.refundReasons,
       'add_ons': instance.addOns,
       'attribute_receipts': instance.attributeReceipts,
       'akun_biaya': instance.akunBiaya,
       'akun_pendapatan': instance.akunPendapatan,
       'akun_setoran': instance.akunSetoran,
-      'shift': instance.shift,
-      'cash_flows': instance.cashFlows,
       'list_user': instance.listUser,
       'saldo_akun_kas': instance.saldoAkunKas,
       'custom_mandatory': instance.customMandatory,

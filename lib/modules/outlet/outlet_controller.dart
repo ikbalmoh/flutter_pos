@@ -24,7 +24,7 @@ class OutletController extends GetxController {
 
   @override
   void onInit() {
-    if (box.hasData('outlet')) {
+    if (box.hasData('outlet') && _outletState.value is! OutletSelected) {
       selectOutlet(Outlet.fromJson(box.read('outlet')), confirm: false);
     } else {
       _outletListState.value = OutletListLoading();
@@ -36,9 +36,7 @@ class OutletController extends GetxController {
   Future loadOutlets() async {
     _outletListState.value = OutletListLoading();
     try {
-      final data = await _service.outlets();
-      List<Outlet> outlets =
-          List<Outlet>.from(data['data'].map((o) => Outlet.fromJson(o)));
+      List<Outlet> outlets = await _service.outlets();
 
       _outletListState.value = OutletListLoaded(outlets: outlets);
     } on DioException catch (e) {
@@ -51,23 +49,36 @@ class OutletController extends GetxController {
   }
 
   void selectOutlet(Outlet outlet, {bool confirm = false}) async {
+    if (_outletState.value is OutletSelected) {
+      return;
+    }
     if (confirm) {
       return App.showConfirmDialog(
         title: outlet.outletName,
         subtitle: 'select_outlet_confirm'.tr,
-        onConfirm: () => selectOutlet(outlet, confirm: false),
+        onConfirm: () {
+          Get.back();
+          selectOutlet(outlet, confirm: false);
+        },
       );
     }
     _outletState.value = OutletLoading();
     try {
       OutletConfig? config = await _service.configs(outlet.idOutlet);
+
       if (kDebugMode) {
         print('Config $config');
       }
       _outletState.value = OutletSelected(outlet: outlet, config: config);
       box.write('outlet', outlet.toJson());
       box.write('outlet_config', config.toJson());
-      Get.offAllNamed(Routes.home, predicate: (route) => true);
+      if (Get.currentRoute != Routes.home) {
+        if (kDebugMode) {
+          print('RESET NAV TO HOME');
+        }
+        Get.offAllNamed(Routes.home,
+            predicate: (route) => Get.currentRoute == Routes.home);
+      }
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? e.message;
       _outletState.value = OutletFailure(message: message);

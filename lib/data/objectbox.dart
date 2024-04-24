@@ -3,6 +3,7 @@ import 'package:selleri/models/category.dart';
 import 'package:selleri/models/item.dart';
 import 'package:selleri/models/item_package.dart';
 import 'package:selleri/models/item_variant.dart';
+import 'package:selleri/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
 
 class ObjectBox {
@@ -12,12 +13,14 @@ class ObjectBox {
   late final Box<Item> itemBox;
   late final Box<ItemVariant> itemVariantBox;
   late final Box<ItemPackage> itemPackageBox;
+  late final Box<Promotion> promotionBox;
 
   ObjectBox._create(this.store) {
     categoryBox = Box<Category>(store);
     itemBox = Box<Item>(store);
     itemVariantBox = Box<ItemVariant>(store);
     itemPackageBox = Box<ItemPackage>(store);
+    promotionBox = Box<Promotion>(store);
   }
 
   static Future<ObjectBox> create() async {
@@ -63,11 +66,19 @@ class ObjectBox {
     }
   }
 
+  void putPromotions(List<Promotion> promotions) {
+    promotionBox.putMany(promotions);
+    if (kDebugMode) {
+      print('${promotions.length} PROMOTIONS HAS BEEN STORED');
+    }
+  }
+
   void clearAll() {
     categoryBox.removeAll();
     itemBox.removeAll();
     itemVariantBox.removeAll();
     itemPackageBox.removeAll();
+    promotionBox.removeAll();
   }
 }
 

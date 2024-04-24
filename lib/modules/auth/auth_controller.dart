@@ -41,7 +41,7 @@ class AuthController extends GetxController {
             } else {
               Get.offAllNamed(
                 Routes.outlet,
-                predicate: (route) => true,
+                predicate: (route) => Get.currentRoute == Routes.outlet,
               );
             }
           }
@@ -51,7 +51,7 @@ class AuthController extends GetxController {
             _clearAuth();
             Get.offAllNamed(
               Routes.login,
-              predicate: (route) => Get.currentRoute == Routes.root,
+              predicate: (route) => Get.currentRoute == Routes.login,
             );
           }
         }

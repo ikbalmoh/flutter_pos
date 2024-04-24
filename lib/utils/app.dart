@@ -59,6 +59,7 @@ class App {
         backgroundColor: Colors.white,
         title: Text(title),
         content: subtitle != null ? Text(subtitle) : null,
+        actionsAlignment: MainAxisAlignment.end,
         actions: [
           TextButton(
             onPressed: () => Get.back(),

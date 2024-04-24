@@ -1,11 +1,19 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:selleri/models/converters/generic.dart';
+import 'package:objectbox/objectbox.dart';
 
 part 'promotion.g.dart';
 
+@Entity()
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Promotion {
-  String id;
+  @JsonKey(name: 'objectbox_id')
+  int id;
+
+  @Index()
+  @JsonKey(name: 'id')
+  String idPromotion;
+  
   String name;
   int type;
   int? requirementQuantity;
@@ -18,21 +26,21 @@ class Promotion {
   int? discountType;
   int? rewardNominal;
   int? rewardMaximumAmount;
-  
+
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool status;
 
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool allOutlet;
-  
+
   DateTime? startDate;
   DateTime? endDate;
 
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool allTime;
-  
+
   String? availableDays;
-  
+
   bool hourly;
 
   @JsonKey(fromJson: Converters.dynamicToBool)
@@ -53,12 +61,19 @@ class Promotion {
   List<int>? numberOfDays;
   String? rewardProductName;
   int? rewardItemPrice;
-  List<dynamic>? times;
-  List<AssignGroup>? assignGroups;
-  List<ItemRequirement>? itemRequirements;
+
+  @PromotionTimeRelToManyConverter()
+  final ToMany<PromotionTime> times;
+
+  @GroupRelToManyConverter()
+  final ToMany<AssignGroup> assignGroups;
+
+  @RequirementRelToManyConverter()
+  final ToMany<ItemRequirement> itemRequirements;
 
   Promotion({
     required this.id,
+    required this.idPromotion,
     required this.name,
     required this.type,
     this.requirementQuantity,
@@ -94,12 +109,13 @@ class Promotion {
     this.numberOfDays,
     this.rewardProductName,
     this.rewardItemPrice,
-    this.times,
-    this.assignGroups,
-    this.itemRequirements,
+    required this.times,
+    required this.assignGroups,
+    required this.itemRequirements,
   });
 
-  factory Promotion.fromJson(Map<String, dynamic> json) => _$PromotionFromJson(json);
+  factory Promotion.fromJson(Map<String, dynamic> json) =>
+      _$PromotionFromJson(json);
 
   Map<String, dynamic> toJson() => _$PromotionToJson(this);
 
@@ -109,29 +125,68 @@ class Promotion {
   }
 }
 
+@Entity()
+@JsonSerializable(fieldRename: FieldRename.snake)
+class PromotionTime {
+  @JsonKey(name: 'objectbox_id')
+  int id;
+  
+  @Index()
+  @JsonKey(name: 'id')
+  String idTime;
+  
+  String startTime;
+  String endTime;
+
+  PromotionTime({
+    required this.id,
+    required this.idTime,
+    required this.startTime,
+    required this.endTime,
+  });
+
+  factory PromotionTime.fromJson(Map<String, dynamic> json) =>
+      _$PromotionTimeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PromotionTimeToJson(this);
+}
+
+@Entity()
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AssignGroup {
-  String id;
-  String promotionId;
+  @JsonKey(name: 'objectbox_id')
+  int id;
+
+  @Index()
+  @JsonKey(name: 'id')
+  String idAssignGroup;
+  
   int groupId;
   String groupName;
 
   AssignGroup({
     required this.id,
-    required this.promotionId,
+    required this.idAssignGroup,
     required this.groupId,
     required this.groupName,
   });
 
-  factory AssignGroup.fromJson(Map<String, dynamic> json) => _$AssignGroupFromJson(json);
+  factory AssignGroup.fromJson(Map<String, dynamic> json) =>
+      _$AssignGroupFromJson(json);
 
   Map<String, dynamic> toJson() => _$AssignGroupToJson(this);
 }
 
+@Entity()
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ItemRequirement {
-  String id;
-  String promotionId;
+  @JsonKey(name: 'objectbox_id')
+  int id;
+  
+  @Index()
+  @JsonKey(name: 'id')
+  String idItemRequirement;
+  
   int requirementProductType;
   String? requirementProductId;
   int? requirementVariantId;
@@ -139,14 +194,15 @@ class ItemRequirement {
 
   ItemRequirement({
     required this.id,
-    required this.promotionId,
+    required this.idItemRequirement,
     required this.requirementProductType,
     this.requirementProductId,
     this.requirementVariantId,
     this.requirementProductName,
   });
 
-  factory ItemRequirement.fromJson(Map<String, dynamic> json) => _$ItemRequirementFromJson(json);
+  factory ItemRequirement.fromJson(Map<String, dynamic> json) =>
+      _$ItemRequirementFromJson(json);
 
   Map<String, dynamic> toJson() => _$ItemRequirementToJson(this);
 
@@ -154,4 +210,43 @@ class ItemRequirement {
   String toString() {
     return toJson().toString();
   }
+}
+
+class GroupRelToManyConverter
+    implements JsonConverter<ToMany<AssignGroup>, List?> {
+  const GroupRelToManyConverter();
+
+  @override
+  ToMany<AssignGroup> fromJson(List? json) => ToMany<AssignGroup>(
+      items: json?.map((e) => AssignGroup.fromJson(e)).toList());
+
+  @override
+  List<Map<String, dynamic>>? toJson(ToMany<AssignGroup> rel) =>
+      rel.map((AssignGroup obj) => obj.toJson()).toList();
+}
+
+class RequirementRelToManyConverter
+    implements JsonConverter<ToMany<ItemRequirement>, List?> {
+  const RequirementRelToManyConverter();
+
+  @override
+  ToMany<ItemRequirement> fromJson(List? json) => ToMany<ItemRequirement>(
+      items: json?.map((e) => ItemRequirement.fromJson(e)).toList());
+
+  @override
+  List<Map<String, dynamic>>? toJson(ToMany<ItemRequirement> rel) =>
+      rel.map((ItemRequirement obj) => obj.toJson()).toList();
+}
+
+class PromotionTimeRelToManyConverter
+    implements JsonConverter<ToMany<PromotionTime>, List?> {
+  const PromotionTimeRelToManyConverter();
+
+  @override
+  ToMany<PromotionTime> fromJson(List? json) => ToMany<PromotionTime>(
+      items: json?.map((e) => PromotionTime.fromJson(e)).toList());
+
+  @override
+  List<Map<String, dynamic>>? toJson(ToMany<PromotionTime> rel) =>
+      rel.map((PromotionTime obj) => obj.toJson()).toList();
 }

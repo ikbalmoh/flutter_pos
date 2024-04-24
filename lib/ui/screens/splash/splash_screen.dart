@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    controller.init();
+    // controller.init();
     super.initState();
   }
 

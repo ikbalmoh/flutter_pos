@@ -7,7 +7,8 @@ part of 'promotion.dart';
 // **************************************************************************
 
 Promotion _$PromotionFromJson(Map<String, dynamic> json) => Promotion(
-      id: json['id'] as String,
+      id: json['objectbox_id'] as int,
+      idPromotion: json['id'] as String,
       name: json['name'] as String,
       type: json['type'] as int,
       requirementQuantity: json['requirement_quantity'] as int?,
@@ -53,17 +54,17 @@ Promotion _$PromotionFromJson(Map<String, dynamic> json) => Promotion(
           .toList(),
       rewardProductName: json['reward_product_name'] as String?,
       rewardItemPrice: json['reward_item_price'] as int?,
-      times: json['times'] as List<dynamic>?,
-      assignGroups: (json['assign_groups'] as List<dynamic>?)
-          ?.map((e) => AssignGroup.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      itemRequirements: (json['item_requirements'] as List<dynamic>?)
-          ?.map((e) => ItemRequirement.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      times: const PromotionTimeRelToManyConverter()
+          .fromJson(json['times'] as List?),
+      assignGroups: const GroupRelToManyConverter()
+          .fromJson(json['assign_groups'] as List?),
+      itemRequirements: const RequirementRelToManyConverter()
+          .fromJson(json['item_requirements'] as List?),
     );
 
 Map<String, dynamic> _$PromotionToJson(Promotion instance) => <String, dynamic>{
-      'id': instance.id,
+      'objectbox_id': instance.id,
+      'id': instance.idPromotion,
       'name': instance.name,
       'type': instance.type,
       'requirement_quantity': instance.requirementQuantity,
@@ -99,30 +100,48 @@ Map<String, dynamic> _$PromotionToJson(Promotion instance) => <String, dynamic>{
       'number_of_days': instance.numberOfDays,
       'reward_product_name': instance.rewardProductName,
       'reward_item_price': instance.rewardItemPrice,
-      'times': instance.times,
-      'assign_groups': instance.assignGroups,
-      'item_requirements': instance.itemRequirements,
+      'times': const PromotionTimeRelToManyConverter().toJson(instance.times),
+      'assign_groups':
+          const GroupRelToManyConverter().toJson(instance.assignGroups),
+      'item_requirements': const RequirementRelToManyConverter()
+          .toJson(instance.itemRequirements),
+    };
+
+PromotionTime _$PromotionTimeFromJson(Map<String, dynamic> json) =>
+    PromotionTime(
+      id: json['objectbox_id'] as int,
+      idTime: json['id'] as String,
+      startTime: json['start_time'] as String,
+      endTime: json['end_time'] as String,
+    );
+
+Map<String, dynamic> _$PromotionTimeToJson(PromotionTime instance) =>
+    <String, dynamic>{
+      'objectbox_id': instance.id,
+      'id': instance.idTime,
+      'start_time': instance.startTime,
+      'end_time': instance.endTime,
     };
 
 AssignGroup _$AssignGroupFromJson(Map<String, dynamic> json) => AssignGroup(
-      id: json['id'] as String,
-      promotionId: json['promotion_id'] as String,
+      id: json['objectbox_id'] as int,
+      idAssignGroup: json['id'] as String,
       groupId: json['group_id'] as int,
       groupName: json['group_name'] as String,
     );
 
 Map<String, dynamic> _$AssignGroupToJson(AssignGroup instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'promotion_id': instance.promotionId,
+      'objectbox_id': instance.id,
+      'id': instance.idAssignGroup,
       'group_id': instance.groupId,
       'group_name': instance.groupName,
     };
 
 ItemRequirement _$ItemRequirementFromJson(Map<String, dynamic> json) =>
     ItemRequirement(
-      id: json['id'] as String,
-      promotionId: json['promotion_id'] as String,
+      id: json['objectbox_id'] as int,
+      idItemRequirement: json['id'] as String,
       requirementProductType: json['requirement_product_type'] as int,
       requirementProductId: json['requirement_product_id'] as String?,
       requirementVariantId: json['requirement_variant_id'] as int?,
@@ -131,8 +150,8 @@ ItemRequirement _$ItemRequirementFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ItemRequirementToJson(ItemRequirement instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'promotion_id': instance.promotionId,
+      'objectbox_id': instance.id,
+      'id': instance.idItemRequirement,
       'requirement_product_type': instance.requirementProductType,
       'requirement_product_id': instance.requirementProductId,
       'requirement_variant_id': instance.requirementVariantId,

@@ -49,89 +49,80 @@ class _HomeScreenState extends State<HomeScreen> {
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (authController.state is Authenticated) {
-        return Scaffold(
-          appBar: searchVisible
-              ? SearchAppBar(
-                  onBack: () => setState(() {
-                    searchVisible = false;
-                    textEditingController.text = '';
-                    itemStrem = objectBox.itemsStream(idCategory: idCategory);
-                  }),
-                  controller: textEditingController,
-                  onChanged: onSearch,
-                )
-              : AppBar(
-                  title: Text(outletController.outlet is OutletSelected
-                      ? (outletController.outlet as OutletSelected)
-                          .outlet
-                          .outletName
-                      : ''),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      onPressed: () => setState(() {
-                        searchVisible = true;
-                      }),
-                      icon: const Icon(Icons.search),
-                    ),
-                    IconButton(
-                      onPressed: () => authController.logout(),
-                      icon: const Icon(Icons.logout_outlined),
-                    )
-                  ],
-                ),
-          body: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeInOut,
-                height: searchVisible ? 0 : 56,
-                child: ItemCategories(
-                  active: idCategory,
-                  onChange: onChangeCategory,
-                ),
-              ),
-              Expanded(
-                child: ItemContainer(
-                  stream: itemStrem,
-                  scrollController: scrollController,
-                ),
-              ),
-            ],
-          ),
-          floatingActionButton: cartController.totalQty > 0
-              ? FloatingActionButton.extended(
-                  tooltip: 'cart'.tr,
-                  onPressed: () => Get.toNamed(Routes.cart),
-                  label: Text(
-                    CurrencyFormat.currency(cartController.cart?.subtotal),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: Colors.white),
+      return Scaffold(
+        appBar: searchVisible
+            ? SearchAppBar(
+                onBack: () => setState(() {
+                  searchVisible = false;
+                  textEditingController.text = '';
+                  itemStrem = objectBox.itemsStream(idCategory: idCategory);
+                }),
+                controller: textEditingController,
+                onChanged: onSearch,
+              )
+            : AppBar(
+                title: Text(outletController.outlet is OutletSelected
+                    ? (outletController.outlet as OutletSelected)
+                        .outlet
+                        .outletName
+                    : ''),
+                automaticallyImplyLeading: false,
+                actions: [
+                  IconButton(
+                    onPressed: () => setState(() {
+                      searchVisible = true;
+                    }),
+                    icon: const Icon(Icons.search),
                   ),
-                  extendedIconLabelSpacing: 20,
-                  icon: Badge(
-                    label: Text(
-                      cartController.totalQty.toString(),
-                    ),
-                    child: const Icon(CupertinoIcons.shopping_cart),
-                  ),
-                )
-              : null,
-        );
-      }
-
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
+                  IconButton(
+                    onPressed: () => authController.logout(),
+                    icon: const Icon(Icons.logout_outlined),
+                  )
+                ],
+              ),
+        body: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+              height: searchVisible ? 0 : 56,
+              child: ItemCategories(
+                active: idCategory,
+                onChange: onChangeCategory,
+              ),
+            ),
+            Expanded(
+              child: ItemContainer(
+                stream: itemStrem,
+                scrollController: scrollController,
+              ),
+            ),
+          ],
         ),
+        floatingActionButton: cartController.totalQty > 0
+            ? FloatingActionButton.extended(
+                tooltip: 'cart'.tr,
+                onPressed: () => Get.toNamed(Routes.cart),
+                label: Text(
+                  CurrencyFormat.currency(cartController.cart?.subtotal),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: Colors.white),
+                ),
+                extendedIconLabelSpacing: 20,
+                icon: Badge(
+                  label: Text(
+                    cartController.totalQty.toString(),
+                  ),
+                  child: const Icon(CupertinoIcons.shopping_cart),
+                ),
+              )
+            : null,
       );
     });
   }

@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'payment_method.dart';
-import 'promotion.dart';
 
 part 'outlet_config.g.dart';
 
@@ -31,16 +30,12 @@ class OutletConfig {
   List<UserHasPin>? userHasPin;
   List<PaymentMethod>? paymentMethods;
   List<int>? nominalCash;
-  List<dynamic>? vouchers;
-  List<Promotion>? promotions;
   List<RefundReason>? refundReasons;
   List<String>? addOns;
   AttributeReceipts? attributeReceipts;
   List<Akun>? akunBiaya;
   List<Akun>? akunPendapatan;
   List<Akun>? akunSetoran;
-  List<dynamic>? shift;
-  List<dynamic>? cashFlows;
   List<ListUser>? listUser;
   int? saldoAkunKas;
   CustomMandatory? customMandatory;
@@ -70,16 +65,12 @@ class OutletConfig {
     this.userHasPin,
     this.paymentMethods,
     this.nominalCash,
-    this.vouchers,
-    this.promotions,
     this.refundReasons,
     this.addOns,
     this.attributeReceipts,
     this.akunBiaya,
     this.akunPendapatan,
     this.akunSetoran,
-    this.shift,
-    this.cashFlows,
     this.listUser,
     this.saldoAkunKas,
     this.customMandatory,

@@ -18,6 +18,7 @@ import 'models/category.dart';
 import 'models/item.dart';
 import 'models/item_package.dart';
 import 'models/item_variant.dart';
+import 'models/promotion.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -260,6 +261,314 @@ final _entities = <ModelEntity>[
             name: 'packageItems',
             targetId: const IdUid(2, 182247591934260991))
       ],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(6, 3416884017836823244),
+      name: 'AssignGroup',
+      lastPropertyId: const IdUid(5, 7145756788115252046),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 2848395048967887567),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(3, 4883287139355924100),
+            name: 'groupId',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 6163049422038459360),
+            name: 'groupName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 7145756788115252046),
+            name: 'idAssignGroup',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(7, 3923032764072812511))
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(7, 4037611196117836389),
+      name: 'ItemRequirement',
+      lastPropertyId: const IdUid(7, 1136049028751001218),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 9129969653569869075),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(3, 1030760563141701406),
+            name: 'requirementProductType',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 8422315073375550524),
+            name: 'requirementProductId',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 9059137639370666324),
+            name: 'requirementVariantId',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 2738953187958283902),
+            name: 'requirementProductName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 1136049028751001218),
+            name: 'idItemRequirement',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(8, 2676789648765722487))
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(8, 9072647444006103348),
+      name: 'Promotion',
+      lastPropertyId: const IdUid(37, 4337190883899751073),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 4279856923813747760),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 657431034939374334),
+            name: 'idPromotion',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(6, 4943718320745457326)),
+        ModelProperty(
+            id: const IdUid(3, 7437152974667463553),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 2436049008783655586),
+            name: 'type',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 4349109435616097297),
+            name: 'requirementQuantity',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 2866524004547762512),
+            name: 'requirementMinimumOrder',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 1401788865859523023),
+            name: 'rewardType',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 4870117294078088798),
+            name: 'rewardProductType',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 3447742504905081862),
+            name: 'rewardProductId',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 2605951951519822470),
+            name: 'rewardVariantId',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 4327907195694193556),
+            name: 'rewardQty',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 265528154158988542),
+            name: 'discountType',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 4246510617900233094),
+            name: 'rewardNominal',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 8322847917647204010),
+            name: 'rewardMaximumAmount',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 3990842795393107441),
+            name: 'status',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 4879958501288882950),
+            name: 'allOutlet',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 123932889820976627),
+            name: 'startDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 6745707545024280202),
+            name: 'endDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 3012739020157620585),
+            name: 'allTime',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 2310912888408070650),
+            name: 'availableDays',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(21, 6702697098729133203),
+            name: 'hourly',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(22, 1471372747533079318),
+            name: 'assignCustomer',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(23, 5583674259394667094),
+            name: 'policy',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(24, 8007876637858132545),
+            name: 'needCode',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(25, 834453567275040702),
+            name: 'promoCode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(26, 5544204168005954509),
+            name: 'kelipatan',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(27, 5281459573229370384),
+            name: 'priority',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(28, 4751541431689012154),
+            name: 'requirementProductType',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(29, 8150767929318900242),
+            name: 'requirementProductId',
+            type: 30,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(30, 6393326579007903868),
+            name: 'requirementVariantId',
+            type: 27,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(31, 7973587441015522212),
+            name: 'typeName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(32, 5618155446441885476),
+            name: 'days',
+            type: 30,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(33, 2421560835461245344),
+            name: 'description',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(34, 6165000085069096755),
+            name: 'assignCustomerName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(35, 6480763991289462177),
+            name: 'numberOfDays',
+            type: 27,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(36, 8207590432883887172),
+            name: 'rewardProductName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(37, 4337190883899751073),
+            name: 'rewardItemPrice',
+            type: 6,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[
+        ModelRelation(
+            id: const IdUid(3, 5739101837765130491),
+            name: 'assignGroups',
+            targetId: const IdUid(6, 3416884017836823244)),
+        ModelRelation(
+            id: const IdUid(4, 8246245317476307642),
+            name: 'itemRequirements',
+            targetId: const IdUid(7, 4037611196117836389)),
+        ModelRelation(
+            id: const IdUid(5, 4292434469509689165),
+            name: 'times',
+            targetId: const IdUid(9, 6866509367297658477))
+      ],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(9, 6866509367297658477),
+      name: 'PromotionTime',
+      lastPropertyId: const IdUid(4, 6223551882697405910),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 4520000504356177044),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 4398357262149878789),
+            name: 'idTime',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(9, 6682668095946242446)),
+        ModelProperty(
+            id: const IdUid(3, 2035670175459239340),
+            name: 'startTime',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 6223551882697405910),
+            name: 'endTime',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -290,9 +599,9 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(5, 1166897459912520224),
-      lastIndexId: const IdUid(5, 7883267410381292325),
-      lastRelationId: const IdUid(2, 8646590383799585272),
+      lastEntityId: const IdUid(9, 6866509367297658477),
+      lastIndexId: const IdUid(9, 6682668095946242446),
+      lastRelationId: const IdUid(5, 4292434469509689165),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [1635103525226085433],
       retiredIndexUids: const [7883267410381292325],
@@ -317,7 +626,9 @@ ModelDefinition getObjectBoxModel() {
         4472040544065130066,
         7680705044695976136,
         8407400109989957200,
-        4333639740043622259
+        4333639740043622259,
+        8380541222888698591,
+        1767558930106195153
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -624,6 +935,379 @@ ModelDefinition getObjectBoxModel() {
           InternalToManyAccess.setRelInfo<Item>(
               object.packageItems, store, RelInfo<Item>.toMany(2, object.id));
           return object;
+        }),
+    AssignGroup: EntityDefinition<AssignGroup>(
+        model: _entities[4],
+        toOneRelations: (AssignGroup object) => [],
+        toManyRelations: (AssignGroup object) => {},
+        getId: (AssignGroup object) => object.id,
+        setId: (AssignGroup object, int id) {
+          object.id = id;
+        },
+        objectToFB: (AssignGroup object, fb.Builder fbb) {
+          final groupNameOffset = fbb.writeString(object.groupName);
+          final idAssignGroupOffset = fbb.writeString(object.idAssignGroup);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(2, object.groupId);
+          fbb.addOffset(3, groupNameOffset);
+          fbb.addOffset(4, idAssignGroupOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idAssignGroupParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, '');
+          final groupIdParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+          final groupNameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final object = AssignGroup(
+              id: idParam,
+              idAssignGroup: idAssignGroupParam,
+              groupId: groupIdParam,
+              groupName: groupNameParam);
+
+          return object;
+        }),
+    ItemRequirement: EntityDefinition<ItemRequirement>(
+        model: _entities[5],
+        toOneRelations: (ItemRequirement object) => [],
+        toManyRelations: (ItemRequirement object) => {},
+        getId: (ItemRequirement object) => object.id,
+        setId: (ItemRequirement object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ItemRequirement object, fb.Builder fbb) {
+          final requirementProductIdOffset = object.requirementProductId == null
+              ? null
+              : fbb.writeString(object.requirementProductId!);
+          final requirementProductNameOffset =
+              object.requirementProductName == null
+                  ? null
+                  : fbb.writeString(object.requirementProductName!);
+          final idItemRequirementOffset =
+              fbb.writeString(object.idItemRequirement);
+          fbb.startTable(8);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(2, object.requirementProductType);
+          fbb.addOffset(3, requirementProductIdOffset);
+          fbb.addInt64(4, object.requirementVariantId);
+          fbb.addOffset(5, requirementProductNameOffset);
+          fbb.addOffset(6, idItemRequirementOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idItemRequirementParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 16, '');
+          final requirementProductTypeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+          final requirementProductIdParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 10);
+          final requirementVariantIdParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 12);
+          final requirementProductNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 14);
+          final object = ItemRequirement(
+              id: idParam,
+              idItemRequirement: idItemRequirementParam,
+              requirementProductType: requirementProductTypeParam,
+              requirementProductId: requirementProductIdParam,
+              requirementVariantId: requirementVariantIdParam,
+              requirementProductName: requirementProductNameParam);
+
+          return object;
+        }),
+    Promotion: EntityDefinition<Promotion>(
+        model: _entities[6],
+        toOneRelations: (Promotion object) => [],
+        toManyRelations: (Promotion object) => {
+              RelInfo<Promotion>.toMany(3, object.id): object.assignGroups,
+              RelInfo<Promotion>.toMany(4, object.id): object.itemRequirements,
+              RelInfo<Promotion>.toMany(5, object.id): object.times
+            },
+        getId: (Promotion object) => object.id,
+        setId: (Promotion object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Promotion object, fb.Builder fbb) {
+          final idPromotionOffset = fbb.writeString(object.idPromotion);
+          final nameOffset = fbb.writeString(object.name);
+          final rewardProductIdOffset = object.rewardProductId == null
+              ? null
+              : fbb.writeString(object.rewardProductId!);
+          final availableDaysOffset = object.availableDays == null
+              ? null
+              : fbb.writeString(object.availableDays!);
+          final promoCodeOffset = object.promoCode == null
+              ? null
+              : fbb.writeString(object.promoCode!);
+          final requirementProductIdOffset = object.requirementProductId == null
+              ? null
+              : fbb.writeList(object.requirementProductId!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          final requirementVariantIdOffset = object.requirementVariantId == null
+              ? null
+              : fbb.writeListInt64(object.requirementVariantId!);
+          final typeNameOffset = object.typeName == null
+              ? null
+              : fbb.writeString(object.typeName!);
+          final daysOffset = object.days == null
+              ? null
+              : fbb.writeList(
+                  object.days!.map(fbb.writeString).toList(growable: false));
+          final descriptionOffset = object.description == null
+              ? null
+              : fbb.writeString(object.description!);
+          final assignCustomerNameOffset = object.assignCustomerName == null
+              ? null
+              : fbb.writeString(object.assignCustomerName!);
+          final numberOfDaysOffset = object.numberOfDays == null
+              ? null
+              : fbb.writeListInt64(object.numberOfDays!);
+          final rewardProductNameOffset = object.rewardProductName == null
+              ? null
+              : fbb.writeString(object.rewardProductName!);
+          fbb.startTable(38);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, idPromotionOffset);
+          fbb.addOffset(2, nameOffset);
+          fbb.addInt64(3, object.type);
+          fbb.addInt64(4, object.requirementQuantity);
+          fbb.addInt64(5, object.requirementMinimumOrder);
+          fbb.addInt64(6, object.rewardType);
+          fbb.addInt64(7, object.rewardProductType);
+          fbb.addOffset(8, rewardProductIdOffset);
+          fbb.addInt64(9, object.rewardVariantId);
+          fbb.addInt64(10, object.rewardQty);
+          fbb.addInt64(11, object.discountType);
+          fbb.addInt64(12, object.rewardNominal);
+          fbb.addInt64(13, object.rewardMaximumAmount);
+          fbb.addBool(14, object.status);
+          fbb.addBool(15, object.allOutlet);
+          fbb.addInt64(16, object.startDate?.millisecondsSinceEpoch);
+          fbb.addInt64(17, object.endDate?.millisecondsSinceEpoch);
+          fbb.addBool(18, object.allTime);
+          fbb.addOffset(19, availableDaysOffset);
+          fbb.addBool(20, object.hourly);
+          fbb.addBool(21, object.assignCustomer);
+          fbb.addBool(22, object.policy);
+          fbb.addBool(23, object.needCode);
+          fbb.addOffset(24, promoCodeOffset);
+          fbb.addBool(25, object.kelipatan);
+          fbb.addInt64(26, object.priority);
+          fbb.addInt64(27, object.requirementProductType);
+          fbb.addOffset(28, requirementProductIdOffset);
+          fbb.addOffset(29, requirementVariantIdOffset);
+          fbb.addOffset(30, typeNameOffset);
+          fbb.addOffset(31, daysOffset);
+          fbb.addOffset(32, descriptionOffset);
+          fbb.addOffset(33, assignCustomerNameOffset);
+          fbb.addOffset(34, numberOfDaysOffset);
+          fbb.addOffset(35, rewardProductNameOffset);
+          fbb.addInt64(36, object.rewardItemPrice);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final startDateValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 36);
+          final endDateValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 38);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idPromotionParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, '');
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final typeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final requirementQuantityParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 12);
+          final requirementMinimumOrderParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 14);
+          final rewardTypeParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 16);
+          final rewardProductTypeParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
+          final rewardProductIdParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 20);
+          final rewardVariantIdParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 22);
+          final rewardQtyParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 24);
+          final discountTypeParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 26);
+          final rewardNominalParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 28);
+          final rewardMaximumAmountParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 30);
+          final statusParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 32, false);
+          final allOutletParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false);
+          final startDateParam = startDateValue == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(startDateValue);
+          final endDateParam = endDateValue == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(endDateValue);
+          final allTimeParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 40, false);
+          final availableDaysParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 42);
+          final hourlyParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 44, false);
+          final assignCustomerParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false);
+          final policyParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false);
+          final needCodeParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 50, false);
+          final promoCodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 52);
+          final kelipatanParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 54, false);
+          final priorityParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 56);
+          final requirementProductTypeParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 58);
+          final requirementProductIdParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 60);
+          final requirementVariantIdParam =
+              const fb.ListReader<int>(fb.Int64Reader(), lazy: false)
+                  .vTableGetNullable(buffer, rootOffset, 62);
+          final typeNameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 64);
+          final daysParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 66);
+          final descriptionParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 68);
+          final assignCustomerNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 70);
+          final numberOfDaysParam =
+              const fb.ListReader<int>(fb.Int64Reader(), lazy: false)
+                  .vTableGetNullable(buffer, rootOffset, 72);
+          final rewardProductNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 74);
+          final rewardItemPriceParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 76);
+          final timesParam = ToMany<PromotionTime>();
+          final assignGroupsParam = ToMany<AssignGroup>();
+          final itemRequirementsParam = ToMany<ItemRequirement>();
+          final object = Promotion(
+              id: idParam,
+              idPromotion: idPromotionParam,
+              name: nameParam,
+              type: typeParam,
+              requirementQuantity: requirementQuantityParam,
+              requirementMinimumOrder: requirementMinimumOrderParam,
+              rewardType: rewardTypeParam,
+              rewardProductType: rewardProductTypeParam,
+              rewardProductId: rewardProductIdParam,
+              rewardVariantId: rewardVariantIdParam,
+              rewardQty: rewardQtyParam,
+              discountType: discountTypeParam,
+              rewardNominal: rewardNominalParam,
+              rewardMaximumAmount: rewardMaximumAmountParam,
+              status: statusParam,
+              allOutlet: allOutletParam,
+              startDate: startDateParam,
+              endDate: endDateParam,
+              allTime: allTimeParam,
+              availableDays: availableDaysParam,
+              hourly: hourlyParam,
+              assignCustomer: assignCustomerParam,
+              policy: policyParam,
+              needCode: needCodeParam,
+              promoCode: promoCodeParam,
+              kelipatan: kelipatanParam,
+              priority: priorityParam,
+              requirementProductType: requirementProductTypeParam,
+              requirementProductId: requirementProductIdParam,
+              requirementVariantId: requirementVariantIdParam,
+              typeName: typeNameParam,
+              days: daysParam,
+              description: descriptionParam,
+              assignCustomerName: assignCustomerNameParam,
+              numberOfDays: numberOfDaysParam,
+              rewardProductName: rewardProductNameParam,
+              rewardItemPrice: rewardItemPriceParam,
+              times: timesParam,
+              assignGroups: assignGroupsParam,
+              itemRequirements: itemRequirementsParam);
+          InternalToManyAccess.setRelInfo<Promotion>(object.assignGroups, store,
+              RelInfo<Promotion>.toMany(3, object.id));
+          InternalToManyAccess.setRelInfo<Promotion>(object.itemRequirements,
+              store, RelInfo<Promotion>.toMany(4, object.id));
+          InternalToManyAccess.setRelInfo<Promotion>(
+              object.times, store, RelInfo<Promotion>.toMany(5, object.id));
+          return object;
+        }),
+    PromotionTime: EntityDefinition<PromotionTime>(
+        model: _entities[7],
+        toOneRelations: (PromotionTime object) => [],
+        toManyRelations: (PromotionTime object) => {},
+        getId: (PromotionTime object) => object.id,
+        setId: (PromotionTime object, int id) {
+          object.id = id;
+        },
+        objectToFB: (PromotionTime object, fb.Builder fbb) {
+          final idTimeOffset = fbb.writeString(object.idTime);
+          final startTimeOffset = fbb.writeString(object.startTime);
+          final endTimeOffset = fbb.writeString(object.endTime);
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, idTimeOffset);
+          fbb.addOffset(2, startTimeOffset);
+          fbb.addOffset(3, endTimeOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idTimeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final startTimeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final endTimeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final object = PromotionTime(
+              id: idParam,
+              idTime: idTimeParam,
+              startTime: startTimeParam,
+              endTime: endTimeParam);
+
+          return object;
         })
   };
 
@@ -792,4 +1476,232 @@ class Item_ {
   /// see [Item.packageItems]
   static final packageItems =
       QueryRelationToMany<Item, ItemPackage>(_entities[3].relations[1]);
+}
+
+/// [AssignGroup] entity fields to define ObjectBox queries.
+class AssignGroup_ {
+  /// see [AssignGroup.id]
+  static final id =
+      QueryIntegerProperty<AssignGroup>(_entities[4].properties[0]);
+
+  /// see [AssignGroup.groupId]
+  static final groupId =
+      QueryIntegerProperty<AssignGroup>(_entities[4].properties[1]);
+
+  /// see [AssignGroup.groupName]
+  static final groupName =
+      QueryStringProperty<AssignGroup>(_entities[4].properties[2]);
+
+  /// see [AssignGroup.idAssignGroup]
+  static final idAssignGroup =
+      QueryStringProperty<AssignGroup>(_entities[4].properties[3]);
+}
+
+/// [ItemRequirement] entity fields to define ObjectBox queries.
+class ItemRequirement_ {
+  /// see [ItemRequirement.id]
+  static final id =
+      QueryIntegerProperty<ItemRequirement>(_entities[5].properties[0]);
+
+  /// see [ItemRequirement.requirementProductType]
+  static final requirementProductType =
+      QueryIntegerProperty<ItemRequirement>(_entities[5].properties[1]);
+
+  /// see [ItemRequirement.requirementProductId]
+  static final requirementProductId =
+      QueryStringProperty<ItemRequirement>(_entities[5].properties[2]);
+
+  /// see [ItemRequirement.requirementVariantId]
+  static final requirementVariantId =
+      QueryIntegerProperty<ItemRequirement>(_entities[5].properties[3]);
+
+  /// see [ItemRequirement.requirementProductName]
+  static final requirementProductName =
+      QueryStringProperty<ItemRequirement>(_entities[5].properties[4]);
+
+  /// see [ItemRequirement.idItemRequirement]
+  static final idItemRequirement =
+      QueryStringProperty<ItemRequirement>(_entities[5].properties[5]);
+}
+
+/// [Promotion] entity fields to define ObjectBox queries.
+class Promotion_ {
+  /// see [Promotion.id]
+  static final id = QueryIntegerProperty<Promotion>(_entities[6].properties[0]);
+
+  /// see [Promotion.idPromotion]
+  static final idPromotion =
+      QueryStringProperty<Promotion>(_entities[6].properties[1]);
+
+  /// see [Promotion.name]
+  static final name =
+      QueryStringProperty<Promotion>(_entities[6].properties[2]);
+
+  /// see [Promotion.type]
+  static final type =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[3]);
+
+  /// see [Promotion.requirementQuantity]
+  static final requirementQuantity =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[4]);
+
+  /// see [Promotion.requirementMinimumOrder]
+  static final requirementMinimumOrder =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[5]);
+
+  /// see [Promotion.rewardType]
+  static final rewardType =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[6]);
+
+  /// see [Promotion.rewardProductType]
+  static final rewardProductType =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[7]);
+
+  /// see [Promotion.rewardProductId]
+  static final rewardProductId =
+      QueryStringProperty<Promotion>(_entities[6].properties[8]);
+
+  /// see [Promotion.rewardVariantId]
+  static final rewardVariantId =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[9]);
+
+  /// see [Promotion.rewardQty]
+  static final rewardQty =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[10]);
+
+  /// see [Promotion.discountType]
+  static final discountType =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[11]);
+
+  /// see [Promotion.rewardNominal]
+  static final rewardNominal =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[12]);
+
+  /// see [Promotion.rewardMaximumAmount]
+  static final rewardMaximumAmount =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[13]);
+
+  /// see [Promotion.status]
+  static final status =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[14]);
+
+  /// see [Promotion.allOutlet]
+  static final allOutlet =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[15]);
+
+  /// see [Promotion.startDate]
+  static final startDate =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[16]);
+
+  /// see [Promotion.endDate]
+  static final endDate =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[17]);
+
+  /// see [Promotion.allTime]
+  static final allTime =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[18]);
+
+  /// see [Promotion.availableDays]
+  static final availableDays =
+      QueryStringProperty<Promotion>(_entities[6].properties[19]);
+
+  /// see [Promotion.hourly]
+  static final hourly =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[20]);
+
+  /// see [Promotion.assignCustomer]
+  static final assignCustomer =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[21]);
+
+  /// see [Promotion.policy]
+  static final policy =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[22]);
+
+  /// see [Promotion.needCode]
+  static final needCode =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[23]);
+
+  /// see [Promotion.promoCode]
+  static final promoCode =
+      QueryStringProperty<Promotion>(_entities[6].properties[24]);
+
+  /// see [Promotion.kelipatan]
+  static final kelipatan =
+      QueryBooleanProperty<Promotion>(_entities[6].properties[25]);
+
+  /// see [Promotion.priority]
+  static final priority =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[26]);
+
+  /// see [Promotion.requirementProductType]
+  static final requirementProductType =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[27]);
+
+  /// see [Promotion.requirementProductId]
+  static final requirementProductId =
+      QueryStringVectorProperty<Promotion>(_entities[6].properties[28]);
+
+  /// see [Promotion.requirementVariantId]
+  static final requirementVariantId =
+      QueryIntegerVectorProperty<Promotion>(_entities[6].properties[29]);
+
+  /// see [Promotion.typeName]
+  static final typeName =
+      QueryStringProperty<Promotion>(_entities[6].properties[30]);
+
+  /// see [Promotion.days]
+  static final days =
+      QueryStringVectorProperty<Promotion>(_entities[6].properties[31]);
+
+  /// see [Promotion.description]
+  static final description =
+      QueryStringProperty<Promotion>(_entities[6].properties[32]);
+
+  /// see [Promotion.assignCustomerName]
+  static final assignCustomerName =
+      QueryStringProperty<Promotion>(_entities[6].properties[33]);
+
+  /// see [Promotion.numberOfDays]
+  static final numberOfDays =
+      QueryIntegerVectorProperty<Promotion>(_entities[6].properties[34]);
+
+  /// see [Promotion.rewardProductName]
+  static final rewardProductName =
+      QueryStringProperty<Promotion>(_entities[6].properties[35]);
+
+  /// see [Promotion.rewardItemPrice]
+  static final rewardItemPrice =
+      QueryIntegerProperty<Promotion>(_entities[6].properties[36]);
+
+  /// see [Promotion.assignGroups]
+  static final assignGroups =
+      QueryRelationToMany<Promotion, AssignGroup>(_entities[6].relations[0]);
+
+  /// see [Promotion.itemRequirements]
+  static final itemRequirements =
+      QueryRelationToMany<Promotion, ItemRequirement>(
+          _entities[6].relations[1]);
+
+  /// see [Promotion.times]
+  static final times =
+      QueryRelationToMany<Promotion, PromotionTime>(_entities[6].relations[2]);
+}
+
+/// [PromotionTime] entity fields to define ObjectBox queries.
+class PromotionTime_ {
+  /// see [PromotionTime.id]
+  static final id =
+      QueryIntegerProperty<PromotionTime>(_entities[7].properties[0]);
+
+  /// see [PromotionTime.idTime]
+  static final idTime =
+      QueryStringProperty<PromotionTime>(_entities[7].properties[1]);
+
+  /// see [PromotionTime.startTime]
+  static final startTime =
+      QueryStringProperty<PromotionTime>(_entities[7].properties[2]);
+
+  /// see [PromotionTime.endTime]
+  static final endTime =
+      QueryStringProperty<PromotionTime>(_entities[7].properties[3]);
 }
