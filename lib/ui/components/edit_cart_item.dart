@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:selleri/models/item_cart.dart';
+import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/ui/components/discount_type_toggle.dart';
 import 'package:selleri/ui/components/qty_editor.dart';
@@ -107,9 +107,9 @@ class _EditCartItemState extends State<EditCartItem> {
 
   void onDelete() {
     App.showConfirmDialog(
-        title: "${'delete'.tr} ${widget.item.itemName}",
-        subtitle: 'are_you_sure'.tr,
-        confirmLabel: 'delete'.tr,
+        title: "${'delete'} ${widget.item.itemName}",
+        subtitle: 'are_you_sure',
+        confirmLabel: 'delete',
         danger: true,
         onConfirm: () {
           Get.back();
@@ -172,11 +172,11 @@ class _EditCartItemState extends State<EditCartItem> {
                       const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'price'.tr.capitalizeFirst!,
+                    'price'.capitalizeFirst!,
                     style: labelStyle,
                   ),
                   prefix: Text(
-                    'price'.tr.capitalizeFirst!,
+                    'price'.capitalizeFirst!,
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,
@@ -206,7 +206,7 @@ class _EditCartItemState extends State<EditCartItem> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'quantity'.tr.capitalizeFirst!,
+                      'quantity'.capitalizeFirst!,
                       style: labelStyle,
                     ),
                     QtyEditor(
@@ -229,11 +229,11 @@ class _EditCartItemState extends State<EditCartItem> {
                       const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'discount'.tr.capitalizeFirst!,
+                    'discount'.capitalizeFirst!,
                     style: labelStyle,
                   ),
                   prefix: Text(
-                    'discount'.tr.capitalizeFirst!,
+                    'discount'.capitalizeFirst!,
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,
@@ -265,7 +265,7 @@ class _EditCartItemState extends State<EditCartItem> {
                       left: 0, top: 15, right: 0, bottom: 15),
                   // floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'note'.tr.capitalizeFirst!,
+                    'note'.capitalizeFirst!,
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,

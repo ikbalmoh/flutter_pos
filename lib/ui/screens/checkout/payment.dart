@@ -34,7 +34,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text('payments'.tr, style: textTheme.bodyLarge),
+            child: Text('payments', style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,
@@ -50,7 +50,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
             child: Column(
               children: [
                 PaymentItem(
-                  title: 'cash'.tr.capitalize!,
+                  title: 'cash'.capitalize!,
                   icon: Icon(
                     Icons.account_balance_wallet_rounded,
                     color: Colors.green.shade600,
@@ -60,7 +60,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                   grandTotal: widget.grandTotal,
                 ),
                 PaymentItem(
-                  title: 'debit'.tr.capitalize!,
+                  title: 'debit'.capitalize!,
                   icon: Icon(
                     CupertinoIcons.creditcard,
                     color: Colors.amber.shade600,
@@ -70,7 +70,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                   grandTotal: widget.grandTotal,
                 ),
                 PaymentItem(
-                  title: 'credit'.tr.capitalize!,
+                  title: 'credit'.capitalize!,
                   icon: Icon(
                     CupertinoIcons.creditcard_fill,
                     color: Colors.blue.shade600,
@@ -80,7 +80,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                   grandTotal: widget.grandTotal,
                 ),
                 PaymentItem(
-                  title: 'e-wallet'.tr,
+                  title: 'e-wallet',
                   icon: const Icon(
                     Icons.qr_code,
                     color: Colors.black,

@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:selleri/models/item.dart';
-import 'package:selleri/models/item_cart.dart';
-import 'package:selleri/models/cart.dart';
-import 'package:selleri/models/item_variant.dart';
-import 'package:selleri/models/outlet.dart';
-import 'package:selleri/models/user.dart';
+import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/models/outlet.dart';
+import 'package:selleri/data/models/user.dart';
 import 'package:selleri/modules/auth/auth.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
 

@@ -64,11 +64,11 @@ class App {
           TextButton(
             onPressed: () => Get.back(),
             style: TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
-            child: Text('cancel'.tr),
+            child: Text('cancel'),
           ),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: danger != null && danger ? Colors.red : Colors.teal),
-              onPressed: onConfirm, child: Text(confirmLabel ?? 'continue'.tr)),
+              onPressed: onConfirm, child: Text(confirmLabel ?? 'continue')),
         ],
       ),
     );

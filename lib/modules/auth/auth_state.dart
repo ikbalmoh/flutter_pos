@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:selleri/models/user.dart';
+import 'package:selleri/data/models/user.dart';
 
 class AuthState extends Equatable {
   const AuthState();

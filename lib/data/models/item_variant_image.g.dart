@@ -9,7 +9,7 @@ part of 'item_variant_image.dart';
 ItemVariantImage _$ItemVariantImageFromJson(Map<String, dynamic> json) =>
     ItemVariantImage(
       idItem: json['id_item'] as String,
-      variantId: json['variant_id'] as int,
+      variantId: (json['variant_id'] as num).toInt(),
       imagePath: json['image_path'] as String,
       isPrimary: Converters.dynamicToBool(json['is_primary']),
     );

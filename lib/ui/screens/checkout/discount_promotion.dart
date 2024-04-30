@@ -18,7 +18,7 @@ class DiscountPromotion extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text('discount_&_promotion'.tr, style: textTheme.bodyLarge),
+            child: Text('discount_&_promotion', style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,
@@ -72,7 +72,7 @@ class DiscountItem extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                'discount_transaction'.tr.capitalize!,
+                'discount_transaction'.capitalize!,
                 style: textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
               ),
               const SizedBox(
@@ -133,7 +133,7 @@ class PromotionItem extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  'add_promotion_code'.tr.capitalize!,
+                  'add_promotion_code'.capitalize!,
                   style: textTheme.bodyMedium
                       ?.copyWith(color: Colors.grey.shade700),
                 ),

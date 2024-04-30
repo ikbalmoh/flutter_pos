@@ -7,11 +7,11 @@ part of 'item_package.dart';
 // **************************************************************************
 
 ItemPackage _$ItemPackageFromJson(Map<String, dynamic> json) => ItemPackage(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       idItem: json['id_item'] as String,
       itemName: json['item_name'] as String,
-      variantId: json['variant_id'] as int,
-      quantityItem: json['quantity_item'] as int,
+      variantId: (json['variant_id'] as num).toInt(),
+      quantityItem: (json['quantity_item'] as num).toInt(),
       itemPrice: Converters.dynamicToDouble(json['item_price']),
     );
 

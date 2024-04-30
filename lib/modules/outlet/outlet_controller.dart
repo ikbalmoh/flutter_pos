@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:selleri/models/outlet.dart';
-import 'package:selleri/models/outlet_config.dart';
+import 'package:selleri/data/models/outlet.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
-import 'package:selleri/routes/routes.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/app.dart';
 
 class OutletController extends GetxController {
@@ -55,7 +55,7 @@ class OutletController extends GetxController {
     if (confirm) {
       return App.showConfirmDialog(
         title: outlet.outletName,
-        subtitle: 'select_outlet_confirm'.tr,
+        subtitle: 'select_outlet_confirm',
         onConfirm: () {
           Get.back();
           selectOutlet(outlet, confirm: false);

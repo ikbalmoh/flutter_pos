@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:selleri/models/item.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/ui/components/item_variant_picker.dart';
 import 'package:selleri/ui/components/shop_item.dart';
@@ -70,7 +70,7 @@ class _ItemContainerState extends State<ItemContainer> {
                       height: 15,
                     ),
                     Text(
-                      'no_items'.tr,
+                      'no_items',
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall

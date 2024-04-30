@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:selleri/models/category.dart';
-import 'package:selleri/models/item.dart';
-import 'package:selleri/models/outlet.dart';
+import 'package:selleri/data/models/category.dart';
+import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/modules/item/item.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
 import 'package:selleri/data/objectbox.dart' show objectBox;
