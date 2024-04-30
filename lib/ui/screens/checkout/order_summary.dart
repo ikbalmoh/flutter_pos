@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:selleri/models/item_cart.dart';
+import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/utils/formater.dart';
 
 class OrderItem extends StatelessWidget {
@@ -80,7 +80,7 @@ class OrderSummary extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Text('order_summary'.tr, style: textTheme.bodyLarge),
+            child: Text('order_summary', style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,
@@ -109,7 +109,7 @@ class OrderSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'subtotal'.tr.capitalize!,
+                  'subtotal'.capitalize!,
                   style: textTheme.bodyMedium
                       ?.copyWith(color: Colors.grey.shade700),
                 ),

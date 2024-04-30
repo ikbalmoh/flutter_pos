@@ -14,7 +14,7 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
               json['subscriptions'] as Map<String, dynamic>),
       offlineTransaction: json['offline_transaction'] as bool?,
       syncBeforeCloseShift: json['sync_before_close_shift'] as bool?,
-      maxOffline: json['max_offline'] as int?,
+      maxOffline: (json['max_offline'] as num?)?.toInt(),
       saleWithPic: json['sale_with_pic'] as bool?,
       customerTransMandatory: json['customer_trans_mandatory'] as bool?,
       stockMinus: json['stock_minus'] as bool?,
@@ -22,10 +22,10 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
       taxable: json['taxable'] as bool?,
       extraItem: json['extra_item'] as bool?,
       autoShift: json['auto_shift'] as bool?,
-      decimalPlaces: json['decimal_places'] as int?,
-      defaultOpenAmount: json['default_open_amount'] as int?,
+      decimalPlaces: (json['decimal_places'] as num?)?.toInt(),
+      defaultOpenAmount: (json['default_open_amount'] as num?)?.toInt(),
       discountOverall: json['discount_overall'] as bool?,
-      defaultPaper: json['default_paper'] as int?,
+      defaultPaper: (json['default_paper'] as num?)?.toInt(),
       attachmentShiftMandatory: json['attachment_shift_mandatory'] as bool?,
       generateSku: json['generate_sku'] as bool?,
       generateBarcode: json['generate_barcode'] as bool?,
@@ -42,7 +42,7 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
           ?.map((e) => PaymentMethod.fromJson(e as Map<String, dynamic>))
           .toList(),
       nominalCash: (json['nominal_cash'] as List<dynamic>?)
-          ?.map((e) => e as int)
+          ?.map((e) => (e as num).toInt())
           .toList(),
       refundReasons: (json['refund_reasons'] as List<dynamic>?)
           ?.map((e) => RefundReason.fromJson(e as Map<String, dynamic>))
@@ -65,7 +65,7 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
       listUser: (json['list_user'] as List<dynamic>?)
           ?.map((e) => ListUser.fromJson(e as Map<String, dynamic>))
           .toList(),
-      saldoAkunKas: json['saldo_akun_kas'] as int?,
+      saldoAkunKas: (json['saldo_akun_kas'] as num?)?.toInt(),
       customMandatory: json['custom_mandatory'] == null
           ? null
           : CustomMandatory.fromJson(
@@ -110,7 +110,7 @@ Map<String, dynamic> _$OutletConfigToJson(OutletConfig instance) =>
     };
 
 Akun _$AkunFromJson(Map<String, dynamic> json) => Akun(
-      idAkun: json['id_akun'] as int,
+      idAkun: (json['id_akun'] as num).toInt(),
       kodeAkun: json['kode_akun'] as String,
       namaAkun: json['nama_akun'] as String,
       keterangan: json['keterangan'] as String?,
@@ -211,8 +211,8 @@ Map<String, dynamic> _$SubscriptionsToJson(Subscriptions instance) =>
 
 SubscriptionLimit _$SubscriptionLimitFromJson(Map<String, dynamic> json) =>
     SubscriptionLimit(
-      max: json['max'] as int,
-      current: json['current'] as int,
+      max: (json['max'] as num).toInt(),
+      current: (json['current'] as num).toInt(),
     );
 
 Map<String, dynamic> _$SubscriptionLimitToJson(SubscriptionLimit instance) =>
@@ -223,7 +223,7 @@ Map<String, dynamic> _$SubscriptionLimitToJson(SubscriptionLimit instance) =>
 
 Tax _$TaxFromJson(Map<String, dynamic> json) => Tax(
       taxName: json['tax_name'] as String,
-      percentage: json['percentage'] as int,
+      percentage: (json['percentage'] as num).toInt(),
       isInclude: json['is_include'] as bool,
     );
 

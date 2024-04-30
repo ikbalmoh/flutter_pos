@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:selleri/models/category.dart';
-import 'package:selleri/models/item.dart';
-import 'package:selleri/models/item_package.dart';
-import 'package:selleri/models/item_variant.dart';
-import 'package:selleri/models/promotion.dart';
+import 'package:selleri/data/models/category.dart';
+import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_package.dart';
+import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
 
 class ObjectBox {

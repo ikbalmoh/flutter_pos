@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:selleri/models/outlet.dart';
+import 'package:selleri/data/models/outlet.dart';
 
 class OutletItem extends StatelessWidget {
   const OutletItem({

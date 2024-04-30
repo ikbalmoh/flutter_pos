@@ -1,20 +1,17 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/services.dart';
-import 'package:selleri/config/lang/lang.dart';
 import 'package:selleri/config/theme.dart';
-import 'package:selleri/modules/auth/auth.dart';
-import 'package:selleri/routes/routes.dart';
+import 'package:selleri/router/app_router.dart';
 
-class App extends StatelessWidget {
+class App extends ConsumerWidget {
   final bool hasToken;
 
   const App({required this.hasToken, super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (MediaQuery.of(context).size.shortestSide < 451) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
@@ -27,9 +24,10 @@ class App extends StatelessWidget {
       ]);
     }
 
-    return GetMaterialApp(
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      enableLog: kDebugMode,
       title: 'Selleri',
       theme: appTheme(context),
       builder: (context, child) => ResponsiveBreakpoints.builder(
@@ -39,12 +37,9 @@ class App extends StatelessWidget {
         ],
         child: child!,
       ),
-      initialRoute: Routes.root,
-      initialBinding: AuthBindings(),
-      getPages: routes,
-      translations: Languages(),
-      locale: Get.deviceLocale,
-      fallbackLocale: const Locale('id', 'ID'),
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+      routeInformationProvider: router.routeInformationProvider,
     );
   }
 }

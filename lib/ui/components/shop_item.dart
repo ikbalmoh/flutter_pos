@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:selleri/models/item.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/utils/formater.dart';
 
 class ShopItem extends StatelessWidget {

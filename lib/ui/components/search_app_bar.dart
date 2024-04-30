@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function() onBack;
@@ -28,7 +27,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         onChanged: onChanged,
         autofocus: true,
         decoration: InputDecoration(
-          hintText: 'search'.tr,
+          hintText: 'search',
           border: InputBorder.none,
           focusedBorder: InputBorder.none,
           disabledBorder: InputBorder.none,

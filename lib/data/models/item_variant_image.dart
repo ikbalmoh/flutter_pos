@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:selleri/models/converters/generic.dart';
+import 'package:selleri/data/models/converters/generic.dart';
 
 part 'item_variant_image.g.dart';
 

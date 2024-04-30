@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:selleri/models/item_cart.dart';
+import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/modules/cart/cart.dart';
-import 'package:selleri/routes/routes.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart_item.dart';
 import 'package:selleri/ui/components/edit_cart_item.dart';
 import 'package:selleri/utils/formater.dart';
@@ -26,7 +26,7 @@ class _CartScreenState extends State<CartScreen> {
       () => Scaffold(
         backgroundColor: Colors.blueGrey.shade50,
         appBar: AppBar(
-          title: Text('cart'.tr.capitalizeFirst!),
+          title: Text('cart'.capitalizeFirst!),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,7 +62,7 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'subtotal'.tr.capitalizeFirst!,
+                            'subtotal'.capitalizeFirst!,
                             style: TextStyle(color: Colors.blueGrey.shade700),
                           ),
                           Text(
@@ -88,7 +88,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                               ),
                               onPressed: () {},
-                              child: Text('hold'.tr.toUpperCase()),
+                              child: Text('hold'.toUpperCase()),
                             ),
                           ),
                           const SizedBox(
@@ -105,7 +105,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               onPressed: () => Get.toNamed(Routes.checkout),
                               icon: const Icon(CupertinoIcons.creditcard_fill),
-                              label: Text('checkout'.tr.toUpperCase()),
+                              label: Text('checkout'.toUpperCase()),
                             ),
                           )
                         ],

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:selleri/models/outlet.dart';
+import 'package:selleri/data/models/outlet.dart';
 
 class OutletListState extends Equatable {
   const OutletListState();

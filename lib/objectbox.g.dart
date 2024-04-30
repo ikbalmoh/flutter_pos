@@ -14,11 +14,11 @@ import 'package:objectbox/internal.dart'; // generated code can access "internal
 import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
-import 'models/category.dart';
-import 'models/item.dart';
-import 'models/item_package.dart';
-import 'models/item_variant.dart';
-import 'models/promotion.dart';
+import 'data/models/category.dart';
+import 'data/models/item.dart';
+import 'data/models/item_package.dart';
+import 'data/models/item_variant.dart';
+import 'data/models/promotion.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 

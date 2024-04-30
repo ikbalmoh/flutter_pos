@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -72,7 +71,7 @@ class CustomInterceptors extends Interceptor {
         ? isJSON(jsonEncode(err.response?.data))
         : false;
     if (!json) {
-      err.response?.data = {'message': 'connection_error'.tr};
+      err.response?.data = {'message': 'connection_error'};
     }
     if (kDebugMode) {
       print(

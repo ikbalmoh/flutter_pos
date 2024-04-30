@@ -1,7 +1,7 @@
 import 'package:get_storage/get_storage.dart';
 import 'package:selleri/data/network/api.dart' show OutletApi;
-import 'package:selleri/models/outlet.dart';
-import 'package:selleri/models/outlet_config.dart';
+import 'package:selleri/data/models/outlet.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 
 class OutletService {
   final api = OutletApi();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:selleri/models/item.dart';
-import 'package:selleri/models/item_variant.dart';
+import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -110,7 +110,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
                 ),
-                child: Text('add_to_cart'.tr),
+                child: Text('add_to_cart'),
               )
             ],
           ),

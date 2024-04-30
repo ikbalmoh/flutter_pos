@@ -20,7 +20,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Scaffold(
         backgroundColor: Colors.blueGrey.shade50,
         appBar: AppBar(
-          title: Text('checkout'.tr.capitalizeFirst!),
+          title: Text('checkout'.capitalizeFirst!),
           actions: [
             IconButton(
                 onPressed: () {}, icon: const Icon(Icons.more_vert_rounded))
@@ -66,7 +66,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'total'.tr.capitalize!,
+                            'total'.capitalize!,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(
@@ -85,7 +85,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         ),
                         onPressed: () {},
-                        child: Text('pay_finish'.tr.toUpperCase()),
+                        child: Text('pay_finish'.toUpperCase()),
                       )
                     ],
                   ),

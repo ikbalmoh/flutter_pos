@@ -7,20 +7,21 @@ part of 'promotion.dart';
 // **************************************************************************
 
 Promotion _$PromotionFromJson(Map<String, dynamic> json) => Promotion(
-      id: json['objectbox_id'] as int,
+      id: (json['objectbox_id'] as num).toInt(),
       idPromotion: json['id'] as String,
       name: json['name'] as String,
-      type: json['type'] as int,
-      requirementQuantity: json['requirement_quantity'] as int?,
-      requirementMinimumOrder: json['requirement_minimum_order'] as int?,
-      rewardType: json['reward_type'] as int?,
-      rewardProductType: json['reward_product_type'] as int?,
+      type: (json['type'] as num).toInt(),
+      requirementQuantity: (json['requirement_quantity'] as num?)?.toInt(),
+      requirementMinimumOrder:
+          (json['requirement_minimum_order'] as num?)?.toInt(),
+      rewardType: (json['reward_type'] as num?)?.toInt(),
+      rewardProductType: (json['reward_product_type'] as num?)?.toInt(),
       rewardProductId: json['reward_product_id'] as String?,
-      rewardVariantId: json['reward_variant_id'] as int?,
-      rewardQty: json['reward_qty'] as int?,
-      discountType: json['discount_type'] as int?,
-      rewardNominal: json['reward_nominal'] as int?,
-      rewardMaximumAmount: json['reward_maximum_amount'] as int?,
+      rewardVariantId: (json['reward_variant_id'] as num?)?.toInt(),
+      rewardQty: (json['reward_qty'] as num?)?.toInt(),
+      discountType: (json['discount_type'] as num?)?.toInt(),
+      rewardNominal: (json['reward_nominal'] as num?)?.toInt(),
+      rewardMaximumAmount: (json['reward_maximum_amount'] as num?)?.toInt(),
       status: Converters.dynamicToBool(json['status']),
       allOutlet: Converters.dynamicToBool(json['all_outlet']),
       startDate: json['start_date'] == null
@@ -37,23 +38,24 @@ Promotion _$PromotionFromJson(Map<String, dynamic> json) => Promotion(
       needCode: json['need_code'] as bool,
       promoCode: json['promo_code'] as String?,
       kelipatan: json['kelipatan'] as bool,
-      priority: json['priority'] as int?,
-      requirementProductType: json['requirement_product_type'] as int?,
+      priority: (json['priority'] as num?)?.toInt(),
+      requirementProductType:
+          (json['requirement_product_type'] as num?)?.toInt(),
       requirementProductId: (json['requirement_product_id'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
       requirementVariantId: (json['requirement_variant_id'] as List<dynamic>?)
-          ?.map((e) => e as int)
+          ?.map((e) => (e as num).toInt())
           .toList(),
       typeName: json['type_name'] as String?,
       days: (json['days'] as List<dynamic>?)?.map((e) => e as String).toList(),
       description: json['description'] as String?,
       assignCustomerName: json['assign_customer_name'] as String?,
       numberOfDays: (json['number_of_days'] as List<dynamic>?)
-          ?.map((e) => e as int)
+          ?.map((e) => (e as num).toInt())
           .toList(),
       rewardProductName: json['reward_product_name'] as String?,
-      rewardItemPrice: json['reward_item_price'] as int?,
+      rewardItemPrice: (json['reward_item_price'] as num?)?.toInt(),
       times: const PromotionTimeRelToManyConverter()
           .fromJson(json['times'] as List?),
       assignGroups: const GroupRelToManyConverter()
@@ -109,7 +111,7 @@ Map<String, dynamic> _$PromotionToJson(Promotion instance) => <String, dynamic>{
 
 PromotionTime _$PromotionTimeFromJson(Map<String, dynamic> json) =>
     PromotionTime(
-      id: json['objectbox_id'] as int,
+      id: (json['objectbox_id'] as num).toInt(),
       idTime: json['id'] as String,
       startTime: json['start_time'] as String,
       endTime: json['end_time'] as String,
@@ -124,9 +126,9 @@ Map<String, dynamic> _$PromotionTimeToJson(PromotionTime instance) =>
     };
 
 AssignGroup _$AssignGroupFromJson(Map<String, dynamic> json) => AssignGroup(
-      id: json['objectbox_id'] as int,
+      id: (json['objectbox_id'] as num).toInt(),
       idAssignGroup: json['id'] as String,
-      groupId: json['group_id'] as int,
+      groupId: (json['group_id'] as num).toInt(),
       groupName: json['group_name'] as String,
     );
 
@@ -140,11 +142,11 @@ Map<String, dynamic> _$AssignGroupToJson(AssignGroup instance) =>
 
 ItemRequirement _$ItemRequirementFromJson(Map<String, dynamic> json) =>
     ItemRequirement(
-      id: json['objectbox_id'] as int,
+      id: (json['objectbox_id'] as num).toInt(),
       idItemRequirement: json['id'] as String,
-      requirementProductType: json['requirement_product_type'] as int,
+      requirementProductType: (json['requirement_product_type'] as num).toInt(),
       requirementProductId: json['requirement_product_id'] as String?,
-      requirementVariantId: json['requirement_variant_id'] as int?,
+      requirementVariantId: (json['requirement_variant_id'] as num?)?.toInt(),
       requirementProductName: json['requirement_product_name'] as String?,
     );
 

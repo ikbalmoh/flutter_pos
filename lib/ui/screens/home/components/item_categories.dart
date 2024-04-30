@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selleri/data/objectbox.dart' show objectBox;
-import 'package:selleri/models/category.dart';
+import 'package:selleri/data/models/category.dart';
 import 'package:selleri/modules/item/item.dart';
 
 class ItemCategories extends StatefulWidget {
@@ -34,7 +34,7 @@ class _ItemCategoriesState extends State<ItemCategories> {
                         id: 0,
                         idCategory: '',
                         code: 'all',
-                        categoryName: 'all'.tr,
+                        categoryName: 'all',
                         isActive: widget.active == '',
                         )
                     : categories[idx - 1];

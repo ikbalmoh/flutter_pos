@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:get/get.dart';
 import 'package:selleri/data/objectbox.dart';
-import 'package:selleri/models/item.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/modules/auth/auth.dart';
 import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/modules/item/item.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
-import 'package:selleri/routes/routes.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/components/item_container.dart';
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         floatingActionButton: cartController.totalQty > 0
             ? FloatingActionButton.extended(
-                tooltip: 'cart'.tr,
+                tooltip: 'cart',
                 onPressed: () => Get.toNamed(Routes.cart),
                 label: Text(
                   CurrencyFormat.currency(cartController.cart?.subtotal),

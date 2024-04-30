@@ -1,4 +1,4 @@
-import 'package:selleri/models/item_cart.dart';
+import 'package:selleri/data/models/item_cart.dart';
 
 class Cart {
   DateTime transactionDate;

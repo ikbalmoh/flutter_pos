@@ -1,38 +1,33 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:selleri/modules/auth/auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/providers/app_start/app_start_provider.dart';
+import 'package:selleri/ui/screens/home/home_screen.dart';
+import 'package:selleri/ui/screens/login/login_screen.dart';
+import 'package:selleri/ui/screens/select_outlet/select_outlet_screen.dart';
+import 'package:selleri/ui/widgets/loading_widget.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  AuthController controller = Get.find();
+class SplashScreen extends ConsumerWidget {
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  void initState() {
-    WidgetsFlutterBinding.ensureInitialized();
-    // controller.init();
-    super.initState();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(appStartNotifierProvider);
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.teal,
-      body: Center(
-        child: SizedBox(
-          height: 30,
-          width: 30,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: Colors.white,
-          ),
-        ),
-      ),
+    print("APP STATE: $state");
+    return state.when(
+      data: (data) {
+        return data.maybeWhen(
+          initializing: () => const LoadingWidget(withScaffold: true),
+          authenticated: () => const SelectOutletScreen(),
+          outletSelected: () => const HomeScreen(),
+          unauthenticated: () => const LoginScreen(),
+          orElse: () => const LoadingWidget(withScaffold: true),
+        );
+      },
+      error: (e, st) => const LoadingWidget(withScaffold: true),
+      loading: () => const LoadingWidget(withScaffold: true),
     );
   }
 }

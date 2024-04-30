@@ -1,0 +1,4 @@
+enum StoreKey {
+  token,
+  user,
+}

@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:selleri/models/user.dart';
-import 'package:selleri/models/outlet.dart';
+import 'package:selleri/data/models/user.dart';
+import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/modules/auth/auth.dart';
 import 'package:selleri/modules/outlet/outlet.dart';
-import 'package:selleri/routes/routes.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/app.dart';
 
 class AuthController extends GetxController {
@@ -120,7 +120,7 @@ class AuthController extends GetxController {
     if (error != null) {
       _authState.value = AuthFailure(message: error);
       App.showSnackbar(
-        'auth_failed'.tr,
+        'auth_failed',
         error,
         alertType: AlertType.error,
       );
