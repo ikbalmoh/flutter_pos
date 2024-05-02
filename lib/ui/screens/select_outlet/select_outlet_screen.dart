@@ -24,6 +24,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
+    ref.read(outletListNotifierProvider.notifier).fetchOutletList();
     super.initState();
   }
 

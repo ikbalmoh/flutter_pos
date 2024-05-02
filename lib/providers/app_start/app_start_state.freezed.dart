@@ -21,7 +21,7 @@ mixin _$AppStartState {
     required TResult Function() initializing,
     required TResult Function() unauthenticated,
     required TResult Function() authenticated,
-    required TResult Function() outletSelected,
+    required TResult Function() selectedOutlet,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -29,7 +29,7 @@ mixin _$AppStartState {
     TResult? Function()? initializing,
     TResult? Function()? unauthenticated,
     TResult? Function()? authenticated,
-    TResult? Function()? outletSelected,
+    TResult? Function()? selectedOutlet,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -37,7 +37,7 @@ mixin _$AppStartState {
     TResult Function()? initializing,
     TResult Function()? unauthenticated,
     TResult Function()? authenticated,
-    TResult Function()? outletSelected,
+    TResult Function()? selectedOutlet,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -46,7 +46,7 @@ mixin _$AppStartState {
     required TResult Function(_Initializing value) initializing,
     required TResult Function(Unauthenticated value) unauthenticated,
     required TResult Function(AppAuthenticated value) authenticated,
-    required TResult Function(OutletSelected value) outletSelected,
+    required TResult Function(AppSelectedOutlet value) selectedOutlet,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -54,7 +54,7 @@ mixin _$AppStartState {
     TResult? Function(_Initializing value)? initializing,
     TResult? Function(Unauthenticated value)? unauthenticated,
     TResult? Function(AppAuthenticated value)? authenticated,
-    TResult? Function(OutletSelected value)? outletSelected,
+    TResult? Function(AppSelectedOutlet value)? selectedOutlet,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -62,7 +62,7 @@ mixin _$AppStartState {
     TResult Function(_Initializing value)? initializing,
     TResult Function(Unauthenticated value)? unauthenticated,
     TResult Function(AppAuthenticated value)? authenticated,
-    TResult Function(OutletSelected value)? outletSelected,
+    TResult Function(AppSelectedOutlet value)? selectedOutlet,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -127,7 +127,7 @@ class _$InitializingImpl implements _Initializing {
     required TResult Function() initializing,
     required TResult Function() unauthenticated,
     required TResult Function() authenticated,
-    required TResult Function() outletSelected,
+    required TResult Function() selectedOutlet,
   }) {
     return initializing();
   }
@@ -138,7 +138,7 @@ class _$InitializingImpl implements _Initializing {
     TResult? Function()? initializing,
     TResult? Function()? unauthenticated,
     TResult? Function()? authenticated,
-    TResult? Function()? outletSelected,
+    TResult? Function()? selectedOutlet,
   }) {
     return initializing?.call();
   }
@@ -149,7 +149,7 @@ class _$InitializingImpl implements _Initializing {
     TResult Function()? initializing,
     TResult Function()? unauthenticated,
     TResult Function()? authenticated,
-    TResult Function()? outletSelected,
+    TResult Function()? selectedOutlet,
     required TResult orElse(),
   }) {
     if (initializing != null) {
@@ -164,7 +164,7 @@ class _$InitializingImpl implements _Initializing {
     required TResult Function(_Initializing value) initializing,
     required TResult Function(Unauthenticated value) unauthenticated,
     required TResult Function(AppAuthenticated value) authenticated,
-    required TResult Function(OutletSelected value) outletSelected,
+    required TResult Function(AppSelectedOutlet value) selectedOutlet,
   }) {
     return initializing(this);
   }
@@ -175,7 +175,7 @@ class _$InitializingImpl implements _Initializing {
     TResult? Function(_Initializing value)? initializing,
     TResult? Function(Unauthenticated value)? unauthenticated,
     TResult? Function(AppAuthenticated value)? authenticated,
-    TResult? Function(OutletSelected value)? outletSelected,
+    TResult? Function(AppSelectedOutlet value)? selectedOutlet,
   }) {
     return initializing?.call(this);
   }
@@ -186,7 +186,7 @@ class _$InitializingImpl implements _Initializing {
     TResult Function(_Initializing value)? initializing,
     TResult Function(Unauthenticated value)? unauthenticated,
     TResult Function(AppAuthenticated value)? authenticated,
-    TResult Function(OutletSelected value)? outletSelected,
+    TResult Function(AppSelectedOutlet value)? selectedOutlet,
     required TResult orElse(),
   }) {
     if (initializing != null) {
@@ -241,7 +241,7 @@ class _$UnauthenticatedImpl implements Unauthenticated {
     required TResult Function() initializing,
     required TResult Function() unauthenticated,
     required TResult Function() authenticated,
-    required TResult Function() outletSelected,
+    required TResult Function() selectedOutlet,
   }) {
     return unauthenticated();
   }
@@ -252,7 +252,7 @@ class _$UnauthenticatedImpl implements Unauthenticated {
     TResult? Function()? initializing,
     TResult? Function()? unauthenticated,
     TResult? Function()? authenticated,
-    TResult? Function()? outletSelected,
+    TResult? Function()? selectedOutlet,
   }) {
     return unauthenticated?.call();
   }
@@ -263,7 +263,7 @@ class _$UnauthenticatedImpl implements Unauthenticated {
     TResult Function()? initializing,
     TResult Function()? unauthenticated,
     TResult Function()? authenticated,
-    TResult Function()? outletSelected,
+    TResult Function()? selectedOutlet,
     required TResult orElse(),
   }) {
     if (unauthenticated != null) {
@@ -278,7 +278,7 @@ class _$UnauthenticatedImpl implements Unauthenticated {
     required TResult Function(_Initializing value) initializing,
     required TResult Function(Unauthenticated value) unauthenticated,
     required TResult Function(AppAuthenticated value) authenticated,
-    required TResult Function(OutletSelected value) outletSelected,
+    required TResult Function(AppSelectedOutlet value) selectedOutlet,
   }) {
     return unauthenticated(this);
   }
@@ -289,7 +289,7 @@ class _$UnauthenticatedImpl implements Unauthenticated {
     TResult? Function(_Initializing value)? initializing,
     TResult? Function(Unauthenticated value)? unauthenticated,
     TResult? Function(AppAuthenticated value)? authenticated,
-    TResult? Function(OutletSelected value)? outletSelected,
+    TResult? Function(AppSelectedOutlet value)? selectedOutlet,
   }) {
     return unauthenticated?.call(this);
   }
@@ -300,7 +300,7 @@ class _$UnauthenticatedImpl implements Unauthenticated {
     TResult Function(_Initializing value)? initializing,
     TResult Function(Unauthenticated value)? unauthenticated,
     TResult Function(AppAuthenticated value)? authenticated,
-    TResult Function(OutletSelected value)? outletSelected,
+    TResult Function(AppSelectedOutlet value)? selectedOutlet,
     required TResult orElse(),
   }) {
     if (unauthenticated != null) {
@@ -355,7 +355,7 @@ class _$AppAuthenticatedImpl implements AppAuthenticated {
     required TResult Function() initializing,
     required TResult Function() unauthenticated,
     required TResult Function() authenticated,
-    required TResult Function() outletSelected,
+    required TResult Function() selectedOutlet,
   }) {
     return authenticated();
   }
@@ -366,7 +366,7 @@ class _$AppAuthenticatedImpl implements AppAuthenticated {
     TResult? Function()? initializing,
     TResult? Function()? unauthenticated,
     TResult? Function()? authenticated,
-    TResult? Function()? outletSelected,
+    TResult? Function()? selectedOutlet,
   }) {
     return authenticated?.call();
   }
@@ -377,7 +377,7 @@ class _$AppAuthenticatedImpl implements AppAuthenticated {
     TResult Function()? initializing,
     TResult Function()? unauthenticated,
     TResult Function()? authenticated,
-    TResult Function()? outletSelected,
+    TResult Function()? selectedOutlet,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
@@ -392,7 +392,7 @@ class _$AppAuthenticatedImpl implements AppAuthenticated {
     required TResult Function(_Initializing value) initializing,
     required TResult Function(Unauthenticated value) unauthenticated,
     required TResult Function(AppAuthenticated value) authenticated,
-    required TResult Function(OutletSelected value) outletSelected,
+    required TResult Function(AppSelectedOutlet value) selectedOutlet,
   }) {
     return authenticated(this);
   }
@@ -403,7 +403,7 @@ class _$AppAuthenticatedImpl implements AppAuthenticated {
     TResult? Function(_Initializing value)? initializing,
     TResult? Function(Unauthenticated value)? unauthenticated,
     TResult? Function(AppAuthenticated value)? authenticated,
-    TResult? Function(OutletSelected value)? outletSelected,
+    TResult? Function(AppSelectedOutlet value)? selectedOutlet,
   }) {
     return authenticated?.call(this);
   }
@@ -414,7 +414,7 @@ class _$AppAuthenticatedImpl implements AppAuthenticated {
     TResult Function(_Initializing value)? initializing,
     TResult Function(Unauthenticated value)? unauthenticated,
     TResult Function(AppAuthenticated value)? authenticated,
-    TResult Function(OutletSelected value)? outletSelected,
+    TResult Function(AppSelectedOutlet value)? selectedOutlet,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
@@ -429,35 +429,35 @@ abstract class AppAuthenticated implements AppStartState {
 }
 
 /// @nodoc
-abstract class _$$OutletSelectedImplCopyWith<$Res> {
-  factory _$$OutletSelectedImplCopyWith(_$OutletSelectedImpl value,
-          $Res Function(_$OutletSelectedImpl) then) =
-      __$$OutletSelectedImplCopyWithImpl<$Res>;
+abstract class _$$AppSelectedOutletImplCopyWith<$Res> {
+  factory _$$AppSelectedOutletImplCopyWith(_$AppSelectedOutletImpl value,
+          $Res Function(_$AppSelectedOutletImpl) then) =
+      __$$AppSelectedOutletImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$OutletSelectedImplCopyWithImpl<$Res>
-    extends _$AppStartStateCopyWithImpl<$Res, _$OutletSelectedImpl>
-    implements _$$OutletSelectedImplCopyWith<$Res> {
-  __$$OutletSelectedImplCopyWithImpl(
-      _$OutletSelectedImpl _value, $Res Function(_$OutletSelectedImpl) _then)
+class __$$AppSelectedOutletImplCopyWithImpl<$Res>
+    extends _$AppStartStateCopyWithImpl<$Res, _$AppSelectedOutletImpl>
+    implements _$$AppSelectedOutletImplCopyWith<$Res> {
+  __$$AppSelectedOutletImplCopyWithImpl(_$AppSelectedOutletImpl _value,
+      $Res Function(_$AppSelectedOutletImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$OutletSelectedImpl implements OutletSelected {
-  const _$OutletSelectedImpl();
+class _$AppSelectedOutletImpl implements AppSelectedOutlet {
+  const _$AppSelectedOutletImpl();
 
   @override
   String toString() {
-    return 'AppStartState.outletSelected()';
+    return 'AppStartState.selectedOutlet()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$OutletSelectedImpl);
+        (other.runtimeType == runtimeType && other is _$AppSelectedOutletImpl);
   }
 
   @override
@@ -469,9 +469,9 @@ class _$OutletSelectedImpl implements OutletSelected {
     required TResult Function() initializing,
     required TResult Function() unauthenticated,
     required TResult Function() authenticated,
-    required TResult Function() outletSelected,
+    required TResult Function() selectedOutlet,
   }) {
-    return outletSelected();
+    return selectedOutlet();
   }
 
   @override
@@ -480,9 +480,9 @@ class _$OutletSelectedImpl implements OutletSelected {
     TResult? Function()? initializing,
     TResult? Function()? unauthenticated,
     TResult? Function()? authenticated,
-    TResult? Function()? outletSelected,
+    TResult? Function()? selectedOutlet,
   }) {
-    return outletSelected?.call();
+    return selectedOutlet?.call();
   }
 
   @override
@@ -491,11 +491,11 @@ class _$OutletSelectedImpl implements OutletSelected {
     TResult Function()? initializing,
     TResult Function()? unauthenticated,
     TResult Function()? authenticated,
-    TResult Function()? outletSelected,
+    TResult Function()? selectedOutlet,
     required TResult orElse(),
   }) {
-    if (outletSelected != null) {
-      return outletSelected();
+    if (selectedOutlet != null) {
+      return selectedOutlet();
     }
     return orElse();
   }
@@ -506,9 +506,9 @@ class _$OutletSelectedImpl implements OutletSelected {
     required TResult Function(_Initializing value) initializing,
     required TResult Function(Unauthenticated value) unauthenticated,
     required TResult Function(AppAuthenticated value) authenticated,
-    required TResult Function(OutletSelected value) outletSelected,
+    required TResult Function(AppSelectedOutlet value) selectedOutlet,
   }) {
-    return outletSelected(this);
+    return selectedOutlet(this);
   }
 
   @override
@@ -517,9 +517,9 @@ class _$OutletSelectedImpl implements OutletSelected {
     TResult? Function(_Initializing value)? initializing,
     TResult? Function(Unauthenticated value)? unauthenticated,
     TResult? Function(AppAuthenticated value)? authenticated,
-    TResult? Function(OutletSelected value)? outletSelected,
+    TResult? Function(AppSelectedOutlet value)? selectedOutlet,
   }) {
-    return outletSelected?.call(this);
+    return selectedOutlet?.call(this);
   }
 
   @override
@@ -528,16 +528,16 @@ class _$OutletSelectedImpl implements OutletSelected {
     TResult Function(_Initializing value)? initializing,
     TResult Function(Unauthenticated value)? unauthenticated,
     TResult Function(AppAuthenticated value)? authenticated,
-    TResult Function(OutletSelected value)? outletSelected,
+    TResult Function(AppSelectedOutlet value)? selectedOutlet,
     required TResult orElse(),
   }) {
-    if (outletSelected != null) {
-      return outletSelected(this);
+    if (selectedOutlet != null) {
+      return selectedOutlet(this);
     }
     return orElse();
   }
 }
 
-abstract class OutletSelected implements AppStartState {
-  const factory OutletSelected() = _$OutletSelectedImpl;
+abstract class AppSelectedOutlet implements AppStartState {
+  const factory AppSelectedOutlet() = _$AppSelectedOutletImpl;
 }
