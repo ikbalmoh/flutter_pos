@@ -57,6 +57,7 @@ GoRouter router(RouterRef ref) {
         }
         return appState.value.when(
           data: (appState) {
+            print('APP STATE: $appState');
             return appState.maybeWhen(
               initializing: () => Routes.root,
               authenticated: () => Routes.outlet,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Outlet {
   String idOutlet;
   String outletName;
@@ -98,6 +100,7 @@ class Outlet {
 
   @override
   String toString() {
-    return '{"id_outlet": $idOutlet,"outlet_name": $outletName,"outlet_code": $outletCode,"outlet_phone": $outletPhone,"outlet_address": $outletAddress,"id_city": $idCity,"city_name": $cityName,"id_region": $idRegion,"region_name": $regionName,"zip_code": $zipCode,"is_active": $isActive,"stock_minus": $stockMinus,"akun_kas_kecil_id": $akunKasKecilId,"akun_kas_besar_id": $akunKasBesarId,"is_online_store": $isOnlineStore,"integration_with": $integrationWith,"morph_name": $morphName,"akun_kas_kecil": $akunKasKecil,"akun_kas_besar": $akunKasBesar}';
+    final jsonToken = toJson();
+    return json.encode(jsonToken);
   }
 }

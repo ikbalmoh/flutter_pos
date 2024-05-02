@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 import 'payment_method.dart';
@@ -76,13 +78,15 @@ class OutletConfig {
     this.customMandatory,
   });
 
-  factory OutletConfig.fromJson(Map<String, dynamic> json) => _$OutletConfigFromJson(json);
+  factory OutletConfig.fromJson(Map<String, dynamic> json) =>
+      _$OutletConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$OutletConfigToJson(this);
 
   @override
   String toString() {
-    return toJson().toString();
+    final jsonToken = toJson();
+    return json.encode(jsonToken);
   }
 }
 
@@ -124,7 +128,8 @@ class AttributeReceipts {
     this.imageBase64,
   });
 
-  factory AttributeReceipts.fromJson(Map<String, dynamic> json) => _$AttributeReceiptsFromJson(json);
+  factory AttributeReceipts.fromJson(Map<String, dynamic> json) =>
+      _$AttributeReceiptsFromJson(json);
 
   Map<String, dynamic> toJson() => _$AttributeReceiptsToJson(this);
 
@@ -142,7 +147,8 @@ class CustomMandatory {
     this.customers,
   });
 
-  factory CustomMandatory.fromJson(Map<String, dynamic> json) => _$CustomMandatoryFromJson(json);
+  factory CustomMandatory.fromJson(Map<String, dynamic> json) =>
+      _$CustomMandatoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$CustomMandatoryToJson(this);
 }
@@ -163,7 +169,8 @@ class ListUser {
     this.rolesName,
   });
 
-  factory ListUser.fromJson(Map<String, dynamic> json) => _$ListUserFromJson(json);
+  factory ListUser.fromJson(Map<String, dynamic> json) =>
+      _$ListUserFromJson(json);
 
   Map<String, dynamic> toJson() => _$ListUserToJson(this);
 
@@ -185,7 +192,8 @@ class PinSetting {
     this.description,
   });
 
-  factory PinSetting.fromJson(Map<String, dynamic> json) => _$PinSettingFromJson(json);
+  factory PinSetting.fromJson(Map<String, dynamic> json) =>
+      _$PinSettingFromJson(json);
 
   Map<String, dynamic> toJson() => _$PinSettingToJson(this);
 
@@ -207,7 +215,8 @@ class RefundReason {
     required this.needNotes,
   });
 
-  factory RefundReason.fromJson(Map<String, dynamic> json) => _$RefundReasonFromJson(json);
+  factory RefundReason.fromJson(Map<String, dynamic> json) =>
+      _$RefundReasonFromJson(json);
 
   Map<String, dynamic> toJson() => _$RefundReasonToJson(this);
 
@@ -227,7 +236,8 @@ class Subscriptions {
     required this.customer,
   });
 
-  factory Subscriptions.fromJson(Map<String, dynamic> json) => _$SubscriptionsFromJson(json);
+  factory Subscriptions.fromJson(Map<String, dynamic> json) =>
+      _$SubscriptionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubscriptionsToJson(this);
 
@@ -247,7 +257,8 @@ class SubscriptionLimit {
     required this.current,
   });
 
-  factory SubscriptionLimit.fromJson(Map<String, dynamic> json) => _$SubscriptionLimitFromJson(json);
+  factory SubscriptionLimit.fromJson(Map<String, dynamic> json) =>
+      _$SubscriptionLimitFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubscriptionLimitToJson(this);
 
@@ -293,7 +304,8 @@ class UserHasPin {
     this.rolesName,
   });
 
-  factory UserHasPin.fromJson(Map<String, dynamic> json) => _$UserHasPinFromJson(json);
+  factory UserHasPin.fromJson(Map<String, dynamic> json) =>
+      _$UserHasPinFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserHasPinToJson(this);
 

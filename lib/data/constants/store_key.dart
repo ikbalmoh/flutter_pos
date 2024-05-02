@@ -3,4 +3,5 @@ enum StoreKey {
   token,
   user,
   outlet,
+  outletConfig,
 }

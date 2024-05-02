@@ -18,15 +18,19 @@ class AppStartNotifier extends _$AppStartNotifier {
   FutureOr<AppStartState> build() async {
     ref.onDispose(() {});
 
+    final outletState = ref.watch(outletNotifierProvider);
+    print('OUTLET STATE: ${outletState.value}');
+    if (outletState.value is OutletSelected) {
+      return const AppStartState.selectedOutlet();
+    }
+
     final authState = ref.watch(authNotifierProvider);
+    if (kDebugMode) {
+      print('AUTH STATE ${authState.value.toString()}');
+    }
     return authState.when(
-        data: (state) {
-          print('AUTH STATE ${state.toString()}');
+        data: (state) async {
           if (state is Authenticated) {
-            final outletState = ref.watch(outletNotifierProvider);
-            if (outletState is OutletSelected) {
-              return const AppStartState.selectedOutlet();
-            }
             return const AppStartState.authenticated();
           }
           return const AppStartState.unauthenticated();

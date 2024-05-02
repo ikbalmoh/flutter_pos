@@ -1,30 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
-import 'package:get/get.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/models/item.dart';
-import 'package:selleri/modules/auth/auth.dart';
-import 'package:selleri/modules/cart/cart.dart';
-import 'package:selleri/modules/item/item.dart';
-import 'package:selleri/modules/outlet/outlet.dart';
-import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/components/item_container.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final AuthController authController = Get.find();
-  final ItemController itemController = Get.find();
-  final OutletController outletController = Get.find();
-  final CartController cartController = Get.find();
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  void onSignOut() {}
 
   String idCategory = '';
   bool searchVisible = false;
@@ -49,81 +42,78 @@ class _HomeScreenState extends State<HomeScreen> {
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
+
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Scaffold(
-        appBar: searchVisible
-            ? SearchAppBar(
-                onBack: () => setState(() {
-                  searchVisible = false;
-                  textEditingController.text = '';
-                  itemStrem = objectBox.itemsStream(idCategory: idCategory);
-                }),
-                controller: textEditingController,
-                onChanged: onSearch,
-              )
-            : AppBar(
-                title: Text(outletController.outlet is OutletSelected
-                    ? (outletController.outlet as OutletSelected)
-                        .outlet
-                        .outletName
-                    : ''),
-                automaticallyImplyLeading: false,
-                actions: [
-                  IconButton(
-                    onPressed: () => setState(() {
-                      searchVisible = true;
-                    }),
-                    icon: const Icon(Icons.search),
-                  ),
-                  IconButton(
-                    onPressed: () => authController.logout(),
-                    icon: const Icon(Icons.logout_outlined),
-                  )
-                ],
-              ),
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeInOut,
-              height: searchVisible ? 0 : 56,
-              child: ItemCategories(
-                active: idCategory,
-                onChange: onChangeCategory,
-              ),
+    final outlet = ref.watch(outletNotifierProvider);
+
+    return Scaffold(
+      appBar: searchVisible
+          ? SearchAppBar(
+              onBack: () => setState(() {
+                searchVisible = false;
+                textEditingController.text = '';
+                itemStrem = objectBox.itemsStream(idCategory: idCategory);
+              }),
+              controller: textEditingController,
+              onChanged: onSearch,
+            )
+          : AppBar(
+              title: Text(outlet.value is OutletSelected
+                  ? (outlet.value as OutletSelected).outlet.outletName
+                  : ''),
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  onPressed: () => setState(() {
+                    searchVisible = true;
+                  }),
+                  icon: const Icon(Icons.search),
+                ),
+                IconButton(
+                  onPressed: () => onSignOut(),
+                  icon: const Icon(Icons.logout_outlined),
+                )
+              ],
             ),
-            Expanded(
-              child: ItemContainer(
-                stream: itemStrem,
-                scrollController: scrollController,
-              ),
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            height: searchVisible ? 0 : 56,
+            child: ItemCategories(
+              active: idCategory,
+              onChange: onChangeCategory,
             ),
-          ],
+          ),
+          Expanded(
+            child: ItemContainer(
+              stream: itemStrem,
+              scrollController: scrollController,
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        tooltip: 'cart',
+        onPressed: () => {},
+        label: Text(
+          CurrencyFormat.currency(0),
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(color: Colors.white),
         ),
-        floatingActionButton: cartController.totalQty > 0
-            ? FloatingActionButton.extended(
-                tooltip: 'cart',
-                onPressed: () => Get.toNamed(Routes.cart),
-                label: Text(
-                  CurrencyFormat.currency(cartController.cart?.subtotal),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(color: Colors.white),
-                ),
-                extendedIconLabelSpacing: 20,
-                icon: Badge(
-                  label: Text(
-                    cartController.totalQty.toString(),
-                  ),
-                  child: const Icon(CupertinoIcons.shopping_cart),
-                ),
-              )
-            : null,
-      );
-    });
+        extendedIconLabelSpacing: 20,
+        icon: const Badge(
+          label: Text(
+            '0',
+          ),
+          child: Icon(CupertinoIcons.shopping_cart),
+        ),
+      ),
+    );
   }
 }

@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:selleri/data/models/outlet.dart';
-import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/data/network/api.dart' show OutletApi;
 
 export 'outlet_state.dart';
 
@@ -16,21 +14,26 @@ class OutletNotifier extends _$OutletNotifier {
       ref.read(outletRepositoryProvider);
 
   @override
-  OutletState build() {
+  FutureOr<OutletState> build() async {
+    final outlet = await _outletRepository.retrieveOutlet();
+    if (outlet != null) {
+      final outletConfig = await _outletRepository.retrieveOutletConfig();
+      if (outletConfig != null) {
+        return OutletSelected(outlet: outlet, config: outletConfig);
+      }
+    }
     return OutletNotSelected();
   }
 
   Future<void> selectOutlet(Outlet outlet) async {
-    state = OutletLoading();
+    state = AsyncData(OutletLoading());
     try {
-      final api = OutletApi();
-      final configJson = await api.configs(outlet.idOutlet);
-      final OutletConfig config = OutletConfig.fromJson(configJson);
       _outletRepository.saveOutlet(outlet);
-      state = OutletSelected(outlet: outlet, config: config);
+      final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
+      state = AsyncData(OutletSelected(outlet: outlet, config: config));
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? e.message;
-      state = OutletFailure(message: message);
+      state = AsyncData(OutletFailure(message: message));
     }
   }
 }

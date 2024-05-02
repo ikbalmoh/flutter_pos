@@ -31,11 +31,7 @@ class AuthNotifier extends _$AuthNotifier {
     final auth = await _authRepoistory.login(username, password);
     state = AsyncData(auth);
   }
-
-  Future<void> revampAuthentication(User user, Token token) async {
-    state = AsyncData(Authenticated(user: user, token: token));
-  }
-
+  
   Future<void> logout() async {
     await _tokenRepository.remove();
     state = AsyncData(await _authRepoistory.logout());

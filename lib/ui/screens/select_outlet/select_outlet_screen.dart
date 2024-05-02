@@ -45,13 +45,12 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    final authState = ref.watch(authNotifierProvider);
     final outletState = ref.watch(outletNotifierProvider);
     final state = ref.watch(outletListNotifierProvider);
 
     return Scaffold(
       backgroundColor: Colors.teal.shade400,
-      body: outletState is OutletLoading
+      body: outletState.value is OutletLoading
           ? const PreparingOutlet()
           : state is OutletListFailure
               ? Center(
@@ -68,24 +67,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.store,
-                        color: Colors.white,
-                        size: 64,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        authState.when(
-                            data: (state) => (state is Authenticated)
-                                ? state.user.user.company.companyName
-                                : '',
-                            error: (e, stack) => e.toString(),
-                            loading: () => '...'),
-                        style: textTheme.headlineSmall
-                            ?.copyWith(color: Colors.white),
-                      ),
+                      const CompanyIcon(),
                       Container(
                         margin: const EdgeInsets.only(top: 50),
                         width: 300,
@@ -141,6 +123,44 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                   ),
                 ),
     );
+  }
+}
+
+class CompanyIcon extends ConsumerWidget {
+  const CompanyIcon({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authNotifierProvider);
+
+    return authState.when(
+        error: (e, stack) => Container(),
+        data: (s) {
+          if (s is Authenticated) {
+            return Column(
+              children: [
+                const Icon(
+                  Icons.store,
+                  color: Colors.white,
+                  size: 64,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  s.user.user.company.companyName,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(color: Colors.white),
+                ),
+              ],
+            );
+          }
+          return Container();
+        },
+        loading: () => Container(),
+        skipError: true);
   }
 }
 
