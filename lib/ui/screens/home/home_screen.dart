@@ -112,6 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletProvider);

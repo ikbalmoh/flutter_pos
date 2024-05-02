@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selleri/data/models/item.dart';
-import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/ui/components/item_variant_picker.dart';
 import 'package:selleri/ui/components/shop_item.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -18,8 +17,6 @@ class ItemContainer extends StatefulWidget {
 }
 
 class _ItemContainerState extends State<ItemContainer> {
-  final CartController cartController = Get.find();
-
   void showVariants(Item item) {
     Get.bottomSheet(ItemVariantPicker(item: item));
   }
@@ -44,9 +41,9 @@ class _ItemContainerState extends State<ItemContainer> {
                   items.length,
                   (index) => ShopItem(
                       item: items[index],
-                      qtyOnCart: cartController.qtyOnCart(items[index].idItem),
-                      onAddToCart: (item) => cartController.addToCart(item),
-                      addQty: (idItem) => cartController.addQty(idItem),
+                      qtyOnCart: 0,
+                      onAddToCart: (item) => {},
+                      addQty: (idItem) => {},
                       showVariants: (item) => showVariants(item)),
                 ),
               );
