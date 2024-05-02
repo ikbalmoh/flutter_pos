@@ -37,7 +37,7 @@ class UserAccount {
   String email;
   List<String> roles;
   Company company;
-  List<Outlet> outlet;
+  List<Outlet>? outlet;
 
   UserAccount({
     required this.idUser,
@@ -46,7 +46,7 @@ class UserAccount {
     required this.email,
     required this.roles,
     required this.company,
-    required this.outlet,
+    this.outlet,
   });
 
   UserAccount.fromJson(Map<dynamic, dynamic> json)
@@ -66,7 +66,7 @@ class UserAccount {
         'email': email,
         'roles': jsonEncode(roles),
         'company': company.toJson(),
-        'outlet': outlet.map((o) => o.toJson()).toList()
+        'outlet': outlet?.map((o) => o.toJson()).toList()
       };
 
   @override

@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/providers/app_start/app_start_provider.dart';
+import 'package:selleri/providers/app_start/app_start_state.dart';
 
 import 'package:selleri/ui/screens/splash/splash_screen.dart';
 import 'package:selleri/ui/screens/login/login_screen.dart';
@@ -13,12 +16,21 @@ import 'routes.dart';
 
 part 'app_router.g.dart';
 
-final _key = GlobalKey<NavigatorState>();
-
 @riverpod
 GoRouter router(RouterRef ref) {
+  final key = GlobalKey<NavigatorState>();
+
+  final appState =
+      ValueNotifier<AsyncValue<AppStartState>>(const AsyncLoading());
+
+  ref
+    ..onDispose(appState.dispose)
+    ..listen(appStartNotifierProvider, (_, next) {
+      appState.value = next;
+    });
+
   return GoRouter(
-      navigatorKey: _key,
+      navigatorKey: key,
       initialLocation: Routes.root,
       routes: [
         GoRoute(
@@ -38,5 +50,23 @@ GoRouter router(RouterRef ref) {
             path: Routes.checkout,
             builder: (context, state) => const CheckoutScreen()),
       ],
-    );
+      refreshListenable: appState,
+      redirect: (context, state) {
+        if (appState.value.isLoading || !appState.value.hasValue) {
+          return Routes.root;
+        }
+        return appState.value.when(
+          data: (appState) {
+            return appState.maybeWhen(
+              initializing: () => Routes.root,
+              authenticated: () => Routes.outlet,
+              selectedOutlet: () => Routes.home,
+              unauthenticated: () => Routes.login,
+              orElse: () => Routes.login,
+            );
+          },
+          error: (e, stack) => Routes.login,
+          loading: () => Routes.root,
+        );
+      });
 }

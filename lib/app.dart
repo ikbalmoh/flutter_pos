@@ -6,9 +6,7 @@ import 'package:selleri/config/theme.dart';
 import 'package:selleri/router/app_router.dart';
 
 class App extends ConsumerWidget {
-  final bool hasToken;
-
-  const App({required this.hasToken, super.key});
+  const App({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -10,6 +10,6 @@ class AppStartState with _$AppStartState {
 
   const factory AppStartState.authenticated() = AppAuthenticated;
   
-  const factory AppStartState.outletSelected() = OutletSelected;
+  const factory AppStartState.selectedOutlet() = AppSelectedOutlet;
 
 }

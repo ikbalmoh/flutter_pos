@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:selleri/data/models/token.dart';
 import 'package:selleri/data/models/user.dart';
 
 class AuthState extends Equatable {
@@ -28,7 +29,7 @@ class UnAuthenticated extends AuthState {
 
 class Authenticated extends AuthState {
   final User user;
-  final String token;
+  final Token token;
 
   const Authenticated({required this.user, required this.token});
 

@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:selleri/app.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/objectbox.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -34,7 +35,6 @@ Future initServices() async {
   };
 
   await dotenv.load(fileName: ".env");
-  await GetStorage.init();
 
   String? deviceId = '';
 
@@ -56,9 +56,10 @@ Future initServices() async {
     print('Device ID: $deviceId');
   }
 
-  GetStorage box = GetStorage();
+  const storage = FlutterSecureStorage();
+
   if (deviceId != null && deviceId.isNotEmpty) {
-    box.write('deviceId', deviceId);
+    storage.write(key: StoreKey.device.toString(), value: deviceId);
   }
 }
 
@@ -67,13 +68,9 @@ Future<void> main() async {
 
   await initServices();
 
-  GetStorage box = GetStorage();
-
   runApp(
-    ProviderScope(
-      child: App(
-        hasToken: box.hasData('token'),
-      ),
+    const ProviderScope(
+      child: App(),
     ),
   );
 }

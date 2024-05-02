@@ -11,26 +11,32 @@ class LoadingWidget extends StatelessWidget {
         ? const Scaffold(
             backgroundColor: Colors.teal,
             body: Center(
-              child: LoadingIndicator(),
+              child: LoadingIndicator(
+                color: Colors.white,
+              ),
             ),
           )
-        : const LoadingIndicator();
+        : const LoadingIndicator(
+            color: Colors.white,
+          );
   }
 }
 
 class LoadingIndicator extends StatelessWidget {
+  final Color? color;
   const LoadingIndicator({
+    required this.color,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       height: 30,
       width: 30,
       child: CircularProgressIndicator(
         strokeWidth: 2,
-        color: Colors.white,
+        color: color ?? Colors.white,
       ),
     );
   }

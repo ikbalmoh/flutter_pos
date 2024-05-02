@@ -110,7 +110,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
                 ),
-                child: Text('add_to_cart'),
+                child: const Text('add_to_cart'),
               )
             ],
           ),

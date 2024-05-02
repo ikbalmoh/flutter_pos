@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/token.dart';
 import 'package:selleri/data/network/api.dart' show AuthApi;
@@ -9,12 +8,15 @@ import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+part 'auth_repository.g.dart';
+
+@riverpod
+AuthRepository authRepository(AuthRepositoryRef ref) => AuthRepository(ref);
+
 abstract class AuthRepositoryProtocol {
   Future<AuthState> login(String username, String password);
   Future<AuthState> logout();
 }
-
-final authRepositoryProvider = Provider(AuthRepository.new);
 
 class AuthRepository implements AuthRepositoryProtocol {
   AuthRepository(this._ref);
@@ -22,7 +24,6 @@ class AuthRepository implements AuthRepositoryProtocol {
   final Ref _ref;
 
   final api = AuthApi();
-  final GetStorage box = GetStorage();
 
   @override
   Future<AuthState> login(String username, String password) async {
@@ -31,11 +32,15 @@ class AuthRepository implements AuthRepositoryProtocol {
     try {
       final response = await api.login(username, password);
 
-      await tokenRepository.saveToken(Token.fromJson(response));
+      final Token token = Token.fromJson(response);
 
-      User user = await getUser();
-      box.write('user', user.toJson());
-      return Authenticated(user: user, token: response['access_token']);
+      await tokenRepository.saveToken(token);
+
+      User? user = await fetchUser();
+      if (user != null) {
+        return Authenticated(user: user, token: token);
+      }
+      return const AuthFailure(message: 'user authentication failed');
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? e.message;
       await tokenRepository.remove();
@@ -46,14 +51,14 @@ class AuthRepository implements AuthRepositoryProtocol {
     }
   }
 
-  Future<User> getUser() async {
+  Future<User?> fetchUser() async {
     final json = await api.user();
     return User.fromJson(json);
   }
 
   @override
   Future<AuthState> logout() async {
-    final TokenRepository tokenRepository = _ref.read(tokenRepositoryProvider);
+    final tokenRepository = _ref.read(tokenRepositoryProvider);
     await tokenRepository.remove();
 
     return Future.delayed(const Duration(seconds: 3), () => UnAuthenticated());

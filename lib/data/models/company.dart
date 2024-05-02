@@ -47,4 +47,9 @@ class Company {
         'locale': locale,
         'status_configured': statusConfigured,
       };
+
+  @override
+  String toString() {
+    return '{id_company: $idCompany, company_name: $companyName}';
+  }
 }

@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:selleri/data/constants/store_key.dart';
+import 'package:selleri/data/models/token.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-final GetStorage box = GetStorage();
+const storage = FlutterSecureStorage();
 
 Dio fetch({bool ignoreBaseUrl = false}) {
   final baseOption = BaseOptions(
@@ -30,12 +32,15 @@ class CustomInterceptors extends Interceptor {
   CustomInterceptors({required this.dio, required this.ignoreBaseUrl});
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    options.headers['device'] = box.read('deviceId');
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    String? deviceId = await storage.read(key: StoreKey.device.toString());
+    options.headers['device'] = deviceId;
 
-    String? accessToken = box.read('access_token');
-    if (accessToken != null) {
-      options.headers['Authorization'] = 'Bearer $accessToken';
+    String? tokenString = await storage.read(key: StoreKey.token.toString());
+    if (tokenString != null) {
+      final Token token = Token.fromJson(json.decode(tokenString));
+      options.headers['Authorization'] = 'Bearer ${token.accessToken}';
     }
 
     if (kDebugMode) {
