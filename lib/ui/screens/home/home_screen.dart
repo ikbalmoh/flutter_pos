@@ -114,6 +114,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    ref.read(itemsStreamProvider().notifier).loadItems();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletProvider);
     final cart = ref.watch(cartProvider);

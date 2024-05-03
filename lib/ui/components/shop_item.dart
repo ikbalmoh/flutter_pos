@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ShopItem extends StatelessWidget {
   final Item item;
@@ -55,10 +56,15 @@ class ShopItem extends StatelessWidget {
                         ? ClipRRect(
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(10)),
-                            child: Image.network(
-                              item.image!,
+                            child: CachedNetworkImage(
+                              imageUrl: item.image!,
                               width: double.maxFinite,
                               fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.blueGrey.shade300,
+                                ),
+                              ),
                             ),
                           )
                         : Center(

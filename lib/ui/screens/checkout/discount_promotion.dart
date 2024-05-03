@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:selleri/utils/formater.dart';
 
 class DiscountPromotion extends StatelessWidget {
@@ -72,7 +71,7 @@ class DiscountItem extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                'discount_transaction'.capitalize!,
+                'Discount Transaction',
                 style: textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
               ),
               const SizedBox(
@@ -133,7 +132,7 @@ class PromotionItem extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  'add_promotion_code'.capitalize!,
+                  'Add Promo Code',
                   style: textTheme.bodyMedium
                       ?.copyWith(color: Colors.grey.shade700),
                 ),
