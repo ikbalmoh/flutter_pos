@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:selleri/utils/formater.dart';
 
 class PaymentDetails extends StatefulWidget {
@@ -50,7 +49,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
             child: Column(
               children: [
                 PaymentItem(
-                  title: 'cash'.capitalize!,
+                  title: 'Cash',
                   icon: Icon(
                     Icons.account_balance_wallet_rounded,
                     color: Colors.green.shade600,
@@ -60,7 +59,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                   grandTotal: widget.grandTotal,
                 ),
                 PaymentItem(
-                  title: 'debit'.capitalize!,
+                  title: 'Debit',
                   icon: Icon(
                     CupertinoIcons.creditcard,
                     color: Colors.amber.shade600,
@@ -70,7 +69,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                   grandTotal: widget.grandTotal,
                 ),
                 PaymentItem(
-                  title: 'credit'.capitalize!,
+                  title: 'Credit',
                   icon: Icon(
                     CupertinoIcons.creditcard_fill,
                     color: Colors.blue.shade600,

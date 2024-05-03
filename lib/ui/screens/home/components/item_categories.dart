@@ -12,8 +12,7 @@ class ItemCategories extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(categoriesProvider.notifier).loadCategory();
-    final categories = ref.watch(categoriesProvider);
+    final categories = ref.watch(categoriesStreamProvider);
     return switch (categories) {
       AsyncData(:final value) => SizedBox(
           height: 55,

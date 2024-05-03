@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/providers/item/category_provider.dart';
+import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
-import 'package:selleri/ui/components/item_container.dart';
+import 'package:selleri/ui/screens/home/components/item_container.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
@@ -41,6 +43,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    ref.read(itemsStreamProvider().notifier).loadItems();
+    super.initState();
   }
 
   @override

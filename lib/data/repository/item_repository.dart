@@ -32,14 +32,20 @@ class ItemRepository implements ItemRepositoryProtocol {
 
   @override
   Future<List<Category>> fetchCategoris() async {
+    final storedCategories = objectBox.categories();
+    if (storedCategories.isNotEmpty) {
+      return storedCategories;
+    }
     try {
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         [];
       }
       final data = await api.categories(outlet!.idOutlet);
-      return List<Category>.from(
+      final categories = List<Category>.from(
           data['data'].map((json) => Category.fromJson(json)));
+      objectBox.putCategories(categories);
+      return categories;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? e.message);
     } on PlatformException catch (e) {
@@ -59,12 +65,18 @@ class ItemRepository implements ItemRepositoryProtocol {
         Item? existItem = objectBox.getItem(json['id_item']);
         json['id'] = existItem?.id ?? 0;
         json['variants'] = json['variants']?.map((variant) {
-          ItemVariant? existVariant = objectBox.itemVariantBox.query(ItemVariant_.idVariant.equals(variant['id_variant'])).build().findFirst();
+          ItemVariant? existVariant = objectBox.itemVariantBox
+              .query(ItemVariant_.idVariant.equals(variant['id_variant']))
+              .build()
+              .findFirst();
           variant['id'] = existVariant?.id ?? 0;
           return variant;
         }).toList();
         json['package_items'] = json['package_items']?.map((package) {
-          ItemPackage? existPackage = objectBox.itemPackageBox.query(ItemPackage_.idItem.equals(package['id_item'])).build().findFirst();
+          ItemPackage? existPackage = objectBox.itemPackageBox
+              .query(ItemPackage_.idItem.equals(package['id_item']))
+              .build()
+              .findFirst();
           package['id'] = existPackage?.id ?? 0;
           return package;
         }).toList();
