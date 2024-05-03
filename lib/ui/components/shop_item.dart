@@ -62,7 +62,7 @@ class ShopItem extends StatelessWidget {
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Center(
                                 child: CircularProgressIndicator(
-                                  color: Colors.blueGrey.shade300,
+                                  backgroundColor: Colors.blueGrey.shade300,
                                 ),
                               ),
                             ),

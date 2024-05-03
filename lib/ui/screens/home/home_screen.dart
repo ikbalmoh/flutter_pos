@@ -31,16 +31,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void onChangeCategory(String id) {
     setState(() {
       idCategory = id;
-      itemStrem = objectBox.itemsStream(idCategory: id);
+      // filter by category
     });
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   void onSearch(String search) {
-    setState(() {
-      itemStrem = objectBox.itemsStream(search: search);
-    });
+    // Filter by search
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
@@ -62,7 +60,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onBack: () => setState(() {
                 searchVisible = false;
                 textEditingController.text = '';
-                itemStrem = objectBox.itemsStream(idCategory: idCategory);
               }),
               controller: textEditingController,
               onChanged: onSearch,
@@ -99,9 +96,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           Expanded(
             child: ItemContainer(
-              stream: itemStrem,
-              scrollController: scrollController,
-            ),
+                scrollController: scrollController, idCategory: idCategory),
           ),
         ],
       ),

@@ -9,10 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 
 class ItemContainer extends ConsumerWidget {
-  final Stream<List<Item>> stream;
   final ScrollController? scrollController;
 
-  const ItemContainer({required this.stream, this.scrollController, super.key});
+  final String idCategory;
+
+  const ItemContainer({this.scrollController, required this.idCategory, super.key});
 
   void showVariants(BuildContext context, Item item) {
     showModalBottomSheet(
@@ -25,7 +26,7 @@ class ItemContainer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTablet = ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET);
-    final items = ref.watch(itemsStreamProvider());
+    final items = ref.watch(itemsStreamProvider(idCategory: idCategory));
     return switch (items) {
       AsyncData(:final value) => value.isNotEmpty
           ? GridView.count(
