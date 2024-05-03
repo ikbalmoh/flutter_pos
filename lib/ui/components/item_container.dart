@@ -1,31 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/ui/components/item_variant_picker.dart';
 import 'package:selleri/ui/components/shop_item.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ItemContainer extends StatefulWidget {
+class ItemContainer extends ConsumerWidget {
   final Stream<List<Item>> stream;
   final ScrollController? scrollController;
 
   const ItemContainer({required this.stream, this.scrollController, super.key});
 
-  @override
-  State<ItemContainer> createState() => _ItemContainerState();
-}
-
-class _ItemContainerState extends State<ItemContainer> {
-  void showVariants(Item item) {
-    Get.bottomSheet(ItemVariantPicker(item: item));
+  void showVariants(BuildContext context, Item item) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return ItemVariantPicker(item: item);
+        });
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isTablet = ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET);
     return StreamBuilder<List<Item>>(
-        stream: widget.stream,
+        stream: stream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
@@ -36,22 +35,23 @@ class _ItemContainerState extends State<ItemContainer> {
                 padding: const EdgeInsets.all(7.5),
                 crossAxisSpacing: 7.5,
                 mainAxisSpacing: 7.5,
-                controller: widget.scrollController,
+                controller: scrollController,
                 children: List.generate(
                   items.length,
                   (index) => ShopItem(
-                      item: items[index],
-                      qtyOnCart: 0,
-                      onAddToCart: (item) => {},
-                      addQty: (idItem) => {},
-                      showVariants: (item) => showVariants(item)),
+                    item: items[index],
+                    qtyOnCart: 0,
+                    onAddToCart: (item) => {},
+                    addQty: (idItem) => {},
+                    showVariants: (item) => showVariants(context, item),
+                  ),
                 ),
               );
             }
 
             return SingleChildScrollView(
               padding: const EdgeInsets.only(top: 200),
-              controller: widget.scrollController,
+              controller: scrollController,
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,

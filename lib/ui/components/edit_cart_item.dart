@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:selleri/data/models/item_cart.dart';
-import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/ui/components/discount_type_toggle.dart';
 import 'package:selleri/ui/components/qty_editor.dart';
 import 'package:selleri/utils/app.dart';
@@ -17,8 +15,6 @@ class EditCartItem extends StatefulWidget {
 }
 
 class _EditCartItemState extends State<EditCartItem> {
-  CartController cartController = Get.find();
-
   final noteController = TextEditingController();
   final priceController = TextEditingController();
   final discountController = TextEditingController();
@@ -30,7 +26,7 @@ class _EditCartItemState extends State<EditCartItem> {
 
   @override
   void initState() {
-    noteController.text = widget.item.note;
+    noteController.text = widget.item.note ?? '';
     priceController.text = widget.item.price.toString();
     discountController.text = widget.item.discount.toString();
 
@@ -89,19 +85,21 @@ class _EditCartItemState extends State<EditCartItem> {
   }
 
   void submitUpdate(ItemCart item) async {
-    int total = await cartController.updateCartItem(item);
-    Get.back(closeOverlays: total == 0);
+    // Submit update
+    // close overlay
   }
 
   void onUpdateItem() async {
-    ItemCart item = widget.item;
-    item.quantity = qty;
-    item.price = price;
-    item.discount = discount;
-    item.discountIsPercent = discountIsPercent;
-    item.discountTotal = discountTotal();
-    item.total = total();
-    item.note = noteController.text;
+    ItemCart item = widget.item.copyWith(
+      quantity: qty,
+      price: price,
+      discount: discount,
+      discountIsPercent: discountIsPercent,
+      discountTotal: discountTotal(),
+      total: total(),
+      note: noteController.text,
+    );
+    // Update Item
     submitUpdate(item);
   }
 
@@ -112,10 +110,7 @@ class _EditCartItemState extends State<EditCartItem> {
         confirmLabel: 'delete',
         danger: true,
         onConfirm: () {
-          Get.back();
-          ItemCart item = widget.item;
-          item.quantity = 0;
-          submitUpdate(item);
+          // Close Overlay
         });
   }
 
@@ -172,11 +167,11 @@ class _EditCartItemState extends State<EditCartItem> {
                       const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'price'.capitalizeFirst!,
+                    'price',
                     style: labelStyle,
                   ),
                   prefix: Text(
-                    'price'.capitalizeFirst!,
+                    'price',
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,
@@ -206,7 +201,7 @@ class _EditCartItemState extends State<EditCartItem> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'quantity'.capitalizeFirst!,
+                      'quantity',
                       style: labelStyle,
                     ),
                     QtyEditor(
@@ -229,11 +224,11 @@ class _EditCartItemState extends State<EditCartItem> {
                       const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'discount'.capitalizeFirst!,
+                    'discount',
                     style: labelStyle,
                   ),
                   prefix: Text(
-                    'discount'.capitalizeFirst!,
+                    'discount',
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,
@@ -265,7 +260,7 @@ class _EditCartItemState extends State<EditCartItem> {
                       left: 0, top: 15, right: 0, bottom: 15),
                   // floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'note'.capitalizeFirst!,
+                    'Note',
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,
