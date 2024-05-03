@@ -52,22 +52,43 @@ GoRouter router(RouterRef ref) {
       ],
       refreshListenable: appState,
       redirect: (context, state) {
-        if (appState.value.isLoading || !appState.value.hasValue) {
-          return Routes.root;
+        final currentRoute = state.topRoute?.path;
+
+        if (kDebugMode) {
+          print(
+              'ROUTE: app state: ${appState.value}, loading: ${appState.value.isLoading}');
         }
-        return appState.value.when(
+
+        if (appState.value.isLoading) {
+          return null;
+        }
+
+        final destinyRoute = appState.value.when(
           data: (appState) {
-            print('APP STATE: $appState');
-            return appState.maybeWhen(
+            final redirectRoute = appState.maybeWhen(
               initializing: () => Routes.root,
               authenticated: () => Routes.outlet,
               selectedOutlet: () => Routes.home,
               unauthenticated: () => Routes.login,
               orElse: () => Routes.login,
             );
+            return redirectRoute;
           },
           error: (e, stack) => Routes.login,
           loading: () => Routes.root,
         );
+
+        final shouldRedirect = currentRoute != destinyRoute;
+
+        if (kDebugMode) {
+          print(
+              'ROUTE: current = $currentRoute | destiny = $destinyRoute | should redirect = $shouldRedirect');
+        }
+
+        if (currentRoute != destinyRoute) {
+          return destinyRoute;
+        }
+
+        return null;
       });
 }

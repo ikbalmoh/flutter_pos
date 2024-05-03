@@ -1,37 +1,25 @@
-class ItemCart {
-  final String identifier;
-  final String idItem;
-  final String itemName;
-  final bool isPackage;
-  final bool isManualPrice;
-  double price;
-  bool manualDiscount;
-  int quantity;
-  double discount;
-  bool discountIsPercent;
-  double discountTotal;
-  String note;
-  DateTime addedAt;
-  double total;
-  num? idVariant;
-  String? variantName;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  ItemCart({
-    required this.identifier,
-    required this.idItem,
-    required this.itemName,
-    required this.price,
-    required this.isPackage,
-    required this.manualDiscount,
-    required this.isManualPrice,
-    required this.quantity,
-    required this.discount,
-    required this.discountIsPercent,
-    required this.discountTotal,
-    required this.note,
-    required this.addedAt,
-    required this.total,
-    this.idVariant,
-    this.variantName,
-  });
+part 'item_cart.freezed.dart';
+
+@freezed
+class ItemCart with _$ItemCart {
+  const factory ItemCart({
+    required String identifier,
+    required String idItem,
+    required String itemName,
+    required bool isPackage,
+    required bool isManualPrice,
+    required double price,
+    required bool manualDiscount,
+    required int quantity,
+    required double discount,
+    required bool discountIsPercent,
+    required double discountTotal,
+    required DateTime addedAt,
+    required double total,
+    required String note,
+    num? idVariant,
+    String? variantName,
+  }) = _ItemCart;
 }

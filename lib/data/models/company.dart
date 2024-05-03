@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Company {
   String idCompany;
   String companyName;
@@ -50,6 +52,7 @@ class Company {
 
   @override
   String toString() {
-    return '{id_company: $idCompany, company_name: $companyName}';
+    final jsonToken = toJson();
+    return json.encode(jsonToken);
   }
 }

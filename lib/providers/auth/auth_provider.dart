@@ -1,6 +1,4 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/data/models/token.dart';
-import 'package:selleri/data/models/user.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'auth_state.dart';
@@ -28,10 +26,9 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> login(String username, String password) async {
     state = AsyncData(Authenticating());
-    final auth = await _authRepoistory.login(username, password);
-    state = AsyncData(auth);
+    state = AsyncData(await _authRepoistory.login(username, password));
   }
-  
+
   Future<void> logout() async {
     await _tokenRepository.remove();
     state = AsyncData(await _authRepoistory.logout());

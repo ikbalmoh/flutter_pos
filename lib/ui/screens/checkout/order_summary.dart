@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+// import 'package:get/get.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -43,9 +43,9 @@ class OrderItem extends StatelessWidget {
                     CurrencyFormat.currency(item.price - item.discountTotal),
                     style: textTheme.bodySmall?.copyWith(fontSize: 14),
                   ),
-                  item.note.isNotEmpty
+                  item.note != null
                       ? Text(
-                          item.note,
+                          item.note ?? '',
                           style: textTheme.bodySmall,
                         )
                       : Container(),
@@ -109,7 +109,7 @@ class OrderSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'subtotal'.capitalize!,
+                  'Subtotal',
                   style: textTheme.bodyMedium
                       ?.copyWith(color: Colors.grey.shade700),
                 ),

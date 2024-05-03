@@ -2,26 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:selleri/data/models/item_cart.dart';
-import 'package:selleri/modules/cart/cart.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart_item.dart';
 import 'package:selleri/ui/components/edit_cart_item.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CartScreen extends StatefulWidget {
+class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
 
-  @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  CartController controller = Get.find();
-
-  void onPressItem(ItemCart item) => Get.bottomSheet(EditCartItem(item: item));
+  void onPressItem(BuildContext context, ItemCart item) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) => EditCartItem(item: item));
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cart = ref.watch(cartNotiferProvider);
     return Obx(
       () => Scaffold(
         backgroundColor: Colors.blueGrey.shade50,
@@ -35,13 +34,13 @@ class _CartScreenState extends State<CartScreen> {
             Expanded(
               child: ListView.builder(
                 itemBuilder: (context, idx) {
-                  ItemCart item = controller.cart!.items[idx];
+                  ItemCart item = cart.items[idx];
                   return CartItem(
                     item: item,
-                    onPress: onPressItem,
+                    onPress: (it) => onPressItem(context, it),
                   );
                 },
-                itemCount: controller.cart!.items.length,
+                itemCount: cart.items.length,
               ),
             ),
             Card(
@@ -66,7 +65,7 @@ class _CartScreenState extends State<CartScreen> {
                             style: TextStyle(color: Colors.blueGrey.shade700),
                           ),
                           Text(
-                            CurrencyFormat.currency(controller.cart?.subtotal),
+                            CurrencyFormat.currency(cart.subtotal),
                             style: Theme.of(context).textTheme.bodyLarge,
                           )
                         ],

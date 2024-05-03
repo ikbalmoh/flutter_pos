@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:selleri/modules/cart/cart.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion.dart';
 import 'package:selleri/ui/screens/checkout/order_summary.dart';
 import 'package:selleri/ui/screens/checkout/payment.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends ConsumerWidget {
   const CheckoutScreen({super.key});
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
-}
-
-class _CheckoutScreenState extends State<CheckoutScreen> {
-  CartController controller = Get.find();
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cart = ref.watch(cartNotiferProvider);
     return Scaffold(
         backgroundColor: Colors.blueGrey.shade50,
         appBar: AppBar(
-          title: Text('checkout'.capitalizeFirst!),
+          title: const Text('Checkout'),
           actions: [
             IconButton(
                 onPressed: () {}, icon: const Icon(Icons.more_vert_rounded))
@@ -40,14 +35,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       height: 7,
                     ),
                     OrderSummary(
-                      items: controller.cart!.items,
-                      subtotal: controller.cart!.subtotal!,
+                      items: cart.items,
+                      subtotal: cart.subtotal,
                     ),
                     const SizedBox(
                       height: 7,
                     ),
                     const DiscountPromotion(),
-                    PaymentDetails(grandTotal: controller.cart!.grandTotal ?? 0,)
+                    PaymentDetails(
+                      grandTotal: cart.grandTotal,
+                    )
                   ],
                 ),
               ),
@@ -66,12 +63,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'total'.capitalize!,
+                            'total',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                          Text(
-                              CurrencyFormat.currency(
-                                  controller.cart!.subtotal),
+                          Text(CurrencyFormat.currency(cart.subtotal),
                               style: Theme.of(context).textTheme.bodyLarge),
                         ],
                       ),

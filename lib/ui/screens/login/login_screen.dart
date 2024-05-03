@@ -26,6 +26,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void _submitLogin() {
     if (_formKey.currentState!.validate()) {
       // SUBMIT
+      ref
+          .read(authNotifierProvider.notifier)
+          .login(_usernameController.text, _passwordController.text);
     }
   }
 
@@ -98,17 +101,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
-                    onPressed: state is Authenticating
+                    onPressed: state.value is Authenticating
                         ? null
                         : () {
                             if (_formKey.currentState!.validate()) {
-                              ref.read(authNotifierProvider.notifier).login(
-                                  _usernameController.text,
-                                  _passwordController.text);
+                              _submitLogin();
                             }
                           },
                     label: const Text('Login'),
-                    icon: state is Authenticating
+                    icon: state.value is Authenticating
                         ? const SizedBox(
                             height: 20,
                             width: 20,

@@ -71,6 +71,7 @@ class UserAccount {
 
   @override
   String toString() {
-    return "{id_user: $idUser, name: $name, email: $email, roles: $roles, company: $company, outlet: $outlet}";
+    final jsonToken = toJson();
+    return json.encode(jsonToken);
   }
 }

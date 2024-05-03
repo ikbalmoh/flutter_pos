@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
-import 'package:selleri/modules/cart/cart.dart';
 import 'package:selleri/utils/formater.dart';
 
 class ItemVariantPicker extends StatefulWidget {
@@ -14,13 +12,11 @@ class ItemVariantPicker extends StatefulWidget {
 }
 
 class _ItemVariantPickerState extends State<ItemVariantPicker> {
-  CartController controller = Get.find();
-
   ItemVariant? selected;
 
   void onAddToCart() {
-    controller.addToCart(widget.item, variant: selected);
-    Get.back();
+    // Add to cart
+    // Back
   }
 
   @override
@@ -60,7 +56,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     GestureDetector(
-                      onTap: () => Get.back(),
+                      onTap: () => {},
                       child: Icon(
                         Icons.close,
                         color: Colors.grey.shade500,
@@ -74,7 +70,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                 height: 7.5,
               ),
               Text(
-                'variants'.capitalize!,
+                'Variants',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
