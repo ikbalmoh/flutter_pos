@@ -12,8 +12,14 @@ class ItemContainer extends ConsumerWidget {
   final ScrollController? scrollController;
 
   final String idCategory;
+  final String search;
 
-  const ItemContainer({this.scrollController, required this.idCategory, super.key});
+  const ItemContainer({
+    this.scrollController,
+    required this.idCategory,
+    required this.search,
+    super.key,
+  });
 
   void showVariants(BuildContext context, Item item) {
     showModalBottomSheet(
@@ -26,7 +32,8 @@ class ItemContainer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTablet = ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET);
-    final items = ref.watch(itemsStreamProvider(idCategory: idCategory));
+    final items =
+        ref.watch(itemsStreamProvider(idCategory: idCategory, search: search));
     return switch (items) {
       AsyncData(:final value) => value.isNotEmpty
           ? GridView.count(

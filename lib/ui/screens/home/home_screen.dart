@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/models/item.dart';
-import 'package:selleri/providers/item/category_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
@@ -22,6 +21,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void onSignOut() {}
 
   String idCategory = '';
+  String search = '';
+
   bool searchVisible = false;
   TextEditingController textEditingController = TextEditingController();
   ScrollController scrollController = ScrollController();
@@ -37,7 +38,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
-  void onSearch(String search) {
+  void onSearch(String value) {
+    setState(() {
+      search = value;
+    });
     // Filter by search
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
@@ -60,6 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onBack: () => setState(() {
                 searchVisible = false;
                 textEditingController.text = '';
+                search = '';
               }),
               controller: textEditingController,
               onChanged: onSearch,
@@ -96,7 +101,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           Expanded(
             child: ItemContainer(
-                scrollController: scrollController, idCategory: idCategory),
+              scrollController: scrollController,
+              idCategory: idCategory,
+              search: search,
+            ),
           ),
         ],
       ),
