@@ -32,7 +32,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
       margin: const EdgeInsets.all(0),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, top: 10),
+          padding: const EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 15),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -106,7 +106,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
                 ),
-                child: const Text('add_to_cart'),
+                child: const Text('PILIH'),
               )
             ],
           ),

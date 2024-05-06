@@ -159,6 +159,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       ],
     );
 
+    final int itemsOnCart = ref.watch(cartNotiferProvider).items.length;
+
     return Scaffold(
       appBar: searchVisible
           ? SearchAppBar(
