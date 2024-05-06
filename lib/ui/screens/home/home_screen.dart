@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
@@ -58,6 +59,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletNotifierProvider);
 
+    final int itemsOnCart = ref.watch(cartNotiferProvider).items.length;
+
     return Scaffold(
       appBar: searchVisible
           ? SearchAppBar(
@@ -108,24 +111,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        tooltip: 'cart',
-        onPressed: () => {},
-        label: Text(
-          CurrencyFormat.currency(0),
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge
-              ?.copyWith(color: Colors.white),
-        ),
-        extendedIconLabelSpacing: 20,
-        icon: const Badge(
-          label: Text(
-            '0',
-          ),
-          child: Icon(CupertinoIcons.shopping_cart),
-        ),
-      ),
+      floatingActionButton: itemsOnCart > 0
+          ? FloatingActionButton.extended(
+              tooltip: 'cart',
+              onPressed: () => {},
+              label: Text(
+                CurrencyFormat.currency(0),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(color: Colors.white),
+              ),
+              extendedIconLabelSpacing: 20,
+              icon: Badge(
+                label: Text(
+                  itemsOnCart.toString(),
+                ),
+                child: const Icon(CupertinoIcons.shopping_cart),
+              ),
+            )
+          : Container(),
     );
   }
 }

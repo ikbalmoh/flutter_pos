@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/ui/components/item_variant_picker.dart';
 import 'package:selleri/ui/components/shop_item.dart';
@@ -45,13 +47,27 @@ class ItemContainer extends ConsumerWidget {
               controller: scrollController,
               children: List.generate(
                 value.length,
-                (index) => ShopItem(
-                  item: value[index],
-                  qtyOnCart: 0,
-                  onAddToCart: (item) => {},
-                  addQty: (idItem) => {},
-                  showVariants: (item) => showVariants(context, item),
-                ),
+                (index) {
+                  final item = value[index];
+                  int qty = 0;
+                  final cartItem = ref
+                      .watch(cartNotiferProvider)
+                      .items
+                      .firstWhereOrNull((i) => i.idItem == item.idItem);
+                  if (cartItem != null) {
+                    qty = ref
+                        .read(cartNotiferProvider.notifier)
+                        .qtyOnCart(item.idItem);
+                  }
+                  return ShopItem(
+                    item: item,
+                    qtyOnCart: qty,
+                    onAddToCart: (item) =>
+                        ref.read(cartNotiferProvider.notifier).addToCart(item),
+                    addQty: (idItem) => {},
+                    showVariants: (item) => showVariants(context, item),
+                  );
+                },
               ),
             )
           : SingleChildScrollView(

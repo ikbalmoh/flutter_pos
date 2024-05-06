@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -54,7 +55,10 @@ class CartNotifer extends _$CartNotifer {
       idVariant: variant?.idVariant,
       variantName: variant?.variantName ?? '',
     );
-    var items = state.items;
+    if (kDebugMode) {
+      print('ADD TO CART: $itemCart');
+    }
+    var items = [...state.items];
     items.add(itemCart);
     state = state.copyWith(items: items);
   }

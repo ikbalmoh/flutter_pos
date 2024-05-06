@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/app.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -57,6 +58,8 @@ Future initServices() async {
   }
 
   const storage = FlutterSecureStorage();
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   if (deviceId != null && deviceId.isNotEmpty) {
     storage.write(key: StoreKey.device.toString(), value: deviceId);
