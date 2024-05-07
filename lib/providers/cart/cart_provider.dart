@@ -33,9 +33,13 @@ class CartNotifer extends _$CartNotifer {
     } else if (variant != null) {
       identifier += '-v${variant.idVariant.toString()}';
     }
-    int idx = state.items.indexWhere((i) => i.identifier == identifier);
 
-    if (idx > -1) return updateQty(identifier);
+    final existItem =
+        state.items.firstWhereOrNull((i) => i.identifier == identifier);
+
+    if (existItem != null) {
+      return updateItem(existItem.copyWith(quantity: existItem.quantity + 1));
+    }
 
     ItemCart itemCart = ItemCart(
       identifier: identifier,
@@ -61,18 +65,33 @@ class CartNotifer extends _$CartNotifer {
     var items = [...state.items];
     items.add(itemCart);
     state = state.copyWith(items: items);
+    calculateCart();
   }
 
   void updateQty(String identifier, {bool increment = true}) {
-    ItemCart? item =
-        state.items.firstWhereOrNull((i) => i.identifier == identifier);
-    if (item != null) {
-      item = item.copyWith(
-        quantity: increment ? item.quantity + 1 : item.quantity - 1,
-      );
-      state = state.copyWith(
-          items: state.items
-            ..map((it) => it.identifier == identifier ? item : it));
+    final index = state.items.indexWhere((i) => i.idItem == identifier);
+    if (index > -1) {
+      List<ItemCart> items = [...state.items];
+      ItemCart item = items[index];
+      int quantity = increment ? item.quantity + 1 : item.quantity - 1;
+      double finalPrice = item.price - item.discountTotal;
+      items[index] =
+          item.copyWith(quantity: quantity, total: quantity * finalPrice);
+      state = state.copyWith(items: items);
+      calculateCart();
+    }
+  }
+
+  void updateItem(ItemCart item) {
+    final index =
+        state.items.indexWhere((i) => i.identifier == item.identifier);
+    if (index > -1) {
+      List<ItemCart> items = [...state.items];
+      double finalPrice = item.price - item.discountTotal;
+      double total = item.quantity * finalPrice;
+      items[index] = item.copyWith(total: total);
+      state = state.copyWith(items: items);
+      calculateCart();
     }
   }
 

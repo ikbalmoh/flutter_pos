@@ -35,9 +35,7 @@ class App extends ConsumerWidget {
         ],
         child: child!,
       ),
-      routeInformationParser: router.routeInformationParser,
-      routerDelegate: router.routerDelegate,
-      routeInformationProvider: router.routeInformationProvider,
+      routerConfig: router,
     );
   }
 }

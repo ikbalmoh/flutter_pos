@@ -4,12 +4,14 @@ import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/screens/home/components/item_container.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -58,8 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletNotifierProvider);
-
-    final int itemsOnCart = ref.watch(cartNotiferProvider).items.length;
+    final cart = ref.watch(cartNotiferProvider);
 
     return Scaffold(
       appBar: searchVisible
@@ -111,12 +112,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: itemsOnCart > 0
+      floatingActionButton: cart.items.isNotEmpty
           ? FloatingActionButton.extended(
               tooltip: 'cart',
-              onPressed: () => {},
+              onPressed: () => context.push(Routes.cart),
               label: Text(
-                CurrencyFormat.currency(0),
+                CurrencyFormat.currency(cart.subtotal),
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
@@ -125,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               extendedIconLabelSpacing: 20,
               icon: Badge(
                 label: Text(
-                  itemsOnCart.toString(),
+                  cart.items.length.toString(),
                 ),
                 child: const Icon(CupertinoIcons.shopping_cart),
               ),

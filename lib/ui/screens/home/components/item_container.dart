@@ -23,11 +23,16 @@ class ItemContainer extends ConsumerWidget {
     super.key,
   });
 
-  void showVariants(BuildContext context, Item item) {
+  void showVariants(BuildContext context, Item item, WidgetRef ref) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return ItemVariantPicker(item: item);
+          return ItemVariantPicker(
+            item: item,
+            onSelect: (variant) => ref
+                .read(cartNotiferProvider.notifier)
+                .addToCart(item, variant: variant),
+          );
         });
   }
 
@@ -64,8 +69,10 @@ class ItemContainer extends ConsumerWidget {
                     qtyOnCart: qty,
                     onAddToCart: (item) =>
                         ref.read(cartNotiferProvider.notifier).addToCart(item),
-                    addQty: (idItem) => {},
-                    showVariants: (item) => showVariants(context, item),
+                    addQty: (idItem) => ref
+                        .read(cartNotiferProvider.notifier)
+                        .updateQty(idItem),
+                    showVariants: (item) => showVariants(context, item, ref),
                   );
                 },
               ),

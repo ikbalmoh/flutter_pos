@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/objectbox.g.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
 
@@ -56,19 +57,22 @@ GoRouter router(RouterRef ref) {
 
         if (kDebugMode) {
           print(
-              'ROUTE: app state: ${appState.value}, loading: ${appState.value.isLoading}');
+              'ROUTE STATE:\napp : ${appState.value.asData}\nroute: ${state.topRoute}');
         }
 
         if (appState.value.isLoading) {
           return null;
         }
 
-        final destinyRoute = appState.value.when(
+        final redirectRoute = appState.value.when(
           data: (appState) {
             final redirectRoute = appState.maybeWhen(
               initializing: () => Routes.root,
               authenticated: () => Routes.outlet,
-              selectedOutlet: () => Routes.home,
+              selectedOutlet: () => [Routes.root, Routes.login, Routes.outlet]
+                      .contains(currentRoute)
+                  ? Routes.home
+                  : null,
               unauthenticated: () => Routes.login,
               orElse: () => Routes.login,
             );
@@ -78,15 +82,16 @@ GoRouter router(RouterRef ref) {
           loading: () => Routes.root,
         );
 
-        final shouldRedirect = currentRoute != destinyRoute;
+        final shouldRedirect =
+            redirectRoute != null ? currentRoute != redirectRoute : false;
 
         if (kDebugMode) {
           print(
-              'ROUTE: current = $currentRoute | destiny = $destinyRoute | should redirect = $shouldRedirect');
+              'ROUTE: current = $currentRoute | redirect = $redirectRoute | should redirect = $shouldRedirect');
         }
 
-        if (currentRoute != destinyRoute) {
-          return destinyRoute;
+        if (shouldRedirect) {
+          return redirectRoute;
         }
 
         return null;

@@ -26,7 +26,7 @@ class _EditCartItemState extends State<EditCartItem> {
 
   @override
   void initState() {
-    noteController.text = widget.item.note ?? '';
+    noteController.text = widget.item.note;
     priceController.text = widget.item.price.toString();
     discountController.text = widget.item.discount.toString();
 
