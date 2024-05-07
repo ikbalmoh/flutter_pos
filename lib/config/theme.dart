@@ -18,10 +18,7 @@ ThemeData appTheme(BuildContext context) {
       foregroundColor: Colors.white,
       backgroundColor: Colors.teal.shade400,
       titleTextStyle: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.w700,
-        fontSize: 20
-      ),
+          color: Colors.white, fontWeight: FontWeight.w700, fontSize: 20),
       actionsIconTheme: const IconThemeData(
         color: Colors.white,
       ),
@@ -42,12 +39,10 @@ ThemeData appTheme(BuildContext context) {
       labelLarge: TextStyle(fontWeight: FontWeight.w600),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Colors.teal,
-      foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(999))
-      )
-    ),
+        backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(999)))),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: MaterialStateProperty.resolveWith<Size>(
@@ -124,5 +119,32 @@ ThemeData appTheme(BuildContext context) {
         horizontal: 15,
       ),
     ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: SlidePageTransition(),
+        TargetPlatform.iOS: SlidePageTransition(),
+      },
+    ),
   );
+}
+
+class SlidePageTransition extends PageTransitionsBuilder {
+  const SlidePageTransition();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(1, 0),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    );
+  }
 }

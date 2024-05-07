@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
@@ -41,6 +40,8 @@ class ItemContainer extends ConsumerWidget {
     final isTablet = ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET);
     final items =
         ref.watch(itemsStreamProvider(idCategory: idCategory, search: search));
+    final cartItems = ref.watch(cartNotiferProvider).items;
+
     return switch (items) {
       AsyncData(:final value) => value.isNotEmpty
           ? GridView.count(
@@ -54,19 +55,12 @@ class ItemContainer extends ConsumerWidget {
                 value.length,
                 (index) {
                   final item = value[index];
-                  int qty = 0;
-                  final cartItem = ref
-                      .watch(cartNotiferProvider)
-                      .items
-                      .firstWhereOrNull((i) => i.idItem == item.idItem);
-                  if (cartItem != null) {
-                    qty = ref
-                        .read(cartNotiferProvider.notifier)
-                        .qtyOnCart(item.idItem);
-                  }
+                  int qtyOnCart = ref
+                      .read(cartNotiferProvider.notifier)
+                      .qtyOnCart(item.idItem);
                   return ShopItem(
                     item: item,
-                    qtyOnCart: qty,
+                    qtyOnCart: qtyOnCart,
                     onAddToCart: (item) =>
                         ref.read(cartNotiferProvider.notifier).addToCart(item),
                     addQty: (idItem) => ref
