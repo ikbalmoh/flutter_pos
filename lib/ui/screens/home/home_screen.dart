@@ -24,6 +24,7 @@ import 'package:selleri/ui/screens/home/components/item_container.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

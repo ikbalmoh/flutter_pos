@@ -42,9 +42,9 @@ class OrderItem extends StatelessWidget {
                     CurrencyFormat.currency(item.price - item.discountTotal),
                     style: textTheme.bodySmall?.copyWith(fontSize: 14),
                   ),
-                  item.note != null
+                  item.note != ''
                       ? Text(
-                          item.note ?? '',
+                          item.note,
                           style: textTheme.bodySmall,
                         )
                       : Container(),

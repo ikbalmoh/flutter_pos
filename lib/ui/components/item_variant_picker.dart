@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:go_router/go_router.dart';
 
 class ItemVariantPicker extends StatefulWidget {
   final Item item;
-  const ItemVariantPicker({super.key, required this.item});
+  final Function(ItemVariant) onSelect;
+
+  const ItemVariantPicker(
+      {super.key, required this.item, required this.onSelect});
 
   @override
   State<ItemVariantPicker> createState() => _ItemVariantPickerState();
@@ -14,9 +18,9 @@ class ItemVariantPicker extends StatefulWidget {
 class _ItemVariantPickerState extends State<ItemVariantPicker> {
   ItemVariant? selected;
 
-  void onAddToCart() {
-    // Add to cart
-    // Back
+  void onAddToCart(BuildContext context, ItemVariant variant) {
+    widget.onSelect(variant);
+    context.pop();
   }
 
   @override
@@ -32,7 +36,8 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
       margin: const EdgeInsets.all(0),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 15),
+          padding:
+              const EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 15),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -100,7 +105,9 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                 height: 7.5,
               ),
               ElevatedButton(
-                onPressed: selected != null ? onAddToCart : null,
+                onPressed: selected != null
+                    ? () => onAddToCart(context, selected!)
+                    : null,
                 style: ElevatedButton.styleFrom(
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
