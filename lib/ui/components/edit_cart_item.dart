@@ -1,20 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/discount_type_toggle.dart';
 import 'package:selleri/ui/components/qty_editor.dart';
 import 'package:selleri/utils/app.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class EditCartItem extends StatefulWidget {
+class EditCartItem extends ConsumerStatefulWidget {
   final ItemCart item;
   const EditCartItem({super.key, required this.item});
 
   @override
-  State<EditCartItem> createState() => _EditCartItemState();
+  ConsumerState<EditCartItem> createState() => _EditCartItemState();
 }
 
-class _EditCartItemState extends State<EditCartItem> {
+class _EditCartItemState extends ConsumerState<EditCartItem> {
   final noteController = TextEditingController();
   final priceController = TextEditingController();
   final discountController = TextEditingController();
@@ -84,12 +87,7 @@ class _EditCartItemState extends State<EditCartItem> {
     return total;
   }
 
-  void submitUpdate(ItemCart item) async {
-    // Submit update
-    // close overlay
-  }
-
-  void onUpdateItem() async {
+  void onUpdateItem(BuildContext context) async {
     ItemCart item = widget.item.copyWith(
       quantity: qty,
       price: price,
@@ -100,7 +98,8 @@ class _EditCartItemState extends State<EditCartItem> {
       note: noteController.text,
     );
     // Update Item
-    submitUpdate(item);
+    ref.read(cartNotiferProvider.notifier).updateItem(item);
+    context.pop();
   }
 
   void onDelete() {
@@ -136,7 +135,7 @@ class _EditCartItemState extends State<EditCartItem> {
       margin: const EdgeInsets.all(0),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, top: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -161,6 +160,7 @@ class _EditCartItemState extends State<EditCartItem> {
                 controller: priceController,
                 readOnly: widget.item.isManualPrice,
                 textAlign: TextAlign.right,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   enabled: !widget.item.isManualPrice,
                   contentPadding:
@@ -218,6 +218,7 @@ class _EditCartItemState extends State<EditCartItem> {
                 controller: discountController,
                 readOnly: !widget.item.manualDiscount,
                 textAlign: TextAlign.right,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   enabled: widget.item.manualDiscount,
                   contentPadding:
@@ -307,7 +308,7 @@ class _EditCartItemState extends State<EditCartItem> {
                             ),
                           ),
                         ),
-                        onPressed: () => onUpdateItem(),
+                        onPressed: () => onUpdateItem(context),
                         icon: const Icon(CupertinoIcons.checkmark_alt),
                         label: Text(
                           CurrencyFormat.currency(total()),
