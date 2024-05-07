@@ -40,7 +40,6 @@ class ItemContainer extends ConsumerWidget {
     final isTablet = ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET);
     final items =
         ref.watch(itemsStreamProvider(idCategory: idCategory, search: search));
-    final cartItems = ref.watch(cartNotiferProvider).items;
 
     return switch (items) {
       AsyncData(:final value) => value.isNotEmpty
@@ -54,7 +53,7 @@ class ItemContainer extends ConsumerWidget {
               children: List.generate(
                 value.length,
                 (index) {
-                  final item = value[index];
+                  final Item item = value[index];
                   int qtyOnCart = ref
                       .read(cartNotiferProvider.notifier)
                       .qtyOnCart(item.idItem);

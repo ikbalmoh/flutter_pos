@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/item.dart';
@@ -34,10 +33,11 @@ class CartNotifer extends _$CartNotifer {
       identifier += '-v${variant.idVariant.toString()}';
     }
 
-    final existItem =
-        state.items.firstWhereOrNull((i) => i.identifier == identifier);
+    final int cartIndex =
+        state.items.indexWhere((i) => i.identifier == identifier);
 
-    if (existItem != null) {
+    if (cartIndex > -1) {
+      final ItemCart existItem = state.items[cartIndex];
       return updateItem(existItem.copyWith(quantity: existItem.quantity + 1));
     }
 

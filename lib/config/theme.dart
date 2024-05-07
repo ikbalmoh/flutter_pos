@@ -24,8 +24,8 @@ ThemeData appTheme(BuildContext context) {
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.teal.shade400,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
       ),
     ),
     textTheme: const TextTheme(

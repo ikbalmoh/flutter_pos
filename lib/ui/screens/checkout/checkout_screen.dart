@@ -13,7 +13,7 @@ class CheckoutScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cart = ref.watch(cartNotiferProvider);
     return Scaffold(
-        backgroundColor: Colors.blueGrey.shade50,
+        backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
           title: const Text('Checkout'),
           actions: [
@@ -34,10 +34,7 @@ class CheckoutScreen extends ConsumerWidget {
                     const SizedBox(
                       height: 7,
                     ),
-                    OrderSummary(
-                      items: cart.items,
-                      subtotal: cart.subtotal,
-                    ),
+                    const OrderSummary(),
                     const SizedBox(
                       height: 7,
                     ),
@@ -55,15 +52,14 @@ class CheckoutScreen extends ConsumerWidget {
               elevation: 0,
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 15, right: 15, top: 15, bottom: 5),
+                  padding: const EdgeInsets.all(15),
                   child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'total',
+                            'Total',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Text(CurrencyFormat.currency(cart.subtotal),
@@ -80,7 +76,7 @@ class CheckoutScreen extends ConsumerWidget {
                           ),
                         ),
                         onPressed: () {},
-                        child: Text('pay_finish'.toUpperCase()),
+                        child: Text('PAY'.toUpperCase()),
                       )
                     ],
                   ),

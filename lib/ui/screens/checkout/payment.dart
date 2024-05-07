@@ -33,7 +33,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text('payments', style: textTheme.bodyLarge),
+            child: Text('Payments', style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,

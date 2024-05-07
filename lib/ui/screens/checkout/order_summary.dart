@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OrderItem extends StatelessWidget {
   final ItemCart item;
@@ -63,14 +65,12 @@ class OrderItem extends StatelessWidget {
   }
 }
 
-class OrderSummary extends StatelessWidget {
-  final List<ItemCart> items;
-  final double subtotal;
-
-  const OrderSummary({super.key, required this.items, required this.subtotal});
+class OrderSummary extends ConsumerWidget {
+  const OrderSummary({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cart = ref.watch(cartNotiferProvider);
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       color: Colors.white,
@@ -79,7 +79,7 @@ class OrderSummary extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Text('order_summary', style: textTheme.bodyLarge),
+            child: Text('Order Summary', style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,
@@ -88,10 +88,10 @@ class OrderSummary extends StatelessWidget {
           ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 7.5),
             itemBuilder: (context, idx) {
-              ItemCart item = items[idx];
+              ItemCart item = cart.items[idx];
               return OrderItem(item: item);
             },
-            itemCount: items.length,
+            itemCount: cart.items.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
           ),
@@ -113,7 +113,7 @@ class OrderSummary extends StatelessWidget {
                       ?.copyWith(color: Colors.grey.shade700),
                 ),
                 Text(
-                  CurrencyFormat.currency(subtotal),
+                  CurrencyFormat.currency(cart.subtotal),
                   style: textTheme.bodyMedium
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),

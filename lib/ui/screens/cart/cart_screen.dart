@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart_item.dart';
 import 'package:selleri/ui/components/edit_cart_item.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -139,7 +140,7 @@ class CartActions extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),
                       ),
-                      onPressed: () => {},
+                      onPressed: () => context.push(Routes.checkout),
                       icon: const Icon(CupertinoIcons.creditcard_fill),
                       label: Text('checkout'.toUpperCase()),
                     ),
