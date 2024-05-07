@@ -95,6 +95,13 @@ class CartNotifer extends _$CartNotifer {
     }
   }
 
+  void removeItem(String identifier) {
+    List<ItemCart> items = [...state.items];
+    items.removeWhere((i) => i.identifier == identifier);
+    state = state.copyWith(items: items);
+    calculateCart();
+  }
+
   void calculateCart() {
     double? subtotal = state.items.isNotEmpty
         ? state.items

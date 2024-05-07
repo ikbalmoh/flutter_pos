@@ -4,14 +4,15 @@ import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/discount_type_toggle.dart';
 import 'package:selleri/ui/components/qty_editor.dart';
-import 'package:selleri/utils/app.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class EditCartItem extends ConsumerStatefulWidget {
   final ItemCart item;
-  const EditCartItem({super.key, required this.item});
+  final Function onDelete;
+
+  const EditCartItem({super.key, required this.item, required this.onDelete});
 
   @override
   ConsumerState<EditCartItem> createState() => _EditCartItemState();
@@ -100,17 +101,6 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
     // Update Item
     ref.read(cartNotiferProvider.notifier).updateItem(item);
     context.pop();
-  }
-
-  void onDelete() {
-    App.showConfirmDialog(
-        title: "${'delete'} ${widget.item.itemName}",
-        subtitle: 'are_you_sure',
-        confirmLabel: 'delete',
-        danger: true,
-        onConfirm: () {
-          // Close Overlay
-        });
   }
 
   @override
@@ -290,7 +280,7 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                   children: [
                     IconButton(
                       color: Colors.red,
-                      onPressed: () => onDelete(),
+                      onPressed: () => widget.onDelete(),
                       icon: const Icon(
                         CupertinoIcons.trash,
                         size: 20,
