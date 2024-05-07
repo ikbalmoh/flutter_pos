@@ -17,7 +17,7 @@ class DiscountPromotion extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text('discount_&_promotion', style: textTheme.bodyLarge),
+            child: Text('Discount & Promotion', style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,
