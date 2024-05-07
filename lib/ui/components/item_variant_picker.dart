@@ -61,7 +61,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     GestureDetector(
-                      onTap: () => {},
+                      onTap: () => context.pop(),
                       child: Icon(
                         Icons.close,
                         color: Colors.grey.shade500,
