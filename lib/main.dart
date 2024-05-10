@@ -10,6 +10,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -17,6 +18,8 @@ Future initServices() async {
   if (kDebugMode) {
     print('INITIALIZING APP ...');
   }
+
+  await EasyLocalization.ensureInitialized();
 
   await initObjectBox();
 
@@ -72,8 +75,13 @@ Future<void> main() async {
   await initServices();
 
   runApp(
-    const ProviderScope(
-      child: App(),
+    ProviderScope(
+      child: EasyLocalization(
+        supportedLocales: const [Locale('en', 'US'), Locale('id', 'ID')],
+        path: 'assets/translations',
+        fallbackLocale: const Locale('id', 'ID'),
+        child: const App(),
+      ),
     ),
   );
 }

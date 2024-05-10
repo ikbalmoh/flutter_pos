@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/providers/item/category_provider.dart';
@@ -25,7 +26,7 @@ class ItemCategories extends ConsumerWidget {
                       id: 0,
                       idCategory: '',
                       code: 'all',
-                      categoryName: 'All',
+                      categoryName: 'all'.tr(),
                       isActive: active == '',
                     )
                   : value[idx - 1];

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion.dart';
@@ -15,7 +16,7 @@ class CheckoutScreen extends ConsumerWidget {
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
-          title: const Text('Checkout'),
+          title: Text('checkout'.tr()),
           actions: [
             IconButton(
                 onPressed: () {}, icon: const Icon(Icons.more_vert_rounded))
@@ -76,7 +77,7 @@ class CheckoutScreen extends ConsumerWidget {
                           ),
                         ),
                         onPressed: () {},
-                        child: Text('PAY'.toUpperCase()),
+                        child: Text('pay'.tr().toUpperCase()),
                       )
                     ],
                   ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -51,7 +52,7 @@ class AppAlert {
                 onPressed: () => context.pop(),
                 style:
                     TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
-                child: const Text('Cancel'),
+                child: Text('cancel'.tr()),
               ),
               TextButton(
                   style: TextButton.styleFrom(

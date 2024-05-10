@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/utils/formater.dart';
@@ -17,7 +18,7 @@ class DiscountPromotion extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text('Discount & Promotion', style: textTheme.bodyLarge),
+            child: Text('discount_permission'.tr(), style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,
@@ -51,8 +52,7 @@ class DiscountItem extends StatelessWidget {
 
     return Material(
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(30))
-      ),
+          borderRadius: BorderRadius.all(Radius.circular(30))),
       child: InkWell(
         onTap: () {},
         splashColor: Colors.blueGrey.shade50,
@@ -72,7 +72,8 @@ class DiscountItem extends StatelessWidget {
               ),
               Text(
                 'Discount Transaction',
-                style: textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+                style:
+                    textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
               ),
               const SizedBox(
                 width: 10,
@@ -81,8 +82,8 @@ class DiscountItem extends StatelessWidget {
                 child: Text(
                   '-${CurrencyFormat.currency(0)}',
                   textAlign: TextAlign.right,
-                  style:
-                      textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                  style: textTheme.bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w500),
                 ),
               ),
               const SizedBox(
@@ -111,8 +112,7 @@ class PromotionItem extends StatelessWidget {
 
     return Material(
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(30))
-      ),
+          borderRadius: BorderRadius.all(Radius.circular(30))),
       child: InkWell(
         splashColor: Colors.blueGrey.shade50,
         highlightColor: Colors.blueGrey.shade100,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +26,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _submitLogin() {
     if (_formKey.currentState!.validate()) {
-      // SUBMIT
       ref
           .read(authNotifierProvider.notifier)
           .login(_usernameController.text, _passwordController.text);
@@ -71,7 +71,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'enter username';
+                        return 'enter_username'.tr();
                       }
                       return null;
                     },
@@ -108,7 +108,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _submitLogin();
                             }
                           },
-                    label: const Text('Login'),
+                    label: Text('login'.tr()),
                     icon: state.value is Authenticating
                         ? const SizedBox(
                             height: 20,

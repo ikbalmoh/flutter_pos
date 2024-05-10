@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -45,7 +46,7 @@ class CartScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
-        title: const Text('Cart'),
+        title: Text('cart'.tr()),
       ),
       body: cart.items.isNotEmpty
           ? Column(
@@ -67,8 +68,8 @@ class CartScreen extends ConsumerWidget {
                 CartActions(cart: cart),
               ],
             )
-          : const Center(
-              child: Text('Cart is Empty'),
+          : Center(
+              child: Text('cart_empty'.tr()),
             ),
     );
   }
@@ -126,7 +127,7 @@ class CartActions extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {},
-                      child: Text('hold'.toUpperCase()),
+                      child: Text('hold'.tr().toUpperCase()),
                     ),
                   ),
                   const SizedBox(
@@ -142,7 +143,7 @@ class CartActions extends StatelessWidget {
                       ),
                       onPressed: () => context.push(Routes.checkout),
                       icon: const Icon(CupertinoIcons.creditcard_fill),
-                      label: Text('checkout'.toUpperCase()),
+                      label: Text('checkout'.tr().toUpperCase()),
                     ),
                   )
                 ],
