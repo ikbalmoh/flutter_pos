@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/utils/formater.dart';
@@ -33,7 +34,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text('Payments', style: textTheme.bodyLarge),
+            child: Text('payments'.tr(), style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,

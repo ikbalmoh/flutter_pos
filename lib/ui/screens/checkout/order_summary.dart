@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
@@ -79,7 +80,7 @@ class OrderSummary extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Text('Order Summary', style: textTheme.bodyLarge),
+            child: Text('order_summary'.tr(), style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,

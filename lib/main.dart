@@ -30,6 +30,8 @@ Future initServices() async {
 
   await initObjectBox();
 
+  await EasyLocalization.ensureInitialized();
+
   await initObjectBox();
 
   FlutterError.onError = (details) {

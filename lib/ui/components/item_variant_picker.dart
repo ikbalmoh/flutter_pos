@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
@@ -113,7 +114,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
                 ),
-                child: const Text('PILIH'),
+                child: Text('choose'.tr()),
               )
             ],
           ),
