@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/auth/auth_state.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -42,7 +43,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.read(authNotifierProvider);
+    final state = ref.watch(authNotifierProvider);
+    ref.listen(authNotifierProvider, (prev, next) {
+      if (next.value is AuthFailure) {
+        AppAlert.snackbar(
+          context,
+          (next.value as AuthFailure).message,
+          alertType: AlertType.error,
+        );
+      }
+    });
     return Scaffold(
       body: SafeArea(
         child: Center(

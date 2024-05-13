@@ -95,11 +95,12 @@ class CartNotifer extends _$CartNotifer {
     }
   }
 
-  void removeItem(String identifier) {
+  Future<bool> removeItem(String identifier) async {
     List<ItemCart> items = [...state.items];
     items.removeWhere((i) => i.identifier == identifier);
     state = state.copyWith(items: items);
     calculateCart();
+    return true;
   }
 
   void calculateCart() {

@@ -24,12 +24,13 @@ class CartScreen extends ConsumerWidget {
         context.pop();
       }
       AppAlert.confirm(context,
-          title: "Delete ${item.itemName}",
-          subtitle: 'Are you sure?',
-          confirmLabel: 'Delete',
-          danger: true, onConfirm: () {
-        // Close Dialog
-        ref.read(cartNotiferProvider.notifier).removeItem(item.identifier);
+          title: "${'delete'.tr()} ${item.itemName}",
+          subtitle: 'are_you_sure'.tr(),
+          confirmLabel: 'delete'.tr(),
+          danger: true, onConfirm: () async {
+        await ref
+            .read(cartNotiferProvider.notifier)
+            .removeItem(item.identifier);
       });
     }
 
