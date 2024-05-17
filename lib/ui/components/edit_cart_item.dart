@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_cart.dart';
@@ -157,11 +158,11 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                       const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'price',
+                    'price'.tr(),
                     style: labelStyle,
                   ),
                   prefix: Text(
-                    'price',
+                    'price'.tr(),
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,
@@ -191,7 +192,7 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'quantity',
+                      'quantity'.tr(),
                       style: labelStyle,
                     ),
                     QtyEditor(
@@ -215,11 +216,11 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                       const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'discount',
+                    'discount'.tr(),
                     style: labelStyle,
                   ),
                   prefix: Text(
-                    'discount',
+                    'discount'.tr(),
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,
@@ -251,7 +252,7 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                       left: 0, top: 15, right: 0, bottom: 15),
                   // floatingLabelBehavior: FloatingLabelBehavior.never,
                   label: Text(
-                    'Note',
+                    'note'.tr(),
                     style: labelStyle,
                   ),
                   alignLabelWithHint: true,

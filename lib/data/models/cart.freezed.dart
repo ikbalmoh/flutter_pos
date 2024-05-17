@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+Cart _$CartFromJson(Map<String, dynamic> json) {
+  return _Cart.fromJson(json);
+}
+
 /// @nodoc
 mixin _$Cart {
   DateTime get transactionDate => throw _privateConstructorUsedError;
@@ -43,6 +47,7 @@ mixin _$Cart {
   List<ItemCart> get items => throw _privateConstructorUsedError;
   List<dynamic>? get payments => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $CartCopyWith<Cart> get copyWith => throw _privateConstructorUsedError;
 }
@@ -414,6 +419,7 @@ class __$$CartImplCopyWithImpl<$Res>
 
 /// @nodoc
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _$CartImpl implements _Cart {
   const _$CartImpl(
       {required this.transactionDate,
@@ -444,6 +450,9 @@ class _$CartImpl implements _Cart {
       final List<dynamic>? payments})
       : _items = items,
         _payments = payments;
+
+  factory _$CartImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CartImplFromJson(json);
 
   @override
   final DateTime transactionDate;
@@ -567,6 +576,7 @@ class _$CartImpl implements _Cart {
             const DeepCollectionEquality().equals(other._payments, _payments));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -603,6 +613,13 @@ class _$CartImpl implements _Cart {
   @pragma('vm:prefer-inline')
   _$$CartImplCopyWith<_$CartImpl> get copyWith =>
       __$$CartImplCopyWithImpl<_$CartImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CartImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _Cart implements Cart {
@@ -633,6 +650,8 @@ abstract class _Cart implements Cart {
       final String? createdName,
       required final List<ItemCart> items,
       final List<dynamic>? payments}) = _$CartImpl;
+
+  factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
 
   @override
   DateTime get transactionDate;
