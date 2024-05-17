@@ -81,8 +81,9 @@ GoRouter router(RouterRef ref) {
           loading: () => Routes.root,
         );
 
-        final shouldRedirect =
-            redirectRoute != null ? currentRoute != redirectRoute : false;
+        final shouldRedirect = redirectRoute != null
+            ? (currentRoute != null && currentRoute != redirectRoute)
+            : false;
 
         if (kDebugMode) {
           print(

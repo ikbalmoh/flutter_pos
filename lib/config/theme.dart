@@ -38,11 +38,20 @@ ThemeData appTheme(BuildContext context) {
       bodySmall: TextStyle(fontWeight: FontWeight.w200, fontSize: 14),
       labelLarge: TextStyle(fontWeight: FontWeight.w600),
     ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(999)),
+        ),
+      ),
+    ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(999)))),
+      backgroundColor: Colors.teal,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(999)),
+      ),
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: MaterialStateProperty.resolveWith<Size>(
@@ -62,7 +71,7 @@ ThemeData appTheme(BuildContext context) {
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (state) => RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
         textStyle: MaterialStateProperty.resolveWith<TextStyle>(

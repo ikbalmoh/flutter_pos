@@ -21,3 +21,9 @@ class CurrencyFormat {
     return currencyFormatter.parse(formated);
   }
 }
+
+class DateTimeFormater {
+  static String dateToString(DateTime value) {
+    return DateFormat('y-M-dd HH:mm:ss').format(value);
+  }
+}

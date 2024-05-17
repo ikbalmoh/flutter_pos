@@ -1,5 +1,6 @@
 {
   "login": "Login",
+  "logout": "Logout",
   "login_failed": "Login Failed",
   "enter_email": "enter email",
   "enter_username": "enter email",
@@ -29,5 +30,8 @@
   "cart_empty": "Cart is Empty",
   "hold": "Hold",
   "checkout": "Checkout",
-  "pay": "Pay"
+  "pay": "Pay",
+  "open_shift": "Open Shift",
+  "start_shift": "Start Shift",
+  "starting_cash": "Starting Cash"
 }

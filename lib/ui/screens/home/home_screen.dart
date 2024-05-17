@@ -1,10 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
+import 'package:selleri/ui/components/open_shift.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/screens/home/components/item_container.dart';
@@ -21,7 +26,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  void onSignOut() {}
+  void onSignOut() {
+    AppAlert.confirm(
+      context,
+      title: 'logout'.tr(),
+      subtitle: 'logout_confirmation'.tr(),
+      onConfirm: () => ref.read(authNotifierProvider.notifier).logout(),
+      confirmLabel: 'logout'.tr()
+    );
+  }
 
   String idCategory = '';
   String search = '';
@@ -53,14 +66,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
+    // Load items
     ref.read(itemsStreamProvider().notifier).loadItems();
     super.initState();
+  }
+
+  void showOpenShift(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const OpenShift();
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletNotifierProvider);
     final cart = ref.watch(cartNotiferProvider);
+    final shift = ref.watch(shiftNotifierProvider);
+
+    // Check if shift opened
+    ref.listen(shiftNotifierProvider, (previous, next) {
+      next.whenData((value) {
+        if (value == null) {
+          showOpenShift(context);
+        }
+      });
+    });
 
     return Scaffold(
       appBar: searchVisible
@@ -91,25 +123,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 )
               ],
             ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
+      body: Stack(
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-            height: searchVisible ? 0 : 56,
-            child: ItemCategories(
-              active: idCategory,
-              onChange: onChangeCategory,
-            ),
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut,
+                height: searchVisible ? 0 : 56,
+                child: ItemCategories(
+                  active: idCategory,
+                  onChange: onChangeCategory,
+                ),
+              ),
+              Expanded(
+                child: ItemContainer(
+                  scrollController: scrollController,
+                  idCategory: idCategory,
+                  search: search,
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ItemContainer(
-              scrollController: scrollController,
-              idCategory: idCategory,
-              search: search,
-            ),
-          ),
+          switch (shift) {
+            AsyncData(:final value) => value == null
+                ? Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withOpacity(0.3),
+                      child: Center(
+                        child: SizedBox(
+                          width: 150,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.playlist_add_sharp),
+                            label: Text('open_shift'.tr()),
+                            onPressed: () => showOpenShift(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
+            AsyncError(:final error) => Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: Center(
+                    child: Text(
+                      error.toString(),
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            _ => const Center(
+                child: CircularProgressIndicator(),
+              )
+          },
         ],
       ),
       floatingActionButton: cart.items.isNotEmpty

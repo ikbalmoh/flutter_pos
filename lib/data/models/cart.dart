@@ -2,9 +2,11 @@ import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'cart.freezed.dart';
+part 'cart.g.dart';
 
 @freezed
 class Cart with _$Cart {
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Cart({
     required DateTime transactionDate,
     String? transactionNo,
@@ -33,4 +35,7 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     List? payments,
   }) = _Cart;
+
+  factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
+
 }

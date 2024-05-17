@@ -66,7 +66,7 @@ class AppAlert {
                       }
                     }
                   },
-                  child: Text(confirmLabel ?? 'continue')),
+                  child: Text(confirmLabel ?? 'Ok')),
             ],
           );
         });

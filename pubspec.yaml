@@ -28,6 +28,7 @@ dependencies:
   objectbox_flutter_libs: ^2.4.0
   responsive_framework: ^1.1.1
   riverpod_annotation: ^2.3.5
+  uuid: ^4.4.0
   validators: ^3.0.0
 
 dev_dependencies:

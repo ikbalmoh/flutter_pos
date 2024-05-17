@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
+import 'package:selleri/data/repository/outlet_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'auth_state.dart';
 
@@ -12,6 +13,8 @@ class AuthNotifier extends _$AuthNotifier {
 
   late final TokenRepository _tokenRepository =
       ref.read(tokenRepositoryProvider);
+  late final OutletRepository _outletRepository =
+      ref.read(outletRepositoryProvider);
 
   @override
   FutureOr<AuthState> build() async {
@@ -36,6 +39,7 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> logout() async {
     await _tokenRepository.remove();
+    await _outletRepository.remove();
     state = AsyncData(await _authRepoistory.logout());
   }
 }

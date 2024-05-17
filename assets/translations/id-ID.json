@@ -1,5 +1,6 @@
 {
   "login": "Masuk",
+  "keluar": "Keluar",
   "login_failed": "Login Gagal",
   "enter_email": "masukkan alamat email",
   "enter_username": "masukkan username",
@@ -29,5 +30,8 @@
   "cart_empty": "Tidak ada barang di Keranjang",
   "hold": "Tunda",
   "checkout": "Checkout",
-  "pay": "Bayar"
+  "pay": "Bayar",
+  "open_shift": "Buka Sif",
+  "start_shift": "Mulai Shift",
+  "starting_cash": "Kas Awal"
 }

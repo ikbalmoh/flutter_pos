@@ -4,4 +4,5 @@ enum StoreKey {
   user,
   outlet,
   outletConfig,
+  shift,
 }

@@ -1,9 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'item_cart.freezed.dart';
+part 'item_cart.g.dart';
 
 @freezed
 class ItemCart with _$ItemCart {
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ItemCart({
     required String identifier,
     required String idItem,
@@ -22,4 +24,7 @@ class ItemCart with _$ItemCart {
     num? idVariant,
     String? variantName,
   }) = _ItemCart;
+
+  factory ItemCart.fromJson(Map<String, dynamic> json) =>
+      _$ItemCartFromJson(json);
 }

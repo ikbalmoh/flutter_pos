@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+ItemCart _$ItemCartFromJson(Map<String, dynamic> json) {
+  return _ItemCart.fromJson(json);
+}
+
 /// @nodoc
 mixin _$ItemCart {
   String get identifier => throw _privateConstructorUsedError;
@@ -33,6 +37,7 @@ mixin _$ItemCart {
   num? get idVariant => throw _privateConstructorUsedError;
   String? get variantName => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $ItemCartCopyWith<ItemCart> get copyWith =>
       throw _privateConstructorUsedError;
@@ -287,6 +292,7 @@ class __$$ItemCartImplCopyWithImpl<$Res>
 
 /// @nodoc
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _$ItemCartImpl implements _ItemCart {
   const _$ItemCartImpl(
       {required this.identifier,
@@ -305,6 +311,9 @@ class _$ItemCartImpl implements _ItemCart {
       required this.note,
       this.idVariant,
       this.variantName});
+
+  factory _$ItemCartImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ItemCartImplFromJson(json);
 
   @override
   final String identifier;
@@ -378,6 +387,7 @@ class _$ItemCartImpl implements _ItemCart {
                 other.variantName == variantName));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -403,6 +413,13 @@ class _$ItemCartImpl implements _ItemCart {
   @pragma('vm:prefer-inline')
   _$$ItemCartImplCopyWith<_$ItemCartImpl> get copyWith =>
       __$$ItemCartImplCopyWithImpl<_$ItemCartImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ItemCartImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _ItemCart implements ItemCart {
@@ -423,6 +440,9 @@ abstract class _ItemCart implements ItemCart {
       required final String note,
       final num? idVariant,
       final String? variantName}) = _$ItemCartImpl;
+
+  factory _ItemCart.fromJson(Map<String, dynamic> json) =
+      _$ItemCartImpl.fromJson;
 
   @override
   String get identifier;
