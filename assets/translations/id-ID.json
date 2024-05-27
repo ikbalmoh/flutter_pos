@@ -1,6 +1,6 @@
 {
   "login": "Masuk",
-  "keluar": "Keluar",
+  "logout": "Keluar",
   "login_failed": "Login Gagal",
   "enter_email": "masukkan alamat email",
   "enter_username": "masukkan username",
@@ -33,5 +33,6 @@
   "pay": "Bayar",
   "open_shift": "Buka Sif",
   "start_shift": "Mulai Shift",
-  "starting_cash": "Kas Awal"
+  "starting_cash": "Kas Awal",
+  "select_customer": "Pilih Pelanggan"
 }

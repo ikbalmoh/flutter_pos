@@ -20,6 +20,7 @@ abstract class OutletRepositoryProtocol {
   Future<void> saveOutletConfig(OutletConfig config);
 
   Future<Outlet?> retrieveOutlet();
+  
   Future<OutletConfig?> retrieveOutletConfig();
 
   Future<OutletConfig?> fetchOutletConfig(String idOutlet);

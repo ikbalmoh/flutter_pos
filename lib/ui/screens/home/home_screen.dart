@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
-import 'package:selleri/data/objectbox.dart';
-import 'package:selleri/data/models/item.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
@@ -27,13 +25,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   void onSignOut() {
-    AppAlert.confirm(
-      context,
-      title: 'logout'.tr(),
-      subtitle: 'logout_confirmation'.tr(),
-      onConfirm: () => ref.read(authNotifierProvider.notifier).logout(),
-      confirmLabel: 'logout'.tr()
-    );
+    AppAlert.confirm(context,
+        title: 'logout'.tr(),
+        subtitle: 'logout_confirmation'.tr(),
+        onConfirm: () => ref.read(authNotifierProvider.notifier).logout(),
+        confirmLabel: 'logout'.tr());
   }
 
   String idCategory = '';
@@ -42,8 +38,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool searchVisible = false;
   TextEditingController textEditingController = TextEditingController();
   ScrollController scrollController = ScrollController();
-
-  Stream<List<Item>> itemStrem = objectBox.itemsStream();
 
   void onChangeCategory(String id) {
     setState(() {
@@ -117,10 +111,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   }),
                   icon: const Icon(Icons.search),
                 ),
-                IconButton(
-                  onPressed: () => onSignOut(),
-                  icon: const Icon(Icons.logout_outlined),
-                )
+                MenuAnchor(
+                    builder: (BuildContext context, MenuController controller,
+                        Widget? child) {
+                      return IconButton(
+                        onPressed: () {
+                          if (controller.isOpen) {
+                            controller.close();
+                          } else {
+                            controller.open();
+                          }
+                        },
+                        icon: const Icon(Icons.more_vert),
+                        tooltip: 'show_menu'.tr(),
+                      );
+                    },
+                    menuChildren: [
+                      MenuItemButton(
+                        onPressed: () {},
+                        leadingIcon: const Icon(Icons.people),
+                        child: Text('select_customer'.tr()),
+                      ),
+                      MenuItemButton(
+                        onPressed: onSignOut,
+                        leadingIcon: const Icon(Icons.logout),
+                        child: Text('logout'.tr()),
+                      ),
+                    ])
               ],
             ),
       body: Stack(

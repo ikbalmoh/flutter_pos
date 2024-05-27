@@ -33,5 +33,6 @@
   "pay": "Pay",
   "open_shift": "Open Shift",
   "start_shift": "Start Shift",
-  "starting_cash": "Starting Cash"
+  "starting_cash": "Starting Cash",
+  "select_customer": "Select Customer"
 }

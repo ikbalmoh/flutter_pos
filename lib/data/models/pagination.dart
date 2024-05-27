@@ -1,11 +1,22 @@
-class Pagination {
-  int currentPage;
-  int lastPage;
-  int total;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  Pagination({
-    required this.currentPage,
-    required this.lastPage,
-    required this.total,
-  });
+part 'pagination.freezed.dart';
+part 'pagination.g.dart';
+
+@Freezed(genericArgumentFactories: true)
+class Pagination<T> with _$Pagination<T> {
+  @JsonSerializable(
+      fieldRename: FieldRename.snake, genericArgumentFactories: true)
+  const factory Pagination({
+    required int currentPage,
+    required int lastPage,
+    required int total,
+    required int from,
+    required int to,
+    List<T>? data,
+  }) = _Pagination<T>;
+
+  factory Pagination.fromJson(
+          Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
+      _$PaginationFromJson(json, fromJsonT);
 }

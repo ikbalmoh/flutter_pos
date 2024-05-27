@@ -7,4 +7,5 @@ class ApiUrl {
   static const String listItems = '/lists/items';
   static const String startShift = '/shifts/start';
   static const String closeShift = '/shifts/{id}/closing';
+  static const String customers = '/customers';
 }
