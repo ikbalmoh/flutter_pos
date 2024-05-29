@@ -6,7 +6,7 @@ import 'package:selleri/data/network/customer.dart';
 
 part 'customer_list_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class CustomerListNotifier extends _$CustomerListNotifier {
   @override
   FutureOr<Pagination<Customer>> build() async {

@@ -128,13 +128,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     menuChildren: [
                       MenuItemButton(
-                        onPressed: () {},
-                        leadingIcon: const Icon(Icons.people),
-                        child: Text('select_customer'.tr()),
+                        onPressed: () => context.push(Routes.customers),
+                        leadingIcon: Icon(
+                          Icons.account_box,
+                          color: cart.idCustomer == null
+                              ? Colors.grey.shade800
+                              : Colors.green.shade600,
+                        ),
+                        child:
+                            Text(cart.customerName ?? 'select_customer'.tr()),
                       ),
                       MenuItemButton(
                         onPressed: onSignOut,
-                        leadingIcon: const Icon(Icons.logout),
+                        leadingIcon: const Icon(
+                          Icons.logout,
+                          color: Colors.red,
+                        ),
                         child: Text('logout'.tr()),
                       ),
                     ])

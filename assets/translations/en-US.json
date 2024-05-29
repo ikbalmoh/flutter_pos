@@ -18,7 +18,7 @@
   "are_you_sure": "Are you sure?",
   "pay_finish": "Finish Transaction",
   "order_summary": "Order Summary",
-  "discount_promotion": "Discount & Promotions",
+  "discount&permission": "Discount & Promotions",
   "discount_transaction": "Discount Transaction",
   "add_promotion_code": "Add Promotion Code",
   "payments": "Payments",
@@ -34,5 +34,13 @@
   "open_shift": "Open Shift",
   "start_shift": "Start Shift",
   "starting_cash": "Starting Cash",
-  "select_customer": "Select Customer"
+  "select_customer": "Select Customer",
+  "customer_detail": "Customer Detail",
+  "customer_name": "Customer Name",
+  "customer_code": "Kode Pelanggan",
+  "phone": "Telepon",
+  "address": "Alamat",
+  "group": "Group",
+  "close": "Close",
+  "select": "Select"
 }

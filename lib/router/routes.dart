@@ -5,4 +5,5 @@ class Routes {
   static const String home = '/home';
   static const String cart = '/cart';
   static const String checkout = '/checkout';
+  static const String customers = '/customers';
 }

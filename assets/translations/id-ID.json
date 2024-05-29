@@ -18,7 +18,7 @@
   "are_you_sure": "Yakin hapus?",
   "pay_finish": "Selesaikan Transaksi",
   "order_summary": "Ringkasan Pesanan",
-  "discount_promotion": "Diskon & Promosi",
+  "discount&permission": "Diskon & Promosi",
   "discount_transaction": "Diskon Transaksi",
   "add_promotion_code": "Masukan Kode Promosi",
   "payments": "Pembayaran",
@@ -34,5 +34,13 @@
   "open_shift": "Buka Sif",
   "start_shift": "Mulai Shift",
   "starting_cash": "Kas Awal",
-  "select_customer": "Pilih Pelanggan"
+  "select_customer": "Pilih Pelanggan",
+  "customer_detail": "Detail Pelanggan",
+  "customer_name": "Nama Pelanggan",
+  "customer_code": "Kode Pelanggan",
+  "phone": "Telepon",
+  "address": "Alamat",
+  "group": "Grup",
+  "close": "Tutup",
+  "select": "Pilih"
 }

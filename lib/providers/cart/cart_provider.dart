@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_variant.dart';
@@ -129,5 +130,14 @@ class CartNotifer extends _$CartNotifer {
     return qtyItems.isNotEmpty
         ? qtyItems.reduce((qty, total) => qty + total)
         : 0;
+  }
+
+  void selectCustomer(Customer customer) {
+    state = state.copyWith(
+        customerName: customer.customerName, idCustomer: customer.idCustomer);
+  }
+
+  void unselectCustomer() {
+    state = state.copyWith(customerName: '', idCustomer: null);
   }
 }

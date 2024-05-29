@@ -2,17 +2,18 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PaymentDetails extends StatefulWidget {
+class PaymentDetails extends ConsumerStatefulWidget {
   const PaymentDetails({super.key, required this.grandTotal});
 
   final double grandTotal;
 
   @override
-  State<PaymentDetails> createState() => _PaymentDetailsState();
+  ConsumerState<PaymentDetails> createState() => _PaymentDetailsState();
 }
 
-class _PaymentDetailsState extends State<PaymentDetails> {
+class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
   String selected = '';
 
   void onChangeMethod(String method) {

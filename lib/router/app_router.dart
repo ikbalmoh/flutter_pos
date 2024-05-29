@@ -11,6 +11,7 @@ import 'package:selleri/ui/screens/select_outlet/select_outlet_screen.dart';
 import 'package:selleri/ui/screens/home/home_screen.dart';
 import 'package:selleri/ui/screens/cart/cart_screen.dart';
 import 'package:selleri/ui/screens/checkout/checkout_screen.dart';
+import 'package:selleri/ui/screens/customer/customer_screen.dart';
 
 import 'routes.dart';
 
@@ -44,6 +45,9 @@ GoRouter router(RouterRef ref) {
             builder: (context, state) => const SelectOutletScreen()),
         GoRoute(
             path: Routes.home, builder: (context, state) => const HomeScreen()),
+        GoRoute(
+            path: Routes.customers,
+            builder: (context, state) => const CustomerScreen()),
         GoRoute(
             path: Routes.cart, builder: (context, state) => const CartScreen()),
         GoRoute(

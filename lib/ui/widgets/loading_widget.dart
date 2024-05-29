@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({this.withScaffold, super.key});
+  const LoadingWidget({this.withScaffold, this.color, super.key});
 
   final bool? withScaffold;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +17,10 @@ class LoadingWidget extends StatelessWidget {
               ),
             ),
           )
-        : const LoadingIndicator(
-            color: Colors.white,
+        : Center(
+            child: LoadingIndicator(
+              color: color,
+            ),
           );
   }
 }
