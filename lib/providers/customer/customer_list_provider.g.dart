@@ -7,12 +7,12 @@ part of 'customer_list_provider.dart';
 // **************************************************************************
 
 String _$customerListNotifierHash() =>
-    r'fcd1e16021ec7aa8a1f87c8395d0cef0269f3dbf';
+    r'fd627f376fa3f87048e683a568093e1b8218ec79';
 
 /// See also [CustomerListNotifier].
 @ProviderFor(CustomerListNotifier)
-final customerListNotifierProvider =
-    AsyncNotifierProvider<CustomerListNotifier, Pagination<Customer>>.internal(
+final customerListNotifierProvider = AutoDisposeAsyncNotifierProvider<
+    CustomerListNotifier, Pagination<Customer>>.internal(
   CustomerListNotifier.new,
   name: r'customerListNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,6 @@ final customerListNotifierProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$CustomerListNotifier = AsyncNotifier<Pagination<Customer>>;
+typedef _$CustomerListNotifier = AutoDisposeAsyncNotifier<Pagination<Customer>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
