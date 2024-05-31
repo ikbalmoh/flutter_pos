@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
@@ -34,6 +36,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String idCategory = '';
   String search = '';
+  Timer? _debounce;
 
   bool searchVisible = false;
   TextEditingController textEditingController = TextEditingController();
@@ -42,19 +45,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void onChangeCategory(String id) {
     setState(() {
       idCategory = id;
-      // filter by category
     });
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
-  void onSearch(String value) {
-    setState(() {
-      search = value;
+  void onSearchItems(String value) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      // do something with query
+      setState(() {
+        search = value;
+      });
+      // Filter handled by stream
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     });
-    // Filter by search
-    scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   @override
@@ -97,7 +103,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 search = '';
               }),
               controller: textEditingController,
-              onChanged: onSearch,
+              onChanged: onSearchItems,
             )
           : AppBar(
               title: Text(outlet.value is OutletSelected

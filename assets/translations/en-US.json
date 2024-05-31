@@ -48,5 +48,7 @@
   "add_payment": "Add Payment",
   "payment_amount": "Payment Amount",
   "note": "Note",
-  "payment_ref": "Payment Ref"
+  "payment_ref": "Payment Ref",
+  "search": "Search",
+  "search_customer": "Search Customer"
 }

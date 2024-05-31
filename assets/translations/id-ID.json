@@ -48,5 +48,7 @@
   "add_payment": "Input Pembayaran",
   "payment_amount": "Total Bayar",
   "note": "Catatan",
-  "payment_ref": "No Referensi"
+  "payment_ref": "No Referensi",
+  "search": "Cari",
+  "search_customer": "Cari Pelanggan"
 }

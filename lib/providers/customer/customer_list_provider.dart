@@ -29,11 +29,15 @@ class CustomerListNotifier extends _$CustomerListNotifier {
     );
   }
 
-  void loadCustomers({int page = 1}) async {
-    state = AsyncData(state.value!.copyWith(loading: true));
+  void loadCustomers({int page = 1, String search = ''}) async {
+    if (page == 1) {
+      state = const AsyncLoading();
+    } else {
+      state = AsyncData(state.value!.copyWith(loading: true));
+    }
     final api = CustomerApi();
     try {
-      var customers = await api.customers(page: page);
+      var customers = await api.customers(page: page, search: search);
       List<Customer> data = List.from(state.value?.data as Iterable<Customer>);
       if (page > 1) {
         data = data..addAll(customers.data as Iterable<Customer>);

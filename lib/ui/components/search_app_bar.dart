@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function() onBack;
   final Function(String) onChanged;
   final TextEditingController controller;
+  final String? placeholder;
 
   @override
   final Size preferredSize;
@@ -13,6 +15,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onBack,
     required this.onChanged,
     required this.controller,
+    this.placeholder,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   @override
@@ -27,7 +30,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         onChanged: onChanged,
         autofocus: true,
         decoration: InputDecoration(
-          hintText: 'search',
+          hintText: placeholder ?? 'search'.tr(),
           border: InputBorder.none,
           focusedBorder: InputBorder.none,
           disabledBorder: InputBorder.none,

@@ -7,8 +7,12 @@ import 'package:selleri/config/api_url.dart';
 class CustomerApi {
   final api = fetch();
 
-  Future<Pagination<Customer>> customers({int page = 1}) async {
-    final Map<String, dynamic> queryParameters = {'page': page};
+  Future<Pagination<Customer>> customers(
+      {int page = 1, String search = ''}) async {
+    final Map<String, dynamic> queryParameters = {
+      'page': page,
+      'q': search
+    };
     try {
       final res =
           await api.get(ApiUrl.customers, queryParameters: queryParameters);

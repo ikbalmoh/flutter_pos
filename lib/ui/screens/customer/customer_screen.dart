@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/customer/customer_list_provider.dart';
+import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/customer/customer_detail.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 
@@ -19,10 +22,23 @@ class CustomerScreen extends ConsumerStatefulWidget {
 class _CustomerScreenState extends ConsumerState<CustomerScreen> {
   final _scrollController = ScrollController();
 
+  TextEditingController _searchController = TextEditingController();
+  bool searchVisible = false;
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(loadMore);
+  }
+
+  void onSearchCustomers(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      ref
+          .read(customerListNotifierProvider.notifier)
+          .loadCustomers(page: 1, search: query);
+    });
   }
 
   void loadMore() {
@@ -35,7 +51,8 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
       return;
     }
     if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent && !(pagination.loading ?? false)) {
+            _scrollController.position.maxScrollExtent &&
+        !(pagination.loading ?? false)) {
       if (kDebugMode) {
         print('Load customers... ${pagination.currentPage}/${pagination.to}');
       }
@@ -64,9 +81,26 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('select_customer'.tr()),
-      ),
+      appBar: searchVisible
+          ? SearchAppBar(
+              controller: _searchController,
+              placeholder: 'search_customer'.tr(),
+              onBack: () => setState(() {
+                searchVisible = false;
+              }),
+              onChanged: onSearchCustomers,
+            )
+          : AppBar(
+              title: Text('select_customer'.tr()),
+              actions: [
+                IconButton(
+                  onPressed: () => setState(() {
+                    searchVisible = true;
+                  }),
+                  icon: const Icon(Icons.search),
+                )
+              ],
+            ),
       body: customers.when(
         data: (data) => ListView.builder(
           controller: _scrollController,
