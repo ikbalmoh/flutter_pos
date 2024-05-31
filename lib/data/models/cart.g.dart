@@ -22,7 +22,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       taxName: json['tax_name'] as String?,
       ppnTotal: (json['ppn_total'] as num?)?.toDouble(),
       grandTotal: (json['grand_total'] as num).toDouble(),
-      totalPayment: (json['total_payment'] as num?)?.toDouble(),
+      totalPayment: (json['total_payment'] as num).toDouble(),
       change: (json['change'] as num?)?.toDouble(),
       idCustomer: json['id_customer'] as String?,
       customerName: json['customer_name'] as String?,
@@ -36,7 +36,9 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       items: (json['items'] as List<dynamic>)
           .map((e) => ItemCart.fromJson(e as Map<String, dynamic>))
           .toList(),
-      payments: json['payments'] as List<dynamic>?,
+      payments: (json['payments'] as List<dynamic>)
+          .map((e) => CartPayment.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>

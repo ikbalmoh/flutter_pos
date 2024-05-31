@@ -38,8 +38,8 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
       userHasPin: (json['user_has_pin'] as List<dynamic>?)
           ?.map((e) => UserHasPin.fromJson(e as Map<String, dynamic>))
           .toList(),
-      paymentMethods: (json['payment_methods'] as List<dynamic>?)
-          ?.map((e) => PaymentMethod.fromJson(e as Map<String, dynamic>))
+      paymentMethods: (json['payment_methods'] as List<dynamic>)
+          .map((e) => PaymentMethod.fromJson(e as Map<String, dynamic>))
           .toList(),
       nominalCash: (json['nominal_cash'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())

@@ -35,7 +35,7 @@ mixin _$Cart {
   String? get taxName => throw _privateConstructorUsedError;
   double? get ppnTotal => throw _privateConstructorUsedError;
   double get grandTotal => throw _privateConstructorUsedError;
-  double? get totalPayment => throw _privateConstructorUsedError;
+  double get totalPayment => throw _privateConstructorUsedError;
   double? get change => throw _privateConstructorUsedError;
   String? get idCustomer => throw _privateConstructorUsedError;
   String? get customerName => throw _privateConstructorUsedError;
@@ -45,7 +45,7 @@ mixin _$Cart {
   String? get createdBy => throw _privateConstructorUsedError;
   String? get createdName => throw _privateConstructorUsedError;
   List<ItemCart> get items => throw _privateConstructorUsedError;
-  List<dynamic>? get payments => throw _privateConstructorUsedError;
+  List<CartPayment> get payments => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -73,7 +73,7 @@ abstract class $CartCopyWith<$Res> {
       String? taxName,
       double? ppnTotal,
       double grandTotal,
-      double? totalPayment,
+      double totalPayment,
       double? change,
       String? idCustomer,
       String? customerName,
@@ -83,7 +83,7 @@ abstract class $CartCopyWith<$Res> {
       String? createdBy,
       String? createdName,
       List<ItemCart> items,
-      List<dynamic>? payments});
+      List<CartPayment> payments});
 }
 
 /// @nodoc
@@ -114,7 +114,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? taxName = freezed,
     Object? ppnTotal = freezed,
     Object? grandTotal = null,
-    Object? totalPayment = freezed,
+    Object? totalPayment = null,
     Object? change = freezed,
     Object? idCustomer = freezed,
     Object? customerName = freezed,
@@ -124,7 +124,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? createdBy = freezed,
     Object? createdName = freezed,
     Object? items = null,
-    Object? payments = freezed,
+    Object? payments = null,
   }) {
     return _then(_value.copyWith(
       transactionDate: null == transactionDate
@@ -187,10 +187,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.grandTotal
           : grandTotal // ignore: cast_nullable_to_non_nullable
               as double,
-      totalPayment: freezed == totalPayment
+      totalPayment: null == totalPayment
           ? _value.totalPayment
           : totalPayment // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       change: freezed == change
           ? _value.change
           : change // ignore: cast_nullable_to_non_nullable
@@ -227,10 +227,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<ItemCart>,
-      payments: freezed == payments
+      payments: null == payments
           ? _value.payments
           : payments // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<CartPayment>,
     ) as $Val);
   }
 }
@@ -258,7 +258,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String? taxName,
       double? ppnTotal,
       double grandTotal,
-      double? totalPayment,
+      double totalPayment,
       double? change,
       String? idCustomer,
       String? customerName,
@@ -268,7 +268,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String? createdBy,
       String? createdName,
       List<ItemCart> items,
-      List<dynamic>? payments});
+      List<CartPayment> payments});
 }
 
 /// @nodoc
@@ -296,7 +296,7 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? taxName = freezed,
     Object? ppnTotal = freezed,
     Object? grandTotal = null,
-    Object? totalPayment = freezed,
+    Object? totalPayment = null,
     Object? change = freezed,
     Object? idCustomer = freezed,
     Object? customerName = freezed,
@@ -306,7 +306,7 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? createdBy = freezed,
     Object? createdName = freezed,
     Object? items = null,
-    Object? payments = freezed,
+    Object? payments = null,
   }) {
     return _then(_$CartImpl(
       transactionDate: null == transactionDate
@@ -369,10 +369,10 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.grandTotal
           : grandTotal // ignore: cast_nullable_to_non_nullable
               as double,
-      totalPayment: freezed == totalPayment
+      totalPayment: null == totalPayment
           ? _value.totalPayment
           : totalPayment // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       change: freezed == change
           ? _value.change
           : change // ignore: cast_nullable_to_non_nullable
@@ -409,10 +409,10 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
               as List<ItemCart>,
-      payments: freezed == payments
+      payments: null == payments
           ? _value._payments
           : payments // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<CartPayment>,
     ));
   }
 }
@@ -437,7 +437,7 @@ class _$CartImpl implements _Cart {
       this.taxName,
       this.ppnTotal,
       required this.grandTotal,
-      this.totalPayment,
+      required this.totalPayment,
       this.change,
       this.idCustomer,
       this.customerName,
@@ -447,7 +447,7 @@ class _$CartImpl implements _Cart {
       this.createdBy,
       this.createdName,
       required final List<ItemCart> items,
-      final List<dynamic>? payments})
+      required final List<CartPayment> payments})
       : _items = items,
         _payments = payments;
 
@@ -485,7 +485,7 @@ class _$CartImpl implements _Cart {
   @override
   final double grandTotal;
   @override
-  final double? totalPayment;
+  final double totalPayment;
   @override
   final double? change;
   @override
@@ -510,14 +510,12 @@ class _$CartImpl implements _Cart {
     return EqualUnmodifiableListView(_items);
   }
 
-  final List<dynamic>? _payments;
+  final List<CartPayment> _payments;
   @override
-  List<dynamic>? get payments {
-    final value = _payments;
-    if (value == null) return null;
+  List<CartPayment> get payments {
     if (_payments is EqualUnmodifiableListView) return _payments;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
+    return EqualUnmodifiableListView(_payments);
   }
 
   @override
@@ -639,7 +637,7 @@ abstract class _Cart implements Cart {
       final String? taxName,
       final double? ppnTotal,
       required final double grandTotal,
-      final double? totalPayment,
+      required final double totalPayment,
       final double? change,
       final String? idCustomer,
       final String? customerName,
@@ -649,7 +647,7 @@ abstract class _Cart implements Cart {
       final String? createdBy,
       final String? createdName,
       required final List<ItemCart> items,
-      final List<dynamic>? payments}) = _$CartImpl;
+      required final List<CartPayment> payments}) = _$CartImpl;
 
   factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
 
@@ -684,7 +682,7 @@ abstract class _Cart implements Cart {
   @override
   double get grandTotal;
   @override
-  double? get totalPayment;
+  double get totalPayment;
   @override
   double? get change;
   @override
@@ -704,7 +702,7 @@ abstract class _Cart implements Cart {
   @override
   List<ItemCart> get items;
   @override
-  List<dynamic>? get payments;
+  List<CartPayment> get payments;
   @override
   @JsonKey(ignore: true)
   _$$CartImplCopyWith<_$CartImpl> get copyWith =>

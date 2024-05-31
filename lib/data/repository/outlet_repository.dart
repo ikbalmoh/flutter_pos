@@ -121,7 +121,7 @@ class OutletRepository implements OutletRepositoryProtocol {
   }
 
   @override
-  Future<OutletConfig?> fetchOutletConfig(String idOutlet) async {
+  Future<OutletConfig> fetchOutletConfig(String idOutlet) async {
     final api = OutletApi();
     final configJson = await api.configs(idOutlet);
     final OutletConfig config = OutletConfig.fromJson(configJson);
