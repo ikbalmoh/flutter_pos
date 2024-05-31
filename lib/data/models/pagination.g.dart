@@ -16,6 +16,7 @@ _$PaginationImpl<T> _$$PaginationImplFromJson<T>(
       total: (json['total'] as num).toInt(),
       from: (json['from'] as num).toInt(),
       to: (json['to'] as num).toInt(),
+      loading: json['loading'] as bool?,
       data: (json['data'] as List<dynamic>?)?.map(fromJsonT).toList(),
     );
 
@@ -29,5 +30,6 @@ Map<String, dynamic> _$$PaginationImplToJson<T>(
       'total': instance.total,
       'from': instance.from,
       'to': instance.to,
+      'loading': instance.loading,
       'data': instance.data?.map(toJsonT).toList(),
     };

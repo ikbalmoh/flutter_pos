@@ -31,6 +31,8 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
 
   @override
   void initState() {
+    super.initState();
+    
     noteController.text = widget.item.note;
     priceController.text = widget.item.price.toString();
     discountController.text = widget.item.discount.toString();

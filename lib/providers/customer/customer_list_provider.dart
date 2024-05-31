@@ -28,4 +28,20 @@ class CustomerListNotifier extends _$CustomerListNotifier {
       data: [],
     );
   }
+
+  void loadCustomers({int page = 1}) async {
+    state = AsyncData(state.value!.copyWith(loading: true));
+    final api = CustomerApi();
+    try {
+      var customers = await api.customers(page: page);
+      List<Customer> data = List.from(state.value?.data as Iterable<Customer>);
+      if (page > 1) {
+        data = data..addAll(customers.data as Iterable<Customer>);
+        customers = customers.copyWith(data: data, loading: false);
+      }
+      state = AsyncData(customers);
+    } catch (e) {
+      print('Load Customer Error: $e');
+    }
+  }
 }

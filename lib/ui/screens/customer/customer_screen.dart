@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,11 +9,44 @@ import 'package:selleri/providers/customer/customer_list_provider.dart';
 import 'package:selleri/ui/screens/customer/customer_detail.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 
-class CustomerScreen extends ConsumerWidget {
+class CustomerScreen extends ConsumerStatefulWidget {
   const CustomerScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CustomerScreen> createState() => _CustomerScreenState();
+}
+
+class _CustomerScreenState extends ConsumerState<CustomerScreen> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(loadMore);
+  }
+
+  void loadMore() {
+    final pagination = ref.read(customerListNotifierProvider).asData?.value;
+    if (pagination == null) {
+      return;
+    }
+
+    if (pagination.currentPage >= pagination.to) {
+      return;
+    }
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent && !(pagination.loading ?? false)) {
+      if (kDebugMode) {
+        print('Load customers... ${pagination.currentPage}/${pagination.to}');
+      }
+      ref
+          .read(customerListNotifierProvider.notifier)
+          .loadCustomers(page: pagination.currentPage + 1);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final customers = ref.watch(customerListNotifierProvider);
     final selectedCustomer = ref.watch(cartNotiferProvider).idCustomer;
 
@@ -35,7 +69,20 @@ class CustomerScreen extends ConsumerWidget {
       ),
       body: customers.when(
         data: (data) => ListView.builder(
+          controller: _scrollController,
           itemBuilder: (context, idx) {
+            if (idx + 1 > data.data!.length) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: LoadingIndicator(color: Colors.teal),
+                  ),
+                ),
+              );
+            }
             Customer customer = data.data![idx];
             bool selected = selectedCustomer == customer.idCustomer;
             return ListTile(
@@ -56,7 +103,7 @@ class CustomerScreen extends ConsumerWidget {
                   : null,
             );
           },
-          itemCount: data.data?.length,
+          itemCount: data.data!.length + 1,
         ),
         error: (e, stack) => null,
         loading: () => const LoadingWidget(

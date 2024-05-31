@@ -13,6 +13,7 @@ class Pagination<T> with _$Pagination<T> {
     required int total,
     required int from,
     required int to,
+    bool? loading,
     List<T>? data,
   }) = _Pagination<T>;
 
