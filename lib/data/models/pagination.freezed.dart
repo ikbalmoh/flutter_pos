@@ -26,6 +26,7 @@ mixin _$Pagination<T> {
   int get total => throw _privateConstructorUsedError;
   int get from => throw _privateConstructorUsedError;
   int get to => throw _privateConstructorUsedError;
+  bool? get loading => throw _privateConstructorUsedError;
   List<T>? get data => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson(Object? Function(T) toJsonT) =>
@@ -47,6 +48,7 @@ abstract class $PaginationCopyWith<T, $Res> {
       int total,
       int from,
       int to,
+      bool? loading,
       List<T>? data});
 }
 
@@ -68,6 +70,7 @@ class _$PaginationCopyWithImpl<T, $Res, $Val extends Pagination<T>>
     Object? total = null,
     Object? from = null,
     Object? to = null,
+    Object? loading = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -91,6 +94,10 @@ class _$PaginationCopyWithImpl<T, $Res, $Val extends Pagination<T>>
           ? _value.to
           : to // ignore: cast_nullable_to_non_nullable
               as int,
+      loading: freezed == loading
+          ? _value.loading
+          : loading // ignore: cast_nullable_to_non_nullable
+              as bool?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -113,6 +120,7 @@ abstract class _$$PaginationImplCopyWith<T, $Res>
       int total,
       int from,
       int to,
+      bool? loading,
       List<T>? data});
 }
 
@@ -132,6 +140,7 @@ class __$$PaginationImplCopyWithImpl<T, $Res>
     Object? total = null,
     Object? from = null,
     Object? to = null,
+    Object? loading = freezed,
     Object? data = freezed,
   }) {
     return _then(_$PaginationImpl<T>(
@@ -155,6 +164,10 @@ class __$$PaginationImplCopyWithImpl<T, $Res>
           ? _value.to
           : to // ignore: cast_nullable_to_non_nullable
               as int,
+      loading: freezed == loading
+          ? _value.loading
+          : loading // ignore: cast_nullable_to_non_nullable
+              as bool?,
       data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -174,6 +187,7 @@ class _$PaginationImpl<T> implements _Pagination<T> {
       required this.total,
       required this.from,
       required this.to,
+      this.loading,
       final List<T>? data})
       : _data = data;
 
@@ -191,6 +205,8 @@ class _$PaginationImpl<T> implements _Pagination<T> {
   final int from;
   @override
   final int to;
+  @override
+  final bool? loading;
   final List<T>? _data;
   @override
   List<T>? get data {
@@ -203,7 +219,7 @@ class _$PaginationImpl<T> implements _Pagination<T> {
 
   @override
   String toString() {
-    return 'Pagination<$T>(currentPage: $currentPage, lastPage: $lastPage, total: $total, from: $from, to: $to, data: $data)';
+    return 'Pagination<$T>(currentPage: $currentPage, lastPage: $lastPage, total: $total, from: $from, to: $to, loading: $loading, data: $data)';
   }
 
   @override
@@ -218,13 +234,14 @@ class _$PaginationImpl<T> implements _Pagination<T> {
             (identical(other.total, total) || other.total == total) &&
             (identical(other.from, from) || other.from == from) &&
             (identical(other.to, to) || other.to == to) &&
+            (identical(other.loading, loading) || other.loading == loading) &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, currentPage, lastPage, total,
-      from, to, const DeepCollectionEquality().hash(_data));
+      from, to, loading, const DeepCollectionEquality().hash(_data));
 
   @JsonKey(ignore: true)
   @override
@@ -245,6 +262,7 @@ abstract class _Pagination<T> implements Pagination<T> {
       required final int total,
       required final int from,
       required final int to,
+      final bool? loading,
       final List<T>? data}) = _$PaginationImpl<T>;
 
   factory _Pagination.fromJson(
@@ -261,6 +279,8 @@ abstract class _Pagination<T> implements Pagination<T> {
   int get from;
   @override
   int get to;
+  @override
+  bool? get loading;
   @override
   List<T>? get data;
   @override
