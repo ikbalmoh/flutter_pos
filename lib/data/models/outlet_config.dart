@@ -30,7 +30,7 @@ class OutletConfig {
   Tax? tax;
   List<PinSetting>? pinSettings;
   List<UserHasPin>? userHasPin;
-  List<PaymentMethod>? paymentMethods;
+  List<PaymentMethod> paymentMethods;
   List<int>? nominalCash;
   List<RefundReason>? refundReasons;
   List<String>? addOns;
@@ -65,7 +65,7 @@ class OutletConfig {
     this.tax,
     this.pinSettings,
     this.userHasPin,
-    this.paymentMethods,
+    required this.paymentMethods,
     this.nominalCash,
     this.refundReasons,
     this.addOns,

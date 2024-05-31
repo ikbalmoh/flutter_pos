@@ -37,6 +37,7 @@ class CartScreen extends ConsumerWidget {
     void onPressItem(ItemCart item) {
       showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (BuildContext context) => EditCartItem(
           item: item,
           onDelete: () => onDeleteItem(item),

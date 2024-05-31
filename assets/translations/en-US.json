@@ -42,5 +42,11 @@
   "address": "Alamat",
   "group": "Group",
   "close": "Close",
-  "select": "Select"
+  "select": "Select",
+  "cash": "Cash",
+  "payment": "{} Payment",
+  "add_payment": "Add Payment",
+  "payment_amount": "Payment Amount",
+  "note": "Note",
+  "payment_ref": "Payment Ref"
 }

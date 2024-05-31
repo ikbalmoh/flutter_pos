@@ -42,5 +42,11 @@
   "address": "Alamat",
   "group": "Grup",
   "close": "Tutup",
-  "select": "Pilih"
+  "select": "Pilih",
+  "cash": "Tunai",
+  "payment": "Pembayaran {}",
+  "add_payment": "Input Pembayaran",
+  "payment_amount": "Total Bayar",
+  "note": "Catatan",
+  "payment_ref": "No Referensi"
 }

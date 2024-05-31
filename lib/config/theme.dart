@@ -3,138 +3,143 @@ import 'package:flutter/services.dart';
 
 ThemeData appTheme(BuildContext context) {
   return ThemeData(
-    scaffoldBackgroundColor: Colors.white,
-    primaryColor: Colors.teal,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.teal,
-      primary: Colors.teal,
-      background: Colors.white,
-      error: Colors.red,
-      brightness: Brightness.light,
-    ),
-    useMaterial3: true,
-    appBarTheme: AppBarTheme(
-      scrolledUnderElevation: 0,
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.teal.shade400,
-      titleTextStyle: const TextStyle(
-          color: Colors.white, fontWeight: FontWeight.w700, fontSize: 20),
-      actionsIconTheme: const IconThemeData(
-        color: Colors.white,
+      scaffoldBackgroundColor: Colors.white,
+      primaryColor: Colors.teal,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.teal,
+        primary: Colors.teal,
+        background: Colors.white,
+        error: Colors.red,
+        brightness: Brightness.light,
       ),
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.teal.shade400,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
+      useMaterial3: true,
+      appBarTheme: AppBarTheme(
+        scrolledUnderElevation: 0,
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.teal.shade400,
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontWeight: FontWeight.w700, fontSize: 20),
+        actionsIconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.teal.shade400,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.light,
+        ),
       ),
-    ),
-    textTheme: const TextTheme(
-      headlineSmall: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
+      textTheme: const TextTheme(
+        headlineSmall: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        bodyLarge: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+        bodyMedium: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        bodySmall: TextStyle(fontWeight: FontWeight.w400, fontSize: 13),
+        labelLarge: TextStyle(fontWeight: FontWeight.w600),
       ),
-      bodyLarge: TextStyle(fontWeight: FontWeight.w600),
-      bodyMedium: TextStyle(fontWeight: FontWeight.w400),
-      bodySmall: TextStyle(fontWeight: FontWeight.w200, fontSize: 14),
-      labelLarge: TextStyle(fontWeight: FontWeight.w600),
-    ),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        shape: const RoundedRectangleBorder(
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(999)),
+          ),
+        ),
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(999)),
         ),
       ),
-    ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Colors.teal,
-      foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(999)),
-      ),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ButtonStyle(
-        minimumSize: MaterialStateProperty.resolveWith<Size>(
-            (states) => const Size.fromHeight(50)),
-        foregroundColor: MaterialStateProperty.resolveWith<Color>(
-          (states) => Colors.white,
-        ),
-        backgroundColor: MaterialStateProperty.resolveWith<Color>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.pressed)) {
-              return Colors.teal.shade400.withOpacity(0.7);
-            } else if (states.contains(MaterialState.disabled)) {
-              return Colors.grey.shade400;
-            }
-            return Colors.teal.shade400;
-          },
-        ),
-        shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
-          (state) => RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          minimumSize: MaterialStateProperty.resolveWith<Size>(
+              (states) => const Size.fromHeight(50)),
+          foregroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) => Colors.white,
           ),
-        ),
-        textStyle: MaterialStateProperty.resolveWith<TextStyle>(
-          (states) => const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+            (Set<MaterialState> states) {
+              if (states.contains(MaterialState.pressed)) {
+                return Colors.teal.shade400.withOpacity(0.7);
+              } else if (states.contains(MaterialState.disabled)) {
+                return Colors.grey.shade400;
+              }
+              return Colors.teal.shade400;
+            },
+          ),
+          shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+            (state) => RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          textStyle: MaterialStateProperty.resolveWith<TextStyle>(
+            (states) => const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
           ),
         ),
       ),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      enabledBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
+      inputDecorationTheme: InputDecorationTheme(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(10),
+          ),
+          borderSide: BorderSide(
+            width: 1,
+            color: Colors.grey.shade400,
+          ),
         ),
-        borderSide: BorderSide(
-          width: 1,
-          color: Colors.grey.shade400,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(10),
+          ),
+          borderSide: BorderSide(
+            width: 1,
+            color: Colors.teal.shade400,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(10),
+          ),
+          borderSide: BorderSide(
+            width: 1,
+            color: Colors.red.shade400,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(10),
+          ),
+          borderSide: BorderSide(
+            width: 1,
+            color: Colors.teal.shade400,
+          ),
+        ),
+        labelStyle: TextStyle(
+          color: Colors.grey.shade500,
+          fontWeight: FontWeight.normal,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: 15,
         ),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
-        borderSide: BorderSide(
-          width: 1,
-          color: Colors.teal.shade400,
-        ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: SlidePageTransition(),
+          TargetPlatform.iOS: SlidePageTransition(),
+        },
       ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
-        borderSide: BorderSide(
-          width: 1,
-          color: Colors.red.shade400,
-        ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        surfaceTintColor: Colors.white,
       ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
-        borderSide: BorderSide(
-          width: 1,
-          color: Colors.teal.shade400,
-        ),
-      ),
-      labelStyle: TextStyle(
-        color: Colors.grey.shade500,
-        fontWeight: FontWeight.normal,
-      ),
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 15,
-      ),
-    ),
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: SlidePageTransition(),
-        TargetPlatform.iOS: SlidePageTransition(),
-      },
-    ),
-  );
+      cardTheme: const CardTheme(
+        surfaceTintColor: Colors.white,
+      ));
 }
 
 class SlidePageTransition extends PageTransitionsBuilder {

@@ -18,9 +18,9 @@ class OutletLoading extends OutletState {}
 
 class OutletSelected extends OutletState {
   final Outlet outlet;
-  final OutletConfig? config;
+  final OutletConfig config;
 
-  const OutletSelected({required this.outlet, this.config});
+  const OutletSelected({required this.outlet, required this.config});
 
   @override
   List<Object> get props => [outlet];

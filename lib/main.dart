@@ -62,7 +62,7 @@ Future initServices() async {
 
   const storage = FlutterSecureStorage();
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
   if (deviceId != null && deviceId.isNotEmpty) {
     storage.write(key: StoreKey.device.toString(), value: deviceId);

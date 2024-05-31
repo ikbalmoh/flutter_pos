@@ -115,203 +115,192 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
     if (widget.item.variantName != '') {
       itemName += ' - ${widget.item.variantName}';
     }
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 10,
+        left: 15,
+        right: 15,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 15,
       ),
-      margin: const EdgeInsets.all(0),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(
-                    top: 8, left: 5, right: 5, bottom: 15),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: 0.5,
-                      color: Colors.blueGrey.shade100,
-                    ),
-                  ),
-                ),
-                child: Text(
-                  itemName,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-              TextFormField(
-                controller: priceController,
-                readOnly: widget.item.isManualPrice,
-                textAlign: TextAlign.right,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  enabled: !widget.item.isManualPrice,
-                  contentPadding:
-                      const EdgeInsets.only(left: 0, bottom: 15, right: 0),
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  label: Text(
-                    'price'.tr(),
-                    style: labelStyle,
-                  ),
-                  prefix: Text(
-                    'price'.tr(),
-                    style: labelStyle,
-                  ),
-                  alignLabelWithHint: true,
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.blueGrey.shade100,
-                    ),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.teal,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                decoration: BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(
+                top: 8, left: 5, right: 5, bottom: 15),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
                   width: 0.5,
                   color: Colors.blueGrey.shade100,
-                ))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'quantity'.tr(),
-                      style: labelStyle,
-                    ),
-                    QtyEditor(
-                        qty: qty,
-                        onChange: (value) {
-                          setState(() {
-                            qty = value;
-                          });
-                        }),
-                  ],
                 ),
               ),
-              TextFormField(
-                controller: discountController,
-                readOnly: !widget.item.manualDiscount,
-                textAlign: TextAlign.right,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  enabled: widget.item.manualDiscount,
-                  contentPadding:
-                      const EdgeInsets.only(left: 0, bottom: 15, right: 0),
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  label: Text(
-                    'discount'.tr(),
-                    style: labelStyle,
-                  ),
-                  prefix: Text(
-                    'discount'.tr(),
-                    style: labelStyle,
-                  ),
-                  alignLabelWithHint: true,
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.blueGrey.shade100,
-                    ),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.teal,
-                    ),
-                  ),
-                  suffix: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: DiscountTypeToggle(
-                      isPercent: discountIsPercent,
-                      onChange: onChangeDiscountType,
-                    ),
-                  ),
+            ),
+            child: Text(
+              itemName,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
+          TextFormField(
+            controller: priceController,
+            readOnly: widget.item.isManualPrice,
+            textAlign: TextAlign.right,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              enabled: !widget.item.isManualPrice,
+              contentPadding:
+                  const EdgeInsets.only(left: 0, bottom: 15, right: 0),
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              label: Text(
+                'price'.tr(),
+                style: labelStyle,
+              ),
+              prefix: Text(
+                'price'.tr(),
+                style: labelStyle,
+              ),
+              alignLabelWithHint: true,
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Colors.blueGrey.shade100,
                 ),
               ),
-              TextFormField(
-                controller: noteController,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.only(
-                      left: 0, top: 15, right: 0, bottom: 15),
-                  // floatingLabelBehavior: FloatingLabelBehavior.never,
-                  label: Text(
-                    'note'.tr(),
-                    style: labelStyle,
-                  ),
-                  alignLabelWithHint: true,
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.blueGrey.shade100,
-                    ),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.5,
-                      color: Colors.teal,
-                    ),
-                  ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Colors.teal,
                 ),
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+              width: 0.5,
+              color: Colors.blueGrey.shade100,
+            ))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'quantity'.tr(),
+                  style: labelStyle,
+                ),
+                QtyEditor(
+                    qty: qty,
+                    onChange: (value) {
+                      setState(() {
+                        qty = value;
+                      });
+                    }),
+              ],
+            ),
+          ),
+          TextFormField(
+            controller: discountController,
+            readOnly: !widget.item.manualDiscount,
+            textAlign: TextAlign.right,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              enabled: widget.item.manualDiscount,
+              contentPadding:
+                  const EdgeInsets.only(left: 0, bottom: 15, right: 0),
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              label: Text(
+                'discount'.tr(),
+                style: labelStyle,
+              ),
+              prefix: Text(
+                'discount'.tr(),
+                style: labelStyle,
+              ),
+              alignLabelWithHint: true,
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Colors.blueGrey.shade100,
+                ),
+              ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Colors.teal,
+                ),
+              ),
+              suffix: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: DiscountTypeToggle(
+                  isPercent: discountIsPercent,
+                  onChange: onChangeDiscountType,
+                ),
+              ),
+            ),
+          ),
+          TextFormField(
+            controller: noteController,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.only(
+                  left: 0, top: 15, right: 0, bottom: 15),
+              // floatingLabelBehavior: FloatingLabelBehavior.never,
+              label: Text(
+                'note'.tr(),
+                style: labelStyle,
+              ),
+              alignLabelWithHint: true,
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Colors.blueGrey.shade100,
+                ),
+              ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.5,
+                  color: Colors.teal,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              IconButton(
+                color: Colors.red,
+                onPressed: () => widget.onDelete(),
+                icon: const Icon(
+                  CupertinoIcons.trash,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(
+                width: 10,
               ),
               Expanded(
-                flex: 1,
-                child: Container(),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    IconButton(
-                      color: Colors.red,
-                      onPressed: () => widget.onDelete(),
-                      icon: const Icon(
-                        CupertinoIcons.trash,
-                        size: 20,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(30),
-                            ),
-                          ),
-                        ),
-                        onPressed: () => onUpdateItem(context),
-                        icon: const Icon(CupertinoIcons.checkmark_alt),
-                        label: Text(
-                          CurrencyFormat.currency(total()),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                  onPressed: () => onUpdateItem(context),
+                  icon: const Icon(CupertinoIcons.checkmark_alt),
+                  label: Text(
+                    CurrencyFormat.currency(total()),
+                  ),
                 ),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

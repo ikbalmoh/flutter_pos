@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
@@ -22,6 +23,8 @@ class CartNotifer extends _$CartNotifer {
       discOverall: 0,
       discOverallTotal: 0,
       discPromotionsTotal: 0,
+      payments: [],
+      totalPayment: 0,
     );
   }
 
@@ -110,7 +113,7 @@ class CartNotifer extends _$CartNotifer {
             .map((i) => i.total)
             .reduce((value, total) => value + total)
         : 0;
-    double total = 0;
+    double total = subtotal;
     if (subtotal != 0 && state.discOverallTotal > 0) {
       total = subtotal - state.discOverallTotal;
     }
@@ -139,5 +142,22 @@ class CartNotifer extends _$CartNotifer {
 
   void unselectCustomer() {
     state = state.copyWith(customerName: '', idCustomer: null);
+  }
+
+  void addPayment(CartPayment payment) {
+    List<CartPayment> payments = List<CartPayment>.from(state.payments);
+    int paymentIdx = payments
+        .indexWhere((cp) => cp.paymentMethodId == payment.paymentMethodId);
+    if (paymentIdx >= 0) {
+      // Update payment
+      payments[paymentIdx] = payment;
+    } else {
+      // Add payment
+      payments.add(payment);
+    }
+    double totalPayment = payments
+        .map((payment) => payment.paymentValue)
+        .reduce((payment, total) => payment + total);
+    state = state.copyWith(payments: payments, totalPayment: totalPayment);
   }
 }

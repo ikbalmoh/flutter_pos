@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion.dart';
 import 'package:selleri/ui/screens/checkout/order_summary.dart';
-import 'package:selleri/ui/screens/checkout/payment.dart';
+import 'package:selleri/ui/screens/checkout/payment/payment.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,23 +26,21 @@ class CheckoutScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Expanded(
+            const Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       height: 7,
                     ),
-                    const OrderSummary(),
-                    const SizedBox(
+                    OrderSummary(),
+                    SizedBox(
                       height: 7,
                     ),
-                    const DiscountPromotion(),
-                    PaymentDetails(
-                      grandTotal: cart.grandTotal,
-                    )
+                    DiscountPromotion(),
+                    PaymentDetails()
                   ],
                 ),
               ),
@@ -50,7 +48,7 @@ class CheckoutScreen extends ConsumerWidget {
             Card(
               margin: const EdgeInsets.all(0),
               color: Colors.white,
-              elevation: 0,
+              elevation: 10,
               child: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
@@ -63,7 +61,7 @@ class CheckoutScreen extends ConsumerWidget {
                             'Total',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                          Text(CurrencyFormat.currency(cart.subtotal),
+                          Text(CurrencyFormat.currency(cart.grandTotal),
                               style: Theme.of(context).textTheme.bodyLarge),
                         ],
                       ),
@@ -75,9 +73,13 @@ class CheckoutScreen extends ConsumerWidget {
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(30)),
                           ),
+                          backgroundColor: cart.totalPayment >= cart.grandTotal
+                              ? Colors.teal
+                              : Colors.red,
                         ),
-                        onPressed: () {},
-                        child: Text('pay'.tr().toUpperCase()),
+                        onPressed: cart.totalPayment > 0 ? () {} : null,
+                        child: Text(
+                            '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
                       )
                     ],
                   ),
