@@ -144,6 +144,18 @@ class CartNotifer extends _$CartNotifer {
     state = state.copyWith(customerName: '', idCustomer: null);
   }
 
+  void setDiscountTransaction(
+      {required double discount, required bool discIsPercent}) {
+    double discOverallTotal =
+        discIsPercent ? state.subtotal * (discount / 100) : discount;
+    state = state.copyWith(
+      discIsPercent: discIsPercent,
+      discOverall: discount,
+      discOverallTotal: discOverallTotal,
+    );
+    calculateCart();
+  }
+
   void addPayment(CartPayment payment) {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
     int paymentIdx = payments
