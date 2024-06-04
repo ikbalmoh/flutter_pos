@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -7,6 +6,7 @@ import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/token.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:developer';
 
 const storage = FlutterSecureStorage();
 
@@ -37,6 +37,9 @@ class CustomInterceptors extends Interceptor {
     String? deviceId = await storage.read(key: StoreKey.device.toString());
     options.headers['device'] = deviceId;
 
+    // User agent
+    options.headers['User-Agent'] = 'okhttp/3.12.1';
+
     String? tokenString = await storage.read(key: StoreKey.token.toString());
     if (tokenString != null) {
       final Token token = Token.fromJson(json.decode(tokenString));
@@ -44,8 +47,7 @@ class CustomInterceptors extends Interceptor {
     }
 
     if (kDebugMode) {
-      print(
-          'REQUEST[${options.method}]\n => URI: ${options.uri}\n => DATA: ${options.data}');
+      log('REQUEST[${options.method}]\n => URI: ${options.uri}\n => DATA: ${options.data}');
     }
 
     return super.onRequest(options, handler);
@@ -54,8 +56,7 @@ class CustomInterceptors extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
-      print(
-          'RESPONSE[${response.statusCode}]\n => URI: ${response.requestOptions.uri}\n => DATA: ${response.data}');
+      log('RESPONSE[${response.statusCode}]\n => URI: ${response.requestOptions.uri}\n => DATA: ${response.data}');
     }
     final status = response.statusCode;
     final isValid = status != null && status >= 200 && status < 300;
@@ -79,8 +80,7 @@ class CustomInterceptors extends Interceptor {
       err.response?.data = {'message': 'connection_error'};
     }
     if (kDebugMode) {
-      print(
-          'ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> URI: ${err.requestOptions.uri}\n => DATA: $originalData');
+      log('ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> URI: ${err.requestOptions.uri}\n => DATA: $originalData');
     }
 
     if (err.response?.statusCode == 401) {

@@ -271,7 +271,7 @@ class SubscriptionLimit {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Tax {
   String taxName;
-  int percentage;
+  double percentage;
   bool isInclude;
 
   Tax({

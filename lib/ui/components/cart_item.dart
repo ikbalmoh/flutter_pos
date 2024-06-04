@@ -70,7 +70,8 @@ class _CartItemState extends State<CartItem> {
                             ),
                             child: Text(
                               '-${CurrencyFormat.currency(widget.item.discount, symbol: !widget.item.discountIsPercent)}${widget.item.discountIsPercent ? '%' : ''}',
-                              style: textTheme.bodyMedium?.copyWith(color: Colors.red.shade600),
+                              style: textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.red.shade600),
                             ),
                           )
                         : Container(),

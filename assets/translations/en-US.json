@@ -51,5 +51,9 @@
   "note": "Note",
   "payment_ref": "Payment Ref",
   "search": "Search",
-  "search_customer": "Search Customer"
+  "search_customer": "Search Customer",
+  "transaction_loading": "Writing Transaction",
+  "transaction_done": "Transaction Success",
+  "transaction_error": "Transaction Failed",
+  "new_transaction": "Create New Transaction"
 }

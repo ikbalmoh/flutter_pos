@@ -35,22 +35,29 @@ GoRouter router(RouterRef ref) {
       initialLocation: Routes.root,
       routes: [
         GoRoute(
+            name: Routes.root,
             path: Routes.root,
             builder: (context, state) => const SplashScreen()),
         GoRoute(
+            name: Routes.login,
             path: Routes.login,
             builder: (context, state) => const LoginScreen()),
         GoRoute(
+            name: Routes.outlet,
             path: Routes.outlet,
             builder: (context, state) => const SelectOutletScreen()),
         GoRoute(
-            path: Routes.home, builder: (context, state) => const HomeScreen()),
+            name: Routes.home,
+            path: Routes.home,
+            builder: (context, state) => const HomeScreen()),
         GoRoute(
+            name: Routes.customers,
             path: Routes.customers,
             builder: (context, state) => const CustomerScreen()),
         GoRoute(
             path: Routes.cart, builder: (context, state) => const CartScreen()),
         GoRoute(
+            name: Routes.checkout,
             path: Routes.checkout,
             builder: (context, state) => const CheckoutScreen()),
       ],

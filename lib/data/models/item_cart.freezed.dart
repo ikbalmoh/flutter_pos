@@ -293,7 +293,7 @@ class __$$ItemCartImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class _$ItemCartImpl implements _ItemCart {
+class _$ItemCartImpl extends _ItemCart {
   const _$ItemCartImpl(
       {required this.identifier,
       required this.idItem,
@@ -310,7 +310,8 @@ class _$ItemCartImpl implements _ItemCart {
       required this.total,
       required this.note,
       this.idVariant,
-      this.variantName});
+      this.variantName})
+      : super._();
 
   factory _$ItemCartImpl.fromJson(Map<String, dynamic> json) =>
       _$$ItemCartImplFromJson(json);
@@ -347,11 +348,6 @@ class _$ItemCartImpl implements _ItemCart {
   final num? idVariant;
   @override
   final String? variantName;
-
-  @override
-  String toString() {
-    return 'ItemCart(identifier: $identifier, idItem: $idItem, itemName: $itemName, isPackage: $isPackage, isManualPrice: $isManualPrice, price: $price, manualDiscount: $manualDiscount, quantity: $quantity, discount: $discount, discountIsPercent: $discountIsPercent, discountTotal: $discountTotal, addedAt: $addedAt, total: $total, note: $note, idVariant: $idVariant, variantName: $variantName)';
-  }
 
   @override
   bool operator ==(Object other) {
@@ -422,7 +418,7 @@ class _$ItemCartImpl implements _ItemCart {
   }
 }
 
-abstract class _ItemCart implements ItemCart {
+abstract class _ItemCart extends ItemCart {
   const factory _ItemCart(
       {required final String identifier,
       required final String idItem,
@@ -440,6 +436,7 @@ abstract class _ItemCart implements ItemCart {
       required final String note,
       final num? idVariant,
       final String? variantName}) = _$ItemCartImpl;
+  const _ItemCart._() : super._();
 
   factory _ItemCart.fromJson(Map<String, dynamic> json) =
       _$ItemCartImpl.fromJson;

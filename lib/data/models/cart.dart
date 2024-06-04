@@ -7,31 +7,34 @@ part 'cart.g.dart';
 
 @freezed
 class Cart with _$Cart {
+  const Cart._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Cart({
     required DateTime transactionDate,
-    String? transactionNo,
-    String? idOutlet,
-    String? outletName,
+    required String transactionNo,
+    required String idOutlet,
+    required String outletName,
+    required String shiftId,
     required double subtotal,
     required bool discIsPercent,
     required double discOverall,
     required double discOverallTotal,
     required double discPromotionsTotal,
     required double total,
-    bool? ppnIsInclude,
-    double? ppn,
+    required bool ppnIsInclude,
+    required double ppn,
     String? taxName,
-    double? ppnTotal,
+    required double ppnTotal,
     required double grandTotal,
     required double totalPayment,
-    double? change,
+    required double change,
     String? idCustomer,
     String? customerName,
     String? notes,
     String? personInCharge,
     DateTime? holdAt,
-    String? createdBy,
+    required String createdBy,
     String? createdName,
     required List<ItemCart> items,
     required List<CartPayment> payments,
@@ -39,4 +42,39 @@ class Cart with _$Cart {
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
 
+  Map<String, dynamic> toTransactionPayload() => <String, dynamic>{
+        "id_outlet": idOutlet,
+        "shift_id": shiftId,
+        "created_by": createdBy,
+        "transaction_date": (transactionDate.millisecondsSinceEpoch / 1000).floor(),
+        "transaction_no": transactionNo,
+        "id_customer": idCustomer,
+        "subtotal": subtotal,
+        "disc_is_percent": discIsPercent,
+        "disc_overall": discOverall,
+        "disc_overall_total": discOverallTotal,
+        "disc_promotions_total": 0,
+        "total": total,
+        "ppn_is_include": ppnIsInclude == true ? 1 : 0,
+        "ppn": ppn,
+        "ppn_total": ppnTotal,
+        "grand_total": grandTotal,
+        "rounding_value": 0,
+        "notes": notes,
+        "total_payment": totalPayment,
+        "change": change,
+        "items": List<Map<String, dynamic>>.from(
+          items.map(
+            (item) => item.toTransactionPayload(),
+          ),
+        ),
+        "payments": List<Map<String, dynamic>>.from(
+          payments.map(
+            (payment) => payment.toJson(),
+          ),
+        ),
+        "vouchers": [],
+        "refunds": [],
+        "promotions": []
+      };
 }

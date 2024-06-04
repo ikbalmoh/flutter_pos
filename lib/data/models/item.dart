@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 import 'item_variant.dart';
@@ -26,7 +28,7 @@ class Item {
 
   @JsonKey(fromJson: Converters.dynamicToDouble)
   final double stockItem;
-  
+
   String? sku;
   String? barcode;
   String? categoryName;
@@ -74,19 +76,17 @@ class Item {
 
   @override
   String toString() {
-    return '{id_item: $idItem, item_name: $itemName, variants: $variants, package_items: $packageItems}';
+    return json.encode(toJson());
   }
 }
 
 class VariantRelToManyConverter
     implements JsonConverter<ToMany<ItemVariant>, List?> {
-
   const VariantRelToManyConverter();
 
   @override
-  ToMany<ItemVariant> fromJson(List? json) =>
-      ToMany<ItemVariant>(
-          items: json?.map((e) => ItemVariant.fromJson(e)).toList());
+  ToMany<ItemVariant> fromJson(List? json) => ToMany<ItemVariant>(
+      items: json?.map((e) => ItemVariant.fromJson(e)).toList());
 
   @override
   List<Map<String, dynamic>>? toJson(ToMany<ItemVariant> rel) =>
@@ -95,13 +95,11 @@ class VariantRelToManyConverter
 
 class PackageItemRelToManyConverter
     implements JsonConverter<ToMany<ItemPackage>, List?> {
-
   const PackageItemRelToManyConverter();
 
   @override
-  ToMany<ItemPackage> fromJson(List? json) =>
-      ToMany<ItemPackage>(
-          items: json?.map((e) => ItemPackage.fromJson(e)).toList());
+  ToMany<ItemPackage> fromJson(List? json) => ToMany<ItemPackage>(
+      items: json?.map((e) => ItemPackage.fromJson(e)).toList());
 
   @override
   List<Map<String, dynamic>>? toJson(ToMany<ItemPackage> rel) =>

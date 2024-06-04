@@ -4,14 +4,29 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
 import 'package:selleri/ui/screens/checkout/order_summary.dart';
 import 'package:selleri/ui/screens/checkout/payment/payment.dart';
+import 'package:selleri/ui/screens/checkout/store_transaction.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CheckoutScreen extends ConsumerWidget {
+class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+  void onStoreTransaction() async {
+    showModalBottomSheet(
+      isDismissible: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (context) => const StoreTransaction(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cart = ref.watch(cartNotiferProvider);
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
@@ -77,7 +92,8 @@ class CheckoutScreen extends ConsumerWidget {
                               ? Colors.teal
                               : Colors.red,
                         ),
-                        onPressed: cart.totalPayment > 0 ? () {} : null,
+                        onPressed:
+                            cart.totalPayment > 0 ? onStoreTransaction : null,
                         child: Text(
                             '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
                       )

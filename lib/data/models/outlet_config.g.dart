@@ -223,7 +223,7 @@ Map<String, dynamic> _$SubscriptionLimitToJson(SubscriptionLimit instance) =>
 
 Tax _$TaxFromJson(Map<String, dynamic> json) => Tax(
       taxName: json['tax_name'] as String,
-      percentage: (json['percentage'] as num).toInt(),
+      percentage: (json['percentage'] as num).toDouble(),
       isInclude: json['is_include'] as bool,
     );
 

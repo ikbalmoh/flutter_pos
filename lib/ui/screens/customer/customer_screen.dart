@@ -22,7 +22,7 @@ class CustomerScreen extends ConsumerStatefulWidget {
 class _CustomerScreenState extends ConsumerState<CustomerScreen> {
   final _scrollController = ScrollController();
 
-  TextEditingController _searchController = TextEditingController();
+  final _searchController = TextEditingController();
   bool searchVisible = false;
   Timer? _debounce;
 

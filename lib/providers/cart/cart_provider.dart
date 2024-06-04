@@ -6,6 +6,11 @@ import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/network/transaction.dart';
+import 'package:selleri/providers/auth/auth_provider.dart';
+import 'package:selleri/providers/auth/auth_state.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 
 part 'cart_provider.g.dart';
 
@@ -13,7 +18,12 @@ part 'cart_provider.g.dart';
 class CartNotifer extends _$CartNotifer {
   @override
   Cart build() {
+    return emptyCart();
+  }
+
+  Cart emptyCart() {
     return Cart(
+      transactionNo: '',
       transactionDate: DateTime.now(),
       items: [],
       subtotal: 0,
@@ -25,7 +35,56 @@ class CartNotifer extends _$CartNotifer {
       discPromotionsTotal: 0,
       payments: [],
       totalPayment: 0,
+      ppnIsInclude: true,
+      ppn: 0,
+      ppnTotal: 0,
+      change: 0,
+      idOutlet: '', // define on initCart
+      outletName: '', // define on initCart
+      shiftId: '', // define on initCart
+      createdBy: '', // define on initCart
     );
+  }
+
+  void initCart() async {
+    try {
+      final outletState =
+          ref.read(outletNotifierProvider).value as OutletSelected;
+
+      final authState =
+          await ref.read(authNotifierProvider.future) as Authenticated;
+
+      final shift = ref.read(shiftNotifierProvider).value;
+
+      String? transactionNo = state.transactionNo;
+      if (transactionNo == '') {
+        transactionNo =
+            'BILL-${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
+      }
+
+      final tax = outletState.config.tax;
+      final taxable = outletState.config.taxable ?? false;
+
+      Cart cart = emptyCart();
+
+      state = cart.copyWith(
+        idOutlet: outletState.outlet.idOutlet,
+        createdBy: authState.user.user.idUser,
+        shiftId: shift!.id,
+        transactionNo: transactionNo,
+        ppn: tax?.percentage ?? 0,
+        ppnIsInclude: tax?.isInclude ?? true,
+        taxName: taxable ? tax?.taxName : '',
+      );
+
+      if (kDebugMode) {
+        print('Cart Initialized: ${state.toString()}');
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print('Init Cart Failed: ${e.toString()}');
+      }
+    }
   }
 
   void addToCart(Item item, {ItemVariant? variant}) async {
@@ -113,15 +172,37 @@ class CartNotifer extends _$CartNotifer {
             .map((i) => i.total)
             .reduce((value, total) => value + total)
         : 0;
-    double total = subtotal;
-    if (subtotal != 0 && state.discOverallTotal > 0) {
-      total = subtotal - state.discOverallTotal;
+    double discOverallTotal = 0;
+    if (subtotal != 0 && state.discOverall > 0) {
+      discOverallTotal = state.discIsPercent
+          ? subtotal * (state.discOverall / 100)
+          : state.discOverall;
     }
+    double total = subtotal - discOverallTotal;
     double grandTotal = total;
+    double ppn = state.ppn;
+
+    double ppnTotal = 0;
+    if (state.ppn > 0) {
+      if (state.ppnIsInclude) {
+        double dpp = grandTotal / ((100 + ppn) / 100);
+        ppnTotal = dpp * (ppn / 100);
+      } else {
+        ppnTotal = grandTotal * (ppn / 100);
+        grandTotal += ppnTotal;
+      }
+    }
+
+    double change =
+        state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
+
     state = state.copyWith(
       subtotal: subtotal,
+      ppnTotal: ppnTotal,
       total: total,
       grandTotal: grandTotal,
+      discOverallTotal: discOverallTotal,
+      change: change,
     );
   }
 
@@ -157,6 +238,13 @@ class CartNotifer extends _$CartNotifer {
   }
 
   void addPayment(CartPayment payment) {
+    final auth = ref.read(authNotifierProvider).value as Authenticated;
+
+    payment = payment.copyWith(
+      createdBy: auth.user.user.idUser,
+      payDate: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
+    );
+
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
     int paymentIdx = payments
         .indexWhere((cp) => cp.paymentMethodId == payment.paymentMethodId);
@@ -171,5 +259,12 @@ class CartNotifer extends _$CartNotifer {
         .map((payment) => payment.paymentValue)
         .reduce((payment, total) => payment + total);
     state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    calculateCart();
+  }
+
+  Future<void> storeTransaction() async {
+    final api = TransactionApi();
+
+    return api.storeTransaction(state);
   }
 }

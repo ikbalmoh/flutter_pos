@@ -82,14 +82,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletNotifierProvider);
-    final cart = ref.watch(cartNotiferProvider);
     final shift = ref.watch(shiftNotifierProvider);
+    final cart = ref.watch(cartNotiferProvider);
 
-    // Check if shift opened
+    // Shift listener
     ref.listen(shiftNotifierProvider, (previous, next) {
       next.whenData((value) {
+        // Open shift
         if (value == null) {
           showOpenShift(context);
+        } else {
+          ref.read(cartNotiferProvider.notifier).initCart();
         }
       });
     });

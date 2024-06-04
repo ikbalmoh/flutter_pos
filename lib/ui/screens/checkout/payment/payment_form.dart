@@ -89,6 +89,7 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
             controller: amountController,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
+            autofocus: true,
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.only(left: 0, bottom: 15, right: 0),
