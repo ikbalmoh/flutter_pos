@@ -9,6 +9,7 @@ import 'package:selleri/ui/screens/checkout/confirm_store_transaction.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
 import 'package:selleri/ui/components/cart/order_summary/order_summary.dart';
 import 'package:selleri/ui/screens/checkout/payment/payment.dart';
+import 'package:selleri/ui/screens/checkout/store_transaction.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -92,6 +92,47 @@ class Cart extends _$Cart {
     return emptyItems;
   }
 
+  void initCart() async {
+    try {
+      final outletState =
+          ref.read(outletNotifierProvider).value as OutletSelected;
+
+      final authState =
+          await ref.read(authNotifierProvider.future) as Authenticated;
+
+      final shift = ref.read(shiftNotifierProvider).value;
+
+      String? transactionNo = state.transactionNo;
+      if (transactionNo == '') {
+        transactionNo =
+            'BILL-${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
+      }
+
+      final tax = outletState.config.tax;
+      final taxable = outletState.config.taxable ?? false;
+
+      Cart cart = emptyCart();
+
+      state = cart.copyWith(
+        idOutlet: outletState.outlet.idOutlet,
+        createdBy: authState.user.user.idUser,
+        shiftId: shift!.id,
+        transactionNo: transactionNo,
+        ppn: tax?.percentage ?? 0,
+        ppnIsInclude: tax?.isInclude ?? true,
+        taxName: taxable ? tax?.taxName : '',
+      );
+
+      if (kDebugMode) {
+        print('Cart Initialized: ${state.toString()}');
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print('Init Cart Failed: ${e.toString()}');
+      }
+    }
+  }
+
   void addToCart(Item item, {ItemVariant? variant}) async {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
       await initCart();

@@ -8,22 +8,23 @@ part of 'cart.dart';
 
 _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       transactionDate: DateTime.parse(json['transaction_date'] as String),
-      transactionNo: json['transaction_no'] as String?,
-      idOutlet: json['id_outlet'] as String?,
-      outletName: json['outlet_name'] as String?,
+      transactionNo: json['transaction_no'] as String,
+      idOutlet: json['id_outlet'] as String,
+      outletName: json['outlet_name'] as String,
+      shiftId: json['shift_id'] as String,
       subtotal: (json['subtotal'] as num).toDouble(),
       discIsPercent: json['disc_is_percent'] as bool,
       discOverall: (json['disc_overall'] as num).toDouble(),
       discOverallTotal: (json['disc_overall_total'] as num).toDouble(),
       discPromotionsTotal: (json['disc_promotions_total'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
-      ppnIsInclude: json['ppn_is_include'] as bool?,
-      ppn: (json['ppn'] as num?)?.toDouble(),
+      ppnIsInclude: json['ppn_is_include'] as bool,
+      ppn: (json['ppn'] as num).toDouble(),
       taxName: json['tax_name'] as String?,
-      ppnTotal: (json['ppn_total'] as num?)?.toDouble(),
+      ppnTotal: (json['ppn_total'] as num).toDouble(),
       grandTotal: (json['grand_total'] as num).toDouble(),
       totalPayment: (json['total_payment'] as num).toDouble(),
-      change: (json['change'] as num?)?.toDouble(),
+      change: (json['change'] as num).toDouble(),
       idCustomer: json['id_customer'] as String?,
       customerName: json['customer_name'] as String?,
       notes: json['notes'] as String?,
@@ -31,7 +32,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       holdAt: json['hold_at'] == null
           ? null
           : DateTime.parse(json['hold_at'] as String),
-      createdBy: json['created_by'] as String?,
+      createdBy: json['created_by'] as String,
       createdName: json['created_name'] as String?,
       items: (json['items'] as List<dynamic>)
           .map((e) => ItemCart.fromJson(e as Map<String, dynamic>))
@@ -47,6 +48,7 @@ Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
       'transaction_no': instance.transactionNo,
       'id_outlet': instance.idOutlet,
       'outlet_name': instance.outletName,
+      'shift_id': instance.shiftId,
       'subtotal': instance.subtotal,
       'disc_is_percent': instance.discIsPercent,
       'disc_overall': instance.discOverall,

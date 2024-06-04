@@ -20,10 +20,12 @@ CartPayment _$CartPaymentFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CartPayment {
+  int? get payDate => throw _privateConstructorUsedError;
   String get paymentMethodId => throw _privateConstructorUsedError;
   String get paymentname => throw _privateConstructorUsedError;
   double get paymentValue => throw _privateConstructorUsedError;
   String? get reference => throw _privateConstructorUsedError;
+  String? get createdBy => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -38,10 +40,12 @@ abstract class $CartPaymentCopyWith<$Res> {
       _$CartPaymentCopyWithImpl<$Res, CartPayment>;
   @useResult
   $Res call(
-      {String paymentMethodId,
+      {int? payDate,
+      String paymentMethodId,
       String paymentname,
       double paymentValue,
-      String? reference});
+      String? reference,
+      String? createdBy});
 }
 
 /// @nodoc
@@ -57,12 +61,18 @@ class _$CartPaymentCopyWithImpl<$Res, $Val extends CartPayment>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? payDate = freezed,
     Object? paymentMethodId = null,
     Object? paymentname = null,
     Object? paymentValue = null,
     Object? reference = freezed,
+    Object? createdBy = freezed,
   }) {
     return _then(_value.copyWith(
+      payDate: freezed == payDate
+          ? _value.payDate
+          : payDate // ignore: cast_nullable_to_non_nullable
+              as int?,
       paymentMethodId: null == paymentMethodId
           ? _value.paymentMethodId
           : paymentMethodId // ignore: cast_nullable_to_non_nullable
@@ -78,6 +88,10 @@ class _$CartPaymentCopyWithImpl<$Res, $Val extends CartPayment>
       reference: freezed == reference
           ? _value.reference
           : reference // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdBy: freezed == createdBy
+          ? _value.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -92,10 +106,12 @@ abstract class _$$CartPaymentImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String paymentMethodId,
+      {int? payDate,
+      String paymentMethodId,
       String paymentname,
       double paymentValue,
-      String? reference});
+      String? reference,
+      String? createdBy});
 }
 
 /// @nodoc
@@ -109,12 +125,18 @@ class __$$CartPaymentImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? payDate = freezed,
     Object? paymentMethodId = null,
     Object? paymentname = null,
     Object? paymentValue = null,
     Object? reference = freezed,
+    Object? createdBy = freezed,
   }) {
     return _then(_$CartPaymentImpl(
+      payDate: freezed == payDate
+          ? _value.payDate
+          : payDate // ignore: cast_nullable_to_non_nullable
+              as int?,
       paymentMethodId: null == paymentMethodId
           ? _value.paymentMethodId
           : paymentMethodId // ignore: cast_nullable_to_non_nullable
@@ -131,6 +153,10 @@ class __$$CartPaymentImplCopyWithImpl<$Res>
           ? _value.reference
           : reference // ignore: cast_nullable_to_non_nullable
               as String?,
+      createdBy: freezed == createdBy
+          ? _value.createdBy
+          : createdBy // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -140,14 +166,18 @@ class __$$CartPaymentImplCopyWithImpl<$Res>
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _$CartPaymentImpl implements _CartPayment {
   const _$CartPaymentImpl(
-      {required this.paymentMethodId,
+      {this.payDate,
+      required this.paymentMethodId,
       required this.paymentname,
       required this.paymentValue,
-      this.reference});
+      this.reference,
+      this.createdBy});
 
   factory _$CartPaymentImpl.fromJson(Map<String, dynamic> json) =>
       _$$CartPaymentImplFromJson(json);
 
+  @override
+  final int? payDate;
   @override
   final String paymentMethodId;
   @override
@@ -156,10 +186,12 @@ class _$CartPaymentImpl implements _CartPayment {
   final double paymentValue;
   @override
   final String? reference;
+  @override
+  final String? createdBy;
 
   @override
   String toString() {
-    return 'CartPayment(paymentMethodId: $paymentMethodId, paymentname: $paymentname, paymentValue: $paymentValue, reference: $reference)';
+    return 'CartPayment(payDate: $payDate, paymentMethodId: $paymentMethodId, paymentname: $paymentname, paymentValue: $paymentValue, reference: $reference, createdBy: $createdBy)';
   }
 
   @override
@@ -167,6 +199,7 @@ class _$CartPaymentImpl implements _CartPayment {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CartPaymentImpl &&
+            (identical(other.payDate, payDate) || other.payDate == payDate) &&
             (identical(other.paymentMethodId, paymentMethodId) ||
                 other.paymentMethodId == paymentMethodId) &&
             (identical(other.paymentname, paymentname) ||
@@ -174,13 +207,15 @@ class _$CartPaymentImpl implements _CartPayment {
             (identical(other.paymentValue, paymentValue) ||
                 other.paymentValue == paymentValue) &&
             (identical(other.reference, reference) ||
-                other.reference == reference));
+                other.reference == reference) &&
+            (identical(other.createdBy, createdBy) ||
+                other.createdBy == createdBy));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, paymentMethodId, paymentname, paymentValue, reference);
+  int get hashCode => Object.hash(runtimeType, payDate, paymentMethodId,
+      paymentname, paymentValue, reference, createdBy);
 
   @JsonKey(ignore: true)
   @override
@@ -198,14 +233,18 @@ class _$CartPaymentImpl implements _CartPayment {
 
 abstract class _CartPayment implements CartPayment {
   const factory _CartPayment(
-      {required final String paymentMethodId,
+      {final int? payDate,
+      required final String paymentMethodId,
       required final String paymentname,
       required final double paymentValue,
-      final String? reference}) = _$CartPaymentImpl;
+      final String? reference,
+      final String? createdBy}) = _$CartPaymentImpl;
 
   factory _CartPayment.fromJson(Map<String, dynamic> json) =
       _$CartPaymentImpl.fromJson;
 
+  @override
+  int? get payDate;
   @override
   String get paymentMethodId;
   @override
@@ -214,6 +253,8 @@ abstract class _CartPayment implements CartPayment {
   double get paymentValue;
   @override
   String? get reference;
+  @override
+  String? get createdBy;
   @override
   @JsonKey(ignore: true)
   _$$CartPaymentImplCopyWith<_$CartPaymentImpl> get copyWith =>

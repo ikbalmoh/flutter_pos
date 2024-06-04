@@ -21,28 +21,29 @@ Cart _$CartFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Cart {
   DateTime get transactionDate => throw _privateConstructorUsedError;
-  String? get transactionNo => throw _privateConstructorUsedError;
-  String? get idOutlet => throw _privateConstructorUsedError;
-  String? get outletName => throw _privateConstructorUsedError;
+  String get transactionNo => throw _privateConstructorUsedError;
+  String get idOutlet => throw _privateConstructorUsedError;
+  String get outletName => throw _privateConstructorUsedError;
+  String get shiftId => throw _privateConstructorUsedError;
   double get subtotal => throw _privateConstructorUsedError;
   bool get discIsPercent => throw _privateConstructorUsedError;
   double get discOverall => throw _privateConstructorUsedError;
   double get discOverallTotal => throw _privateConstructorUsedError;
   double get discPromotionsTotal => throw _privateConstructorUsedError;
   double get total => throw _privateConstructorUsedError;
-  bool? get ppnIsInclude => throw _privateConstructorUsedError;
-  double? get ppn => throw _privateConstructorUsedError;
+  bool get ppnIsInclude => throw _privateConstructorUsedError;
+  double get ppn => throw _privateConstructorUsedError;
   String? get taxName => throw _privateConstructorUsedError;
-  double? get ppnTotal => throw _privateConstructorUsedError;
+  double get ppnTotal => throw _privateConstructorUsedError;
   double get grandTotal => throw _privateConstructorUsedError;
   double get totalPayment => throw _privateConstructorUsedError;
-  double? get change => throw _privateConstructorUsedError;
+  double get change => throw _privateConstructorUsedError;
   String? get idCustomer => throw _privateConstructorUsedError;
   String? get customerName => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
   String? get personInCharge => throw _privateConstructorUsedError;
   DateTime? get holdAt => throw _privateConstructorUsedError;
-  String? get createdBy => throw _privateConstructorUsedError;
+  String get createdBy => throw _privateConstructorUsedError;
   String? get createdName => throw _privateConstructorUsedError;
   List<ItemCart> get items => throw _privateConstructorUsedError;
   List<CartPayment> get payments => throw _privateConstructorUsedError;
@@ -59,28 +60,29 @@ abstract class $CartCopyWith<$Res> {
   @useResult
   $Res call(
       {DateTime transactionDate,
-      String? transactionNo,
-      String? idOutlet,
-      String? outletName,
+      String transactionNo,
+      String idOutlet,
+      String outletName,
+      String shiftId,
       double subtotal,
       bool discIsPercent,
       double discOverall,
       double discOverallTotal,
       double discPromotionsTotal,
       double total,
-      bool? ppnIsInclude,
-      double? ppn,
+      bool ppnIsInclude,
+      double ppn,
       String? taxName,
-      double? ppnTotal,
+      double ppnTotal,
       double grandTotal,
       double totalPayment,
-      double? change,
+      double change,
       String? idCustomer,
       String? customerName,
       String? notes,
       String? personInCharge,
       DateTime? holdAt,
-      String? createdBy,
+      String createdBy,
       String? createdName,
       List<ItemCart> items,
       List<CartPayment> payments});
@@ -100,28 +102,29 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
   @override
   $Res call({
     Object? transactionDate = null,
-    Object? transactionNo = freezed,
-    Object? idOutlet = freezed,
-    Object? outletName = freezed,
+    Object? transactionNo = null,
+    Object? idOutlet = null,
+    Object? outletName = null,
+    Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
     Object? discOverall = null,
     Object? discOverallTotal = null,
     Object? discPromotionsTotal = null,
     Object? total = null,
-    Object? ppnIsInclude = freezed,
-    Object? ppn = freezed,
+    Object? ppnIsInclude = null,
+    Object? ppn = null,
     Object? taxName = freezed,
-    Object? ppnTotal = freezed,
+    Object? ppnTotal = null,
     Object? grandTotal = null,
     Object? totalPayment = null,
-    Object? change = freezed,
+    Object? change = null,
     Object? idCustomer = freezed,
     Object? customerName = freezed,
     Object? notes = freezed,
     Object? personInCharge = freezed,
     Object? holdAt = freezed,
-    Object? createdBy = freezed,
+    Object? createdBy = null,
     Object? createdName = freezed,
     Object? items = null,
     Object? payments = null,
@@ -131,18 +134,22 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.transactionDate
           : transactionDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      transactionNo: freezed == transactionNo
+      transactionNo: null == transactionNo
           ? _value.transactionNo
           : transactionNo // ignore: cast_nullable_to_non_nullable
-              as String?,
-      idOutlet: freezed == idOutlet
+              as String,
+      idOutlet: null == idOutlet
           ? _value.idOutlet
           : idOutlet // ignore: cast_nullable_to_non_nullable
-              as String?,
-      outletName: freezed == outletName
+              as String,
+      outletName: null == outletName
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
+      shiftId: null == shiftId
+          ? _value.shiftId
+          : shiftId // ignore: cast_nullable_to_non_nullable
+              as String,
       subtotal: null == subtotal
           ? _value.subtotal
           : subtotal // ignore: cast_nullable_to_non_nullable
@@ -167,22 +174,22 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as double,
-      ppnIsInclude: freezed == ppnIsInclude
+      ppnIsInclude: null == ppnIsInclude
           ? _value.ppnIsInclude
           : ppnIsInclude // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      ppn: freezed == ppn
+              as bool,
+      ppn: null == ppn
           ? _value.ppn
           : ppn // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       taxName: freezed == taxName
           ? _value.taxName
           : taxName // ignore: cast_nullable_to_non_nullable
               as String?,
-      ppnTotal: freezed == ppnTotal
+      ppnTotal: null == ppnTotal
           ? _value.ppnTotal
           : ppnTotal // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       grandTotal: null == grandTotal
           ? _value.grandTotal
           : grandTotal // ignore: cast_nullable_to_non_nullable
@@ -191,10 +198,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.totalPayment
           : totalPayment // ignore: cast_nullable_to_non_nullable
               as double,
-      change: freezed == change
+      change: null == change
           ? _value.change
           : change // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       idCustomer: freezed == idCustomer
           ? _value.idCustomer
           : idCustomer // ignore: cast_nullable_to_non_nullable
@@ -215,10 +222,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.holdAt
           : holdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      createdBy: freezed == createdBy
+      createdBy: null == createdBy
           ? _value.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       createdName: freezed == createdName
           ? _value.createdName
           : createdName // ignore: cast_nullable_to_non_nullable
@@ -244,28 +251,29 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
   @useResult
   $Res call(
       {DateTime transactionDate,
-      String? transactionNo,
-      String? idOutlet,
-      String? outletName,
+      String transactionNo,
+      String idOutlet,
+      String outletName,
+      String shiftId,
       double subtotal,
       bool discIsPercent,
       double discOverall,
       double discOverallTotal,
       double discPromotionsTotal,
       double total,
-      bool? ppnIsInclude,
-      double? ppn,
+      bool ppnIsInclude,
+      double ppn,
       String? taxName,
-      double? ppnTotal,
+      double ppnTotal,
       double grandTotal,
       double totalPayment,
-      double? change,
+      double change,
       String? idCustomer,
       String? customerName,
       String? notes,
       String? personInCharge,
       DateTime? holdAt,
-      String? createdBy,
+      String createdBy,
       String? createdName,
       List<ItemCart> items,
       List<CartPayment> payments});
@@ -282,28 +290,29 @@ class __$$CartImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? transactionDate = null,
-    Object? transactionNo = freezed,
-    Object? idOutlet = freezed,
-    Object? outletName = freezed,
+    Object? transactionNo = null,
+    Object? idOutlet = null,
+    Object? outletName = null,
+    Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
     Object? discOverall = null,
     Object? discOverallTotal = null,
     Object? discPromotionsTotal = null,
     Object? total = null,
-    Object? ppnIsInclude = freezed,
-    Object? ppn = freezed,
+    Object? ppnIsInclude = null,
+    Object? ppn = null,
     Object? taxName = freezed,
-    Object? ppnTotal = freezed,
+    Object? ppnTotal = null,
     Object? grandTotal = null,
     Object? totalPayment = null,
-    Object? change = freezed,
+    Object? change = null,
     Object? idCustomer = freezed,
     Object? customerName = freezed,
     Object? notes = freezed,
     Object? personInCharge = freezed,
     Object? holdAt = freezed,
-    Object? createdBy = freezed,
+    Object? createdBy = null,
     Object? createdName = freezed,
     Object? items = null,
     Object? payments = null,
@@ -313,18 +322,22 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.transactionDate
           : transactionDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      transactionNo: freezed == transactionNo
+      transactionNo: null == transactionNo
           ? _value.transactionNo
           : transactionNo // ignore: cast_nullable_to_non_nullable
-              as String?,
-      idOutlet: freezed == idOutlet
+              as String,
+      idOutlet: null == idOutlet
           ? _value.idOutlet
           : idOutlet // ignore: cast_nullable_to_non_nullable
-              as String?,
-      outletName: freezed == outletName
+              as String,
+      outletName: null == outletName
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
+      shiftId: null == shiftId
+          ? _value.shiftId
+          : shiftId // ignore: cast_nullable_to_non_nullable
+              as String,
       subtotal: null == subtotal
           ? _value.subtotal
           : subtotal // ignore: cast_nullable_to_non_nullable
@@ -349,22 +362,22 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as double,
-      ppnIsInclude: freezed == ppnIsInclude
+      ppnIsInclude: null == ppnIsInclude
           ? _value.ppnIsInclude
           : ppnIsInclude // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      ppn: freezed == ppn
+              as bool,
+      ppn: null == ppn
           ? _value.ppn
           : ppn // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       taxName: freezed == taxName
           ? _value.taxName
           : taxName // ignore: cast_nullable_to_non_nullable
               as String?,
-      ppnTotal: freezed == ppnTotal
+      ppnTotal: null == ppnTotal
           ? _value.ppnTotal
           : ppnTotal // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       grandTotal: null == grandTotal
           ? _value.grandTotal
           : grandTotal // ignore: cast_nullable_to_non_nullable
@@ -373,10 +386,10 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.totalPayment
           : totalPayment // ignore: cast_nullable_to_non_nullable
               as double,
-      change: freezed == change
+      change: null == change
           ? _value.change
           : change // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
       idCustomer: freezed == idCustomer
           ? _value.idCustomer
           : idCustomer // ignore: cast_nullable_to_non_nullable
@@ -397,10 +410,10 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.holdAt
           : holdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      createdBy: freezed == createdBy
+      createdBy: null == createdBy
           ? _value.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       createdName: freezed == createdName
           ? _value.createdName
           : createdName // ignore: cast_nullable_to_non_nullable
@@ -420,36 +433,38 @@ class __$$CartImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class _$CartImpl implements _Cart {
+class _$CartImpl extends _Cart {
   const _$CartImpl(
       {required this.transactionDate,
-      this.transactionNo,
-      this.idOutlet,
-      this.outletName,
+      required this.transactionNo,
+      required this.idOutlet,
+      required this.outletName,
+      required this.shiftId,
       required this.subtotal,
       required this.discIsPercent,
       required this.discOverall,
       required this.discOverallTotal,
       required this.discPromotionsTotal,
       required this.total,
-      this.ppnIsInclude,
-      this.ppn,
+      required this.ppnIsInclude,
+      required this.ppn,
       this.taxName,
-      this.ppnTotal,
+      required this.ppnTotal,
       required this.grandTotal,
       required this.totalPayment,
-      this.change,
+      required this.change,
       this.idCustomer,
       this.customerName,
       this.notes,
       this.personInCharge,
       this.holdAt,
-      this.createdBy,
+      required this.createdBy,
       this.createdName,
       required final List<ItemCart> items,
       required final List<CartPayment> payments})
       : _items = items,
-        _payments = payments;
+        _payments = payments,
+        super._();
 
   factory _$CartImpl.fromJson(Map<String, dynamic> json) =>
       _$$CartImplFromJson(json);
@@ -457,11 +472,13 @@ class _$CartImpl implements _Cart {
   @override
   final DateTime transactionDate;
   @override
-  final String? transactionNo;
+  final String transactionNo;
   @override
-  final String? idOutlet;
+  final String idOutlet;
   @override
-  final String? outletName;
+  final String outletName;
+  @override
+  final String shiftId;
   @override
   final double subtotal;
   @override
@@ -475,19 +492,19 @@ class _$CartImpl implements _Cart {
   @override
   final double total;
   @override
-  final bool? ppnIsInclude;
+  final bool ppnIsInclude;
   @override
-  final double? ppn;
+  final double ppn;
   @override
   final String? taxName;
   @override
-  final double? ppnTotal;
+  final double ppnTotal;
   @override
   final double grandTotal;
   @override
   final double totalPayment;
   @override
-  final double? change;
+  final double change;
   @override
   final String? idCustomer;
   @override
@@ -499,7 +516,7 @@ class _$CartImpl implements _Cart {
   @override
   final DateTime? holdAt;
   @override
-  final String? createdBy;
+  final String createdBy;
   @override
   final String? createdName;
   final List<ItemCart> _items;
@@ -520,7 +537,7 @@ class _$CartImpl implements _Cart {
 
   @override
   String toString() {
-    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments)';
+    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, shiftId: $shiftId, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments)';
   }
 
   @override
@@ -536,6 +553,7 @@ class _$CartImpl implements _Cart {
                 other.idOutlet == idOutlet) &&
             (identical(other.outletName, outletName) ||
                 other.outletName == outletName) &&
+            (identical(other.shiftId, shiftId) || other.shiftId == shiftId) &&
             (identical(other.subtotal, subtotal) ||
                 other.subtotal == subtotal) &&
             (identical(other.discIsPercent, discIsPercent) ||
@@ -582,6 +600,7 @@ class _$CartImpl implements _Cart {
         transactionNo,
         idOutlet,
         outletName,
+        shiftId,
         subtotal,
         discIsPercent,
         discOverall,
@@ -620,45 +639,49 @@ class _$CartImpl implements _Cart {
   }
 }
 
-abstract class _Cart implements Cart {
+abstract class _Cart extends Cart {
   const factory _Cart(
       {required final DateTime transactionDate,
-      final String? transactionNo,
-      final String? idOutlet,
-      final String? outletName,
+      required final String transactionNo,
+      required final String idOutlet,
+      required final String outletName,
+      required final String shiftId,
       required final double subtotal,
       required final bool discIsPercent,
       required final double discOverall,
       required final double discOverallTotal,
       required final double discPromotionsTotal,
       required final double total,
-      final bool? ppnIsInclude,
-      final double? ppn,
+      required final bool ppnIsInclude,
+      required final double ppn,
       final String? taxName,
-      final double? ppnTotal,
+      required final double ppnTotal,
       required final double grandTotal,
       required final double totalPayment,
-      final double? change,
+      required final double change,
       final String? idCustomer,
       final String? customerName,
       final String? notes,
       final String? personInCharge,
       final DateTime? holdAt,
-      final String? createdBy,
+      required final String createdBy,
       final String? createdName,
       required final List<ItemCart> items,
       required final List<CartPayment> payments}) = _$CartImpl;
+  const _Cart._() : super._();
 
   factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
 
   @override
   DateTime get transactionDate;
   @override
-  String? get transactionNo;
+  String get transactionNo;
   @override
-  String? get idOutlet;
+  String get idOutlet;
   @override
-  String? get outletName;
+  String get outletName;
+  @override
+  String get shiftId;
   @override
   double get subtotal;
   @override
@@ -672,19 +695,19 @@ abstract class _Cart implements Cart {
   @override
   double get total;
   @override
-  bool? get ppnIsInclude;
+  bool get ppnIsInclude;
   @override
-  double? get ppn;
+  double get ppn;
   @override
   String? get taxName;
   @override
-  double? get ppnTotal;
+  double get ppnTotal;
   @override
   double get grandTotal;
   @override
   double get totalPayment;
   @override
-  double? get change;
+  double get change;
   @override
   String? get idCustomer;
   @override
@@ -696,7 +719,7 @@ abstract class _Cart implements Cart {
   @override
   DateTime? get holdAt;
   @override
-  String? get createdBy;
+  String get createdBy;
   @override
   String? get createdName;
   @override
