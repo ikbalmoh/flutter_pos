@@ -74,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
-                    decoration: const InputDecoration(labelText: "Userna"),
+                    decoration: const InputDecoration(labelText: "Username"),
                     controller: _usernameController,
                     scrollPadding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).viewInsets.bottom + 10,

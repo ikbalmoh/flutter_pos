@@ -9,6 +9,7 @@ import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/open_shift.dart';
+import 'package:selleri/ui/screens/home/components/home_menu.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
@@ -100,11 +101,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: searchVisible
           ? SearchAppBar(
-              onBack: () => setState(() {
-                searchVisible = false;
-                textEditingController.text = '';
-                search = '';
-              }),
+              onBack: () => setState(
+                () {
+                  searchVisible = false;
+                  textEditingController.text = '';
+                  search = '';
+                },
+              ),
               controller: textEditingController,
               onChanged: onSearchItems,
             )
@@ -120,42 +123,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   }),
                   icon: const Icon(Icons.search),
                 ),
-                MenuAnchor(
-                    builder: (BuildContext context, MenuController controller,
-                        Widget? child) {
-                      return IconButton(
-                        onPressed: () {
-                          if (controller.isOpen) {
-                            controller.close();
-                          } else {
-                            controller.open();
-                          }
-                        },
-                        icon: const Icon(Icons.more_vert),
-                        tooltip: 'show_menu'.tr(),
-                      );
-                    },
-                    menuChildren: [
-                      MenuItemButton(
-                        onPressed: () => context.push(Routes.customers),
-                        leadingIcon: Icon(
-                          Icons.account_box,
-                          color: cart.idCustomer == null
-                              ? Colors.grey.shade800
-                              : Colors.green.shade600,
-                        ),
-                        child:
-                            Text(cart.customerName ?? 'select_customer'.tr()),
-                      ),
-                      MenuItemButton(
-                        onPressed: onSignOut,
-                        leadingIcon: const Icon(
-                          Icons.logout,
-                          color: Colors.red,
-                        ),
-                        child: Text('logout'.tr()),
-                      ),
-                    ])
+                const HomeMenu()
               ],
             ),
       body: Stack(

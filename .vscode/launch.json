@@ -5,9 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "selleri",
+      "name": "Staging",
       "request": "launch",
-      "type": "dart"
+      "type": "dart",
+      "args": ["--flavor", "staging"]
     },
     {
       "name": "selleri (profile mode)",

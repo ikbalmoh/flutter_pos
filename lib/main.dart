@@ -38,7 +38,9 @@ Future initServices() async {
     return true;
   };
 
-  await dotenv.load(fileName: ".env");
+  String env = appFlavor == 'production' ? ".env" : ".env.staging";
+
+  await dotenv.load(fileName: env);
 
   String? deviceId = '';
 
