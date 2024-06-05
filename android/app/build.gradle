@@ -95,6 +95,21 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions "release"
+
+    productFlavors {
+        staging {
+            dimension "release"
+            resValue "string", "app_name", "Selleri Staging"
+            applicationIdSuffix ".staging"
+            manifestPlaceholders = [applicationLabel: "[Staging] Selleri"]
+        }
+        production {
+            dimension "release"
+            manifestPlaceholders = [applicationLabel: "Selleri"]
+        }
+    }
 }
 
 flutter {
