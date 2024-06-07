@@ -1,12 +1,12 @@
 import 'dart:convert';
-
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'dart:developer';
-
 import 'package:selleri/data/models/printer.dart';
+import 'package:image/image.dart';
 
 part 'printer_provider.g.dart';
 
@@ -84,6 +84,12 @@ class PrinterNotifier extends _$PrinterNotifier {
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
 
+    final ByteData data = await rootBundle.load('assets/images/icon-print.jpg');
+    final Uint8List imgBytes = data.buffer.asUint8List();
+    final Image? img = decodeImage(imgBytes);
+    if (img != null) {
+      bytes += generator.imageRaster(img, align: PosAlign.center);
+    }
     bytes += generator.text(
       'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ',
       styles: const PosStyles(
@@ -91,6 +97,7 @@ class PrinterNotifier extends _$PrinterNotifier {
         width: PosTextSize.size1,
       ),
     );
+
     bytes += generator.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
         styles: const PosStyles(codeTable: 'CP1252'));
     bytes += generator.text('Special 2: blåbærgrød',
@@ -131,6 +138,8 @@ class PrinterNotifier extends _$PrinterNotifier {
           height: PosTextSize.size2,
           width: PosTextSize.size2,
         ));
+
+    bytes += generator.qrcode('selleri.co.id');
 
     // bytes += generator.feed(1);
     bytes += generator.cut();
