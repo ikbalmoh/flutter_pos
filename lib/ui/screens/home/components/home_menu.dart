@@ -34,7 +34,13 @@ class HomeMenu extends ConsumerWidget {
               controller.open();
             }
           },
-          icon: const Icon(Icons.more_vert),
+          icon: Badge(
+            smallSize: 8,
+            backgroundColor: ref.watch(printerNotifierProvider).value != null
+                ? Colors.transparent
+                : Colors.red.shade600,
+            child: const Icon(Icons.more_vert),
+          ),
           tooltip: 'show_menu'.tr(),
         );
       },
@@ -54,12 +60,13 @@ class HomeMenu extends ConsumerWidget {
         MenuItemButton(
           onPressed: () => context.push(Routes.printers),
           leadingIcon: Badge(
+            smallSize: 8,
             backgroundColor: ref.watch(printerNotifierProvider).value != null
-                ? Colors.green.shade600
+                ? Colors.green.shade500
                 : Colors.red.shade600,
             child: Icon(
               Icons.print,
-              color: Colors.grey.shade800,
+              color: Colors.grey.shade600,
             ),
           ),
           child:
