@@ -48,6 +48,16 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
       });
     });
 
+    final currentPrinter = ref.watch(printerNotifierProvider).value;
+
+    void onSelectPrinter(BluetoothInfo device) {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return ConnectPrinter(device: device);
+          });
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

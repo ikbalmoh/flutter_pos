@@ -298,9 +298,7 @@ class ObjectBox {
 
   void putPromotions(List<Promotion> promotions) {
     promotionBox.putMany(promotions);
-    if (kDebugMode) {
-      print('${promotions.length} PROMOTIONS HAS BEEN STORED');
-    }
+    log('${promotions.length} PROMOTIONS HAS BEEN STORED');
   }
 
   void clearAll() {

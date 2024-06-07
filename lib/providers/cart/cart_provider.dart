@@ -123,13 +123,9 @@ class Cart extends _$Cart {
         taxName: taxable ? tax?.taxName : '',
       );
 
-      if (kDebugMode) {
-        print('Cart Initialized: ${state.toString()}');
-      }
+      log('Cart Initialized: ${state.toString()}');
     } on Exception catch (e) {
-      if (kDebugMode) {
-        print('Init Cart Failed: ${e.toString()}');
-      }
+      log('Init Cart Failed: ${e.toString()}');
     }
   }
 
