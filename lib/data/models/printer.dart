@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 
 class Printer {
@@ -22,6 +24,12 @@ class Printer {
             : json['size'] == 512
                 ? PaperSize.mm72
                 : PaperSize.mm80;
+
+  @override
+  String toString() {
+    final jsonToken = toJson();
+    return json.encode(jsonToken);
+  }
 }
 
 class PaperSizeSetting {

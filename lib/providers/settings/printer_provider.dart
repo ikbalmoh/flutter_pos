@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -11,10 +14,24 @@ part 'printer_provider.g.dart';
 class PrinterNotifier extends _$PrinterNotifier {
   @override
   FutureOr<Printer?> build() async {
+    const storage = FlutterSecureStorage();
+    final currentPrinter = await storage.read(key: 'printer');
+    if (currentPrinter != null) {
+      final printerJson = json.decode(currentPrinter);
+      Printer printer = Printer.fromJson(printerJson);
+      await connectPrinter(
+        BluetoothInfo(name: printer.name, macAdress: printer.macAddress),
+        size: printer.size,
+        print: false,
+      );
+      return printer;
+    }
     return null;
   }
 
-  void connectPrinter(BluetoothInfo device, PaperSize size) async {
+  Future<void> connectPrinter(BluetoothInfo device,
+      {required PaperSize size, bool print = true}) async {
+    state = const AsyncLoading();
     try {
       bool isConnected = await PrintBluetoothThermal.connectionStatus;
       if (!isConnected) {
@@ -26,15 +43,18 @@ class PrinterNotifier extends _$PrinterNotifier {
       if (!isConnected) {
         throw Exception('Failed to Connect');
       }
-      state = AsyncData(
-        Printer(
-          macAddress: device.macAdress,
-          name: device.name,
-          size: size,
-        ),
+      final printer = Printer(
+        macAddress: device.macAdress,
+        name: device.name,
+        size: size,
       );
-      printTest();
+
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'printer', value: printer.toString());
+      state = AsyncData(printer);
+      await printTest();
     } catch (e) {
+      state = AsyncError(e, StackTrace.current);
       log('CONNECT PRINTER FAILED: ${e.toString()}');
     }
   }
@@ -46,7 +66,7 @@ class PrinterNotifier extends _$PrinterNotifier {
     }
   }
 
-  void printTest() async {
+  Future<void> printTest() async {
     final isConnected = await PrintBluetoothThermal.connectionStatus;
     if (!isConnected) {
       log('PRINTER NOT CONNECTED');

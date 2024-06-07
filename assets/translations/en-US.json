@@ -63,5 +63,8 @@
   "connect_printer": "Connect Printer",
   "disconnect_printer": "Disconnect Printer",
   "paper_size": "Paper Size",
-  "print_test": "Print Test"
+  "print_test": "Print Test",
+  "printer_connected": "Connected to {}",
+  "connect_printer_failed": "Failed to connect to the printer: {}",
+  "printer_connecting": "Connecting printer"
 }

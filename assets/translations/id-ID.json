@@ -63,5 +63,8 @@
   "connect_printer": "Hubungkan Printer",
   "disconnect_printer": "Putuskan Printer",
   "paper_size": "Ukuran Kertas",
-  "print_test": "Tes Printer"
+  "print_test": "Tes Printer",
+  "printer_connected": "Printer {} terhubung",
+  "connect_printer_failed": "Gagal menghubungkan printer: {}",
+  "printer_connecting": "Menguhubungkan printer"
 }
