@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/release
 .env
 .env.staging
+
+# FVM Version Cache
+.fvm/
