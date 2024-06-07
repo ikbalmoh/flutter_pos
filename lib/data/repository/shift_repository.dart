@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,6 +6,7 @@ import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/network/shift.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
+import 'dart:developer';
 
 part 'shift_repository.g.dart';
 
@@ -50,9 +50,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
         return shift;
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('RETIREVE CURRENT SHIFT FAILED: ${e.toString()}');
-      }
+      log('RETIREVE CURRENT SHIFT FAILED: ${e.toString()}');
     }
     return null;
   }

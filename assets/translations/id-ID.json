@@ -55,5 +55,13 @@
   "transaction_loading": "Membuat Transaksi",
   "transaction_done": "Transaksi Selesai",
   "transaction_error": "Transaksi Gagal",
-  "new_transaction": "Buat Transaksi Baru"
+  "new_transaction": "Buat Transaksi Baru",
+  "printer_setting": "Pengaturan Printer",
+  "no_device_found": "Tidak Ada Perangkat Terdeteksi",
+  "printer_setting_instruction": "Pastikan bluetooth aktif\ndan printer telah dipasangkan",
+  "scan_again": "Scan Lagi",
+  "connect_printer": "Hubungkan Printer",
+  "disconnect_printer": "Putuskan Printer",
+  "paper_size": "Ukuran Kertas",
+  "print_test": "Tes Printer"
 }

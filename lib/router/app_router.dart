@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
+import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
-
 import 'package:selleri/ui/screens/splash/splash_screen.dart';
 import 'package:selleri/ui/screens/login/login_screen.dart';
 import 'package:selleri/ui/screens/select_outlet/select_outlet_screen.dart';
@@ -12,6 +11,7 @@ import 'package:selleri/ui/screens/home/home_screen.dart';
 import 'package:selleri/ui/screens/cart/cart_screen.dart';
 import 'package:selleri/ui/screens/checkout/checkout_screen.dart';
 import 'package:selleri/ui/screens/customer/customer_screen.dart';
+import 'package:selleri/ui/screens/settings/printer/printer_setting_screen.dart';
 
 import 'routes.dart';
 
@@ -60,15 +60,16 @@ GoRouter router(RouterRef ref) {
             name: Routes.checkout,
             path: Routes.checkout,
             builder: (context, state) => const CheckoutScreen()),
+        GoRoute(
+            name: Routes.printers,
+            path: Routes.printers,
+            builder: (context, state) => const PrinterSettingScreen()),
       ],
       refreshListenable: appState,
       redirect: (context, state) {
         final currentRoute = state.topRoute?.path;
 
-        if (kDebugMode) {
-          print(
-              'ROUTE STATE:\napp : ${appState.value.asData}\nroute: ${state.topRoute}');
-        }
+        log('ROUTE STATE:\napp : ${appState.value.asData}\nroute: ${state.topRoute}');
 
         if (appState.value.isLoading) {
           return null;
@@ -96,10 +97,7 @@ GoRouter router(RouterRef ref) {
             ? (currentRoute != null && currentRoute != redirectRoute)
             : false;
 
-        if (kDebugMode) {
-          print(
-              'ROUTE: current = $currentRoute | redirect = $redirectRoute | should redirect = $shouldRedirect');
-        }
+        log('ROUTE: current = $currentRoute | redirect = $redirectRoute | should redirect = $shouldRedirect');
 
         if (shouldRedirect) {
           return redirectRoute;

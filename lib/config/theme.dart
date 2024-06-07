@@ -8,7 +8,7 @@ ThemeData appTheme(BuildContext context) {
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.teal,
       primary: Colors.teal,
-      background: Colors.white,
+      surface: Colors.white,
       error: Colors.red,
       brightness: Brightness.light,
     ),
@@ -54,27 +54,27 @@ ThemeData appTheme(BuildContext context) {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: MaterialStateProperty.resolveWith<Size>(
+        minimumSize: WidgetStateProperty.resolveWith<Size>(
             (states) => const Size.fromHeight(50)),
-        foregroundColor: MaterialStateProperty.resolveWith<Color>(
+        foregroundColor: WidgetStateProperty.resolveWith<Color>(
           (states) => Colors.white,
         ),
-        backgroundColor: MaterialStateProperty.resolveWith<Color>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.pressed)) {
+        backgroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.pressed)) {
               return Colors.teal.shade400.withOpacity(0.7);
-            } else if (states.contains(MaterialState.disabled)) {
+            } else if (states.contains(WidgetState.disabled)) {
               return Colors.grey.shade400;
             }
             return Colors.teal.shade400;
           },
         ),
-        shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+        shape: WidgetStateProperty.resolveWith<RoundedRectangleBorder>(
           (state) => RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        textStyle: MaterialStateProperty.resolveWith<TextStyle>(
+        textStyle: WidgetStateProperty.resolveWith<TextStyle>(
           (states) => const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,

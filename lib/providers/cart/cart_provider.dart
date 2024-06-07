@@ -11,6 +11,7 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'dart:developer';
 
 part 'cart_provider.g.dart';
 
@@ -77,13 +78,9 @@ class CartNotifer extends _$CartNotifer {
         taxName: taxable ? tax?.taxName : '',
       );
 
-      if (kDebugMode) {
-        print('Cart Initialized: ${state.toString()}');
-      }
+      log('Cart Initialized: ${state.toString()}');
     } on Exception catch (e) {
-      if (kDebugMode) {
-        print('Init Cart Failed: ${e.toString()}');
-      }
+      log('Init Cart Failed: ${e.toString()}');
     }
   }
 
@@ -123,7 +120,7 @@ class CartNotifer extends _$CartNotifer {
       variantName: variant?.variantName ?? '',
     );
     if (kDebugMode) {
-      print('ADD TO CART: $itemCart');
+      log('ADD TO CART: $itemCart');
     }
     var items = [...state.items];
     items.add(itemCart);

@@ -55,5 +55,13 @@
   "transaction_loading": "Writing Transaction",
   "transaction_done": "Transaction Success",
   "transaction_error": "Transaction Failed",
-  "new_transaction": "Create New Transaction"
+  "new_transaction": "Create New Transaction",
+  "printer_setting": "Printer Setting",
+  "no_device_found": "No Devices Found",
+  "printer_setting_instruction": "Make sure bluetooth is enabled\nand the printer has been paired",
+  "scan_again": "Scan Again",
+  "connect_printer": "Connect Printer",
+  "disconnect_printer": "Disconnect Printer",
+  "paper_size": "Paper Size",
+  "print_test": "Print Test"
 }

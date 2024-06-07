@@ -5,19 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Staging",
+      "name": "Debug",
       "request": "launch",
       "type": "dart",
-      "args": ["--flavor", "staging"]
+      "args": ["--flavor", "dev"]
     },
     {
-      "name": "selleri (profile mode)",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "profile"
-    },
-    {
-      "name": "selleri (release mode)",
+      "name": "Selleri (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"

@@ -59,17 +59,23 @@ android {
         }
     }
 
-    flavorDimensions "release"
+    flavorDimensions "mode"
 
     productFlavors {
+        dev {
+            dimension "mode"
+            resValue "string", "app_name", "Selleri DEV"
+            applicationIdSuffix ".debug"
+            manifestPlaceholders = [applicationLabel: "[DEV] Selleri"]
+        }
         staging {
-            dimension "release"
+            dimension "mode"
             resValue "string", "app_name", "Selleri Staging"
             applicationIdSuffix ".staging"
             manifestPlaceholders = [applicationLabel: "[Staging] Selleri"]
         }
         production {
-            dimension "release"
+            dimension "mode"
             manifestPlaceholders = [applicationLabel: "Selleri"]
         }
     }

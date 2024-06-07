@@ -1,10 +1,10 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
+import 'dart:developer';
 
 class ObjectBox {
   late final Store store;
@@ -61,16 +61,12 @@ class ObjectBox {
 
   void putItems(List<Item> items) {
     itemBox.putMany(items);
-    if (kDebugMode) {
-      print('${items.length} ITEMS HAS BEEN STORED');
-    }
+    log('${items.length} ITEMS HAS BEEN STORED');
   }
 
   void putPromotions(List<Promotion> promotions) {
     promotionBox.putMany(promotions);
-    if (kDebugMode) {
-      print('${promotions.length} PROMOTIONS HAS BEEN STORED');
-    }
+    log('${promotions.length} PROMOTIONS HAS BEEN STORED');
   }
 
   void clearAll() {

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/ui/screens/settings/printer/printer_setting.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class HomeMenu extends ConsumerWidget {
@@ -50,19 +50,20 @@ class HomeMenu extends ConsumerWidget {
           child: Text(ref.watch(cartNotiferProvider).customerName ??
               'select_customer'.tr()),
         ),
+        const PopupMenuDivider(),
         MenuItemButton(
-          onPressed: () {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) => const PrinterSetting(),
-            );
-          },
-          leadingIcon: Icon(
-            Icons.print,
-            color: Colors.grey.shade800,
+          onPressed: () => context.push(Routes.printers),
+          leadingIcon: Badge(
+            backgroundColor: ref.watch(printerNotifierProvider).value != null
+                ? Colors.green.shade600
+                : Colors.red.shade600,
+            child: Icon(
+              Icons.print,
+              color: Colors.grey.shade800,
+            ),
           ),
-          child: const Text('Printer'),
+          child:
+              Text(ref.watch(printerNotifierProvider).value?.name ?? 'Printer'),
         ),
         MenuItemButton(
           onPressed: onSignOut,

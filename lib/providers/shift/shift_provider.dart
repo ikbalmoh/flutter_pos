@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
@@ -9,6 +8,7 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:developer';
 
 part 'shift_provider.g.dart';
 
@@ -56,9 +56,7 @@ class ShiftNotifier extends _$ShiftNotifier {
       state = AsyncData(storedShift);
     } on DioException catch (e) {
       String message = e.response?.data['msg'] ?? e.message;
-      if (kDebugMode) {
-        print('OPEN SHIFT FAILED: $message');
-      }
+      log('OPEN SHIFT FAILED: $message');
     }
   }
 

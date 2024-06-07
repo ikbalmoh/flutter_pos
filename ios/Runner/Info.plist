@@ -50,5 +50,7 @@
 		<string>en</string>
 		<string>id</string>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth access to connect 58mm or 80mm thermal printers</string>
 </dict>
 </plist>

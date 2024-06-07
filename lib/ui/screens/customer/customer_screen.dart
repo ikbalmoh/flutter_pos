@@ -1,7 +1,6 @@
 import 'dart:async';
-
+import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -53,9 +52,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
-      if (kDebugMode) {
-        print('Load customers... ${pagination.currentPage}/${pagination.to}');
-      }
+      log('Load customers... ${pagination.currentPage}/${pagination.to}');
       ref
           .read(customerListNotifierProvider.notifier)
           .loadCustomers(page: pagination.currentPage + 1);

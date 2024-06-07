@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,12 +38,13 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
 
   void submitTransaction() async {
     try {
-      final data = await ref.read(cartNotiferProvider.notifier).storeTransaction();
+      final data =
+          await ref.read(cartNotiferProvider.notifier).storeTransaction();
       setState(() {
         status = Status.success;
       });
     } on Exception catch (e) {
-      print('TRANSACTION ERROR: $e');
+      log('TRANSACTION ERROR: $e');
       setState(() {
         status = Status.error;
       });

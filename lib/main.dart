@@ -11,13 +11,12 @@ import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'dart:developer';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
 Future initServices() async {
-  if (kDebugMode) {
-    print('INITIALIZING APP ...');
-  }
+  log('INITIALIZING APP ...');
 
   await EasyLocalization.ensureInitialized();
 
@@ -25,16 +24,12 @@ Future initServices() async {
 
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
-    if (kDebugMode) {
-      print('ERROR DETAILS: $details');
-    }
+    log('ERROR DETAILS: $details');
     if (kReleaseMode) exit(1);
   };
 
   PlatformDispatcher.instance.onError = (error, stack) {
-    if (kDebugMode) {
-      print('ERROR OCCURED:\n error => $error\n stack => $stack');
-    }
+    log('ERROR OCCURED:\n error => $error\n stack => $stack');
     return true;
   };
 
@@ -58,9 +53,7 @@ Future initServices() async {
     deviceId = deviceInfo.userAgent;
   }
 
-  if (kDebugMode) {
-    print('Device ID: $deviceId');
-  }
+  log('Device ID: $deviceId');
 
   const storage = FlutterSecureStorage();
 
