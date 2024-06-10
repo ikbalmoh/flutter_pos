@@ -11,6 +11,7 @@ class PromotionItem extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Material(
+      color: Colors.white,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30))),
       child: InkWell(
