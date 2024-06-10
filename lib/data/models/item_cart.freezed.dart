@@ -29,6 +29,7 @@ mixin _$ItemCart {
   bool get manualDiscount => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
   double get discount => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get discountIsPercent => throw _privateConstructorUsedError;
   double get discountTotal => throw _privateConstructorUsedError;
   DateTime get addedAt => throw _privateConstructorUsedError;
@@ -58,7 +59,7 @@ abstract class $ItemCartCopyWith<$Res> {
       bool manualDiscount,
       int quantity,
       double discount,
-      bool discountIsPercent,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool discountIsPercent,
       double discountTotal,
       DateTime addedAt,
       double total,
@@ -184,7 +185,7 @@ abstract class _$$ItemCartImplCopyWith<$Res>
       bool manualDiscount,
       int quantity,
       double discount,
-      bool discountIsPercent,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool discountIsPercent,
       double discountTotal,
       DateTime addedAt,
       double total,
@@ -304,6 +305,7 @@ class _$ItemCartImpl extends _ItemCart {
       required this.manualDiscount,
       required this.quantity,
       required this.discount,
+      @JsonKey(fromJson: Converters.dynamicToBool)
       required this.discountIsPercent,
       required this.discountTotal,
       required this.addedAt,
@@ -335,6 +337,7 @@ class _$ItemCartImpl extends _ItemCart {
   @override
   final double discount;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   final bool discountIsPercent;
   @override
   final double discountTotal;
@@ -429,6 +432,7 @@ abstract class _ItemCart extends ItemCart {
       required final bool manualDiscount,
       required final int quantity,
       required final double discount,
+      @JsonKey(fromJson: Converters.dynamicToBool)
       required final bool discountIsPercent,
       required final double discountTotal,
       required final DateTime addedAt,
@@ -460,6 +464,7 @@ abstract class _ItemCart extends ItemCart {
   @override
   double get discount;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get discountIsPercent;
   @override
   double get discountTotal;

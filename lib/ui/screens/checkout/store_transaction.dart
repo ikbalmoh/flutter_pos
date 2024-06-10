@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class StoreTransaction extends ConsumerStatefulWidget {
@@ -20,30 +22,44 @@ enum Status { loading, success, error }
 
 class _StoreTransactionState extends ConsumerState<StoreTransaction> {
   Status status = Status.loading;
+  int printCounter = 0;
 
   @override
   void initState() {
-    submitTransaction();
+    WidgetsFlutterBinding.ensureInitialized();
+    submitTransaction(context);
     super.initState();
   }
 
-  void submitTransaction() async {
+  void onPrintReceipt() {
     try {
-      Future.delayed(const Duration(seconds: 3), () {
-        setState(() {
-          status = Status.success;
-        });
+      ref
+          .read(cartNotiferProvider.notifier)
+          .printReceipt(printCounter: printCounter);
+      setState(() {
+        printCounter++;
       });
-      // final data =
-      //     await ref.read(cartNotiferProvider.notifier).storeTransaction();
-      // setState(() {
-      //   status = Status.success;
-      // });
+    } on Exception catch (e) {
+      AppAlert.snackbar(context, e.toString());
+    }
+  }
+
+  void submitTransaction(BuildContext context) async {
+    setState(() {
+      status = Status.loading;
+    });
+    try {
+      await ref.read(cartNotiferProvider.notifier).storeTransaction();
+      onPrintReceipt();
+      setState(() {
+        status = Status.success;
+      });
     } on Exception catch (e) {
       log('TRANSACTION ERROR: $e');
       setState(() {
         status = Status.error;
       });
+      AppAlert.snackbar(context, e.toString());
     }
   }
 
@@ -62,8 +78,10 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       child: status == Status.loading
           ? const TransactionLoading()
           : status == Status.success
-              ? const TransactionSuccess()
-              : TransactionError(onRetry: submitTransaction),
+              ? TransactionSuccess(
+                  onPrintReceipt: onPrintReceipt,
+                )
+              : TransactionError(onRetry: () => submitTransaction(context)),
     );
   }
 }
@@ -88,19 +106,18 @@ class TransactionLoading extends StatelessWidget {
 }
 
 class TransactionSuccess extends ConsumerWidget {
-  const TransactionSuccess({super.key});
+  final Function() onPrintReceipt;
+  const TransactionSuccess({required this.onPrintReceipt, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void resetCart() {
-      context.pop();
-
       // Reset Navigation
-      // while (context.canPop() == true) {
-      //   context.pop();
-      // }
-      // context.pushReplacementNamed(Routes.home);
-      // ref.read(cartNotiferProvider.notifier).initCart();
+      while (context.canPop() == true) {
+        context.pop();
+      }
+      context.pushReplacementNamed(Routes.home);
+      ref.read(cartNotiferProvider.notifier).initCart();
     }
 
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -133,8 +150,8 @@ class TransactionSuccess extends ConsumerWidget {
             TextButton(
               style:
                   TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
+              onPressed: onPrintReceipt,
               child: Text('print_receipt'.tr()),
-              onPressed: () {},
             ),
             const SizedBox(width: 15),
             Expanded(
@@ -169,11 +186,12 @@ class TransactionError extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        const SizedBox(height: 30),
         Text(
           'transaction_error'.tr(),
           style: textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 40),
         ElevatedButton(
           onPressed: onRetry,
           style: ElevatedButton.styleFrom(

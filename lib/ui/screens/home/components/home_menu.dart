@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -55,6 +56,14 @@ class HomeMenu extends ConsumerWidget {
           ),
           child: Text(ref.watch(cartNotiferProvider).customerName ??
               'select_customer'.tr()),
+        ),
+        MenuItemButton(
+          onPressed: () => ref.read(cartNotiferProvider.notifier).initCart(),
+          leadingIcon: Icon(
+            Icons.file_copy,
+            color: Colors.grey.shade800,
+          ),
+          child: Text('new_transaction'.tr()),
         ),
         const PopupMenuDivider(),
         MenuItemButton(

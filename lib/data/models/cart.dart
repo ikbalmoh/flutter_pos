@@ -1,4 +1,5 @@
 import 'package:selleri/data/models/cart_payment.dart';
+import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -17,6 +18,7 @@ class Cart with _$Cart {
     required String outletName,
     required String shiftId,
     required double subtotal,
+    @JsonKey(fromJson: Converters.dynamicToBool)
     required bool discIsPercent,
     required double discOverall,
     required double discOverallTotal,

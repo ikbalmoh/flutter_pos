@@ -9,7 +9,7 @@ class CartPayment with _$CartPayment {
   const factory CartPayment({
     int? payDate,
     required String paymentMethodId,
-    required String paymentname,
+    required String paymentName,
     required double paymentValue,
     String? reference,
     String? createdBy,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/converters/generic.dart';
 
 part 'item_cart.freezed.dart';
 part 'item_cart.g.dart';
@@ -20,6 +21,7 @@ class ItemCart with _$ItemCart {
     required bool manualDiscount,
     required int quantity,
     required double discount,
+    @JsonKey(fromJson: Converters.dynamicToBool)
     required bool discountIsPercent,
     required double discountTotal,
     required DateTime addedAt,

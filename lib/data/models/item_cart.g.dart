@@ -17,7 +17,7 @@ _$ItemCartImpl _$$ItemCartImplFromJson(Map<String, dynamic> json) =>
       manualDiscount: json['manual_discount'] as bool,
       quantity: (json['quantity'] as num).toInt(),
       discount: (json['discount'] as num).toDouble(),
-      discountIsPercent: json['discount_is_percent'] as bool,
+      discountIsPercent: Converters.dynamicToBool(json['discount_is_percent']),
       discountTotal: (json['discount_total'] as num).toDouble(),
       addedAt: DateTime.parse(json['added_at'] as String),
       total: (json['total'] as num).toDouble(),

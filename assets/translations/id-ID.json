@@ -52,7 +52,7 @@
   "payment_ref": "No Referensi",
   "search": "Cari",
   "search_customer": "Cari Pelanggan",
-  "transaction_loading": "Membuat Transaksi",
+  "transaction_loading": "Transaksi sedang diproses",
   "transaction_done": "Transaksi Selesai",
   "transaction_error": "Transaksi Gagal",
   "new_transaction": "Transaksi Baru",
@@ -65,8 +65,10 @@
   "paper_size": "Ukuran Kertas",
   "print_test": "Tes Printer",
   "printer_connected": "Printer {} terhubung",
+  "printer_not_connected": "Printer tidak terhubung",
   "connect_printer_failed": "Gagal menghubungkan printer: {}",
   "printer_connecting": "Menguhubungkan printer",
   "change": "Kembalian",
-  "print_receipt": "Cetak Struk"
+  "print_receipt": "Cetak Struk",
+  "try_again": "Coba Lagi"
 }

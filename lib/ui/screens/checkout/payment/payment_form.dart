@@ -44,7 +44,7 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
     ref.read(cartNotiferProvider.notifier).addPayment(
           CartPayment(
             paymentMethodId: widget.method.id,
-            paymentname: widget.method.name,
+            paymentName: widget.method.name,
             paymentValue: amount,
             reference: refController.text,
           ),

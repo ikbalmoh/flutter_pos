@@ -52,7 +52,7 @@
   "payment_ref": "Payment Ref",
   "search": "Search",
   "search_customer": "Search Customer",
-  "transaction_loading": "Writing Transaction",
+  "transaction_loading": "Processing Transaction",
   "transaction_done": "Transaction Success",
   "transaction_error": "Transaction Failed",
   "new_transaction": "New Transaction",
@@ -65,8 +65,10 @@
   "paper_size": "Paper Size",
   "print_test": "Print Test",
   "printer_connected": "Connected to {}",
+  "printer_not_connected": "Printer is not connected",
   "connect_printer_failed": "Failed to connect to the printer: {}",
   "printer_connecting": "Connecting printer",
   "change": "Change",
-  "print_receipt": "Print Receipt"
+  "print_receipt": "Print Receipt",
+  "try_again": "Coba Lagi"
 }

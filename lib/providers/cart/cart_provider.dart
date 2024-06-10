@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -6,12 +7,16 @@ import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'dart:developer';
+
+import 'package:selleri/utils/printer.dart';
 
 part 'cart_provider.g.dart';
 
@@ -57,11 +62,8 @@ class CartNotifer extends _$CartNotifer {
 
       final shift = ref.read(shiftNotifierProvider).value;
 
-      String? transactionNo = state.transactionNo;
-      if (transactionNo == '') {
-        transactionNo =
-            'BILL-${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
-      }
+      String? transactionNo =
+          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
@@ -71,6 +73,7 @@ class CartNotifer extends _$CartNotifer {
       state = cart.copyWith(
         idOutlet: outletState.outlet.idOutlet,
         createdBy: authState.user.user.idUser,
+        createdName: authState.user.user.name,
         shiftId: shift!.id,
         transactionNo: transactionNo,
         ppn: tax?.percentage ?? 0,
@@ -260,8 +263,42 @@ class CartNotifer extends _$CartNotifer {
   }
 
   Future<void> storeTransaction() async {
-    final api = TransactionApi();
+    try {
+      final api = TransactionApi();
 
-    return api.storeTransaction(state);
+      final data = await api.storeTransaction(state);
+
+      final List<dynamic> transactions = data['data'];
+
+      if (transactions.isEmpty) {
+        log('TRANSACTION FAILED: $data');
+        // throw Exception('transaction_error'.tr());
+      }
+
+      // state = Cart.fromJson(transactions[0]);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  void printReceipt({int printCounter = 1}) async {
+    try {
+      final printer = ref.read(printerNotifierProvider).value;
+      if (printer == null) {
+        throw Exception('printer_not_connected'.tr());
+      }
+      final AttributeReceipts? attributeReceipts =
+          (ref.read(outletNotifierProvider).value as OutletSelected)
+              .config
+              .attributeReceipts;
+      final receipt = await Printer.buildReceiptBytes(
+        state,
+        attributes: attributeReceipts,
+        size: printer.size,
+      );
+      ref.read(printerNotifierProvider.notifier).print(receipt);
+    } on Exception catch (e) {
+      throw Exception(e);
+    }
   }
 }

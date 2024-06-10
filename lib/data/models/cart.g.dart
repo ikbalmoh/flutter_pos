@@ -13,7 +13,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       outletName: json['outlet_name'] as String,
       shiftId: json['shift_id'] as String,
       subtotal: (json['subtotal'] as num).toDouble(),
-      discIsPercent: json['disc_is_percent'] as bool,
+      discIsPercent: Converters.dynamicToBool(json['disc_is_percent']),
       discOverall: (json['disc_overall'] as num).toDouble(),
       discOverallTotal: (json['disc_overall_total'] as num).toDouble(),
       discPromotionsTotal: (json['disc_promotions_total'] as num).toDouble(),

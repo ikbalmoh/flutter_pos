@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -41,7 +43,9 @@ class PrinterNotifier extends _$PrinterNotifier {
       }
       log('CONNNECT STATUS: $isConnected');
       if (!isConnected) {
-        throw Exception('Failed to Connect');
+        throw Exception(
+          'connect_printer_failed'.tr(args: [device.name]),
+        );
       }
       final printer = Printer(
         macAddress: device.macAdress,
@@ -52,7 +56,9 @@ class PrinterNotifier extends _$PrinterNotifier {
       const storage = FlutterSecureStorage();
       await storage.write(key: 'printer', value: printer.toString());
       state = AsyncData(printer);
-      await printTest();
+      if (!kDebugMode) {
+        await printTest();
+      }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
       log('CONNECT PRINTER FAILED: ${e.toString()}');
@@ -67,15 +73,21 @@ class PrinterNotifier extends _$PrinterNotifier {
   }
 
   Future<void> printTest() async {
+    final bytes = await generateTestTicket();
+    await print(bytes);
+  }
+
+  Future<void> print(List<int> bytes) async {
     final isConnected = await PrintBluetoothThermal.connectionStatus;
     if (!isConnected) {
-      log('PRINTER NOT CONNECTED');
-      return;
+      state = const AsyncData(null);
+      throw Exception('printer_not_connected'.tr());
     }
+    log('START PRINTING...');
     await PrintBluetoothThermal.writeString(
         printText: PrintTextSize(size: 2, text: ''));
-    await PrintBluetoothThermal.writeBytes(await generateTestTicket());
-    log('TEST PRINT DONE');
+    await PrintBluetoothThermal.writeBytes(bytes);
+    log('PRINTING COMPLETE');
   }
 
   Future<List<int>> generateTestTicket() async {

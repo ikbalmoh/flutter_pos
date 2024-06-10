@@ -26,6 +26,7 @@ mixin _$Cart {
   String get outletName => throw _privateConstructorUsedError;
   String get shiftId => throw _privateConstructorUsedError;
   double get subtotal => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get discIsPercent => throw _privateConstructorUsedError;
   double get discOverall => throw _privateConstructorUsedError;
   double get discOverallTotal => throw _privateConstructorUsedError;
@@ -65,7 +66,7 @@ abstract class $CartCopyWith<$Res> {
       String outletName,
       String shiftId,
       double subtotal,
-      bool discIsPercent,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
       double discOverall,
       double discOverallTotal,
       double discPromotionsTotal,
@@ -256,7 +257,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String outletName,
       String shiftId,
       double subtotal,
-      bool discIsPercent,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
       double discOverall,
       double discOverallTotal,
       double discPromotionsTotal,
@@ -441,7 +442,7 @@ class _$CartImpl extends _Cart {
       required this.outletName,
       required this.shiftId,
       required this.subtotal,
-      required this.discIsPercent,
+      @JsonKey(fromJson: Converters.dynamicToBool) required this.discIsPercent,
       required this.discOverall,
       required this.discOverallTotal,
       required this.discPromotionsTotal,
@@ -482,6 +483,7 @@ class _$CartImpl extends _Cart {
   @override
   final double subtotal;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   final bool discIsPercent;
   @override
   final double discOverall;
@@ -647,6 +649,7 @@ abstract class _Cart extends Cart {
       required final String outletName,
       required final String shiftId,
       required final double subtotal,
+      @JsonKey(fromJson: Converters.dynamicToBool)
       required final bool discIsPercent,
       required final double discOverall,
       required final double discOverallTotal,
@@ -685,6 +688,7 @@ abstract class _Cart extends Cart {
   @override
   double get subtotal;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get discIsPercent;
   @override
   double get discOverall;
