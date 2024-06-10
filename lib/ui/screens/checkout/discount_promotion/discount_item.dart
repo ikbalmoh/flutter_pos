@@ -24,6 +24,7 @@ class DiscountItem extends ConsumerWidget {
     }
 
     return Material(
+      color: Colors.white,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30))),
       child: InkWell(

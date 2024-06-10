@@ -55,7 +55,7 @@
   "transaction_loading": "Writing Transaction",
   "transaction_done": "Transaction Success",
   "transaction_error": "Transaction Failed",
-  "new_transaction": "Create New Transaction",
+  "new_transaction": "New Transaction",
   "printer_setting": "Printer Setting",
   "no_device_found": "No Devices Found",
   "printer_setting_instruction": "Make sure bluetooth is enabled\nand the printer has been paired",
@@ -66,5 +66,7 @@
   "print_test": "Print Test",
   "printer_connected": "Connected to {}",
   "connect_printer_failed": "Failed to connect to the printer: {}",
-  "printer_connecting": "Connecting printer"
+  "printer_connecting": "Connecting printer",
+  "change": "Change",
+  "print_receipt": "Print Receipt"
 }

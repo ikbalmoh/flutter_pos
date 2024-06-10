@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
@@ -18,7 +19,7 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   void onStoreTransaction() async {
     showModalBottomSheet(
-      isDismissible: true,
+      isDismissible: kDebugMode,
       isScrollControlled: true,
       context: context,
       builder: (context) => const StoreTransaction(),

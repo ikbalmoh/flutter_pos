@@ -6,7 +6,7 @@
   "enter_username": "masukkan username",
   "enter_valid_email": "alamat email tidak valid",
   "enter_password": "masukkan password",
-  "please_relogin": "silahkan login kmebali",
+  "please_relogin": "silahkan login kembali",
   "select_outlet": "Pilih Outlet",
   "select_outlet_confirm": "Pilih outlet ini?",
   "cancel": "Batal",
@@ -55,7 +55,7 @@
   "transaction_loading": "Membuat Transaksi",
   "transaction_done": "Transaksi Selesai",
   "transaction_error": "Transaksi Gagal",
-  "new_transaction": "Buat Transaksi Baru",
+  "new_transaction": "Transaksi Baru",
   "printer_setting": "Pengaturan Printer",
   "no_device_found": "Tidak Ada Perangkat Terdeteksi",
   "printer_setting_instruction": "Pastikan bluetooth aktif\ndan printer telah dipasangkan",
@@ -66,5 +66,7 @@
   "print_test": "Tes Printer",
   "printer_connected": "Printer {} terhubung",
   "connect_printer_failed": "Gagal menghubungkan printer: {}",
-  "printer_connecting": "Menguhubungkan printer"
+  "printer_connecting": "Menguhubungkan printer",
+  "change": "Kembalian",
+  "print_receipt": "Cetak Struk"
 }
