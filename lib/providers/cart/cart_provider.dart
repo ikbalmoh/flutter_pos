@@ -26,6 +26,8 @@ import 'package:selleri/utils/app_alert.dart';
 import 'dart:developer';
 import 'package:selleri/utils/printer.dart' as util;
 
+import 'package:selleri/utils/printer.dart';
+
 part 'cart_provider.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -102,11 +104,8 @@ class Cart extends _$Cart {
 
       final shift = ref.read(shiftNotifierProvider).value;
 
-      String? transactionNo = state.transactionNo;
-      if (transactionNo == '') {
-        transactionNo =
-            'BILL-${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
-      }
+      String? transactionNo =
+          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
@@ -116,6 +115,7 @@ class Cart extends _$Cart {
       state = cart.copyWith(
         idOutlet: outletState.outlet.idOutlet,
         createdBy: authState.user.user.idUser,
+        createdName: authState.user.user.name,
         shiftId: shift!.id,
         transactionNo: transactionNo,
         ppn: tax?.percentage ?? 0,

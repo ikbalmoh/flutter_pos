@@ -82,6 +82,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
         status = Status.error;
         error = e.toString();
       });
+      AppAlert.snackbar(context, e.toString());
     }
   }
 

@@ -96,7 +96,8 @@ class GeneralFormater {
 }
 
 class DateTimeFormater {
-  static String dateToString(DateTime value) {
-    return DateFormat('y-MM-dd HH:mm:ss').format(value);
+  static String dateToString(DateTime value, {String? format = 'y-MM-dd HH:mm:ss'}) {
+    return DateFormat(format).format(value);
   }
 }
+

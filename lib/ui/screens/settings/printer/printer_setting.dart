@@ -61,18 +61,14 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
     ref.listen(printerNotifierProvider, (prev, next) {
       next.when(data: (printer) {
         if (printer != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('printer_connected'.tr(args: [printer.name])),
-          ));
+          AppAlert.snackbar(
+              context, 'printer_connected'.tr(args: [printer.name]));
         }
       }, error: (e, stack) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('connect_printer_failed'.tr(args: [e.toString()])),
-        ));
+        AppAlert.snackbar(
+            context, 'connect_printer_failed'.tr(args: [e.toString()]));
       }, loading: () {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('printer_connecting'.tr()),
-        ));
+        AppAlert.snackbar(context, 'printer_connecting'.tr());
       });
     });
 
