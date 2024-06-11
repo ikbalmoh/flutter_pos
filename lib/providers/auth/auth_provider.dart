@@ -20,8 +20,6 @@ class AuthNotifier extends _$AuthNotifier {
 
   late final TokenRepository _tokenRepository =
       ref.read(tokenRepositoryProvider);
-  late final OutletRepository _outletRepository =
-      ref.read(outletRepositoryProvider);
 
   @override
   FutureOr<AuthState> build() async {
