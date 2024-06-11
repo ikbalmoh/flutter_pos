@@ -1,23 +1,20 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/open_shift.dart';
+import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
 import 'package:selleri/utils/app_alert.dart';
-import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/screens/home/components/item_container.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
-import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -147,6 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   search: search,
                 ),
               ),
+              cart.items.isNotEmpty ? BottomActions(cart: cart,) : Container()
             ],
           ),
           switch (shift) {
@@ -185,26 +183,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
         ],
       ),
-      floatingActionButton: cart.items.isNotEmpty
-          ? FloatingActionButton.extended(
-              tooltip: 'cart',
-              onPressed: () => context.push(Routes.cart),
-              label: Text(
-                CurrencyFormat.currency(cart.subtotal),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(color: Colors.white),
-              ),
-              extendedIconLabelSpacing: 20,
-              icon: Badge(
-                label: Text(
-                  cart.items.length.toString(),
-                ),
-                child: const Icon(CupertinoIcons.shopping_cart),
-              ),
-            )
-          : Container(),
     );
   }
 }

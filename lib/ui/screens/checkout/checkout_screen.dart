@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';

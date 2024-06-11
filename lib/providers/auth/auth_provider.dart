@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
-import 'package:selleri/data/repository/outlet_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'auth_state.dart';
