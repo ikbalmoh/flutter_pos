@@ -25,13 +25,6 @@ class OrderItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            item.quantity.toString(),
-            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
           Expanded(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -42,8 +35,9 @@ class OrderItem extends StatelessWidget {
                     style: textTheme.bodyMedium,
                   ),
                   Text(
-                    CurrencyFormat.currency(item.price - item.discountTotal),
-                    style: textTheme.bodySmall?.copyWith(fontSize: 14),
+                    ' ${item.quantity} x ${CurrencyFormat.currency(item.price - item.discountTotal)}',
+                    style: textTheme.bodySmall
+                        ?.copyWith(fontSize: 14, color: Colors.grey.shade700),
                   ),
                   item.note != ''
                       ? Text(
@@ -56,10 +50,23 @@ class OrderItem extends StatelessWidget {
           const SizedBox(
             width: 12,
           ),
-          Text(
-            CurrencyFormat.currency(item.total, symbol: false),
-            textAlign: TextAlign.right,
-          ),
+          Column(
+            children: [
+              (item.price * item.quantity) != item.total
+                  ? Text(
+                      CurrencyFormat.currency(item.price * item.quantity,
+                          symbol: false),
+                      style: const TextStyle(
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    )
+                  : Container(),
+              Text(
+                CurrencyFormat.currency(item.total, symbol: false),
+                textAlign: TextAlign.right,
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -103,24 +110,45 @@ class OrderSummary extends ConsumerWidget {
               color: Colors.blueGrey.shade50,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Subtotal',
-                  style: textTheme.bodyMedium
-                      ?.copyWith(color: Colors.grey.shade700),
-                ),
-                Text(
-                  CurrencyFormat.currency(cart.subtotal),
-                  style: textTheme.bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-          )
+          const SizedBox(height: 7),
+          TwoColumn(
+            label: 'Subtotal',
+            value: cart.subtotal,
+          ),
+          TwoColumn(
+            label: cart.taxName ?? 'tax_name',
+            value: cart.ppnTotal,
+          ),
+          const SizedBox(height: 7),
+        ],
+      ),
+    );
+  }
+}
+
+class TwoColumn extends StatelessWidget {
+  const TwoColumn({super.key, required this.label, required this.value});
+
+  final String label;
+  final double value;
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+          ),
+          Text(
+            CurrencyFormat.currency(value),
+            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );

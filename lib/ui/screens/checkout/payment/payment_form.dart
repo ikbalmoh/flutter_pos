@@ -26,7 +26,8 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
   @override
   void initState() {
     if (widget.cartPayment != null) {
-      amountController.text = widget.cartPayment!.paymentValue.toString();
+      amountController.text = widget.cartPayment?.paymentValue.toString() ??
+          ref.read(cartNotiferProvider).grandTotal.toString();
       refController.text = widget.cartPayment!.reference ?? '';
       setState(() {
         amount = widget.cartPayment!.paymentValue;
