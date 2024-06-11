@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
-import 'package:selleri/data/models/printer.dart';
 import 'package:selleri/providers/settings/printer_list_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/ui/screens/settings/printer/connect_printer.dart';

@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
-import 'package:selleri/data/repository/outlet_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
