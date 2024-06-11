@@ -61,7 +61,7 @@
   "printer_setting_instruction": "Make sure bluetooth is enabled\nand the printer has been paired",
   "scan_again": "Scan Again",
   "connect_printer": "Connect Printer",
-  "disconnect_printer": "Disconnect Printer",
+  "disconnect_printer": "Disconnect",
   "paper_size": "Paper Size",
   "print_test": "Print Test",
   "printer_connected": "Connected to {}",
@@ -75,5 +75,6 @@
   "x_data_displayed": "{} data has been displayed",
   "show_menu": "Show Menu",
   "price": "Price",
-  "quantity": "Quantity"
+  "quantity": "Quantity",
+  "update": "Perbaharui"
 }

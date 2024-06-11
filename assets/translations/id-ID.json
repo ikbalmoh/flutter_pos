@@ -61,7 +61,7 @@
   "printer_setting_instruction": "Pastikan bluetooth aktif\ndan printer telah dipasangkan",
   "scan_again": "Scan Lagi",
   "connect_printer": "Hubungkan Printer",
-  "disconnect_printer": "Putuskan Printer",
+  "disconnect_printer": "Putuskan",
   "paper_size": "Ukuran Kertas",
   "print_test": "Tes Printer",
   "printer_connected": "Printer {} terhubung",
@@ -75,5 +75,6 @@
   "x_data_displayed": "{} telah data ditampilkan",
   "show_menu": "Tampilkan Menu",
   "price": "Harga",
-  "quantity": "Kuantiti"
+  "quantity": "Kuantiti",
+  "update": "Update"
 }

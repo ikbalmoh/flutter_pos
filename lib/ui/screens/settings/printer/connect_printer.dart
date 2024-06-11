@@ -22,11 +22,30 @@ List<PaperSizeSetting> paperSizeSettings = [
 ];
 
 class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
-  PaperSize? size = PaperSize.mm58;
+  PaperSize? size;
+
+  @override
+  void initState() {
+    final currentPrinter = ref.read(printerNotifierProvider).value;
+    setState(() {
+      size = currentPrinter?.macAddress == widget.device.macAdress
+          ? currentPrinter?.size
+          : PaperSize.mm58;
+    });
+    super.initState();
+  }
 
   void onConnectPrinter() {
     context.pop();
     ref.read(printerNotifierProvider.notifier).connectPrinter(
+          widget.device,
+          size: size ?? PaperSize.mm58,
+        );
+  }
+
+  void onUpdatePrinter() {
+    context.pop();
+    ref.read(printerNotifierProvider.notifier).updatePrinter(
           widget.device,
           size: size ?? PaperSize.mm58,
         );
@@ -125,19 +144,29 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
             color: Colors.blueGrey.shade50,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ref.watch(printerNotifierProvider).value?.macAddress ==
-                      widget.device.macAdress
-                  ? TextButton(
-                      style: TextButton.styleFrom(backgroundColor: Colors.red),
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: ref.watch(printerNotifierProvider).value?.macAddress ==
+                    widget.device.macAdress
+                ? [
+                    TextButton(
+                      style: TextButton.styleFrom(foregroundColor: Colors.red),
                       onPressed: onDisconnectPrinter,
                       child: Text(
                         'disconnect_printer'.tr(),
+                      ),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(backgroundColor: Colors.teal),
+                      onPressed: onUpdatePrinter,
+                      child: Text(
+                        'update'.tr(),
                         style: const TextStyle(color: Colors.white),
                       ),
                     )
-                  : TextButton(
+                  ]
+                : [
+                    Container(),
+                    TextButton(
                       style: TextButton.styleFrom(backgroundColor: Colors.teal),
                       onPressed: onConnectPrinter,
                       child: Text(
@@ -145,7 +174,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
                         style: const TextStyle(color: Colors.white),
                       ),
                     )
-            ],
+                  ],
           )
         ],
       ),

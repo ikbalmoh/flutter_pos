@@ -17,6 +17,11 @@ class PrinterNotifier extends _$PrinterNotifier {
   @override
   FutureOr<Printer?> build() async {
     const storage = FlutterSecureStorage();
+    bool isEnable = await PrintBluetoothThermal.bluetoothEnabled;
+    if (!isEnable) {
+      return null;
+    }
+
     final currentPrinter = await storage.read(key: 'printer');
     if (currentPrinter != null) {
       final printerJson = json.decode(currentPrinter);
@@ -71,6 +76,15 @@ class PrinterNotifier extends _$PrinterNotifier {
       state = AsyncError(e, StackTrace.current);
       log('CONNECT PRINTER FAILED: ${e.toString()}');
     }
+  }
+
+  void updatePrinter(BluetoothInfo device, {required PaperSize size}) {
+    final printer = Printer(
+      macAddress: device.macAdress,
+      name: device.name,
+      size: size,
+    );
+    state = AsyncData(printer);
   }
 
   void disconnect() async {
