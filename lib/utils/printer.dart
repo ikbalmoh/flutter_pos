@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -35,6 +36,7 @@ class Printer {
     AttributeReceipts? attributes,
     PaperSize? size = PaperSize.mm58,
   }) async {
+    log('BUILD RECEIPT: $cart');
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
@@ -56,15 +58,11 @@ class Printer {
     if (img != null) {
       img = copyResize(img, height: 120);
       bytes += generator.imageRaster(img, align: PosAlign.center);
-    } else {
-      bytes += generator.text(cart.outletName,
-          styles: const PosStyles(
-            align: PosAlign.center,
-            bold: true,
-            height: PosTextSize.size2,
-            width: PosTextSize.size2,
-          ));
     }
+
+    bytes += generator.text(cart.outletName,
+        styles: const PosStyles(align: PosAlign.center, bold: true),
+        linesAfter: 1);
 
     if (headers != null) {
       bytes += generator.text(headers,
@@ -77,7 +75,7 @@ class Printer {
     bytes += generator.text(
         'Date: ${DateTimeFormater.dateToString(cart.transactionDate, format: 'dd/MM/y HH:mm')}');
     bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
-    bytes += generator.text(Printer.divider());
+    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
 
     // items
     for (ItemCart item in cart.items) {
@@ -114,7 +112,7 @@ class Printer {
         ]);
       }
     }
-    bytes += generator.text(Printer.subdivider());
+    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
     // subtotal
     bytes += generator.row([
       PosColumn(
@@ -154,7 +152,7 @@ class Printer {
       ),
     ]);
     // Payments
-    bytes += generator.text(Printer.subdivider());
+    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
     bytes += generator.text('payments'.tr());
     for (var payment in cart.payments) {
       bytes += generator.row([
@@ -171,7 +169,7 @@ class Printer {
       ]);
     }
     // Change
-    bytes += generator.text(Printer.subdivider());
+    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
     bytes += generator.row([
       PosColumn(
         text: 'change'.tr(),
@@ -186,7 +184,8 @@ class Printer {
     ]);
 
     // footer
-    bytes += generator.text(Printer.divider(), linesAfter: 1);
+    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58),
+        linesAfter: 1);
     if (footers != null) {
       bytes += generator.text(footers,
           linesAfter: 2, styles: const PosStyles(align: PosAlign.center));

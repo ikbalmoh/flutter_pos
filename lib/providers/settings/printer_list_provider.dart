@@ -18,6 +18,14 @@ class PrinterListNotifier extends _$PrinterListNotifier {
     state = const AsyncLoading();
     try {
       log('START SCAN PRINTERS...');
+
+      final bool isBluetoothEnabled =
+          await PrintBluetoothThermal.bluetoothEnabled;
+      log('BLUETOOTH ENABLED? $isBluetoothEnabled');
+      if (!isBluetoothEnabled) {
+        throw Exception('bluetooth disabled');
+      }
+
       final scanPermission = await Permission.bluetoothScan.request();
       log('Scan permission : ${scanPermission.isGranted}');
 
@@ -26,13 +34,6 @@ class PrinterListNotifier extends _$PrinterListNotifier {
       if (!isPermissionGranted) {
         log('PERMISSION NOT GRANTED');
         throw Exception('Permission not granted');
-      }
-
-      final bool isBluetoothEnabled =
-          await PrintBluetoothThermal.bluetoothEnabled;
-      log('BLUETOOTH ENABLED? $isBluetoothEnabled');
-      if (!isBluetoothEnabled) {
-        throw Exception('bluetooth disabled');
       }
 
       final List<BluetoothInfo> devices =

@@ -72,6 +72,7 @@ class CartNotifer extends _$CartNotifer {
 
       state = cart.copyWith(
         idOutlet: outletState.outlet.idOutlet,
+        outletName: outletState.outlet.outletName,
         createdBy: authState.user.user.idUser,
         createdName: authState.user.user.name,
         shiftId: shift!.id,
