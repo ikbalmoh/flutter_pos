@@ -19,11 +19,14 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   void onStoreTransaction() async {
     showModalBottomSheet(
-      isDismissible: kDebugMode,
-      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
       context: context,
       backgroundColor: Colors.white,
-      builder: (context) => const StoreTransaction(),
+      builder: (context) => const PopScope(
+        canPop: false,
+        child: StoreTransaction(),
+      ),
     );
   }
 

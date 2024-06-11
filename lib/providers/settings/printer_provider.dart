@@ -21,12 +21,17 @@ class PrinterNotifier extends _$PrinterNotifier {
     if (currentPrinter != null) {
       final printerJson = json.decode(currentPrinter);
       Printer printer = Printer.fromJson(printerJson);
-      await connectPrinter(
-        BluetoothInfo(name: printer.name, macAdress: printer.macAddress),
-        size: printer.size,
-        print: false,
-      );
-      return printer;
+      try {
+        bool isConnected = await PrintBluetoothThermal.connect(
+          macPrinterAddress: printer.macAddress,
+        );
+        if (!isConnected) {
+          await storage.delete(key: 'printer');
+        }
+        return isConnected ? printer : null;
+      } catch (e) {
+        return null;
+      }
     }
     return null;
   }
@@ -35,6 +40,8 @@ class PrinterNotifier extends _$PrinterNotifier {
       {required PaperSize size, bool print = true}) async {
     state = const AsyncLoading();
     try {
+      const storage = FlutterSecureStorage();
+
       bool isConnected = await PrintBluetoothThermal.connectionStatus;
       if (!isConnected) {
         isConnected = await PrintBluetoothThermal.connect(
@@ -43,6 +50,8 @@ class PrinterNotifier extends _$PrinterNotifier {
       }
       log('CONNNECT STATUS: $isConnected');
       if (!isConnected) {
+        state = const AsyncData(null);
+        await storage.delete(key: 'printer');
         throw Exception(
           'connect_printer_failed'.tr(args: [device.name]),
         );
@@ -53,7 +62,6 @@ class PrinterNotifier extends _$PrinterNotifier {
         size: size,
       );
 
-      const storage = FlutterSecureStorage();
       await storage.write(key: 'printer', value: printer.toString());
       state = AsyncData(printer);
       if (!kDebugMode) {
