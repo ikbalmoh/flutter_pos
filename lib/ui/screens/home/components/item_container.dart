@@ -25,6 +25,7 @@ class ItemContainer extends ConsumerWidget {
   void showVariants(BuildContext context, Item item, WidgetRef ref) {
     showModalBottomSheet(
         context: context,
+        backgroundColor: Colors.white,
         builder: (BuildContext context) {
           return ItemVariantPicker(
             item: item,

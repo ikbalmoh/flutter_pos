@@ -70,5 +70,10 @@
   "printer_connecting": "Connecting printer",
   "change": "Change",
   "print_receipt": "Print Receipt",
-  "try_again": "Coba Lagi"
+  "try_again": "Coba Lagi",
+  "tax_name": "Tax {}",
+  "x_data_displayed": "{} data has been displayed",
+  "show_menu": "Show Menu",
+  "price": "Price",
+  "quantity": "Quantity"
 }

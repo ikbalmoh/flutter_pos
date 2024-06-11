@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/converters/generic.dart';
+import 'package:uuid/uuid.dart';
 
 part 'item_cart.freezed.dart';
 part 'item_cart.g.dart';
+
+var uuid = const Uuid();
 
 @freezed
 class ItemCart with _$ItemCart {
@@ -40,7 +43,7 @@ class ItemCart with _$ItemCart {
   }
 
   Map<String, dynamic> toTransactionPayload() => <String, dynamic>{
-        "id": identifier,
+        "id": uuid.v4(),
         "id_item": idItem,
         "variant_id": idVariant,
         "quantity": quantity,

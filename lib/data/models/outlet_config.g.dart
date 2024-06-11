@@ -7,6 +7,7 @@ part of 'outlet_config.dart';
 // **************************************************************************
 
 OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
+      locale: json['locale'] as String?,
       serverTime: json['server_time'] as String?,
       subscriptions: json['subscriptions'] == null
           ? null
@@ -74,6 +75,7 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
 
 Map<String, dynamic> _$OutletConfigToJson(OutletConfig instance) =>
     <String, dynamic>{
+      'locale': instance.locale,
       'server_time': instance.serverTime,
       'subscriptions': instance.subscriptions,
       'offline_transaction': instance.offlineTransaction,

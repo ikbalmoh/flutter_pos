@@ -22,6 +22,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       isDismissible: kDebugMode,
       isScrollControlled: true,
       context: context,
+      backgroundColor: Colors.white,
       builder: (context) => const StoreTransaction(),
     );
   }

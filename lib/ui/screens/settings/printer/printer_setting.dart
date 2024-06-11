@@ -20,6 +20,7 @@ class PrinterSetting extends ConsumerWidget {
     void onSelectPrinter(BluetoothInfo device) {
       showModalBottomSheet(
           context: context,
+          backgroundColor: Colors.white,
           builder: (context) {
             return ConnectPrinter(device: device);
           });

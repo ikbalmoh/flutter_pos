@@ -18,6 +18,7 @@ class DiscountItem extends ConsumerWidget {
       showModalBottomSheet(
           isScrollControlled: true,
           context: context,
+          backgroundColor: Colors.white,
           builder: (context) {
             return AddDiscountOverall(ref.read(cartNotiferProvider).subtotal);
           });

@@ -114,7 +114,7 @@ class ShopItem extends StatelessWidget {
                                 Text('${item.variants.length} variants')
                               ],
                             )
-                          : Text(CurrencyFormat.currency(item.itemPrice))
+                          : Text(CurrencyFormat.currency(item.itemPrice)),
                     ],
                   ),
                 )

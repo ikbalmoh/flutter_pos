@@ -90,12 +90,29 @@ class Printer {
           styles: const PosStyles(align: PosAlign.left),
         ),
         PosColumn(
-          text: CurrencyFormat.currency(item.total, symbol: false),
+          text: CurrencyFormat.currency(
+            item.price * item.quantity,
+            symbol: false,
+          ),
           width: 3,
           styles: const PosStyles(align: PosAlign.right),
         ),
       ]);
-      // TODO: item details
+      if (item.discountTotal > 0) {
+        bytes += generator.row([
+          PosColumn(
+            text: 'discount'.tr(),
+            width: 9,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text:
+                '-${CurrencyFormat.currency(item.discountTotal, symbol: false)}',
+            width: 3,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
     }
     bytes += generator.text(Printer.subdivider());
     // subtotal

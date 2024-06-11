@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/outlet.dart';
@@ -26,7 +27,10 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
   }
 
   void onSelectOutlet(Outlet outlet) {
-    ref.read(outletNotifierProvider.notifier).selectOutlet(outlet);
+    ref.read(outletNotifierProvider.notifier).selectOutlet(outlet,
+        onSelected: (config) => context.setLocale(config.locale == 'en'
+            ? const Locale('en', 'US')
+            : const Locale('id', 'ID')));
   }
 
   ListView buildOutletLists(BuildContext context, List<Outlet> outlets) {
@@ -104,7 +108,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                                   ),
                                 ),
                               ),
-                              child: Text("Select Outlet",
+                              child: Text("select_outlet".tr(),
                                   style: textTheme.bodyLarge
                                       ?.copyWith(fontWeight: FontWeight.w500)),
                             ),

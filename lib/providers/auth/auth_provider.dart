@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'auth_state.dart';
 
 part 'auth_provider.g.dart';
@@ -38,8 +39,8 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> logout() async {
-    await _tokenRepository.remove();
-    await _outletRepository.remove();
     state = AsyncData(await _authRepoistory.logout());
+    ref.read(outletNotifierProvider.notifier).clearOutlet();
+    await _tokenRepository.remove();
   }
 }

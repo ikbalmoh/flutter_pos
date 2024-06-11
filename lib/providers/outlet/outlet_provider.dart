@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:selleri/data/models/outlet.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -25,15 +26,24 @@ class OutletNotifier extends _$OutletNotifier {
     return OutletNotSelected();
   }
 
-  Future<void> selectOutlet(Outlet outlet) async {
+  Future<void> selectOutlet(Outlet outlet,
+      {Function(OutletConfig)? onSelected}) async {
     state = AsyncData(OutletLoading());
     try {
       _outletRepository.saveOutlet(outlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
       state = AsyncData(OutletSelected(outlet: outlet, config: config));
+      if (onSelected != null) {
+        onSelected(config);
+      }
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? e.message;
       state = AsyncData(OutletFailure(message: message));
     }
+  }
+
+  Future<void> clearOutlet() async {
+    await _outletRepository.remove();
+    state = AsyncData(OutletNotSelected());
   }
 }

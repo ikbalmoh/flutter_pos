@@ -70,5 +70,10 @@
   "printer_connecting": "Menguhubungkan printer",
   "change": "Kembalian",
   "print_receipt": "Cetak Struk",
-  "try_again": "Coba Lagi"
+  "try_again": "Coba Lagi",
+  "tax_name": "Pajak {}",
+  "x_data_displayed": "{} telah data ditampilkan",
+  "show_menu": "Tampilkan Menu",
+  "price": "Harga",
+  "quantity": "Kuantiti"
 }

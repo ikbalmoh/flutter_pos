@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/customer/customer_list_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/customer/customer_detail.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
@@ -65,13 +66,17 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
     final selectedCustomer = ref.watch(cartNotiferProvider).idCustomer;
 
     void onSelectCustomer(customer) {
-      context.pop();
+      while (context.canPop() == true) {
+        context.pop();
+      }
+      context.pushReplacementNamed(Routes.home);
       ref.read(cartNotiferProvider.notifier).selectCustomer(customer);
     }
 
     void showCustomerSheet(Customer customer) {
       showModalBottomSheet(
         context: context,
+        backgroundColor: Colors.white,
         builder: (BuildContext context) =>
             CustomerDetail(customer: customer, onSelect: onSelectCustomer),
       );
@@ -82,9 +87,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
           ? SearchAppBar(
               controller: _searchController,
               placeholder: 'search_customer'.tr(),
-              onBack: () => setState(() {
-                searchVisible = false;
-              }),
+              onBack: () {
+                setState(() {
+                  searchVisible = false;
+                });
+                _searchController.text = '';
+                onSearchCustomers('');
+              },
               onChanged: onSearchCustomers,
             )
           : AppBar(
@@ -103,6 +112,22 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
           controller: _scrollController,
           itemBuilder: (context, idx) {
             if (idx + 1 > data.data!.length) {
+              if (data.currentPage >= data.lastPage) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  child: Center(
+                    child: Text(
+                      'x_data_displayed'.tr(
+                        args: [data.total.toString()],
+                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey.shade600,
+                          ),
+                    ),
+                  ),
+                );
+              }
               return const Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),

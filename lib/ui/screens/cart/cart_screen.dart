@@ -38,6 +38,7 @@ class CartScreen extends ConsumerWidget {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
+        backgroundColor: Colors.white,
         builder: (BuildContext context) => EditCartItem(
           item: item,
           onDelete: () => onDeleteItem(item),

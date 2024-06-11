@@ -143,6 +143,10 @@ ThemeData appTheme(BuildContext context) {
     popupMenuTheme: const PopupMenuThemeData(
       surfaceTintColor: Colors.white,
     ),
+    dialogBackgroundColor: Colors.white,
+    dialogTheme: const DialogTheme(
+      backgroundColor: Colors.white,
+    ),
   );
 }
 

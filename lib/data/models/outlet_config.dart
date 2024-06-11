@@ -8,6 +8,7 @@ part 'outlet_config.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class OutletConfig {
+  String? locale;
   String? serverTime;
   Subscriptions? subscriptions;
   bool? offlineTransaction;
@@ -43,6 +44,7 @@ class OutletConfig {
   CustomMandatory? customMandatory;
 
   OutletConfig({
+    this.locale,
     this.serverTime,
     this.subscriptions,
     this.offlineTransaction,

@@ -27,8 +27,17 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    submitTransaction(context);
+    submitTransaction();
     super.initState();
+  }
+
+  void resetCart() {
+    // Reset Navigation
+    while (context.canPop() == true) {
+      context.pop();
+    }
+    context.pushReplacementNamed(Routes.home);
+    ref.read(cartNotiferProvider.notifier).initCart();
   }
 
   void onPrintReceipt() {
@@ -39,27 +48,31 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       setState(() {
         printCounter++;
       });
-    } on Exception catch (e) {
-      AppAlert.snackbar(context, e.toString());
+    } catch (e) {
+      log('PRINT FAILED: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
   }
 
-  void submitTransaction(BuildContext context) async {
-    setState(() {
-      status = Status.loading;
-    });
+  void submitTransaction() async {
+    if (status != Status.loading) {
+      setState(() {
+        status = Status.loading;
+      });
+    }
     try {
       await ref.read(cartNotiferProvider.notifier).storeTransaction();
-      onPrintReceipt();
       setState(() {
         status = Status.success;
       });
-    } on Exception catch (e) {
+      onPrintReceipt();
+    } catch (e) {
       log('TRANSACTION ERROR: $e');
       setState(() {
         status = Status.error;
       });
-      AppAlert.snackbar(context, e.toString());
     }
   }
 
@@ -79,9 +92,11 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
           ? const TransactionLoading()
           : status == Status.success
               ? TransactionSuccess(
+                  onReset: resetCart,
                   onPrintReceipt: onPrintReceipt,
                 )
-              : TransactionError(onRetry: () => submitTransaction(context)),
+              : TransactionError(
+                  onRetry: submitTransaction, onReset: resetCart),
     );
   }
 }
@@ -106,20 +121,16 @@ class TransactionLoading extends StatelessWidget {
 }
 
 class TransactionSuccess extends ConsumerWidget {
+  final Function() onReset;
   final Function() onPrintReceipt;
-  const TransactionSuccess({required this.onPrintReceipt, super.key});
+  const TransactionSuccess({
+    required this.onReset,
+    required this.onPrintReceipt,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void resetCart() {
-      // Reset Navigation
-      while (context.canPop() == true) {
-        context.pop();
-      }
-      context.pushReplacementNamed(Routes.home);
-      ref.read(cartNotiferProvider.notifier).initCart();
-    }
-
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -156,7 +167,7 @@ class TransactionSuccess extends ConsumerWidget {
             const SizedBox(width: 15),
             Expanded(
               child: ElevatedButton(
-                onPressed: resetCart,
+                onPressed: onReset,
                 style: ElevatedButton.styleFrom(
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -175,8 +186,10 @@ class TransactionSuccess extends ConsumerWidget {
 }
 
 class TransactionError extends StatelessWidget {
+  final Function() onReset;
   final Function() onRetry;
-  const TransactionError({required this.onRetry, super.key});
+  const TransactionError(
+      {required this.onRetry, super.key, required this.onReset});
 
   @override
   Widget build(BuildContext context) {
@@ -192,16 +205,29 @@ class TransactionError extends StatelessWidget {
           style: textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
         ),
         const SizedBox(height: 40),
-        ElevatedButton(
-          onPressed: onRetry,
-          style: ElevatedButton.styleFrom(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
+        Row(
+          children: [
+            TextButton(
+              style:
+                  TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
+              onPressed: onReset,
+              child: Text('new_transaction'.tr()),
             ),
-          ),
-          child: Text(
-            'try_again'.tr(),
-          ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: onRetry,
+                style: ElevatedButton.styleFrom(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                  ),
+                ),
+                child: Text(
+                  'try_again'.tr(),
+                ),
+              ),
+            ),
+          ],
         )
       ],
     );

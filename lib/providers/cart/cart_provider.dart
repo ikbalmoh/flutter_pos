@@ -266,22 +266,19 @@ class CartNotifer extends _$CartNotifer {
     try {
       final api = TransactionApi();
 
-      final data = await api.storeTransaction(state);
+      final res = await api.storeTransaction(state);
 
-      final List<dynamic> transactions = data['data'];
+      log('TRANSACTIONS: $res');
 
-      if (transactions.isEmpty) {
-        log('TRANSACTION FAILED: $data');
-        // throw Exception('transaction_error'.tr());
+      if (res.isEmpty) {
+        throw Exception('transaction_error'.tr());
       }
-
-      // state = Cart.fromJson(transactions[0]);
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  void printReceipt({int printCounter = 1}) async {
+  Future<void> printReceipt({int printCounter = 1}) async {
     try {
       final printer = ref.read(printerNotifierProvider).value;
       if (printer == null) {
@@ -297,8 +294,8 @@ class CartNotifer extends _$CartNotifer {
         size: printer.size,
       );
       ref.read(printerNotifierProvider.notifier).print(receipt);
-    } on Exception catch (e) {
-      throw Exception(e);
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 }
