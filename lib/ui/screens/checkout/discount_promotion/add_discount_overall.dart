@@ -20,7 +20,8 @@ class AddDiscountOverall extends ConsumerStatefulWidget {
 class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
   late double discount;
   late bool discountIsPercent;
-  final discountController = TextEditingController();
+
+  final _discountFormatter = CurrencyFormat.currencyInput();
 
   @override
   void initState() {
@@ -29,26 +30,26 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
       discount = cart.discOverall;
       discountIsPercent = cart.discIsPercent;
     });
-    discountController.text = cart.discOverall.toString();
-    discountController.addListener(() {
-      double disc = double.tryParse(discountController.text) ?? 0;
-      if (discountIsPercent && disc > 100) {
-        disc = 100;
-      } else if (!discountIsPercent && disc > cart.subtotal) {
-        disc = cart.subtotal;
-        discountController.text = cart.subtotal.toString();
-      }
-      setState(() {
-        discount = disc;
-      });
-    });
     super.initState();
+  }
+
+  void onChangeDiscountValue(String _) {
+    final cart = ref.read(cartNotiferProvider);
+
+    double disc = _discountFormatter.getUnformattedValue().toDouble();
+    if (discountIsPercent && disc > 100) {
+      disc = 100;
+    } else if (!discountIsPercent && disc > cart.subtotal) {
+      disc = cart.subtotal;
+    }
+    setState(() {
+      discount = disc;
+    });
   }
 
   void onChangeDiscountType() {
     bool isPercent = !discountIsPercent;
     double disc = isPercent && discount > 100 ? 100 : discount;
-    discountController.text = disc.toString();
     setState(() {
       discountIsPercent = isPercent;
       discount = disc;
@@ -107,7 +108,10 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
             ),
           ),
           TextFormField(
-            controller: discountController,
+            inputFormatters: [_discountFormatter],
+            initialValue: _discountFormatter
+                .formatDouble(ref.read(cartNotiferProvider).discOverall),
+            onChanged: onChangeDiscountValue,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
             autofocus: true,

@@ -1,3 +1,4 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 
 class CurrencyFormat {
@@ -20,11 +21,16 @@ class CurrencyFormat {
     );
     return currencyFormatter.parse(formated);
   }
-}
 
-class DateTimeFormater {
-  static String dateToString(DateTime value, {String? format = 'y-MM-dd HH:mm:ss'}) {
-    return DateFormat(format).format(value);
+  static CurrencyTextInputFormatter currencyInput() {
+    return CurrencyTextInputFormatter.currency(
+        locale: 'id', decimalDigits: 0, symbol: '');
   }
 }
 
+class DateTimeFormater {
+  static String dateToString(DateTime value,
+      {String? format = 'y-MM-dd HH:mm:ss'}) {
+    return DateFormat(format).format(value);
+  }
+}
