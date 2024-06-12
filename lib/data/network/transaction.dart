@@ -104,4 +104,18 @@ class TransactionApi {
       throw Exception(e);
     }
   }
+
+  Future holdTransaction(Cart cart) async {
+    try {
+      final json = cart.toJson();
+      final List<Map<String, dynamic>> data = [json];
+      final res = await api.post(ApiUrl.hold, data: data);
+
+      return res.data['data'];
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

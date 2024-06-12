@@ -20,7 +20,7 @@ Cart _$CartFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Cart {
-  DateTime get transactionDate => throw _privateConstructorUsedError;
+  int get transactionDate => throw _privateConstructorUsedError;
   String get transactionNo => throw _privateConstructorUsedError;
   String get idOutlet => throw _privateConstructorUsedError;
   String get outletName => throw _privateConstructorUsedError;
@@ -60,7 +60,7 @@ abstract class $CartCopyWith<$Res> {
       _$CartCopyWithImpl<$Res, Cart>;
   @useResult
   $Res call(
-      {DateTime transactionDate,
+      {int transactionDate,
       String transactionNo,
       String idOutlet,
       String outletName,
@@ -134,7 +134,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
       transactionDate: null == transactionDate
           ? _value.transactionDate
           : transactionDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as int,
       transactionNo: null == transactionNo
           ? _value.transactionNo
           : transactionNo // ignore: cast_nullable_to_non_nullable
@@ -251,7 +251,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {DateTime transactionDate,
+      {int transactionDate,
       String transactionNo,
       String idOutlet,
       String outletName,
@@ -322,7 +322,7 @@ class __$$CartImplCopyWithImpl<$Res>
       transactionDate: null == transactionDate
           ? _value.transactionDate
           : transactionDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as int,
       transactionNo: null == transactionNo
           ? _value.transactionNo
           : transactionNo // ignore: cast_nullable_to_non_nullable
@@ -471,7 +471,7 @@ class _$CartImpl extends _Cart {
       _$$CartImplFromJson(json);
 
   @override
-  final DateTime transactionDate;
+  final int transactionDate;
   @override
   final String transactionNo;
   @override
@@ -643,7 +643,7 @@ class _$CartImpl extends _Cart {
 
 abstract class _Cart extends Cart {
   const factory _Cart(
-      {required final DateTime transactionDate,
+      {required final int transactionDate,
       required final String transactionNo,
       required final String idOutlet,
       required final String outletName,
@@ -676,7 +676,7 @@ abstract class _Cart extends Cart {
   factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
 
   @override
-  DateTime get transactionDate;
+  int get transactionDate;
   @override
   String get transactionNo;
   @override

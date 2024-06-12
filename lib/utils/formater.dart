@@ -105,4 +105,9 @@ class DateTimeFormater {
       {String? format = 'y-MM-dd HH:mm:ss'}) {
     return DateFormat(format).format(value);
   }
+
+  static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(value);
+    return dateToString(dateTime, format: format);
+  }
 }
