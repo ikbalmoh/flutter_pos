@@ -144,7 +144,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   search: search,
                 ),
               ),
-              cart.items.isNotEmpty ? BottomActions(cart: cart,) : Container()
+              cart.items.isNotEmpty
+                  ? BottomActions(
+                      cart: cart,
+                    )
+                  : Container()
             ],
           ),
           switch (shift) {

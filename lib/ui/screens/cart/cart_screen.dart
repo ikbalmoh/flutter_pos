@@ -8,6 +8,7 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart_item.dart';
 import 'package:selleri/ui/components/edit_cart_item.dart';
+import 'package:selleri/ui/components/hold/hold_button.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -120,19 +121,7 @@ class CartActions extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
-                    flex: 1,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text('hold'.tr().toUpperCase()),
-                    ),
-                  ),
+                  const HoldButton(),
                   const SizedBox(
                     width: 10,
                   ),
@@ -146,7 +135,7 @@ class CartActions extends StatelessWidget {
                       ),
                       onPressed: () => context.push(Routes.checkout),
                       icon: const Icon(CupertinoIcons.creditcard_fill),
-                      label: Text('checkout'.tr().toUpperCase()),
+                      label: Text('payments'.tr().toUpperCase()),
                     ),
                   )
                 ],

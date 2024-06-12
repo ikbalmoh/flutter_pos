@@ -73,7 +73,7 @@ class Printer {
     bytes += generator.text('No: ${cart.transactionNo}');
     bytes += generator.text('Cashier: ${cart.createdName ?? '-'}');
     bytes += generator.text(
-        'Date: ${DateTimeFormater.dateToString(cart.transactionDate, format: 'dd/MM/y HH:mm')}');
+        'Date: ${DateTimeFormater.msToString(cart.transactionDate * 1000, format: 'dd/MM/y HH:mm')}');
     bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
     bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
 

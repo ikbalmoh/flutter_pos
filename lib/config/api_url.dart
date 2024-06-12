@@ -9,4 +9,5 @@ class ApiUrl {
   static const String closeShift = '/shifts/{id}/closing';
   static const String customers = '/customers';
   static const String transaction = '/sales-transactions';
+  static const String hold = '/hold-transaction';
 }

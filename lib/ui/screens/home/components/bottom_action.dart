@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/router/routes.dart';
+import 'package:selleri/ui/components/hold/hold_button.dart';
 import 'package:selleri/utils/formater.dart';
 
 class BottomActions extends StatelessWidget {
@@ -25,30 +25,24 @@ class BottomActions extends StatelessWidget {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 10,
+            horizontal: 15,
             vertical: 12,
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.blue,
-                      ),
-                      onPressed: () {},
-                      child: Text('hold'.tr().toUpperCase()),
-                    ),
-                  ),
+                  const HoldButton(),
                   const SizedBox(
                     width: 10,
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: 2,
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         shape: const RoundedRectangleBorder(

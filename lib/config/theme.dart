@@ -82,6 +82,29 @@ ThemeData appTheme(BuildContext context) {
         ),
       ),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        minimumSize: WidgetStateProperty.resolveWith<Size>(
+            (states) => const Size.fromHeight(50)),
+        foregroundColor: WidgetStateProperty.resolveWith<Color>(
+          (states) => Colors.teal,
+        ),
+        side: WidgetStateProperty.resolveWith<BorderSide>(
+          (states) => const BorderSide(color: Colors.teal),
+        ),
+        shape: WidgetStateProperty.resolveWith<RoundedRectangleBorder>(
+          (state) => RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        textStyle: WidgetStateProperty.resolveWith<TextStyle>(
+          (states) => const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       enabledBorder: OutlineInputBorder(
         borderRadius: const BorderRadius.all(

@@ -30,7 +30,7 @@ class CartNotifer extends _$CartNotifer {
   Cart emptyCart() {
     return Cart(
       transactionNo: '',
-      transactionDate: DateTime.now(),
+      transactionDate: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
       items: [],
       subtotal: 0,
       total: 0,
@@ -297,6 +297,17 @@ class CartNotifer extends _$CartNotifer {
       ref.read(printerNotifierProvider.notifier).print(receipt);
     } on Exception catch (_) {
       rethrow;
+    }
+  }
+
+  Future<void> holdCart({required String note, bool createNew = false}) async {
+    Cart cart = state.copyWith(holdAt: DateTime.now(), notes: note);
+    final api = TransactionApi();
+    await api.holdTransaction(cart);
+    if (createNew) {
+      initCart();
+    } else {
+      state = cart;
     }
   }
 }

@@ -12,14 +12,13 @@ class Cart with _$Cart {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Cart({
-    required DateTime transactionDate,
+    required int transactionDate,
     required String transactionNo,
     required String idOutlet,
     required String outletName,
     required String shiftId,
     required double subtotal,
-    @JsonKey(fromJson: Converters.dynamicToBool)
-    required bool discIsPercent,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool discIsPercent,
     required double discOverall,
     required double discOverallTotal,
     required double discPromotionsTotal,
@@ -48,7 +47,7 @@ class Cart with _$Cart {
         "id_outlet": idOutlet,
         "shift_id": shiftId,
         "created_by": createdBy,
-        "transaction_date": (transactionDate.millisecondsSinceEpoch / 1000).floor(),
+        "transaction_date": transactionDate,
         "transaction_no": transactionNo,
         "id_customer": idCustomer ?? '',
         "subtotal": subtotal,
