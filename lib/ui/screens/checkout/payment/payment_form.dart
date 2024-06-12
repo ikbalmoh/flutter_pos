@@ -18,26 +18,22 @@ class PaymentForm extends ConsumerStatefulWidget {
 }
 
 class _PaymentFormState extends ConsumerState<PaymentForm> {
-  TextEditingController amountController = TextEditingController(text: '0');
   TextEditingController refController = TextEditingController();
+
+  final _formatter = CurrencyFormat.currencyInput();
 
   double amount = 0;
 
   @override
   void initState() {
     if (widget.cartPayment != null) {
-      amountController.text = widget.cartPayment?.paymentValue.toString() ??
-          ref.read(cartNotiferProvider).grandTotal.toString();
       refController.text = widget.cartPayment!.reference ?? '';
       setState(() {
-        amount = widget.cartPayment!.paymentValue;
+        amount = widget.cartPayment?.paymentValue ??
+            ref.read(cartNotiferProvider).grandTotal -
+                ref.read(cartNotiferProvider).totalPayment;
       });
     }
-    amountController.addListener(() {
-      setState(() {
-        amount = double.tryParse(amountController.text) ?? 0;
-      });
-    });
     super.initState();
   }
 
@@ -87,7 +83,14 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
             ),
           ),
           TextFormField(
-            controller: amountController,
+            inputFormatters: [_formatter],
+            initialValue: _formatter.formatDouble(
+                widget.cartPayment?.paymentValue ??
+                    ref.read(cartNotiferProvider).grandTotal -
+                        ref.read(cartNotiferProvider).totalPayment),
+            onChanged: (_) => setState(() {
+              amount = _formatter.getUnformattedValue().toDouble();
+            }),
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
             autofocus: true,

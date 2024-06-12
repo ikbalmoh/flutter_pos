@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/discount_type_toggle.dart';
@@ -21,8 +24,9 @@ class EditCartItem extends ConsumerStatefulWidget {
 
 class _EditCartItemState extends ConsumerState<EditCartItem> {
   final noteController = TextEditingController();
-  final priceController = TextEditingController();
-  final discountController = TextEditingController();
+
+  final _priceFormater = CurrencyFormat.currencyInput();
+  final _discountFormater = CurrencyFormat.currencyInput();
 
   late double price;
   late double discount;
@@ -32,27 +36,8 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
   @override
   void initState() {
     super.initState();
-    
+
     noteController.text = widget.item.note;
-    priceController.text = widget.item.price.toString();
-    discountController.text = widget.item.discount.toString();
-
-    priceController.addListener(() {
-      setState(() {
-        price = double.tryParse(priceController.text) ?? 0;
-      });
-    });
-
-    discountController.addListener(() {
-      double disc = double.tryParse(discountController.text) ?? 0;
-      if (discountIsPercent && disc > 100) {
-        disc = 100;
-        discountController.text = disc.toString();
-      }
-      setState(() {
-        discount = disc;
-      });
-    });
 
     setState(() {
       price = widget.item.price;
@@ -66,16 +51,23 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
   @override
   void dispose() {
     noteController.dispose();
-    priceController.dispose();
-    discountController.dispose();
     super.dispose();
+  }
+
+  void onChangeDiscountValue(String _) {
+    double disc = _discountFormater.getUnformattedValue().toDouble();
+    if (discountIsPercent && disc > 100) {
+      disc = 100;
+    }
+    setState(() {
+      discount = disc;
+    });
   }
 
   void onChangeDiscountType() {
     if (!widget.item.manualDiscount) return;
     bool isPercent = !discountIsPercent;
     double disc = isPercent && discount > 100 ? 100 : discount;
-    discountController.text = disc.toString();
     setState(() {
       discountIsPercent = isPercent;
       discount = disc;
@@ -129,8 +121,8 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: const EdgeInsets.only(
-                top: 8, left: 5, right: 5, bottom: 15),
+            padding:
+                const EdgeInsets.only(top: 8, left: 5, right: 5, bottom: 15),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -145,7 +137,14 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
             ),
           ),
           TextFormField(
-            controller: priceController,
+            inputFormatters: <TextInputFormatter>[_priceFormater],
+            initialValue: _priceFormater.formatDouble(widget.item.price),
+            onChanged: (value) {
+              setState(() {
+                price = _priceFormater.getUnformattedValue().toDouble();
+              });
+            },
+            // controller: priceController,
             readOnly: widget.item.isManualPrice,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
@@ -203,7 +202,9 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
             ),
           ),
           TextFormField(
-            controller: discountController,
+            inputFormatters: [_discountFormater],
+            initialValue: _discountFormater.formatDouble(widget.item.discount),
+            onChanged: onChangeDiscountValue,
             readOnly: !widget.item.manualDiscount,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
@@ -245,9 +246,8 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
           TextFormField(
             controller: noteController,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.only(
-                  left: 0, top: 15, right: 0, bottom: 15),
-              // floatingLabelBehavior: FloatingLabelBehavior.never,
+              contentPadding:
+                  const EdgeInsets.only(left: 0, top: 15, right: 0, bottom: 15),
               label: Text(
                 'note'.tr(),
                 style: labelStyle,
