@@ -11,8 +11,8 @@ class Pagination<T> with _$Pagination<T> {
     required int currentPage,
     required int lastPage,
     required int total,
-    required int from,
-    required int to,
+    int? from,
+    int? to,
     bool? loading,
     List<T>? data,
   }) = _Pagination<T>;

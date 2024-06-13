@@ -24,8 +24,8 @@ mixin _$Pagination<T> {
   int get currentPage => throw _privateConstructorUsedError;
   int get lastPage => throw _privateConstructorUsedError;
   int get total => throw _privateConstructorUsedError;
-  int get from => throw _privateConstructorUsedError;
-  int get to => throw _privateConstructorUsedError;
+  int? get from => throw _privateConstructorUsedError;
+  int? get to => throw _privateConstructorUsedError;
   bool? get loading => throw _privateConstructorUsedError;
   List<T>? get data => throw _privateConstructorUsedError;
 
@@ -46,8 +46,8 @@ abstract class $PaginationCopyWith<T, $Res> {
       {int currentPage,
       int lastPage,
       int total,
-      int from,
-      int to,
+      int? from,
+      int? to,
       bool? loading,
       List<T>? data});
 }
@@ -68,8 +68,8 @@ class _$PaginationCopyWithImpl<T, $Res, $Val extends Pagination<T>>
     Object? currentPage = null,
     Object? lastPage = null,
     Object? total = null,
-    Object? from = null,
-    Object? to = null,
+    Object? from = freezed,
+    Object? to = freezed,
     Object? loading = freezed,
     Object? data = freezed,
   }) {
@@ -86,14 +86,14 @@ class _$PaginationCopyWithImpl<T, $Res, $Val extends Pagination<T>>
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as int,
-      from: null == from
+      from: freezed == from
           ? _value.from
           : from // ignore: cast_nullable_to_non_nullable
-              as int,
-      to: null == to
+              as int?,
+      to: freezed == to
           ? _value.to
           : to // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       loading: freezed == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -118,8 +118,8 @@ abstract class _$$PaginationImplCopyWith<T, $Res>
       {int currentPage,
       int lastPage,
       int total,
-      int from,
-      int to,
+      int? from,
+      int? to,
       bool? loading,
       List<T>? data});
 }
@@ -138,8 +138,8 @@ class __$$PaginationImplCopyWithImpl<T, $Res>
     Object? currentPage = null,
     Object? lastPage = null,
     Object? total = null,
-    Object? from = null,
-    Object? to = null,
+    Object? from = freezed,
+    Object? to = freezed,
     Object? loading = freezed,
     Object? data = freezed,
   }) {
@@ -156,14 +156,14 @@ class __$$PaginationImplCopyWithImpl<T, $Res>
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as int,
-      from: null == from
+      from: freezed == from
           ? _value.from
           : from // ignore: cast_nullable_to_non_nullable
-              as int,
-      to: null == to
+              as int?,
+      to: freezed == to
           ? _value.to
           : to // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       loading: freezed == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -185,8 +185,8 @@ class _$PaginationImpl<T> implements _Pagination<T> {
       {required this.currentPage,
       required this.lastPage,
       required this.total,
-      required this.from,
-      required this.to,
+      this.from,
+      this.to,
       this.loading,
       final List<T>? data})
       : _data = data;
@@ -202,9 +202,9 @@ class _$PaginationImpl<T> implements _Pagination<T> {
   @override
   final int total;
   @override
-  final int from;
+  final int? from;
   @override
-  final int to;
+  final int? to;
   @override
   final bool? loading;
   final List<T>? _data;
@@ -260,8 +260,8 @@ abstract class _Pagination<T> implements Pagination<T> {
       {required final int currentPage,
       required final int lastPage,
       required final int total,
-      required final int from,
-      required final int to,
+      final int? from,
+      final int? to,
       final bool? loading,
       final List<T>? data}) = _$PaginationImpl<T>;
 
@@ -276,9 +276,9 @@ abstract class _Pagination<T> implements Pagination<T> {
   @override
   int get total;
   @override
-  int get from;
+  int? get from;
   @override
-  int get to;
+  int? get to;
   @override
   bool? get loading;
   @override

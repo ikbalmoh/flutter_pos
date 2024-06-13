@@ -31,6 +31,7 @@
   "cart_empty": "Cart is Empty",
   "hold": "Hold",
   "hold_new": "Hold & New",
+  "update_new": "Update & New",
   "checkout": "Checkout",
   "pay": "Pay",
   "open_shift": "Open Shift",
@@ -87,5 +88,6 @@
   "cashier": "Cashier",
   "customer": "Customer",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "no_data": "No {} Data"
 }

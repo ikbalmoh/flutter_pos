@@ -14,8 +14,8 @@ _$PaginationImpl<T> _$$PaginationImplFromJson<T>(
       currentPage: (json['current_page'] as num).toInt(),
       lastPage: (json['last_page'] as num).toInt(),
       total: (json['total'] as num).toInt(),
-      from: (json['from'] as num).toInt(),
-      to: (json['to'] as num).toInt(),
+      from: (json['from'] as num?)?.toInt(),
+      to: (json['to'] as num?)?.toInt(),
       loading: json['loading'] as bool?,
       data: (json['data'] as List<dynamic>?)?.map(fromJsonT).toList(),
     );

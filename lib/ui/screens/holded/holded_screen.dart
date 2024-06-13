@@ -44,20 +44,20 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
 
   void loadMore() {
     final pagination = ref.read(holdedNofierProvider).asData?.value;
-    if (pagination == null) {
+    if (pagination == null ||
+        pagination.to == null ||
+        (pagination.to != null && pagination.currentPage >= pagination.to!)) {
       return;
     }
 
-    if (pagination.currentPage >= pagination.to) {
-      return;
-    }
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
       log('Load hold... ${pagination.currentPage}/${pagination.to}');
-      ref
-          .read(holdedNofierProvider.notifier)
-          .loadTransaction(page: pagination.currentPage + 1);
+      ref.read(holdedNofierProvider.notifier).loadTransaction(
+            page: pagination.currentPage + 1,
+            search: query,
+          );
     }
   }
 
@@ -133,45 +133,64 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
               ],
             ),
       body: ref.watch(holdedNofierProvider).when(
-            data: (data) => ListView.builder(
-              controller: _scrollController,
-              itemBuilder: (context, idx) {
-                if (idx + 1 > data.data!.length) {
-                  if (data.currentPage >= data.lastPage) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 10),
-                      child: Center(
-                        child: Text(
-                          'x_data_displayed'.tr(
-                            args: [data.total.toString()],
+            data: (data) => data.data!.isNotEmpty
+                ? ListView.builder(
+                    controller: _scrollController,
+                    itemBuilder: (context, idx) {
+                      if (idx + 1 > data.data!.length) {
+                        if (data.currentPage >= data.lastPage) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 10),
+                            child: Center(
+                              child: Text(
+                                'x_data_displayed'.tr(
+                                  args: [data.total.toString()],
+                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.grey.shade600,
+                                    ),
+                              ),
+                            ),
+                          );
+                        }
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 10),
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: LoadingIndicator(color: Colors.teal),
+                            ),
                           ),
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey.shade600,
-                                  ),
-                        ),
-                      ),
-                    );
-                  }
-                  return const Center(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                      child: SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: LoadingIndicator(color: Colors.teal),
-                      ),
-                    ),
-                  );
-                }
+                        );
+                      }
 
-                final hold = data.data![idx];
-                return HoldItem(hold: hold, onSelect: onOpenHoldedCart);
-              },
-              itemCount: data.data!.length + 1,
-            ),
+                      final hold = data.data![idx];
+                      return HoldItem(hold: hold, onSelect: onOpenHoldedCart);
+                    },
+                    itemCount: data.data!.length + 1,
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'no_data'.tr(args: ['']),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Colors.grey),
+                        )
+                      ],
+                    ),
+                  ),
             error: (e, stack) => null,
             loading: () => const LoadingWidget(
               color: Colors.teal,

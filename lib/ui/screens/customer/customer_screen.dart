@@ -43,20 +43,20 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
 
   void loadMore() {
     final pagination = ref.read(customerListNotifierProvider).asData?.value;
-    if (pagination == null) {
+    if (pagination == null ||
+        pagination.to == null ||
+        (pagination.to != null && pagination.currentPage >= pagination.to!)) {
       return;
     }
 
-    if (pagination.currentPage >= pagination.to) {
-      return;
-    }
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
       log('Load customers... ${pagination.currentPage}/${pagination.to}');
-      ref
-          .read(customerListNotifierProvider.notifier)
-          .loadCustomers(page: pagination.currentPage + 1);
+      ref.read(customerListNotifierProvider.notifier).loadCustomers(
+            page: pagination.currentPage + 1,
+            search: _searchController.text,
+          );
     }
   }
 
@@ -116,59 +116,75 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                   fontSize: 18),
             ),
       body: customers.when(
-        data: (data) => ListView.builder(
-          controller: _scrollController,
-          itemBuilder: (context, idx) {
-            if (idx + 1 > data.data!.length) {
-              if (data.currentPage >= data.lastPage) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  child: Center(
-                    child: Text(
-                      'x_data_displayed'.tr(
-                        args: [data.total.toString()],
-                      ),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey.shade600,
+        data: (data) => data.data!.isNotEmpty
+            ? ListView.builder(
+                controller: _scrollController,
+                itemBuilder: (context, idx) {
+                  if (idx + 1 > data.data!.length) {
+                    if (data.currentPage >= data.lastPage) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10),
+                        child: Center(
+                          child: Text(
+                            'x_data_displayed'.tr(
+                              args: [data.total.toString()],
+                            ),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey.shade600,
+                                    ),
                           ),
+                        ),
+                      );
+                    }
+                    return const Center(
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: LoadingIndicator(color: Colors.teal),
+                        ),
+                      ),
+                    );
+                  }
+                  Customer customer = data.data![idx];
+                  bool selected = selectedCustomer == customer.idCustomer;
+                  return ListTile(
+                    title: Text(customer.customerName.trim()),
+                    subtitle: Text(customer.code.trim()),
+                    shape: Border(
+                      bottom: BorderSide(
+                        width: 0.5,
+                        color: Colors.blueGrey.shade50,
+                      ),
                     ),
-                  ),
-                );
-              }
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: LoadingIndicator(color: Colors.teal),
-                  ),
-                ),
-              );
-            }
-            Customer customer = data.data![idx];
-            bool selected = selectedCustomer == customer.idCustomer;
-            return ListTile(
-              title: Text(customer.customerName.trim()),
-              subtitle: Text(customer.code.trim()),
-              shape: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade50,
+                    onTap: () => showCustomerSheet(customer),
+                    trailing: selected
+                        ? const Icon(
+                            Icons.check_circle,
+                            color: Colors.teal,
+                          )
+                        : null,
+                  );
+                },
+                itemCount: data.data!.length + 1,
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'no_data'.tr(args: ['customer'.tr()]),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    )
+                  ],
                 ),
               ),
-              onTap: () => showCustomerSheet(customer),
-              trailing: selected
-                  ? const Icon(
-                      Icons.check_circle,
-                      color: Colors.teal,
-                    )
-                  : null,
-            );
-          },
-          itemCount: data.data!.length + 1,
-        ),
         error: (e, stack) => null,
         loading: () => const LoadingWidget(
           color: Colors.teal,

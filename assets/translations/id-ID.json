@@ -31,6 +31,7 @@
   "cart_empty": "Tidak ada barang di Keranjang",
   "hold": "Tunda",
   "hold_new": "Tunda & Baru",
+  "update_new": "Perbaharui & Baru",
   "checkout": "Checkout",
   "pay": "Bayar",
   "open_shift": "Buka Sif",
@@ -87,5 +88,6 @@
   "cashier": "Kasir",
   "customer": "Pelanggan",
   "yes": "Ya",
-  "no": "Tidak"
+  "no": "Tidak",
+  "no_data": "Tidak Ada Data {}"
 }

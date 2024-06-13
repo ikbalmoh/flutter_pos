@@ -139,6 +139,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Column(
             mainAxisSize: MainAxisSize.max,
             children: [
+              ref.watch(cartNotiferProvider).holdAt == null
+                  ? Container()
+                  : Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade800,
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(0)),
+                      ),
+                      child: Text(
+                        ref.watch(cartNotiferProvider).transactionNo,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
@@ -155,22 +173,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   search: search,
                 ),
               ),
-              ref.watch(cartNotiferProvider).holdAt == null
-                  ? Container()
-                  : Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade500,
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(0)),
-                      ),
-                      child: Text(
-                        ref.watch(cartNotiferProvider).transactionNo,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
               cart.items.isNotEmpty
                   ? BottomActions(
                       cart: cart,

@@ -197,7 +197,9 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                                     ? () => onHold(true)
                                     : null,
                                 child: Text(
-                                  'hold_new'.tr(),
+                                  ref.read(cartNotiferProvider).holdAt == null
+                                      ? 'hold_new'.tr()
+                                      : 'update_new'.tr(),
                                 ),
                               ),
                             ),
