@@ -164,6 +164,9 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                   : [
                       Flexible(
                         child: TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.blue,
+                          ),
                           onPressed: note.length >= 3 && !holding
                               ? () => onHold(true)
                               : null,
@@ -176,6 +179,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                       Flexible(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(30),

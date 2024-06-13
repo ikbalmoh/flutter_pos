@@ -23,18 +23,22 @@ mixin _$ItemCart {
   String get identifier => throw _privateConstructorUsedError;
   String get idItem => throw _privateConstructorUsedError;
   String get itemName => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get isPackage => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get isManualPrice => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get manualDiscount => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
   double get discount => throw _privateConstructorUsedError;
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool get discountIsPercent => throw _privateConstructorUsedError;
   double get discountTotal => throw _privateConstructorUsedError;
-  DateTime get addedAt => throw _privateConstructorUsedError;
+  DateTime? get addedAt => throw _privateConstructorUsedError;
   double get total => throw _privateConstructorUsedError;
-  String get note => throw _privateConstructorUsedError;
+  String? get note => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToNum)
   num? get idVariant => throw _privateConstructorUsedError;
   String? get variantName => throw _privateConstructorUsedError;
 
@@ -53,18 +57,18 @@ abstract class $ItemCartCopyWith<$Res> {
       {String identifier,
       String idItem,
       String itemName,
-      bool isPackage,
-      bool isManualPrice,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isPackage,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isManualPrice,
       double price,
-      bool manualDiscount,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool manualDiscount,
       int quantity,
       double discount,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discountIsPercent,
       double discountTotal,
-      DateTime addedAt,
+      DateTime? addedAt,
       double total,
-      String note,
-      num? idVariant,
+      String? note,
+      @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
       String? variantName});
 }
 
@@ -92,9 +96,9 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
     Object? discount = null,
     Object? discountIsPercent = null,
     Object? discountTotal = null,
-    Object? addedAt = null,
+    Object? addedAt = freezed,
     Object? total = null,
-    Object? note = null,
+    Object? note = freezed,
     Object? idVariant = freezed,
     Object? variantName = freezed,
   }) {
@@ -143,18 +147,18 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
           ? _value.discountTotal
           : discountTotal // ignore: cast_nullable_to_non_nullable
               as double,
-      addedAt: null == addedAt
+      addedAt: freezed == addedAt
           ? _value.addedAt
           : addedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       total: null == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as double,
-      note: null == note
+      note: freezed == note
           ? _value.note
           : note // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       idVariant: freezed == idVariant
           ? _value.idVariant
           : idVariant // ignore: cast_nullable_to_non_nullable
@@ -179,18 +183,18 @@ abstract class _$$ItemCartImplCopyWith<$Res>
       {String identifier,
       String idItem,
       String itemName,
-      bool isPackage,
-      bool isManualPrice,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isPackage,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isManualPrice,
       double price,
-      bool manualDiscount,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool manualDiscount,
       int quantity,
       double discount,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discountIsPercent,
       double discountTotal,
-      DateTime addedAt,
+      DateTime? addedAt,
       double total,
-      String note,
-      num? idVariant,
+      String? note,
+      @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
       String? variantName});
 }
 
@@ -216,9 +220,9 @@ class __$$ItemCartImplCopyWithImpl<$Res>
     Object? discount = null,
     Object? discountIsPercent = null,
     Object? discountTotal = null,
-    Object? addedAt = null,
+    Object? addedAt = freezed,
     Object? total = null,
-    Object? note = null,
+    Object? note = freezed,
     Object? idVariant = freezed,
     Object? variantName = freezed,
   }) {
@@ -267,18 +271,18 @@ class __$$ItemCartImplCopyWithImpl<$Res>
           ? _value.discountTotal
           : discountTotal // ignore: cast_nullable_to_non_nullable
               as double,
-      addedAt: null == addedAt
+      addedAt: freezed == addedAt
           ? _value.addedAt
           : addedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       total: null == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as double,
-      note: null == note
+      note: freezed == note
           ? _value.note
           : note // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       idVariant: freezed == idVariant
           ? _value.idVariant
           : idVariant // ignore: cast_nullable_to_non_nullable
@@ -299,19 +303,19 @@ class _$ItemCartImpl extends _ItemCart {
       {required this.identifier,
       required this.idItem,
       required this.itemName,
-      required this.isPackage,
-      required this.isManualPrice,
+      @JsonKey(fromJson: Converters.dynamicToBool) required this.isPackage,
+      @JsonKey(fromJson: Converters.dynamicToBool) required this.isManualPrice,
       required this.price,
-      required this.manualDiscount,
+      @JsonKey(fromJson: Converters.dynamicToBool) required this.manualDiscount,
       required this.quantity,
       required this.discount,
       @JsonKey(fromJson: Converters.dynamicToBool)
       required this.discountIsPercent,
       required this.discountTotal,
-      required this.addedAt,
+      this.addedAt,
       required this.total,
-      required this.note,
-      this.idVariant,
+      this.note,
+      @JsonKey(fromJson: Converters.dynamicToNum) this.idVariant,
       this.variantName})
       : super._();
 
@@ -325,12 +329,15 @@ class _$ItemCartImpl extends _ItemCart {
   @override
   final String itemName;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   final bool isPackage;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   final bool isManualPrice;
   @override
   final double price;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   final bool manualDiscount;
   @override
   final int quantity;
@@ -342,12 +349,13 @@ class _$ItemCartImpl extends _ItemCart {
   @override
   final double discountTotal;
   @override
-  final DateTime addedAt;
+  final DateTime? addedAt;
   @override
   final double total;
   @override
-  final String note;
+  final String? note;
   @override
+  @JsonKey(fromJson: Converters.dynamicToNum)
   final num? idVariant;
   @override
   final String? variantName;
@@ -426,19 +434,22 @@ abstract class _ItemCart extends ItemCart {
       {required final String identifier,
       required final String idItem,
       required final String itemName,
+      @JsonKey(fromJson: Converters.dynamicToBool)
       required final bool isPackage,
+      @JsonKey(fromJson: Converters.dynamicToBool)
       required final bool isManualPrice,
       required final double price,
+      @JsonKey(fromJson: Converters.dynamicToBool)
       required final bool manualDiscount,
       required final int quantity,
       required final double discount,
       @JsonKey(fromJson: Converters.dynamicToBool)
       required final bool discountIsPercent,
       required final double discountTotal,
-      required final DateTime addedAt,
+      final DateTime? addedAt,
       required final double total,
-      required final String note,
-      final num? idVariant,
+      final String? note,
+      @JsonKey(fromJson: Converters.dynamicToNum) final num? idVariant,
       final String? variantName}) = _$ItemCartImpl;
   const _ItemCart._() : super._();
 
@@ -452,12 +463,15 @@ abstract class _ItemCart extends ItemCart {
   @override
   String get itemName;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get isPackage;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get isManualPrice;
   @override
   double get price;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get manualDiscount;
   @override
   int get quantity;
@@ -469,12 +483,13 @@ abstract class _ItemCart extends ItemCart {
   @override
   double get discountTotal;
   @override
-  DateTime get addedAt;
+  DateTime? get addedAt;
   @override
   double get total;
   @override
-  String get note;
+  String? get note;
   @override
+  @JsonKey(fromJson: Converters.dynamicToNum)
   num? get idVariant;
   @override
   String? get variantName;

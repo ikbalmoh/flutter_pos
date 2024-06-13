@@ -98,6 +98,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
             )
           : AppBar(
               title: Text('select_customer'.tr()),
+              centerTitle: false,
               actions: [
                 IconButton(
                   onPressed: () => setState(() {
@@ -106,6 +107,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                   icon: const Icon(Icons.search),
                 )
               ],
+              backgroundColor: Colors.white,
+              iconTheme: const IconThemeData(color: Colors.black87),
+              actionsIconTheme: const IconThemeData(color: Colors.black87),
+              titleTextStyle: const TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18),
             ),
       body: customers.when(
         data: (data) => ListView.builder(

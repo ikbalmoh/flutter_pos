@@ -14,11 +14,13 @@ ThemeData appTheme(BuildContext context) {
     ),
     useMaterial3: true,
     appBarTheme: AppBarTheme(
-      scrolledUnderElevation: 0,
+      elevation: 6,
+      surfaceTintColor: Colors.white,
+      // scrolledUnderElevation: 0,
       foregroundColor: Colors.white,
       backgroundColor: Colors.teal.shade400,
       titleTextStyle: const TextStyle(
-          color: Colors.white, fontWeight: FontWeight.w700, fontSize: 20),
+          color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18),
       actionsIconTheme: const IconThemeData(
         color: Colors.white,
       ),

@@ -35,7 +35,7 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
   void initState() {
     super.initState();
 
-    noteController.text = widget.item.note;
+    noteController.text = widget.item.note ?? '';
 
     setState(() {
       price = widget.item.price;

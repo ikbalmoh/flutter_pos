@@ -34,6 +34,14 @@ class DateTimeFormater {
     return DateFormat(format).format(value);
   }
 
+  static DateTime stringToDateTime(String value) {
+    return DateTime.parse(value);
+  }
+
+  static int stringToTimestamp(String value) {
+    return DateTime.parse(value).millisecondsSinceEpoch;
+  }
+
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(value);
     return dateToString(dateTime, format: format);

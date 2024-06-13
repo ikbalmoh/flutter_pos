@@ -42,8 +42,9 @@ class CustomerListNotifier extends _$CustomerListNotifier {
         customers = customers.copyWith(data: data, loading: false);
       }
       state = AsyncData(customers);
-    } catch (e) {
+    } catch (e, trace) {
       log('Load Customer Error: $e');
+      state = AsyncError(e, trace);
     }
   }
 }

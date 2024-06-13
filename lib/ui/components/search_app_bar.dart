@@ -21,6 +21,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   AppBar build(BuildContext context) {
     return AppBar(
+      surfaceTintColor: Colors.white,
       backgroundColor: Colors.white,
       foregroundColor: Colors.grey.shade500,
       automaticallyImplyLeading: false,

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/utils/formater.dart';
 
 part 'cart.freezed.dart';
 part 'cart.g.dart';
@@ -15,7 +18,7 @@ class Cart with _$Cart {
     required int transactionDate,
     required String transactionNo,
     required String idOutlet,
-    required String outletName,
+    String? outletName,
     required String shiftId,
     required double subtotal,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool discIsPercent,
@@ -23,9 +26,10 @@ class Cart with _$Cart {
     required double discOverallTotal,
     required double discPromotionsTotal,
     required double total,
-    required bool ppnIsInclude,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool ppnIsInclude,
     required double ppn,
     String? taxName,
+    @JsonKey(fromJson: Converters.dynamicToDouble)
     required double ppnTotal,
     required double grandTotal,
     required double totalPayment,
@@ -39,9 +43,20 @@ class Cart with _$Cart {
     String? createdName,
     required List<ItemCart> items,
     required List<CartPayment> payments,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
   }) = _Cart;
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
+
+  factory Cart.fromDataHold(String dataString) {
+    Map<String, dynamic> data = json.decode(dataString);
+    data['transaction_date'] =
+        DateTimeFormater.stringToTimestamp(data['transaction_date']);
+    for (var item in data['items']) {
+      item['identifier'] = item['id_item'];
+    }
+    return Cart.fromJson(data);
+  }
 
   Map<String, dynamic> toTransactionPayload() => <String, dynamic>{
         "id_outlet": idOutlet,

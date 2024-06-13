@@ -7,7 +7,7 @@ part of 'customer_list_provider.dart';
 // **************************************************************************
 
 String _$customerListNotifierHash() =>
-    r'ea221f2b2ceabb552108951633aec02b19a5e30a';
+    r'e9bfe3f83d442c552a270fcaeac08ac8676993cc';
 
 /// See also [CustomerListNotifier].
 @ProviderFor(CustomerListNotifier)

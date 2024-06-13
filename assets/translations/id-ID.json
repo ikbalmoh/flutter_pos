@@ -81,5 +81,8 @@
   "hold_current_transaction": "Tunda Transaksi Saat Ini",
   "total_transaction": "Total Transaksi {}",
   "holding_transaction": "Menunda Transaksi",
-  "transaction_holded": "Transaksi Ditunda"
+  "transaction_holded": "Transaksi ditunda",
+  "holded_transactions": "Transaksi Ditunda",
+  "cashier": "Kasir",
+  "customer": "Pelanggan"
 }

@@ -23,7 +23,7 @@ mixin _$Cart {
   int get transactionDate => throw _privateConstructorUsedError;
   String get transactionNo => throw _privateConstructorUsedError;
   String get idOutlet => throw _privateConstructorUsedError;
-  String get outletName => throw _privateConstructorUsedError;
+  String? get outletName => throw _privateConstructorUsedError;
   String get shiftId => throw _privateConstructorUsedError;
   double get subtotal => throw _privateConstructorUsedError;
   @JsonKey(fromJson: Converters.dynamicToBool)
@@ -32,9 +32,11 @@ mixin _$Cart {
   double get discOverallTotal => throw _privateConstructorUsedError;
   double get discPromotionsTotal => throw _privateConstructorUsedError;
   double get total => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get ppnIsInclude => throw _privateConstructorUsedError;
   double get ppn => throw _privateConstructorUsedError;
   String? get taxName => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToDouble)
   double get ppnTotal => throw _privateConstructorUsedError;
   double get grandTotal => throw _privateConstructorUsedError;
   double get totalPayment => throw _privateConstructorUsedError;
@@ -48,6 +50,8 @@ mixin _$Cart {
   String? get createdName => throw _privateConstructorUsedError;
   List<ItemCart> get items => throw _privateConstructorUsedError;
   List<CartPayment> get payments => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToBool)
+  bool get isApp => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -63,7 +67,7 @@ abstract class $CartCopyWith<$Res> {
       {int transactionDate,
       String transactionNo,
       String idOutlet,
-      String outletName,
+      String? outletName,
       String shiftId,
       double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
@@ -71,10 +75,10 @@ abstract class $CartCopyWith<$Res> {
       double discOverallTotal,
       double discPromotionsTotal,
       double total,
-      bool ppnIsInclude,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool ppnIsInclude,
       double ppn,
       String? taxName,
-      double ppnTotal,
+      @JsonKey(fromJson: Converters.dynamicToDouble) double ppnTotal,
       double grandTotal,
       double totalPayment,
       double change,
@@ -86,7 +90,8 @@ abstract class $CartCopyWith<$Res> {
       String createdBy,
       String? createdName,
       List<ItemCart> items,
-      List<CartPayment> payments});
+      List<CartPayment> payments,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isApp});
 }
 
 /// @nodoc
@@ -105,7 +110,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? transactionDate = null,
     Object? transactionNo = null,
     Object? idOutlet = null,
-    Object? outletName = null,
+    Object? outletName = freezed,
     Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
@@ -129,6 +134,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? createdName = freezed,
     Object? items = null,
     Object? payments = null,
+    Object? isApp = null,
   }) {
     return _then(_value.copyWith(
       transactionDate: null == transactionDate
@@ -143,10 +149,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.idOutlet
           : idOutlet // ignore: cast_nullable_to_non_nullable
               as String,
-      outletName: null == outletName
+      outletName: freezed == outletName
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       shiftId: null == shiftId
           ? _value.shiftId
           : shiftId // ignore: cast_nullable_to_non_nullable
@@ -239,6 +245,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.payments
           : payments // ignore: cast_nullable_to_non_nullable
               as List<CartPayment>,
+      isApp: null == isApp
+          ? _value.isApp
+          : isApp // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -254,7 +264,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       {int transactionDate,
       String transactionNo,
       String idOutlet,
-      String outletName,
+      String? outletName,
       String shiftId,
       double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
@@ -262,10 +272,10 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       double discOverallTotal,
       double discPromotionsTotal,
       double total,
-      bool ppnIsInclude,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool ppnIsInclude,
       double ppn,
       String? taxName,
-      double ppnTotal,
+      @JsonKey(fromJson: Converters.dynamicToDouble) double ppnTotal,
       double grandTotal,
       double totalPayment,
       double change,
@@ -277,7 +287,8 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String createdBy,
       String? createdName,
       List<ItemCart> items,
-      List<CartPayment> payments});
+      List<CartPayment> payments,
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isApp});
 }
 
 /// @nodoc
@@ -293,7 +304,7 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? transactionDate = null,
     Object? transactionNo = null,
     Object? idOutlet = null,
-    Object? outletName = null,
+    Object? outletName = freezed,
     Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
@@ -317,6 +328,7 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? createdName = freezed,
     Object? items = null,
     Object? payments = null,
+    Object? isApp = null,
   }) {
     return _then(_$CartImpl(
       transactionDate: null == transactionDate
@@ -331,10 +343,10 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.idOutlet
           : idOutlet // ignore: cast_nullable_to_non_nullable
               as String,
-      outletName: null == outletName
+      outletName: freezed == outletName
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       shiftId: null == shiftId
           ? _value.shiftId
           : shiftId // ignore: cast_nullable_to_non_nullable
@@ -427,6 +439,10 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value._payments
           : payments // ignore: cast_nullable_to_non_nullable
               as List<CartPayment>,
+      isApp: null == isApp
+          ? _value.isApp
+          : isApp // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -439,7 +455,7 @@ class _$CartImpl extends _Cart {
       {required this.transactionDate,
       required this.transactionNo,
       required this.idOutlet,
-      required this.outletName,
+      this.outletName,
       required this.shiftId,
       required this.subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) required this.discIsPercent,
@@ -447,10 +463,10 @@ class _$CartImpl extends _Cart {
       required this.discOverallTotal,
       required this.discPromotionsTotal,
       required this.total,
-      required this.ppnIsInclude,
+      @JsonKey(fromJson: Converters.dynamicToBool) required this.ppnIsInclude,
       required this.ppn,
       this.taxName,
-      required this.ppnTotal,
+      @JsonKey(fromJson: Converters.dynamicToDouble) required this.ppnTotal,
       required this.grandTotal,
       required this.totalPayment,
       required this.change,
@@ -462,7 +478,8 @@ class _$CartImpl extends _Cart {
       required this.createdBy,
       this.createdName,
       required final List<ItemCart> items,
-      required final List<CartPayment> payments})
+      required final List<CartPayment> payments,
+      @JsonKey(fromJson: Converters.dynamicToBool) required this.isApp})
       : _items = items,
         _payments = payments,
         super._();
@@ -477,7 +494,7 @@ class _$CartImpl extends _Cart {
   @override
   final String idOutlet;
   @override
-  final String outletName;
+  final String? outletName;
   @override
   final String shiftId;
   @override
@@ -494,12 +511,14 @@ class _$CartImpl extends _Cart {
   @override
   final double total;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   final bool ppnIsInclude;
   @override
   final double ppn;
   @override
   final String? taxName;
   @override
+  @JsonKey(fromJson: Converters.dynamicToDouble)
   final double ppnTotal;
   @override
   final double grandTotal;
@@ -538,8 +557,12 @@ class _$CartImpl extends _Cart {
   }
 
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
+  final bool isApp;
+
+  @override
   String toString() {
-    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, shiftId: $shiftId, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments)';
+    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, shiftId: $shiftId, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments, isApp: $isApp)';
   }
 
   @override
@@ -591,7 +614,8 @@ class _$CartImpl extends _Cart {
             (identical(other.createdName, createdName) ||
                 other.createdName == createdName) &&
             const DeepCollectionEquality().equals(other._items, _items) &&
-            const DeepCollectionEquality().equals(other._payments, _payments));
+            const DeepCollectionEquality().equals(other._payments, _payments) &&
+            (identical(other.isApp, isApp) || other.isApp == isApp));
   }
 
   @JsonKey(ignore: true)
@@ -624,7 +648,8 @@ class _$CartImpl extends _Cart {
         createdBy,
         createdName,
         const DeepCollectionEquality().hash(_items),
-        const DeepCollectionEquality().hash(_payments)
+        const DeepCollectionEquality().hash(_payments),
+        isApp
       ]);
 
   @JsonKey(ignore: true)
@@ -646,7 +671,7 @@ abstract class _Cart extends Cart {
       {required final int transactionDate,
       required final String transactionNo,
       required final String idOutlet,
-      required final String outletName,
+      final String? outletName,
       required final String shiftId,
       required final double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool)
@@ -655,9 +680,11 @@ abstract class _Cart extends Cart {
       required final double discOverallTotal,
       required final double discPromotionsTotal,
       required final double total,
+      @JsonKey(fromJson: Converters.dynamicToBool)
       required final bool ppnIsInclude,
       required final double ppn,
       final String? taxName,
+      @JsonKey(fromJson: Converters.dynamicToDouble)
       required final double ppnTotal,
       required final double grandTotal,
       required final double totalPayment,
@@ -670,7 +697,9 @@ abstract class _Cart extends Cart {
       required final String createdBy,
       final String? createdName,
       required final List<ItemCart> items,
-      required final List<CartPayment> payments}) = _$CartImpl;
+      required final List<CartPayment> payments,
+      @JsonKey(fromJson: Converters.dynamicToBool)
+      required final bool isApp}) = _$CartImpl;
   const _Cart._() : super._();
 
   factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
@@ -682,7 +711,7 @@ abstract class _Cart extends Cart {
   @override
   String get idOutlet;
   @override
-  String get outletName;
+  String? get outletName;
   @override
   String get shiftId;
   @override
@@ -699,12 +728,14 @@ abstract class _Cart extends Cart {
   @override
   double get total;
   @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
   bool get ppnIsInclude;
   @override
   double get ppn;
   @override
   String? get taxName;
   @override
+  @JsonKey(fromJson: Converters.dynamicToDouble)
   double get ppnTotal;
   @override
   double get grandTotal;
@@ -730,6 +761,9 @@ abstract class _Cart extends Cart {
   List<ItemCart> get items;
   @override
   List<CartPayment> get payments;
+  @override
+  @JsonKey(fromJson: Converters.dynamicToBool)
+  bool get isApp;
   @override
   @JsonKey(ignore: true)
   _$$CartImplCopyWith<_$CartImpl> get copyWith =>

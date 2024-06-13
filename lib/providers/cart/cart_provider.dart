@@ -49,6 +49,7 @@ class CartNotifer extends _$CartNotifer {
       outletName: '', // define on initCart
       shiftId: '', // define on initCart
       createdBy: '', // define on initCart
+      isApp: true,
     );
   }
 

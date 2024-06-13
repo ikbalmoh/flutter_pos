@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
@@ -22,24 +21,25 @@ class HoldButton extends ConsumerWidget {
           });
     }
 
-    return IconButton(
-      tooltip: 'hold_current_transaction'.tr(),
-      onPressed: onHold,
-      icon: ref.watch(cartNotiferProvider).holdAt == null
-          ? const Icon(CupertinoIcons.doc_fill)
-          : Badge(
-              backgroundColor: Colors.green,
-              alignment: Alignment.bottomRight,
-              label: const Icon(
-                CupertinoIcons.checkmark_alt,
-                color: Colors.white,
-                size: 10,
-              ),
-              child: Icon(
-                CupertinoIcons.doc_fill,
-                color: Colors.grey.shade700,
-              ),
-            ),
+    return Flexible(
+      fit: FlexFit.loose,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          foregroundColor: Colors.blue,
+          side: const BorderSide(color: Colors.blue),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+        ),
+        onPressed: onHold,
+        child: Text(
+          ref.watch(cartNotiferProvider).holdAt == null
+              ? 'hold'.tr().toUpperCase()
+              : 'update'.tr().toUpperCase(),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
+import 'package:selleri/ui/screens/holded/holded_screen.dart';
 import 'package:selleri/ui/screens/splash/splash_screen.dart';
 import 'package:selleri/ui/screens/login/login_screen.dart';
 import 'package:selleri/ui/screens/select_outlet/select_outlet_screen.dart';
@@ -64,6 +65,10 @@ GoRouter router(RouterRef ref) {
             name: Routes.printers,
             path: Routes.printers,
             builder: (context, state) => const PrinterSettingScreen()),
+        GoRoute(
+            name: Routes.holded,
+            path: Routes.holded,
+            builder: (context, state) => const HoldedScreen()),
       ],
       refreshListenable: appState,
       redirect: (context, state) {

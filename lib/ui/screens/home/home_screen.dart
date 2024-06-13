@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
+import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/open_shift.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
@@ -115,10 +118,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
+                  tooltip: 'search'.tr(),
                   onPressed: () => setState(() {
                     searchVisible = true;
                   }),
                   icon: const Icon(Icons.search),
+                ),
+                IconButton(
+                  tooltip: 'holded_transactions'.tr(),
+                  onPressed: () {
+                    context.push(Routes.holded);
+                  },
+                  icon: const Icon(CupertinoIcons.folder),
                 ),
                 const HomeMenu()
               ],
@@ -144,6 +155,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   search: search,
                 ),
               ),
+              ref.watch(cartNotiferProvider).holdAt == null
+                  ? Container()
+                  : Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(5)),
+                      ),
+                      child: Text(
+                        'transaction_holded'.tr(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
               cart.items.isNotEmpty
                   ? BottomActions(
                       cart: cart,

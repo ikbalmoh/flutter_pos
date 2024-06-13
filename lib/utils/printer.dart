@@ -60,7 +60,7 @@ class Printer {
       bytes += generator.imageRaster(img, align: PosAlign.center);
     }
 
-    bytes += generator.text(cart.outletName,
+    bytes += generator.text(cart.outletName ?? '',
         styles: const PosStyles(align: PosAlign.center, bold: true),
         linesAfter: 1);
 

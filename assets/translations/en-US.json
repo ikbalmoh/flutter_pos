@@ -81,5 +81,8 @@
   "hold_current_transaction": "Hold Current Transaction",
   "total_transaction": "Total Transaction {}",
   "holding_transaction": "Holding Transaction",
-  "transaction_holded": "Transaction Holded"
+  "transaction_holded": "This transaction is holded",
+  "holded_transactions": "Holded Transactions",
+  "cashier": "cashier",
+  "customer": "customer"
 }
