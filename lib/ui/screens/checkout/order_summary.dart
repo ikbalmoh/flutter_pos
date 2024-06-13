@@ -35,7 +35,7 @@ class OrderItem extends StatelessWidget {
                     style: textTheme.bodyMedium,
                   ),
                   Text(
-                    ' ${item.quantity} x ${CurrencyFormat.currency(item.price - item.discountTotal)}',
+                    ' ${item.quantity} x ${CurrencyFormat.currency(item.price)}',
                     style: textTheme.bodySmall
                         ?.copyWith(fontSize: 14, color: Colors.grey.shade700),
                   ),
