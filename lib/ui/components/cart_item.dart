@@ -5,8 +5,14 @@ import 'package:selleri/utils/formater.dart';
 class CartItem extends StatefulWidget {
   final ItemCart item;
   final Function(ItemCart) onPress;
+  final Function(ItemCart)? onLongPress;
 
-  const CartItem({super.key, required this.item, required this.onPress});
+  const CartItem({
+    super.key,
+    required this.item,
+    required this.onPress,
+    this.onLongPress,
+  });
 
   @override
   State<CartItem> createState() => _CartItemState();
@@ -17,6 +23,9 @@ class _CartItemState extends State<CartItem> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return InkWell(
+      onLongPress: widget.onLongPress != null
+          ? () => widget.onLongPress!(widget.item)
+          : null,
       onTap: () => widget.onPress(widget.item),
       child: Container(
         decoration: BoxDecoration(

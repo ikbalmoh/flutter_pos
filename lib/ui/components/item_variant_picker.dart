@@ -26,99 +26,88 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 10,
+        left: 15,
+        right: 15,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 15,
       ),
-      margin: const EdgeInsets.all(0),
-      child: SafeArea(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 15),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(
-                    top: 8, left: 5, right: 5, bottom: 15),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: 0.5,
-                      color: Colors.blueGrey.shade100,
-                    ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.only(top: 8, left: 5, right: 5, bottom: 15),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 0.5,
+                  color: Colors.blueGrey.shade100,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.item.itemName,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                GestureDetector(
+                  onTap: () => context.pop(),
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.grey.shade500,
+                    size: 16,
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.item.itemName,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.grey.shade500,
-                        size: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 7.5,
-              ),
-              Text(
-                'Variants',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: Colors.blueGrey.shade600),
-              ),
-              const SizedBox(
-                height: 7.5,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, idx) {
-                    ItemVariant variant = widget.item.variants[idx];
-                    return VariantItem(
-                        variant: variant,
-                        selected: selected?.idVariant == variant.idVariant,
-                        onSelect: (v) {
-                          setState(() {
-                            selected = v;
-                          });
-                        });
-                  },
-                  itemCount: widget.item.variants.length,
-                  shrinkWrap: true,
-                ),
-              ),
-              const SizedBox(
-                height: 7.5,
-              ),
-              ElevatedButton(
-                onPressed: selected != null
-                    ? () => onAddToCart(context, selected!)
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                  ),
-                ),
-                child: Text('choose'.tr()),
-              )
-            ],
+              ],
+            ),
           ),
-        ),
+          const SizedBox(
+            height: 15,
+          ),
+          Text(
+            'select_variant'.tr(),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.blueGrey.shade600),
+          ),
+          const SizedBox(
+            height: 7.5,
+          ),
+          ListView.builder(
+            itemBuilder: (context, idx) {
+              ItemVariant variant = widget.item.variants[idx];
+              return VariantItem(
+                  variant: variant,
+                  selected: selected?.idVariant == variant.idVariant,
+                  onSelect: (v) {
+                    setState(() {
+                      selected = v;
+                    });
+                  });
+            },
+            itemCount: widget.item.variants.length,
+            shrinkWrap: true,
+          ),
+          ElevatedButton(
+            onPressed:
+                selected != null ? () => onAddToCart(context, selected!) : null,
+            style: ElevatedButton.styleFrom(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+              ),
+            ),
+            child: Text('choose'.tr()),
+          ),
+          const SizedBox(
+            height: 7.5,
+          ),
+        ],
       ),
     );
   }
