@@ -311,4 +311,12 @@ class CartNotifer extends _$CartNotifer {
       state = cart;
     }
   }
+
+  void openHoldedCart(Cart holded) {
+    Cart cart = holded.copyWith();
+    if (cart.holdAt == null) {
+      cart = cart.copyWith(holdAt: DateTime.now());
+    }
+    state = cart;
+  }
 }

@@ -78,11 +78,14 @@
   "price": "Harga",
   "quantity": "Kuantiti",
   "update": "Update",
+  "update_current_transaction": "Perbaharui Transaksi Saat Ini",
   "hold_current_transaction": "Tunda Transaksi Saat Ini",
   "total_transaction": "Total Transaksi {}",
   "holding_transaction": "Menunda Transaksi",
   "transaction_holded": "Transaksi ditunda",
   "holded_transactions": "Transaksi Ditunda",
   "cashier": "Kasir",
-  "customer": "Pelanggan"
+  "customer": "Pelanggan",
+  "yes": "Ya",
+  "no": "Tidak"
 }

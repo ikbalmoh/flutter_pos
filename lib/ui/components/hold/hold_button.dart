@@ -11,14 +11,15 @@ class HoldButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     void onHold() {
       showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          isDismissible: false,
-          enableDrag: false,
-          isScrollControlled: true,
-          builder: (context) {
-            return const HoldForm();
-          });
+        context: context,
+        backgroundColor: Colors.white,
+        isDismissible: false,
+        enableDrag: false,
+        isScrollControlled: true,
+        builder: (context) {
+          return const HoldForm();
+        },
+      );
     }
 
     return Flexible(

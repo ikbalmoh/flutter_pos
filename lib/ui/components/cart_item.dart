@@ -44,7 +44,7 @@ class _CartItemState extends State<CartItem> {
                 ),
                 Row(
                   children: [
-                    widget.item.variantName != ''
+                    widget.item.idVariant != null
                         ? Container(
                             margin: const EdgeInsets.only(top: 5, right: 5),
                             padding: const EdgeInsets.symmetric(

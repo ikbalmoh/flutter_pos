@@ -5,8 +5,11 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart_holded.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/cart/holded_provider.dart';
+import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/formater.dart';
@@ -65,6 +68,33 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
           .read(holdedNofierProvider.notifier)
           .loadTransaction(page: 1, search: query);
     });
+  }
+
+  void openHoldedTransaction(CartHolded holded) {
+    ref.read(cartNotiferProvider.notifier).openHoldedCart(holded.dataHold);
+    while (context.canPop()) {
+      context.pop();
+    }
+  }
+
+  void onOpenHoldedCart(CartHolded cartHolded) {
+    final currentCart = ref.read(cartNotiferProvider);
+    if (currentCart.items.isNotEmpty || currentCart.holdAt != null) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isDismissible: false,
+        enableDrag: false,
+        isScrollControlled: true,
+        builder: (context) {
+          return HoldForm(
+            onHolded: () => openHoldedTransaction(cartHolded),
+          );
+        },
+      );
+    } else {
+      openHoldedTransaction(cartHolded);
+    }
   }
 
   @override
@@ -138,7 +168,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                 }
 
                 final hold = data.data![idx];
-                return HoldItem(hold: hold);
+                return HoldItem(hold: hold, onSelect: onOpenHoldedCart);
               },
               itemCount: data.data!.length + 1,
             ),
@@ -154,8 +184,9 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
 
 class HoldItem extends StatelessWidget {
   final CartHolded hold;
+  final Function(CartHolded) onSelect;
 
-  const HoldItem({required this.hold, super.key});
+  const HoldItem({required this.hold, required this.onSelect, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +218,7 @@ class HoldItem extends StatelessWidget {
           color: Colors.blueGrey.shade50,
         ),
       ),
-      onTap: () {},
+      onTap: () => onSelect(hold),
       leading: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: hold.dataHold.isApp

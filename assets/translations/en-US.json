@@ -79,10 +79,13 @@
   "quantity": "Quantity",
   "update": "Perbaharui",
   "hold_current_transaction": "Hold Current Transaction",
+  "update_current_transaction": "Update Current Transaction",
   "total_transaction": "Total Transaction {}",
   "holding_transaction": "Holding Transaction",
   "transaction_holded": "This transaction is holded",
   "holded_transactions": "Holded Transactions",
   "cashier": "cashier",
-  "customer": "customer"
+  "customer": "customer",
+  "yes": "Yes",
+  "no": "No"
 }

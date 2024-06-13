@@ -9,7 +9,8 @@ import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class HoldForm extends ConsumerStatefulWidget {
-  const HoldForm({super.key});
+  final Function()? onHolded;
+  const HoldForm({this.onHolded, super.key});
 
   @override
   ConsumerState<HoldForm> createState() => _HoldFormState();
@@ -43,6 +44,17 @@ class _HoldFormState extends ConsumerState<HoldForm> {
       await ref
           .read(cartNotiferProvider.notifier)
           .holdCart(note: note, createNew: createNew);
+
+      if (widget.onHolded != null) {
+        widget.onHolded!();
+      } else if (context != null && context.mounted) {
+        while (context.canPop()) {
+          context.pop();
+        }
+      }
+      if (context != null && context.mounted) {
+        AppAlert.snackbar(context, 'transaction_holded'.tr());
+      }
 
       if (context != null && context.mounted) {
         while (context.canPop()) {
@@ -83,7 +95,9 @@ class _HoldFormState extends ConsumerState<HoldForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${'hold_current_transaction'.tr()}?',
+                  ref.read(cartNotiferProvider).holdAt == null
+                      ? '${'hold_current_transaction'.tr()}?'
+                      : '${'update_current_transaction'.tr()}?',
                   style: textTheme.headlineSmall,
                 ),
                 IconButton(
@@ -162,17 +176,31 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                       )
                     ]
                   : [
-                      Flexible(
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.blue,
-                          ),
-                          onPressed: note.length >= 3 && !holding
-                              ? () => onHold(true)
-                              : null,
-                          child: Text('hold_new'.tr()),
-                        ),
-                      ),
+                      widget.onHolded != null
+                          ? Flexible(
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.blue,
+                                ),
+                                onPressed: widget.onHolded,
+                                child: Text(
+                                  'no'.tr(),
+                                ),
+                              ),
+                            )
+                          : Flexible(
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.blue,
+                                ),
+                                onPressed: note.length >= 3
+                                    ? () => onHold(true)
+                                    : null,
+                                child: Text(
+                                  'hold_new'.tr(),
+                                ),
+                              ),
+                            ),
                       const SizedBox(
                         width: 10,
                       ),
@@ -189,7 +217,10 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                           onPressed: note.length >= 3 && !holding
                               ? () => onHold(false)
                               : null,
-                          child: Text('hold'.tr()),
+                          child: Text(
+                              ref.read(cartNotiferProvider).holdAt == null
+                                  ? 'hold'.tr()
+                                  : 'update'.tr()),
                         ),
                       ),
                     ],

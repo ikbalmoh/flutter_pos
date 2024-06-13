@@ -161,13 +161,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       width: MediaQuery.of(context).size.width,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
-                      decoration: const BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(5)),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade500,
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(0)),
                       ),
                       child: Text(
-                        'transaction_holded'.tr(),
+                        ref.watch(cartNotiferProvider).transactionNo,
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
@@ -175,7 +175,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ? BottomActions(
                       cart: cart,
                     )
-                  : Container()
+                  : Container(),
             ],
           ),
           switch (shift) {

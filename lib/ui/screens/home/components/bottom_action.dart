@@ -22,53 +22,44 @@ class BottomActions extends StatelessWidget {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
       margin: const EdgeInsets.all(0),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 12,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const HoldButton(),
-                  const SizedBox(
-                    width: 10,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 15,
+        ).copyWith(bottom: 25),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const HoldButton(),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              flex: 2,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                        ),
-                      ),
-                      onPressed: () => context.push(Routes.cart),
-                      icon: Badge(
-                        label: Text(
-                          cart.items.length.toString(),
-                        ),
-                        child: const Icon(CupertinoIcons.shopping_cart),
-                      ),
-                      label: Text(
-                        CurrencyFormat.currency(cart.subtotal),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(color: Colors.white),
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
+                ),
+                onPressed: () => context.push(Routes.cart),
+                icon: Badge(
+                  label: Text(
+                    cart.items.length.toString(),
+                  ),
+                  child: const Icon(CupertinoIcons.shopping_cart),
+                ),
+                label: Text(
+                  CurrencyFormat.currency(cart.subtotal),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: Colors.white),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
