@@ -10,7 +10,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       transactionDate: (json['transaction_date'] as num).toInt(),
       transactionNo: json['transaction_no'] as String,
       idOutlet: json['id_outlet'] as String,
-      outletName: json['outlet_name'] as String,
+      outletName: json['outlet_name'] as String?,
       shiftId: json['shift_id'] as String,
       subtotal: (json['subtotal'] as num).toDouble(),
       discIsPercent: Converters.dynamicToBool(json['disc_is_percent']),
@@ -18,10 +18,10 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       discOverallTotal: (json['disc_overall_total'] as num).toDouble(),
       discPromotionsTotal: (json['disc_promotions_total'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
-      ppnIsInclude: json['ppn_is_include'] as bool,
+      ppnIsInclude: Converters.dynamicToBool(json['ppn_is_include']),
       ppn: (json['ppn'] as num).toDouble(),
       taxName: json['tax_name'] as String?,
-      ppnTotal: (json['ppn_total'] as num).toDouble(),
+      ppnTotal: Converters.dynamicToDouble(json['ppn_total']),
       grandTotal: (json['grand_total'] as num).toDouble(),
       totalPayment: (json['total_payment'] as num).toDouble(),
       change: (json['change'] as num).toDouble(),
@@ -40,6 +40,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       payments: (json['payments'] as List<dynamic>)
           .map((e) => CartPayment.fromJson(e as Map<String, dynamic>))
           .toList(),
+      isApp: Converters.dynamicToBool(json['is_app']),
     );
 
 Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
@@ -71,4 +72,5 @@ Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
       'created_name': instance.createdName,
       'items': instance.items,
       'payments': instance.payments,
+      'is_app': instance.isApp,
     };

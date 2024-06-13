@@ -41,7 +41,7 @@ class OrderItem extends StatelessWidget {
                   ),
                   item.note != ''
                       ? Text(
-                          item.note,
+                          item.note ?? '',
                           style: textTheme.bodySmall,
                         )
                       : Container(),
