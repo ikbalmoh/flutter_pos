@@ -77,7 +77,8 @@
   "x_data_displayed": "{} telah data ditampilkan",
   "show_menu": "Tampilkan Menu",
   "price": "Harga",
-  "quantity": "Kuantiti",
+  "quantity": "Stok",
+  "current_quantity": "Stok Saat Ini",
   "update": "Update",
   "update_current_transaction": "Perbaharui Transaksi Saat Ini",
   "hold_current_transaction": "Tunda Transaksi Saat Ini",
@@ -89,5 +90,6 @@
   "customer": "Pelanggan",
   "yes": "Ya",
   "no": "Tidak",
-  "no_data": "Tidak Ada Data {}"
+  "no_data": "Tidak Ada Data {}",
+  "select_variant": "Pilih Varian"
 }

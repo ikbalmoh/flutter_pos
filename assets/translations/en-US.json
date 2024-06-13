@@ -78,6 +78,7 @@
   "show_menu": "Show Menu",
   "price": "Price",
   "quantity": "Quantity",
+  "current_quantity": "Current Quantity",
   "update": "Update",
   "hold_current_transaction": "Hold Current Transaction",
   "update_current_transaction": "Update Current Transaction",
@@ -89,5 +90,6 @@
   "customer": "Customer",
   "yes": "Yes",
   "no": "No",
-  "no_data": "No {} Data"
+  "no_data": "No {} Data",
+  "select_variant": "Select a Variant"
 }

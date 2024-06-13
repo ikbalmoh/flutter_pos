@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class ShopItem extends StatelessWidget {
   final Item item;
+  final Function(Item)? onLongPress;
   final Function(Item) onAddToCart;
   final Function(Item) showVariants;
   final Function(String) addQty;
@@ -14,6 +15,7 @@ class ShopItem extends StatelessWidget {
     required this.item,
     required this.onAddToCart,
     required this.showVariants,
+    this.onLongPress,
     super.key,
     required this.addQty,
     required this.qtyOnCart,
@@ -22,6 +24,7 @@ class ShopItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onLongPress: onLongPress != null ? () => onLongPress!(item) : null,
       onTap: () => item.variants.isNotEmpty
           ? showVariants(item)
           : qtyOnCart > 0

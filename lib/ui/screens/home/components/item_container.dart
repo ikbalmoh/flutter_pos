@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/ui/components/item/item_info.dart';
 import 'package:selleri/ui/components/item_variant_picker.dart';
 import 'package:selleri/ui/components/shop_item.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -26,6 +27,8 @@ class ItemContainer extends ConsumerWidget {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
+        isScrollControlled: true,
+        useSafeArea: true,
         builder: (BuildContext context) {
           return ItemVariantPicker(
             item: item,
@@ -33,6 +36,18 @@ class ItemContainer extends ConsumerWidget {
                 .read(cartNotiferProvider.notifier)
                 .addToCart(item, variant: variant),
           );
+        });
+  }
+
+  void onLongPress(BuildContext context, Item item) {
+    showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        useSafeArea: true,
+        builder: (context) {
+          return ItemInfo(item: item);
         });
   }
 
@@ -67,6 +82,7 @@ class ItemContainer extends ConsumerWidget {
                         .read(cartNotiferProvider.notifier)
                         .updateQty(idItem),
                     showVariants: (item) => showVariants(context, item, ref),
+                    onLongPress: (item) => onLongPress(context, item),
                   );
                 },
               ),
