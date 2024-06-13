@@ -267,7 +267,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             child: const CartScreen(asWidget: true),
                           )),
                     )
-                  : Container()
+                  : Container(),
             ],
           ),
           const ShiftOverlay(),
