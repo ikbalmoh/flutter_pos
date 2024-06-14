@@ -12,7 +12,8 @@ import 'package:selleri/providers/cart/holded_provider.dart';
 import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
-import 'package:selleri/utils/formater.dart';
+
+import 'holded_item.dart';
 
 class HoldedScreen extends ConsumerStatefulWidget {
   const HoldedScreen({super.key});
@@ -171,7 +172,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                       }
 
                       final hold = data.data![idx];
-                      return HoldItem(hold: hold, onSelect: onOpenHoldedCart);
+                      return HoldedItem(hold: hold, onSelect: onOpenHoldedCart);
                     },
                     itemCount: data.data!.length + 1,
                   )
@@ -197,65 +198,6 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
             ),
             skipError: true,
           ),
-    );
-  }
-}
-
-class HoldItem extends StatelessWidget {
-  final CartHolded hold;
-  final Function(CartHolded) onSelect;
-
-  const HoldItem({required this.hold, required this.onSelect, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-
-    return ListTile(
-      titleAlignment: ListTileTitleAlignment.top,
-      title: Text(hold.transactionNo.trim()),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            CurrencyFormat.currency(hold.dataHold.grandTotal),
-            style: textTheme.bodyMedium,
-          ),
-          Text(
-            '${'cashier'.tr()}: ${hold.createdName ?? ''}',
-            style: textTheme.bodySmall?.copyWith(color: Colors.black54),
-          ),
-          Text(
-            '${'customer'.tr()}: ${hold.customerName ?? ''}',
-            style: textTheme.bodySmall?.copyWith(color: Colors.black54),
-          ),
-        ],
-      ),
-      shape: Border(
-        bottom: BorderSide(
-          width: 0.5,
-          color: Colors.blueGrey.shade50,
-        ),
-      ),
-      onTap: () => onSelect(hold),
-      leading: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: hold.dataHold.isApp
-            ? Icon(
-                Icons.smartphone,
-                color: Colors.green.shade700,
-                size: 20,
-              )
-            : const Icon(
-                Icons.laptop,
-                color: Colors.black45,
-                size: 20,
-              ),
-      ),
-      trailing: Text(
-        DateTimeFormater.dateToString(hold.createdAt, format: 'dd/MM HH:mm'),
-        style: textTheme.bodySmall,
-      ),
     );
   }
 }

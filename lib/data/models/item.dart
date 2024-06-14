@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:selleri/data/objectbox.dart';
+import 'package:selleri/data/objectbox.dart' show objectBox;
+// ignore: unnecessary_import
+import 'package:objectbox/objectbox.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'item_variant.dart';
 import 'item_package.dart';

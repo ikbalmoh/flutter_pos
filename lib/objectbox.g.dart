@@ -150,120 +150,6 @@ final _entities = <obx_int.ModelEntity>[
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(5, 1166897459912520224),
-      name: 'Item',
-      lastPropertyId: const obx_int.IdUid(19, 4222066207772647964),
-      flags: 0,
-      properties: <obx_int.ModelProperty>[
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 8992820008613876448),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 1542912270316258703),
-            name: 'idItem',
-            type: 9,
-            flags: 2048,
-            indexId: const obx_int.IdUid(4, 1240910611640086350)),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 4317306195535945048),
-            name: 'itemName',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 4763375201495018458),
-            name: 'itemPrice',
-            type: 8,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(5, 8075452207938021225),
-            name: 'isActive',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(6, 4506509392451184831),
-            name: 'obsolete',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(7, 5237958705227334204),
-            name: 'isPackage',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(8, 5771981969123071712),
-            name: 'manualDiscount',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(9, 229550051909560886),
-            name: 'isManualPrice',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(10, 5765845091440420855),
-            name: 'stockControl',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(11, 3378384863634485583),
-            name: 'idCategory',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(12, 7883589399064394301),
-            name: 'stockItem',
-            type: 8,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(13, 927924552915369238),
-            name: 'sku',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(14, 3426065220939393555),
-            name: 'barcode',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(15, 2836790725752673047),
-            name: 'categoryName',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(16, 8164503982260194336),
-            name: 'image',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(17, 1291892344623309815),
-            name: 'lastAdjustment',
-            type: 12,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(18, 8538847107548712130),
-            name: 'promotions',
-            type: 30,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(19, 4222066207772647964),
-            name: 'packageCategories',
-            type: 30,
-            flags: 0)
-      ],
-      relations: <obx_int.ModelRelation>[
-        obx_int.ModelRelation(
-            id: const obx_int.IdUid(1, 8755826672230174999),
-            name: 'variants',
-            targetId: const obx_int.IdUid(3, 4358767868100185192)),
-        obx_int.ModelRelation(
-            id: const obx_int.IdUid(2, 8646590383799585272),
-            name: 'packageItems',
-            targetId: const obx_int.IdUid(2, 182247591934260991))
-      ],
-      backlinks: <obx_int.ModelBacklink>[]),
-  obx_int.ModelEntity(
       id: const obx_int.IdUid(6, 3416884017836823244),
       name: 'AssignGroup',
       lastPropertyId: const obx_int.IdUid(5, 7145756788115252046),
@@ -570,6 +456,120 @@ final _entities = <obx_int.ModelEntity>[
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(10, 1396131410230828223),
+      name: 'Item',
+      lastPropertyId: const obx_int.IdUid(19, 3044086744002932845),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 4738098490956406743),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 5601758734366050712),
+            name: 'idItem',
+            type: 9,
+            flags: 2048,
+            indexId: const obx_int.IdUid(10, 1926630203947606046)),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 3800765373818209254),
+            name: 'itemName',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 1994044980042333837),
+            name: 'itemPrice',
+            type: 8,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 887017660030938494),
+            name: 'isActive',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 8751503692339458259),
+            name: 'obsolete',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 6856532501774342610),
+            name: 'isPackage',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 2569168940587711517),
+            name: 'manualDiscount',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 1303700875340172847),
+            name: 'isManualPrice',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 3231409348481494613),
+            name: 'stockControl',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 6793980923817233710),
+            name: 'idCategory',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 1797761505382339904),
+            name: 'stockItem',
+            type: 8,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 1216021756029204820),
+            name: 'sku',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(14, 3613672255442059338),
+            name: 'barcode',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(15, 2120200797964844141),
+            name: 'categoryName',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(16, 2053843591104947930),
+            name: 'image',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(17, 6155193990777514587),
+            name: 'lastAdjustment',
+            type: 12,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(18, 997279395444005600),
+            name: 'promotions',
+            type: 30,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(19, 3044086744002932845),
+            name: 'packageCategories',
+            type: 30,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[
+        obx_int.ModelRelation(
+            id: const obx_int.IdUid(6, 2681686452871472942),
+            name: 'variants',
+            targetId: const obx_int.IdUid(3, 4358767868100185192)),
+        obx_int.ModelRelation(
+            id: const obx_int.IdUid(7, 2941575558521524290),
+            name: 'packageItems',
+            targetId: const obx_int.IdUid(2, 182247591934260991))
+      ],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -608,11 +608,11 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(9, 6866509367297658477),
-      lastIndexId: const obx_int.IdUid(9, 6682668095946242446),
-      lastRelationId: const obx_int.IdUid(5, 4292434469509689165),
+      lastEntityId: const obx_int.IdUid(10, 1396131410230828223),
+      lastIndexId: const obx_int.IdUid(10, 1926630203947606046),
+      lastRelationId: const obx_int.IdUid(7, 2941575558521524290),
       lastSequenceId: const obx_int.IdUid(0, 0),
-      retiredEntityUids: const [1635103525226085433],
+      retiredEntityUids: const [1635103525226085433, 1166897459912520224],
       retiredIndexUids: const [7883267410381292325],
       retiredPropertyUids: const [
         2528578218671652427,
@@ -637,7 +637,26 @@ obx_int.ModelDefinition getObjectBoxModel() {
         8407400109989957200,
         4333639740043622259,
         8380541222888698591,
-        1767558930106195153
+        1767558930106195153,
+        8992820008613876448,
+        1542912270316258703,
+        4317306195535945048,
+        4763375201495018458,
+        8075452207938021225,
+        4506509392451184831,
+        5237958705227334204,
+        5771981969123071712,
+        229550051909560886,
+        5765845091440420855,
+        3378384863634485583,
+        7883589399064394301,
+        927924552915369238,
+        3426065220939393555,
+        2836790725752673047,
+        8164503982260194336,
+        1291892344623309815,
+        8538847107548712130,
+        4222066207772647964
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -804,149 +823,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
 
           return object;
         }),
-    Item: obx_int.EntityDefinition<Item>(
-        model: _entities[3],
-        toOneRelations: (Item object) => [],
-        toManyRelations: (Item object) => {
-              obx_int.RelInfo<Item>.toMany(1, object.id): object.variants,
-              obx_int.RelInfo<Item>.toMany(2, object.id): object.packageItems
-            },
-        getId: (Item object) => object.id,
-        setId: (Item object, int id) {
-          object.id = id;
-        },
-        objectToFB: (Item object, fb.Builder fbb) {
-          final idItemOffset = fbb.writeString(object.idItem);
-          final itemNameOffset = fbb.writeString(object.itemName);
-          final idCategoryOffset = fbb.writeString(object.idCategory);
-          final skuOffset =
-              object.sku == null ? null : fbb.writeString(object.sku!);
-          final barcodeOffset =
-              object.barcode == null ? null : fbb.writeString(object.barcode!);
-          final categoryNameOffset = object.categoryName == null
-              ? null
-              : fbb.writeString(object.categoryName!);
-          final imageOffset =
-              object.image == null ? null : fbb.writeString(object.image!);
-          final promotionsOffset = object.promotions == null
-              ? null
-              : fbb.writeList(object.promotions!
-                  .map(fbb.writeString)
-                  .toList(growable: false));
-          final packageCategoriesOffset = object.packageCategories == null
-              ? null
-              : fbb.writeList(object.packageCategories!
-                  .map(fbb.writeString)
-                  .toList(growable: false));
-          fbb.startTable(20);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, idItemOffset);
-          fbb.addOffset(2, itemNameOffset);
-          fbb.addFloat64(3, object.itemPrice);
-          fbb.addBool(4, object.isActive);
-          fbb.addBool(5, object.obsolete);
-          fbb.addBool(6, object.isPackage);
-          fbb.addBool(7, object.manualDiscount);
-          fbb.addBool(8, object.isManualPrice);
-          fbb.addBool(9, object.stockControl);
-          fbb.addOffset(10, idCategoryOffset);
-          fbb.addFloat64(11, object.stockItem);
-          fbb.addOffset(12, skuOffset);
-          fbb.addOffset(13, barcodeOffset);
-          fbb.addOffset(14, categoryNameOffset);
-          fbb.addOffset(15, imageOffset);
-          fbb.addInt64(
-              16,
-              object.lastAdjustment == null
-                  ? null
-                  : object.lastAdjustment!.microsecondsSinceEpoch * 1000);
-          fbb.addOffset(17, promotionsOffset);
-          fbb.addOffset(18, packageCategoriesOffset);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (obx.Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
-          final lastAdjustmentValue =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 36);
-          final idParam =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          final idItemParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 6, '');
-          final itemNameParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 8, '');
-          final itemPriceParam =
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0);
-          final isActiveParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false);
-          final obsoleteParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 14, false);
-          final isPackageParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 16, false);
-          final skuParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 28);
-          final barcodeParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 30);
-          final manualDiscountParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
-          final isManualPriceParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false);
-          final stockControlParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false);
-          final idCategoryParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 24, '');
-          final categoryNameParam =
-              const fb.StringReader(asciiOptimization: true)
-                  .vTableGetNullable(buffer, rootOffset, 32);
-          final stockItemParam =
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0);
-          final imageParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 34);
-          final lastAdjustmentParam = lastAdjustmentValue == null
-              ? null
-              : DateTime.fromMicrosecondsSinceEpoch(
-                  (lastAdjustmentValue / 1000).round());
-          final packageCategoriesParam = const fb.ListReader<String>(
-                  fb.StringReader(asciiOptimization: true),
-                  lazy: false)
-              .vTableGetNullable(buffer, rootOffset, 40);
-          final promotionsParam = const fb.ListReader<String>(
-                  fb.StringReader(asciiOptimization: true),
-                  lazy: false)
-              .vTableGetNullable(buffer, rootOffset, 38);
-          final variantsParam = obx.ToMany<ItemVariant>();
-          final packageItemsParam = obx.ToMany<ItemPackage>();
-          final object = Item(
-              id: idParam,
-              idItem: idItemParam,
-              itemName: itemNameParam,
-              itemPrice: itemPriceParam,
-              isActive: isActiveParam,
-              obsolete: obsoleteParam,
-              isPackage: isPackageParam,
-              sku: skuParam,
-              barcode: barcodeParam,
-              manualDiscount: manualDiscountParam,
-              isManualPrice: isManualPriceParam,
-              stockControl: stockControlParam,
-              idCategory: idCategoryParam,
-              categoryName: categoryNameParam,
-              stockItem: stockItemParam,
-              image: imageParam,
-              lastAdjustment: lastAdjustmentParam,
-              packageCategories: packageCategoriesParam,
-              promotions: promotionsParam,
-              variants: variantsParam,
-              packageItems: packageItemsParam);
-          obx_int.InternalToManyAccess.setRelInfo<Item>(object.variants, store,
-              obx_int.RelInfo<Item>.toMany(1, object.id));
-          obx_int.InternalToManyAccess.setRelInfo<Item>(object.packageItems,
-              store, obx_int.RelInfo<Item>.toMany(2, object.id));
-          return object;
-        }),
     AssignGroup: obx_int.EntityDefinition<AssignGroup>(
-        model: _entities[4],
+        model: _entities[3],
         toOneRelations: (AssignGroup object) => [],
         toManyRelations: (AssignGroup object) => {},
         getId: (AssignGroup object) => object.id,
@@ -985,7 +863,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           return object;
         }),
     ItemRequirement: obx_int.EntityDefinition<ItemRequirement>(
-        model: _entities[5],
+        model: _entities[4],
         toOneRelations: (ItemRequirement object) => [],
         toManyRelations: (ItemRequirement object) => {},
         getId: (ItemRequirement object) => object.id,
@@ -1041,7 +919,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           return object;
         }),
     Promotion: obx_int.EntityDefinition<Promotion>(
-        model: _entities[6],
+        model: _entities[5],
         toOneRelations: (Promotion object) => [],
         toManyRelations: (Promotion object) => {
               obx_int.RelInfo<Promotion>.toMany(3, object.id):
@@ -1286,7 +1164,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           return object;
         }),
     PromotionTime: obx_int.EntityDefinition<PromotionTime>(
-        model: _entities[7],
+        model: _entities[6],
         toOneRelations: (PromotionTime object) => [],
         toManyRelations: (PromotionTime object) => {},
         getId: (PromotionTime object) => object.id,
@@ -1322,6 +1200,147 @@ obx_int.ModelDefinition getObjectBoxModel() {
               startTime: startTimeParam,
               endTime: endTimeParam);
 
+          return object;
+        }),
+    Item: obx_int.EntityDefinition<Item>(
+        model: _entities[7],
+        toOneRelations: (Item object) => [],
+        toManyRelations: (Item object) => {
+              obx_int.RelInfo<Item>.toMany(6, object.id): object.variants,
+              obx_int.RelInfo<Item>.toMany(7, object.id): object.packageItems
+            },
+        getId: (Item object) => object.id,
+        setId: (Item object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Item object, fb.Builder fbb) {
+          final idItemOffset = fbb.writeString(object.idItem);
+          final itemNameOffset = fbb.writeString(object.itemName);
+          final idCategoryOffset = fbb.writeString(object.idCategory);
+          final skuOffset =
+              object.sku == null ? null : fbb.writeString(object.sku!);
+          final barcodeOffset =
+              object.barcode == null ? null : fbb.writeString(object.barcode!);
+          final categoryNameOffset = object.categoryName == null
+              ? null
+              : fbb.writeString(object.categoryName!);
+          final imageOffset =
+              object.image == null ? null : fbb.writeString(object.image!);
+          final promotionsOffset = object.promotions == null
+              ? null
+              : fbb.writeList(object.promotions!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          final packageCategoriesOffset = object.packageCategories == null
+              ? null
+              : fbb.writeList(object.packageCategories!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          fbb.startTable(20);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, idItemOffset);
+          fbb.addOffset(2, itemNameOffset);
+          fbb.addFloat64(3, object.itemPrice);
+          fbb.addBool(4, object.isActive);
+          fbb.addBool(5, object.obsolete);
+          fbb.addBool(6, object.isPackage);
+          fbb.addBool(7, object.manualDiscount);
+          fbb.addBool(8, object.isManualPrice);
+          fbb.addBool(9, object.stockControl);
+          fbb.addOffset(10, idCategoryOffset);
+          fbb.addFloat64(11, object.stockItem);
+          fbb.addOffset(12, skuOffset);
+          fbb.addOffset(13, barcodeOffset);
+          fbb.addOffset(14, categoryNameOffset);
+          fbb.addOffset(15, imageOffset);
+          fbb.addInt64(
+              16,
+              object.lastAdjustment == null
+                  ? null
+                  : object.lastAdjustment!.microsecondsSinceEpoch * 1000);
+          fbb.addOffset(17, promotionsOffset);
+          fbb.addOffset(18, packageCategoriesOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final lastAdjustmentValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 36);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idItemParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final itemNameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final itemPriceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final isActiveParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false);
+          final obsoleteParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 14, false);
+          final isPackageParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 16, false);
+          final skuParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 28);
+          final barcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 30);
+          final manualDiscountParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
+          final isManualPriceParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false);
+          final stockControlParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false);
+          final idCategoryParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 24, '');
+          final categoryNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 32);
+          final stockItemParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0);
+          final imageParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 34);
+          final lastAdjustmentParam = lastAdjustmentValue == null
+              ? null
+              : DateTime.fromMicrosecondsSinceEpoch(
+                  (lastAdjustmentValue / 1000).round());
+          final packageCategoriesParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 40);
+          final promotionsParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 38);
+          final variantsParam = obx.ToMany<ItemVariant>();
+          final packageItemsParam = obx.ToMany<ItemPackage>();
+          final object = Item(
+              id: idParam,
+              idItem: idItemParam,
+              itemName: itemNameParam,
+              itemPrice: itemPriceParam,
+              isActive: isActiveParam,
+              obsolete: obsoleteParam,
+              isPackage: isPackageParam,
+              sku: skuParam,
+              barcode: barcodeParam,
+              manualDiscount: manualDiscountParam,
+              isManualPrice: isManualPriceParam,
+              stockControl: stockControlParam,
+              idCategory: idCategoryParam,
+              categoryName: categoryNameParam,
+              stockItem: stockItemParam,
+              image: imageParam,
+              lastAdjustment: lastAdjustmentParam,
+              packageCategories: packageCategoriesParam,
+              promotions: promotionsParam,
+              variants: variantsParam,
+              packageItems: packageItemsParam);
+          obx_int.InternalToManyAccess.setRelInfo<Item>(object.variants, store,
+              obx_int.RelInfo<Item>.toMany(6, object.id));
+          obx_int.InternalToManyAccess.setRelInfo<Item>(object.packageItems,
+              store, obx_int.RelInfo<Item>.toMany(7, object.id));
           return object;
         })
   };
@@ -1414,316 +1433,316 @@ class ItemVariant_ {
       obx.QueryStringVectorProperty<ItemVariant>(_entities[2].properties[7]);
 }
 
-/// [Item] entity fields to define ObjectBox queries.
-class Item_ {
-  /// see [Item.id]
-  static final id = obx.QueryIntegerProperty<Item>(_entities[3].properties[0]);
-
-  /// see [Item.idItem]
-  static final idItem =
-      obx.QueryStringProperty<Item>(_entities[3].properties[1]);
-
-  /// see [Item.itemName]
-  static final itemName =
-      obx.QueryStringProperty<Item>(_entities[3].properties[2]);
-
-  /// see [Item.itemPrice]
-  static final itemPrice =
-      obx.QueryDoubleProperty<Item>(_entities[3].properties[3]);
-
-  /// see [Item.isActive]
-  static final isActive =
-      obx.QueryBooleanProperty<Item>(_entities[3].properties[4]);
-
-  /// see [Item.obsolete]
-  static final obsolete =
-      obx.QueryBooleanProperty<Item>(_entities[3].properties[5]);
-
-  /// see [Item.isPackage]
-  static final isPackage =
-      obx.QueryBooleanProperty<Item>(_entities[3].properties[6]);
-
-  /// see [Item.manualDiscount]
-  static final manualDiscount =
-      obx.QueryBooleanProperty<Item>(_entities[3].properties[7]);
-
-  /// see [Item.isManualPrice]
-  static final isManualPrice =
-      obx.QueryBooleanProperty<Item>(_entities[3].properties[8]);
-
-  /// see [Item.stockControl]
-  static final stockControl =
-      obx.QueryBooleanProperty<Item>(_entities[3].properties[9]);
-
-  /// see [Item.idCategory]
-  static final idCategory =
-      obx.QueryStringProperty<Item>(_entities[3].properties[10]);
-
-  /// see [Item.stockItem]
-  static final stockItem =
-      obx.QueryDoubleProperty<Item>(_entities[3].properties[11]);
-
-  /// see [Item.sku]
-  static final sku = obx.QueryStringProperty<Item>(_entities[3].properties[12]);
-
-  /// see [Item.barcode]
-  static final barcode =
-      obx.QueryStringProperty<Item>(_entities[3].properties[13]);
-
-  /// see [Item.categoryName]
-  static final categoryName =
-      obx.QueryStringProperty<Item>(_entities[3].properties[14]);
-
-  /// see [Item.image]
-  static final image =
-      obx.QueryStringProperty<Item>(_entities[3].properties[15]);
-
-  /// see [Item.lastAdjustment]
-  static final lastAdjustment =
-      obx.QueryDateNanoProperty<Item>(_entities[3].properties[16]);
-
-  /// see [Item.promotions]
-  static final promotions =
-      obx.QueryStringVectorProperty<Item>(_entities[3].properties[17]);
-
-  /// see [Item.packageCategories]
-  static final packageCategories =
-      obx.QueryStringVectorProperty<Item>(_entities[3].properties[18]);
-
-  /// see [Item.variants]
-  static final variants =
-      obx.QueryRelationToMany<Item, ItemVariant>(_entities[3].relations[0]);
-
-  /// see [Item.packageItems]
-  static final packageItems =
-      obx.QueryRelationToMany<Item, ItemPackage>(_entities[3].relations[1]);
-}
-
 /// [AssignGroup] entity fields to define ObjectBox queries.
 class AssignGroup_ {
   /// see [AssignGroup.id]
   static final id =
-      obx.QueryIntegerProperty<AssignGroup>(_entities[4].properties[0]);
+      obx.QueryIntegerProperty<AssignGroup>(_entities[3].properties[0]);
 
   /// see [AssignGroup.groupId]
   static final groupId =
-      obx.QueryIntegerProperty<AssignGroup>(_entities[4].properties[1]);
+      obx.QueryIntegerProperty<AssignGroup>(_entities[3].properties[1]);
 
   /// see [AssignGroup.groupName]
   static final groupName =
-      obx.QueryStringProperty<AssignGroup>(_entities[4].properties[2]);
+      obx.QueryStringProperty<AssignGroup>(_entities[3].properties[2]);
 
   /// see [AssignGroup.idAssignGroup]
   static final idAssignGroup =
-      obx.QueryStringProperty<AssignGroup>(_entities[4].properties[3]);
+      obx.QueryStringProperty<AssignGroup>(_entities[3].properties[3]);
 }
 
 /// [ItemRequirement] entity fields to define ObjectBox queries.
 class ItemRequirement_ {
   /// see [ItemRequirement.id]
   static final id =
-      obx.QueryIntegerProperty<ItemRequirement>(_entities[5].properties[0]);
+      obx.QueryIntegerProperty<ItemRequirement>(_entities[4].properties[0]);
 
   /// see [ItemRequirement.requirementProductType]
   static final requirementProductType =
-      obx.QueryIntegerProperty<ItemRequirement>(_entities[5].properties[1]);
+      obx.QueryIntegerProperty<ItemRequirement>(_entities[4].properties[1]);
 
   /// see [ItemRequirement.requirementProductId]
   static final requirementProductId =
-      obx.QueryStringProperty<ItemRequirement>(_entities[5].properties[2]);
+      obx.QueryStringProperty<ItemRequirement>(_entities[4].properties[2]);
 
   /// see [ItemRequirement.requirementVariantId]
   static final requirementVariantId =
-      obx.QueryIntegerProperty<ItemRequirement>(_entities[5].properties[3]);
+      obx.QueryIntegerProperty<ItemRequirement>(_entities[4].properties[3]);
 
   /// see [ItemRequirement.requirementProductName]
   static final requirementProductName =
-      obx.QueryStringProperty<ItemRequirement>(_entities[5].properties[4]);
+      obx.QueryStringProperty<ItemRequirement>(_entities[4].properties[4]);
 
   /// see [ItemRequirement.idItemRequirement]
   static final idItemRequirement =
-      obx.QueryStringProperty<ItemRequirement>(_entities[5].properties[5]);
+      obx.QueryStringProperty<ItemRequirement>(_entities[4].properties[5]);
 }
 
 /// [Promotion] entity fields to define ObjectBox queries.
 class Promotion_ {
   /// see [Promotion.id]
   static final id =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[0]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[0]);
 
   /// see [Promotion.idPromotion]
   static final idPromotion =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[1]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[1]);
 
   /// see [Promotion.name]
   static final name =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[2]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[2]);
 
   /// see [Promotion.type]
   static final type =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[3]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[3]);
 
   /// see [Promotion.requirementQuantity]
   static final requirementQuantity =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[4]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[4]);
 
   /// see [Promotion.requirementMinimumOrder]
   static final requirementMinimumOrder =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[5]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[5]);
 
   /// see [Promotion.rewardType]
   static final rewardType =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[6]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[6]);
 
   /// see [Promotion.rewardProductType]
   static final rewardProductType =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[7]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[7]);
 
   /// see [Promotion.rewardProductId]
   static final rewardProductId =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[8]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[8]);
 
   /// see [Promotion.rewardVariantId]
   static final rewardVariantId =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[9]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[9]);
 
   /// see [Promotion.rewardQty]
   static final rewardQty =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[10]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[10]);
 
   /// see [Promotion.discountType]
   static final discountType =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[11]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[11]);
 
   /// see [Promotion.rewardNominal]
   static final rewardNominal =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[12]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[12]);
 
   /// see [Promotion.rewardMaximumAmount]
   static final rewardMaximumAmount =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[13]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[13]);
 
   /// see [Promotion.status]
   static final status =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[14]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[14]);
 
   /// see [Promotion.allOutlet]
   static final allOutlet =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[15]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[15]);
 
   /// see [Promotion.startDate]
   static final startDate =
-      obx.QueryDateProperty<Promotion>(_entities[6].properties[16]);
+      obx.QueryDateProperty<Promotion>(_entities[5].properties[16]);
 
   /// see [Promotion.endDate]
   static final endDate =
-      obx.QueryDateProperty<Promotion>(_entities[6].properties[17]);
+      obx.QueryDateProperty<Promotion>(_entities[5].properties[17]);
 
   /// see [Promotion.allTime]
   static final allTime =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[18]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[18]);
 
   /// see [Promotion.availableDays]
   static final availableDays =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[19]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[19]);
 
   /// see [Promotion.hourly]
   static final hourly =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[20]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[20]);
 
   /// see [Promotion.assignCustomer]
   static final assignCustomer =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[21]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[21]);
 
   /// see [Promotion.policy]
   static final policy =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[22]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[22]);
 
   /// see [Promotion.needCode]
   static final needCode =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[23]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[23]);
 
   /// see [Promotion.promoCode]
   static final promoCode =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[24]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[24]);
 
   /// see [Promotion.kelipatan]
   static final kelipatan =
-      obx.QueryBooleanProperty<Promotion>(_entities[6].properties[25]);
+      obx.QueryBooleanProperty<Promotion>(_entities[5].properties[25]);
 
   /// see [Promotion.priority]
   static final priority =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[26]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[26]);
 
   /// see [Promotion.requirementProductType]
   static final requirementProductType =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[27]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[27]);
 
   /// see [Promotion.requirementProductId]
   static final requirementProductId =
-      obx.QueryStringVectorProperty<Promotion>(_entities[6].properties[28]);
+      obx.QueryStringVectorProperty<Promotion>(_entities[5].properties[28]);
 
   /// see [Promotion.requirementVariantId]
   static final requirementVariantId =
-      obx.QueryIntegerVectorProperty<Promotion>(_entities[6].properties[29]);
+      obx.QueryIntegerVectorProperty<Promotion>(_entities[5].properties[29]);
 
   /// see [Promotion.typeName]
   static final typeName =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[30]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[30]);
 
   /// see [Promotion.days]
   static final days =
-      obx.QueryStringVectorProperty<Promotion>(_entities[6].properties[31]);
+      obx.QueryStringVectorProperty<Promotion>(_entities[5].properties[31]);
 
   /// see [Promotion.description]
   static final description =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[32]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[32]);
 
   /// see [Promotion.assignCustomerName]
   static final assignCustomerName =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[33]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[33]);
 
   /// see [Promotion.numberOfDays]
   static final numberOfDays =
-      obx.QueryIntegerVectorProperty<Promotion>(_entities[6].properties[34]);
+      obx.QueryIntegerVectorProperty<Promotion>(_entities[5].properties[34]);
 
   /// see [Promotion.rewardProductName]
   static final rewardProductName =
-      obx.QueryStringProperty<Promotion>(_entities[6].properties[35]);
+      obx.QueryStringProperty<Promotion>(_entities[5].properties[35]);
 
   /// see [Promotion.rewardItemPrice]
   static final rewardItemPrice =
-      obx.QueryIntegerProperty<Promotion>(_entities[6].properties[36]);
+      obx.QueryIntegerProperty<Promotion>(_entities[5].properties[36]);
 
   /// see [Promotion.assignGroups]
   static final assignGroups = obx.QueryRelationToMany<Promotion, AssignGroup>(
-      _entities[6].relations[0]);
+      _entities[5].relations[0]);
 
   /// see [Promotion.itemRequirements]
   static final itemRequirements =
       obx.QueryRelationToMany<Promotion, ItemRequirement>(
-          _entities[6].relations[1]);
+          _entities[5].relations[1]);
 
   /// see [Promotion.times]
   static final times = obx.QueryRelationToMany<Promotion, PromotionTime>(
-      _entities[6].relations[2]);
+      _entities[5].relations[2]);
 }
 
 /// [PromotionTime] entity fields to define ObjectBox queries.
 class PromotionTime_ {
   /// see [PromotionTime.id]
   static final id =
-      obx.QueryIntegerProperty<PromotionTime>(_entities[7].properties[0]);
+      obx.QueryIntegerProperty<PromotionTime>(_entities[6].properties[0]);
 
   /// see [PromotionTime.idTime]
   static final idTime =
-      obx.QueryStringProperty<PromotionTime>(_entities[7].properties[1]);
+      obx.QueryStringProperty<PromotionTime>(_entities[6].properties[1]);
 
   /// see [PromotionTime.startTime]
   static final startTime =
-      obx.QueryStringProperty<PromotionTime>(_entities[7].properties[2]);
+      obx.QueryStringProperty<PromotionTime>(_entities[6].properties[2]);
 
   /// see [PromotionTime.endTime]
   static final endTime =
-      obx.QueryStringProperty<PromotionTime>(_entities[7].properties[3]);
+      obx.QueryStringProperty<PromotionTime>(_entities[6].properties[3]);
+}
+
+/// [Item] entity fields to define ObjectBox queries.
+class Item_ {
+  /// see [Item.id]
+  static final id = obx.QueryIntegerProperty<Item>(_entities[7].properties[0]);
+
+  /// see [Item.idItem]
+  static final idItem =
+      obx.QueryStringProperty<Item>(_entities[7].properties[1]);
+
+  /// see [Item.itemName]
+  static final itemName =
+      obx.QueryStringProperty<Item>(_entities[7].properties[2]);
+
+  /// see [Item.itemPrice]
+  static final itemPrice =
+      obx.QueryDoubleProperty<Item>(_entities[7].properties[3]);
+
+  /// see [Item.isActive]
+  static final isActive =
+      obx.QueryBooleanProperty<Item>(_entities[7].properties[4]);
+
+  /// see [Item.obsolete]
+  static final obsolete =
+      obx.QueryBooleanProperty<Item>(_entities[7].properties[5]);
+
+  /// see [Item.isPackage]
+  static final isPackage =
+      obx.QueryBooleanProperty<Item>(_entities[7].properties[6]);
+
+  /// see [Item.manualDiscount]
+  static final manualDiscount =
+      obx.QueryBooleanProperty<Item>(_entities[7].properties[7]);
+
+  /// see [Item.isManualPrice]
+  static final isManualPrice =
+      obx.QueryBooleanProperty<Item>(_entities[7].properties[8]);
+
+  /// see [Item.stockControl]
+  static final stockControl =
+      obx.QueryBooleanProperty<Item>(_entities[7].properties[9]);
+
+  /// see [Item.idCategory]
+  static final idCategory =
+      obx.QueryStringProperty<Item>(_entities[7].properties[10]);
+
+  /// see [Item.stockItem]
+  static final stockItem =
+      obx.QueryDoubleProperty<Item>(_entities[7].properties[11]);
+
+  /// see [Item.sku]
+  static final sku = obx.QueryStringProperty<Item>(_entities[7].properties[12]);
+
+  /// see [Item.barcode]
+  static final barcode =
+      obx.QueryStringProperty<Item>(_entities[7].properties[13]);
+
+  /// see [Item.categoryName]
+  static final categoryName =
+      obx.QueryStringProperty<Item>(_entities[7].properties[14]);
+
+  /// see [Item.image]
+  static final image =
+      obx.QueryStringProperty<Item>(_entities[7].properties[15]);
+
+  /// see [Item.lastAdjustment]
+  static final lastAdjustment =
+      obx.QueryDateNanoProperty<Item>(_entities[7].properties[16]);
+
+  /// see [Item.promotions]
+  static final promotions =
+      obx.QueryStringVectorProperty<Item>(_entities[7].properties[17]);
+
+  /// see [Item.packageCategories]
+  static final packageCategories =
+      obx.QueryStringVectorProperty<Item>(_entities[7].properties[18]);
+
+  /// see [Item.variants]
+  static final variants =
+      obx.QueryRelationToMany<Item, ItemVariant>(_entities[7].relations[0]);
+
+  /// see [Item.packageItems]
+  static final packageItems =
+      obx.QueryRelationToMany<Item, ItemPackage>(_entities[7].relations[1]);
 }
