@@ -2,7 +2,7 @@
 
 ## Requirement
 
-- Flutter 3.22.1
+- Flutter 3.22.2
 - Shorebird
 
 ## Flavor
@@ -13,7 +13,7 @@
 ## Build APK Staging
 
 ```
-shorebird release android --flavor staging  --flutter-version=3.22.1 --artifact apk
+shorebird release android --flavor staging  --flutter-version=3.22.2 --artifact apk
 ```
 
 ## Release Patch
