@@ -186,7 +186,16 @@ SPEC REPOS:
 
 SPEC REPOS:
   trunk:
+    - Firebase
+    - FirebaseCore
+    - FirebaseCoreInternal
+    - FirebaseInstallations
+    - FirebaseMessaging
+    - GoogleDataTransport
+    - GoogleUtilities
+    - nanopb
     - ObjectBox
+    - PromisesObjC
 
 EXTERNAL SOURCES:
   camera_avfoundation:
