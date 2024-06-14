@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>957311922583-i8l8po7sbpval4skd5jfdsd5s43440a6.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDELX5rGF1RQfCkrBMSjw4MU42qSds2Mbw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>957311922583</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.dgti.selleri</string>
+	<key>PROJECT_ID</key>
+	<string>selleri-dev</string>
+	<key>STORAGE_BUCKET</key>
+	<string>selleri-dev.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:957311922583:ios:97ac2c093f6a6aec2794d2</string>
+</dict>
+</plist>
