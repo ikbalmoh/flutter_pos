@@ -121,14 +121,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     super.initState();
   }
 
-  void showOpenShift(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const OpenShift();
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletProvider);

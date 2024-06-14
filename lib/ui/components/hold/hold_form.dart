@@ -48,6 +48,8 @@ class _HoldFormState extends ConsumerState<HoldForm> {
 
       AppAlert.toast('transaction_holded'.tr());
 
+      AppAlert.toast('transaction_holded'.tr());
+
       if (widget.onHolded != null) {
         widget.onHolded!();
       } else if (context != null && context.mounted) {

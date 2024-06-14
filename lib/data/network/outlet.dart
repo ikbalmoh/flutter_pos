@@ -85,4 +85,18 @@ class OutletApi {
     final res = await api.get('${ApiUrl.outletConfig}/$id');
     return res.data['data'];
   }
+
+  Future<dynamic> storeFcmToken(
+      {required String token, required String outletId}) async {
+    String? deviceId = await storage.read(key: StoreKey.device.toString());
+
+    Map<String, dynamic> data = {
+      "device_id": deviceId,
+      "outlet_id": outletId,
+      "fcm_token": token
+    };
+
+    final res = await api.post(ApiUrl.storeFcmToken, data: data);
+    return res.data;
+  }
 }

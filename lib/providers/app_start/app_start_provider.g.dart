@@ -6,12 +6,12 @@ part of 'app_start_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appStartNotifierHash() => r'752c64577f8c65d1043850a8f44abd192b421c0b';
+String _$appStartNotifierHash() => r'bf15750643460a0bb9c8a79c74c46c279cc58942';
 
 /// See also [AppStartNotifier].
 @ProviderFor(AppStartNotifier)
 final appStartNotifierProvider =
-    AutoDisposeAsyncNotifierProvider<AppStartNotifier, AppStartState>.internal(
+    AsyncNotifierProvider<AppStartNotifier, AppStartState>.internal(
   AppStartNotifier.new,
   name: r'appStartNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,6 +21,6 @@ final appStartNotifierProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$AppStartNotifier = AutoDisposeAsyncNotifier<AppStartState>;
+typedef _$AppStartNotifier = AsyncNotifier<AppStartState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
