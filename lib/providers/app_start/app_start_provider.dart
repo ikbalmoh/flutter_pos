@@ -7,7 +7,7 @@ import 'dart:developer';
 
 part 'app_start_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AppStartNotifier extends _$AppStartNotifier {
   @override
   FutureOr<AppStartState> build() async {

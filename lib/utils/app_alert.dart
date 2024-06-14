@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum AlertType { success, error, info }
 
@@ -27,6 +28,18 @@ class AppAlert {
         duration: duration,
         action: action,
       ),
+    );
+  }
+
+  static void toast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.white,
+      textColor: Colors.black87,
+      fontSize: 16.0,
     );
   }
 

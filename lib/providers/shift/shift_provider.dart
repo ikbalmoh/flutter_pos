@@ -26,6 +26,7 @@ class ShiftNotifier extends _$ShiftNotifier {
   }
 
   Future<void> openShift(double openAmount) async {
+    state = const AsyncLoading();
     final outletState =
         await ref.read(outletNotifierProvider.future) as OutletSelected;
     final authState =
@@ -57,6 +58,7 @@ class ShiftNotifier extends _$ShiftNotifier {
     } on DioException catch (e) {
       String message = e.response?.data['msg'] ?? e.message;
       log('OPEN SHIFT FAILED: $message');
+      state = AsyncError(e, StackTrace.current);
     }
   }
 

@@ -80,6 +80,8 @@
   "quantity": "Quantity",
   "current_quantity": "Current Quantity",
   "update": "Update",
+  "updated": "Updated",
+  "synced": "Synced",
   "hold_current_transaction": "Hold Current Transaction",
   "update_current_transaction": "Update Current Transaction",
   "total_transaction": "Total Transaction {}",
@@ -91,5 +93,6 @@
   "yes": "Yes",
   "no": "No",
   "no_data": "No {} Data",
-  "select_variant": "Select a Variant"
+  "select_variant": "Select a Variant",
+  "and_x_others": "and {} others"
 }

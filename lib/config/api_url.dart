@@ -10,4 +10,5 @@ class ApiUrl {
   static const String customers = '/customers';
   static const String transaction = '/sales-transactions';
   static const String hold = '/hold-transaction';
+  static const String storeFcmToken = '/fcm-token/store';
 }

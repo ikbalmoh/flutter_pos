@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/services.dart';
 import 'package:selleri/config/theme.dart';
+import 'package:selleri/providers/fcm/fcm_provider.dart';
 import 'package:selleri/router/app_router.dart';
 
 class App extends ConsumerWidget {
@@ -24,6 +25,8 @@ class App extends ConsumerWidget {
     }
 
     final router = ref.watch(routerProvider);
+
+    ref.watch(fcmNotifierProvider);
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,

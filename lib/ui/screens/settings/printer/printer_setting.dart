@@ -27,14 +27,12 @@ class PrinterSetting extends ConsumerWidget {
     ref.listen(printerNotifierProvider, (prev, next) {
       next.when(data: (printer) {
         if (printer != null) {
-          AppAlert.snackbar(
-              context, 'printer_connected'.tr(args: [printer.name]));
+          AppAlert.toast('printer_connected'.tr(args: [printer.name]));
         }
       }, error: (e, stack) {
-        AppAlert.snackbar(
-            context, 'connect_printer_failed'.tr(args: [e.toString()]));
+        AppAlert.toast('connect_printer_failed'.tr(args: [e.toString()]));
       }, loading: () {
-        AppAlert.snackbar(context, 'printer_connecting'.tr());
+        AppAlert.toast('printer_connecting'.tr());
       });
     });
 

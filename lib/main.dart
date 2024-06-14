@@ -12,6 +12,9 @@ import 'package:selleri/data/objectbox.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'dart:developer';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -61,6 +64,30 @@ Future initServices() async {
 
   if (deviceId != null && deviceId.isNotEmpty) {
     storage.write(key: StoreKey.device.toString(), value: deviceId);
+  }
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    log('FCM NOTIFICATION: User granted permission');
+  } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    log('FCM NOTIFICATION: User granted provisional permission');
+  } else {
+    log('FCM NOTIFICATION: User declined or has not accepted permission');
   }
 }
 

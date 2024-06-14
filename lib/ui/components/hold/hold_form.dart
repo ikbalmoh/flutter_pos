@@ -45,6 +45,8 @@ class _HoldFormState extends ConsumerState<HoldForm> {
           .read(cartNotiferProvider.notifier)
           .holdCart(note: note, createNew: createNew);
 
+      AppAlert.toast('transaction_holded'.tr());
+
       if (widget.onHolded != null) {
         widget.onHolded!();
       } else if (context != null && context.mounted) {
@@ -52,21 +54,9 @@ class _HoldFormState extends ConsumerState<HoldForm> {
           context.pop();
         }
       }
-      if (context != null && context.mounted) {
-        AppAlert.snackbar(context, 'transaction_holded'.tr());
-      }
-
-      if (context != null && context.mounted) {
-        while (context.canPop()) {
-          context.pop();
-        }
-        AppAlert.snackbar(context, 'transaction_holded'.tr());
-      }
     } on Exception catch (e) {
       log('HOLD ERROR: ${e.toString()}');
-      if (context != null && context.mounted) {
-        AppAlert.snackbar(context, e.toString());
-      }
+      AppAlert.toast(e.toString());
     } finally {
       setState(() {
         holding = false;

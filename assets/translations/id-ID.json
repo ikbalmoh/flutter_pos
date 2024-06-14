@@ -31,7 +31,7 @@
   "cart_empty": "Tidak ada barang di Keranjang",
   "hold": "Tunda",
   "hold_new": "Tunda & Baru",
-  "update_new": "Perbaharui & Baru",
+  "update_new": "Perbarui & Baru",
   "checkout": "Checkout",
   "pay": "Bayar",
   "open_shift": "Buka Sif",
@@ -79,8 +79,10 @@
   "price": "Harga",
   "quantity": "Stok",
   "current_quantity": "Stok Saat Ini",
-  "update": "Update",
-  "update_current_transaction": "Perbaharui Transaksi Saat Ini",
+  "update": "Perbarui",
+  "updated": "Diperbarui",
+  "synced": "Disinkronkan",
+  "update_current_transaction": "Perbarui Transaksi Saat Ini",
   "hold_current_transaction": "Tunda Transaksi Saat Ini",
   "total_transaction": "Total Transaksi {}",
   "holding_transaction": "Menunda Transaksi",
@@ -91,5 +93,6 @@
   "yes": "Ya",
   "no": "Tidak",
   "no_data": "Tidak Ada Data {}",
-  "select_variant": "Pilih Varian"
+  "select_variant": "Pilih Varian",
+  "and_x_others": "dan {} lainnya"
 }

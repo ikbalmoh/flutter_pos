@@ -7,11 +7,10 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
-import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
-import 'package:selleri/ui/components/open_shift.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
+import 'package:selleri/ui/screens/home/components/shift_overlay.dart';
 import 'package:selleri/utils/app_alert.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/screens/home/components/item_container.dart';
@@ -72,31 +71,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
   }
 
-  void showOpenShift(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const OpenShift();
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletNotifierProvider);
-    final shift = ref.watch(shiftNotifierProvider);
     final cart = ref.watch(cartNotiferProvider);
-
-    // Shift listener
-    ref.listen(shiftNotifierProvider, (previous, next) {
-      next.whenData((value) {
-        // Open shift
-        if (value == null) {
-          showOpenShift(context);
-        } else {
-          ref.read(cartNotiferProvider.notifier).initCart();
-        }
-      });
-    });
 
     return Scaffold(
       appBar: searchVisible
@@ -180,40 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   : Container(),
             ],
           ),
-          switch (shift) {
-            AsyncData(:final value) => value == null
-                ? Positioned.fill(
-                    child: Container(
-                      color: Colors.black.withOpacity(0.3),
-                      child: Center(
-                        child: SizedBox(
-                          width: 150,
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.playlist_add_sharp),
-                            label: Text('open_shift'.tr()),
-                            onPressed: () => showOpenShift(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(),
-            AsyncError(:final error) => Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(0.3),
-                  child: Center(
-                    child: Text(
-                      error.toString(),
-                      style: const TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            _ => const Center(
-                child: CircularProgressIndicator(),
-              )
-          },
+          const ShiftOverlay()
         ],
       ),
     );

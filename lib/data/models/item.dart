@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:objectbox/objectbox.dart';
+import 'package:selleri/data/objectbox.dart';
+import 'package:selleri/objectbox.g.dart';
 import 'item_variant.dart';
 import 'item_package.dart';
 import 'converters/generic.dart';
@@ -70,7 +71,27 @@ class Item {
     required this.packageItems,
   });
 
-  factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
+  factory Item.fromJson(Map<String, dynamic> json) {
+    Item? existItem = objectBox.getItem(json['id_item']);
+    json['id'] = existItem?.id ?? 0;
+    json['variants'] = json['variants']?.map((variant) {
+      ItemVariant? existVariant = objectBox.itemVariantBox
+          .query(ItemVariant_.idVariant.equals(variant['id_variant']))
+          .build()
+          .findFirst();
+      variant['id'] = existVariant?.id ?? 0;
+      return variant;
+    }).toList();
+    json['package_items'] = json['package_items']?.map((package) {
+      ItemPackage? existPackage = objectBox.itemPackageBox
+          .query(ItemPackage_.idItem.equals(package['id_item']))
+          .build()
+          .findFirst();
+      package['id'] = existPackage?.id ?? 0;
+      return package;
+    }).toList();
+    return _$ItemFromJson(json);
+  }
 
   Map<String, dynamic> toJson() => _$ItemToJson(this);
 
