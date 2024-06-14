@@ -111,7 +111,11 @@ class DateTimeFormater {
   }
 
   static int stringToTimestamp(String value) {
-    return DateTime.parse(value).millisecondsSinceEpoch;
+    try {
+      return DateTime.parse(value).millisecondsSinceEpoch;
+    } catch (e) {
+      return DateTime.now().millisecondsSinceEpoch;
+    }
   }
 
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
