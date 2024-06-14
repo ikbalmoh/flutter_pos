@@ -6,7 +6,7 @@ part of 'shift_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$shiftNotifierHash() => r'7ed767e2de7e178f3e2f0ba19157d11bfac966ab';
+String _$shiftNotifierHash() => r'7708e74c656c8ccd9a1967faccbe72b0a506611c';
 
 /// See also [ShiftNotifier].
 @ProviderFor(ShiftNotifier)

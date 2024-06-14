@@ -17,6 +17,7 @@ _$CartHoldedImpl _$$CartHoldedImplFromJson(Map<String, dynamic> json) =>
       customerName: json['customer_name'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       createdName: json['created_name'] as String?,
+      description: json['description'] as String?,
       dataHold: Cart.fromDataHold(json['data_hold'] as String),
     );
 
@@ -31,5 +32,6 @@ Map<String, dynamic> _$$CartHoldedImplToJson(_$CartHoldedImpl instance) =>
       'customer_name': instance.customerName,
       'created_at': instance.createdAt.toIso8601String(),
       'created_name': instance.createdName,
+      'description': instance.description,
       'data_hold': instance.dataHold,
     };

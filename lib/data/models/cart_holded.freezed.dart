@@ -29,6 +29,7 @@ mixin _$CartHolded {
   String? get customerName => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   String? get createdName => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
   @JsonKey(fromJson: Cart.fromDataHold)
   Cart get dataHold => throw _privateConstructorUsedError;
 
@@ -54,6 +55,7 @@ abstract class $CartHoldedCopyWith<$Res> {
       String? customerName,
       DateTime createdAt,
       String? createdName,
+      String? description,
       @JsonKey(fromJson: Cart.fromDataHold) Cart dataHold});
 
   $CartCopyWith<$Res> get dataHold;
@@ -81,6 +83,7 @@ class _$CartHoldedCopyWithImpl<$Res, $Val extends CartHolded>
     Object? customerName = freezed,
     Object? createdAt = null,
     Object? createdName = freezed,
+    Object? description = freezed,
     Object? dataHold = null,
   }) {
     return _then(_value.copyWith(
@@ -120,6 +123,10 @@ class _$CartHoldedCopyWithImpl<$Res, $Val extends CartHolded>
           ? _value.createdName
           : createdName // ignore: cast_nullable_to_non_nullable
               as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
       dataHold: null == dataHold
           ? _value.dataHold
           : dataHold // ignore: cast_nullable_to_non_nullable
@@ -154,6 +161,7 @@ abstract class _$$CartHoldedImplCopyWith<$Res>
       String? customerName,
       DateTime createdAt,
       String? createdName,
+      String? description,
       @JsonKey(fromJson: Cart.fromDataHold) Cart dataHold});
 
   @override
@@ -180,6 +188,7 @@ class __$$CartHoldedImplCopyWithImpl<$Res>
     Object? customerName = freezed,
     Object? createdAt = null,
     Object? createdName = freezed,
+    Object? description = freezed,
     Object? dataHold = null,
   }) {
     return _then(_$CartHoldedImpl(
@@ -219,6 +228,10 @@ class __$$CartHoldedImplCopyWithImpl<$Res>
           ? _value.createdName
           : createdName // ignore: cast_nullable_to_non_nullable
               as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
       dataHold: null == dataHold
           ? _value.dataHold
           : dataHold // ignore: cast_nullable_to_non_nullable
@@ -241,6 +254,7 @@ class _$CartHoldedImpl extends _CartHolded {
       this.customerName,
       required this.createdAt,
       this.createdName,
+      this.description,
       @JsonKey(fromJson: Cart.fromDataHold) required this.dataHold})
       : super._();
 
@@ -266,12 +280,14 @@ class _$CartHoldedImpl extends _CartHolded {
   @override
   final String? createdName;
   @override
+  final String? description;
+  @override
   @JsonKey(fromJson: Cart.fromDataHold)
   final Cart dataHold;
 
   @override
   String toString() {
-    return 'CartHolded(transactionId: $transactionId, idOutlet: $idOutlet, shiftId: $shiftId, transactionDate: $transactionDate, transactionNo: $transactionNo, idCustomer: $idCustomer, customerName: $customerName, createdAt: $createdAt, createdName: $createdName, dataHold: $dataHold)';
+    return 'CartHolded(transactionId: $transactionId, idOutlet: $idOutlet, shiftId: $shiftId, transactionDate: $transactionDate, transactionNo: $transactionNo, idCustomer: $idCustomer, customerName: $customerName, createdAt: $createdAt, createdName: $createdName, description: $description, dataHold: $dataHold)';
   }
 
   @override
@@ -296,6 +312,8 @@ class _$CartHoldedImpl extends _CartHolded {
                 other.createdAt == createdAt) &&
             (identical(other.createdName, createdName) ||
                 other.createdName == createdName) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
             (identical(other.dataHold, dataHold) ||
                 other.dataHold == dataHold));
   }
@@ -313,6 +331,7 @@ class _$CartHoldedImpl extends _CartHolded {
       customerName,
       createdAt,
       createdName,
+      description,
       dataHold);
 
   @JsonKey(ignore: true)
@@ -340,6 +359,7 @@ abstract class _CartHolded extends CartHolded {
           final String? customerName,
           required final DateTime createdAt,
           final String? createdName,
+          final String? description,
           @JsonKey(fromJson: Cart.fromDataHold) required final Cart dataHold}) =
       _$CartHoldedImpl;
   const _CartHolded._() : super._();
@@ -365,6 +385,8 @@ abstract class _CartHolded extends CartHolded {
   DateTime get createdAt;
   @override
   String? get createdName;
+  @override
+  String? get description;
   @override
   @JsonKey(fromJson: Cart.fromDataHold)
   Cart get dataHold;
