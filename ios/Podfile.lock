@@ -196,6 +196,7 @@ SPEC REPOS:
     - nanopb
     - ObjectBox
     - PromisesObjC
+    - Toast
 
 EXTERNAL SOURCES:
   camera_avfoundation:
