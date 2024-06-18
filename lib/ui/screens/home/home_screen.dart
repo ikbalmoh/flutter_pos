@@ -8,6 +8,7 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/router/routes.dart';
+import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
 import 'package:selleri/ui/screens/home/components/shift_overlay.dart';
@@ -26,14 +27,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  void onSignOut() {
-    AppAlert.confirm(context,
-        title: 'logout'.tr(),
-        subtitle: 'logout_confirmation'.tr(),
-        onConfirm: () => ref.read(authNotifierProvider.notifier).logout(),
-        confirmLabel: 'logout'.tr());
-  }
-
   String idCategory = '';
   String search = '';
   Timer? _debounce;
@@ -53,14 +46,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void onSearchItems(String value) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      // do something with query
       setState(() {
         search = value;
       });
-      // Filter handled by stream
       scrollController.animateTo(0,
           duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     });
+  }
+
+  void onSignOut() {
+    AppAlert.confirm(context,
+        title: 'logout'.tr(),
+        subtitle: 'logout_confirmation'.tr(),
+        onConfirm: () => ref.read(authNotifierProvider.notifier).logout(),
+        confirmLabel: 'logout'.tr());
   }
 
   @override
@@ -158,7 +157,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   : Container(),
             ],
           ),
-          const ShiftOverlay()
+          const ShiftOverlay(),
+          const UpdatePatcher()
         ],
       ),
     );
