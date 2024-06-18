@@ -28,12 +28,13 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
   void initState() {
     if (widget.cartPayment != null) {
       refController.text = widget.cartPayment!.reference ?? '';
-      setState(() {
-        amount = widget.cartPayment?.paymentValue ??
-            ref.read(cartNotiferProvider).grandTotal -
-                ref.read(cartNotiferProvider).totalPayment;
-      });
     }
+    double inititalValue = widget.cartPayment?.paymentValue ??
+        ref.read(cartNotiferProvider).grandTotal -
+            ref.read(cartNotiferProvider).totalPayment;
+    setState(() {
+      amount = inititalValue < 0 ? 0 : inititalValue;
+    });
     super.initState();
   }
 
@@ -84,10 +85,7 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
           ),
           TextFormField(
             inputFormatters: [_formatter],
-            initialValue: _formatter.formatDouble(
-                widget.cartPayment?.paymentValue ??
-                    ref.read(cartNotiferProvider).grandTotal -
-                        ref.read(cartNotiferProvider).totalPayment),
+            initialValue: _formatter.formatDouble(amount),
             onChanged: (_) => setState(() {
               amount = _formatter.getUnformattedValue().toDouble();
             }),

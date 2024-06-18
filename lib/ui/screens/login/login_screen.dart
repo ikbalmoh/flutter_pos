@@ -280,7 +280,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const UpdatePatcher()
               ],
             ),
-          ),
+            Text(
+              'v$buildNumber-$patch',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey,
+                  ),
+            )
+          ],
         ),
       ),
     );
