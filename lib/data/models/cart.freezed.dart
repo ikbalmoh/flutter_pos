@@ -24,6 +24,7 @@ mixin _$Cart {
   String get transactionNo => throw _privateConstructorUsedError;
   String get idOutlet => throw _privateConstructorUsedError;
   String? get outletName => throw _privateConstructorUsedError;
+  String? get transcactionId => throw _privateConstructorUsedError;
   String get shiftId => throw _privateConstructorUsedError;
   double get subtotal => throw _privateConstructorUsedError;
   @JsonKey(fromJson: Converters.dynamicToBool)
@@ -44,6 +45,7 @@ mixin _$Cart {
   String? get idCustomer => throw _privateConstructorUsedError;
   String? get customerName => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
   String? get personInCharge => throw _privateConstructorUsedError;
   DateTime? get holdAt => throw _privateConstructorUsedError;
   String get createdBy => throw _privateConstructorUsedError;
@@ -68,6 +70,7 @@ abstract class $CartCopyWith<$Res> {
       String transactionNo,
       String idOutlet,
       String? outletName,
+      String? transcactionId,
       String shiftId,
       double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
@@ -85,6 +88,7 @@ abstract class $CartCopyWith<$Res> {
       String? idCustomer,
       String? customerName,
       String? notes,
+      String? description,
       String? personInCharge,
       DateTime? holdAt,
       String createdBy,
@@ -111,6 +115,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? transactionNo = null,
     Object? idOutlet = null,
     Object? outletName = freezed,
+    Object? transcactionId = freezed,
     Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
@@ -128,6 +133,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? idCustomer = freezed,
     Object? customerName = freezed,
     Object? notes = freezed,
+    Object? description = freezed,
     Object? personInCharge = freezed,
     Object? holdAt = freezed,
     Object? createdBy = null,
@@ -152,6 +158,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
       outletName: freezed == outletName
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      transcactionId: freezed == transcactionId
+          ? _value.transcactionId
+          : transcactionId // ignore: cast_nullable_to_non_nullable
               as String?,
       shiftId: null == shiftId
           ? _value.shiftId
@@ -220,6 +230,10 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
       notes: freezed == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
               as String?,
       personInCharge: freezed == personInCharge
           ? _value.personInCharge
@@ -265,6 +279,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String transactionNo,
       String idOutlet,
       String? outletName,
+      String? transcactionId,
       String shiftId,
       double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
@@ -282,6 +297,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String? idCustomer,
       String? customerName,
       String? notes,
+      String? description,
       String? personInCharge,
       DateTime? holdAt,
       String createdBy,
@@ -305,6 +321,7 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? transactionNo = null,
     Object? idOutlet = null,
     Object? outletName = freezed,
+    Object? transcactionId = freezed,
     Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
@@ -322,6 +339,7 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? idCustomer = freezed,
     Object? customerName = freezed,
     Object? notes = freezed,
+    Object? description = freezed,
     Object? personInCharge = freezed,
     Object? holdAt = freezed,
     Object? createdBy = null,
@@ -346,6 +364,10 @@ class __$$CartImplCopyWithImpl<$Res>
       outletName: freezed == outletName
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      transcactionId: freezed == transcactionId
+          ? _value.transcactionId
+          : transcactionId // ignore: cast_nullable_to_non_nullable
               as String?,
       shiftId: null == shiftId
           ? _value.shiftId
@@ -415,6 +437,10 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
       personInCharge: freezed == personInCharge
           ? _value.personInCharge
           : personInCharge // ignore: cast_nullable_to_non_nullable
@@ -456,6 +482,7 @@ class _$CartImpl extends _Cart {
       required this.transactionNo,
       required this.idOutlet,
       this.outletName,
+      this.transcactionId,
       required this.shiftId,
       required this.subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) required this.discIsPercent,
@@ -473,6 +500,7 @@ class _$CartImpl extends _Cart {
       this.idCustomer,
       this.customerName,
       this.notes,
+      this.description,
       this.personInCharge,
       this.holdAt,
       required this.createdBy,
@@ -495,6 +523,8 @@ class _$CartImpl extends _Cart {
   final String idOutlet;
   @override
   final String? outletName;
+  @override
+  final String? transcactionId;
   @override
   final String shiftId;
   @override
@@ -533,6 +563,8 @@ class _$CartImpl extends _Cart {
   @override
   final String? notes;
   @override
+  final String? description;
+  @override
   final String? personInCharge;
   @override
   final DateTime? holdAt;
@@ -562,7 +594,7 @@ class _$CartImpl extends _Cart {
 
   @override
   String toString() {
-    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, shiftId: $shiftId, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments, isApp: $isApp)';
+    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, transcactionId: $transcactionId, shiftId: $shiftId, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, description: $description, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments, isApp: $isApp)';
   }
 
   @override
@@ -578,6 +610,8 @@ class _$CartImpl extends _Cart {
                 other.idOutlet == idOutlet) &&
             (identical(other.outletName, outletName) ||
                 other.outletName == outletName) &&
+            (identical(other.transcactionId, transcactionId) ||
+                other.transcactionId == transcactionId) &&
             (identical(other.shiftId, shiftId) || other.shiftId == shiftId) &&
             (identical(other.subtotal, subtotal) ||
                 other.subtotal == subtotal) &&
@@ -606,6 +640,8 @@ class _$CartImpl extends _Cart {
             (identical(other.customerName, customerName) ||
                 other.customerName == customerName) &&
             (identical(other.notes, notes) || other.notes == notes) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
             (identical(other.personInCharge, personInCharge) ||
                 other.personInCharge == personInCharge) &&
             (identical(other.holdAt, holdAt) || other.holdAt == holdAt) &&
@@ -626,6 +662,7 @@ class _$CartImpl extends _Cart {
         transactionNo,
         idOutlet,
         outletName,
+        transcactionId,
         shiftId,
         subtotal,
         discIsPercent,
@@ -643,6 +680,7 @@ class _$CartImpl extends _Cart {
         idCustomer,
         customerName,
         notes,
+        description,
         personInCharge,
         holdAt,
         createdBy,
@@ -672,6 +710,7 @@ abstract class _Cart extends Cart {
       required final String transactionNo,
       required final String idOutlet,
       final String? outletName,
+      final String? transcactionId,
       required final String shiftId,
       required final double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool)
@@ -692,6 +731,7 @@ abstract class _Cart extends Cart {
       final String? idCustomer,
       final String? customerName,
       final String? notes,
+      final String? description,
       final String? personInCharge,
       final DateTime? holdAt,
       required final String createdBy,
@@ -712,6 +752,8 @@ abstract class _Cart extends Cart {
   String get idOutlet;
   @override
   String? get outletName;
+  @override
+  String? get transcactionId;
   @override
   String get shiftId;
   @override
@@ -749,6 +791,8 @@ abstract class _Cart extends Cart {
   String? get customerName;
   @override
   String? get notes;
+  @override
+  String? get description;
   @override
   String? get personInCharge;
   @override

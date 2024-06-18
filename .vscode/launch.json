@@ -11,6 +11,12 @@
       "args": ["--flavor", "dev"]
     },
     {
+      "name": "Staging",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "staging"]
+    },
+    {
       "name": "Selleri (release mode)",
       "request": "launch",
       "type": "dart",

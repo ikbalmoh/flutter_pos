@@ -52,35 +52,65 @@ class AppAlert {
     bool? danger,
   }) {
     final navigator = Navigator.of(context, rootNavigator: true);
-    showDialog(
+    showModalBottomSheet(
+        backgroundColor: Colors.white,
         context: context,
         builder: (context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            title: Text(title),
-            content: subtitle != null ? Text(subtitle) : null,
-            actionsAlignment: MainAxisAlignment.end,
-            actions: [
-              TextButton(
-                onPressed: () => context.pop(),
-                style:
-                    TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
-                child: Text('cancel'.tr()),
-              ),
-              TextButton(
-                  style: TextButton.styleFrom(
-                      foregroundColor:
-                          danger != null && danger ? Colors.red : Colors.teal),
-                  onPressed: () {
-                    if (onConfirm != null) {
-                      onConfirm();
-                      if (navigator.canPop()) {
-                        navigator.pop();
-                      }
-                    }
-                  },
-                  child: Text(confirmLabel ?? 'Ok')),
-            ],
+          return Padding(
+            padding: EdgeInsets.only(
+              top: 25,
+              left: 20,
+              right: 20,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                SizedBox(height: subtitle != null ? 20 : 0),
+                subtitle != null
+                    ? Text(
+                        subtitle,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: Colors.grey.shade700),
+                      )
+                    : Container(),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => context.pop(),
+                      style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade600),
+                      child: Text('cancel'.tr()),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                          foregroundColor: danger != null && danger
+                              ? Colors.red
+                              : Colors.teal),
+                      onPressed: () {
+                        if (onConfirm != null) {
+                          onConfirm();
+                          if (navigator.canPop()) {
+                            navigator.pop();
+                          }
+                        }
+                      },
+                      child: Text(confirmLabel ?? 'Ok'),
+                    ),
+                  ],
+                )
+              ],
+            ),
           );
         });
   }

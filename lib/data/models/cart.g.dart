@@ -11,6 +11,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       transactionNo: json['transaction_no'] as String,
       idOutlet: json['id_outlet'] as String,
       outletName: json['outlet_name'] as String?,
+      transcactionId: json['transcaction_id'] as String?,
       shiftId: json['shift_id'] as String,
       subtotal: (json['subtotal'] as num).toDouble(),
       discIsPercent: Converters.dynamicToBool(json['disc_is_percent']),
@@ -28,6 +29,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       idCustomer: json['id_customer'] as String?,
       customerName: json['customer_name'] as String?,
       notes: json['notes'] as String?,
+      description: json['description'] as String?,
       personInCharge: json['person_in_charge'] as String?,
       holdAt: json['hold_at'] == null
           ? null
@@ -49,6 +51,7 @@ Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
       'transaction_no': instance.transactionNo,
       'id_outlet': instance.idOutlet,
       'outlet_name': instance.outletName,
+      'transcaction_id': instance.transcactionId,
       'shift_id': instance.shiftId,
       'subtotal': instance.subtotal,
       'disc_is_percent': instance.discIsPercent,
@@ -66,6 +69,7 @@ Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
       'id_customer': instance.idCustomer,
       'customer_name': instance.customerName,
       'notes': instance.notes,
+      'description': instance.description,
       'person_in_charge': instance.personInCharge,
       'hold_at': instance.holdAt?.toIso8601String(),
       'created_by': instance.createdBy,

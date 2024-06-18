@@ -94,5 +94,13 @@
   "no": "No",
   "no_data": "No {} Data",
   "select_variant": "Select a Variant",
-  "and_x_others": "and {} others"
+  "and_x_others": "and {} others",
+  "update_available": "Update is Available",
+  "update_note": "Please do update to continue using Selleri",
+  "apply_update": "Apply Update",
+  "update_applied": "Update Applied",
+  "downloading": "Downloading...",
+  "please_wait": "Please Wait",
+  "please_restart": "Please Restart",
+  "restart": "Restart"
 }

@@ -19,14 +19,14 @@ class HoldForm extends ConsumerStatefulWidget {
 class _HoldFormState extends ConsumerState<HoldForm> {
   final GlobalKey<_HoldFormState> holdWidgetKey = GlobalKey();
 
-  String note = '';
+  String description = '';
 
   bool holding = false;
 
   @override
   void initState() {
     setState(() {
-      note = ref.read(cartNotiferProvider).notes ?? '';
+      description = ref.read(cartNotiferProvider).description ?? '';
     });
     super.initState();
   }
@@ -43,7 +43,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
     try {
       await ref
           .read(cartNotiferProvider.notifier)
-          .holdCart(note: note, createNew: createNew);
+          .holdCart(note: description, createNew: createNew);
 
       AppAlert.toast('transaction_holded'.tr());
 
@@ -111,11 +111,11 @@ class _HoldFormState extends ConsumerState<HoldForm> {
             ),
             const SizedBox(height: 10),
             TextFormField(
-              initialValue: ref.read(cartNotiferProvider).notes,
+              initialValue: ref.read(cartNotiferProvider).description,
               autofocus: true,
               onChanged: (value) {
                 setState(() {
-                  note = value;
+                  description = value;
                 });
               },
               decoration: InputDecoration(
@@ -183,7 +183,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.blue,
                                 ),
-                                onPressed: note.length >= 3
+                                onPressed: description.length >= 3
                                     ? () => onHold(true)
                                     : null,
                                 child: Text(
@@ -206,7 +206,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                               ),
                             ),
                           ),
-                          onPressed: note.length >= 3 && !holding
+                          onPressed: description.length >= 3 && !holding
                               ? () => onHold(false)
                               : null,
                           child: Text(
@@ -217,7 +217,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                       ),
                     ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
           ],
         ),
       ),

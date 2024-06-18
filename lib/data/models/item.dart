@@ -75,6 +75,13 @@ class Item {
 
   factory Item.fromJson(Map<String, dynamic> json) {
     Item? existItem = objectBox.getItem(json['id_item']);
+    if (existItem != null) {
+      final Map<String, dynamic> itemJson = existItem.toJson();
+      json = {
+        ...itemJson,
+        ...json,
+      };
+    }
     json['id'] = existItem?.id ?? 0;
     json['variants'] = json['variants']?.map((variant) {
       ItemVariant? existVariant = objectBox.itemVariantBox

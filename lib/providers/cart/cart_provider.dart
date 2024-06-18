@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
@@ -92,10 +93,13 @@ class CartNotifer extends _$CartNotifer {
   void addToCart(Item item, {ItemVariant? variant}) async {
     String identifier = item.idItem;
     String itemName = item.itemName;
+    double itemPrice = item.itemPrice;
+
     if (item.isPackage) {
       identifier += (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
     } else if (variant != null) {
       identifier += '-v${variant.idVariant.toString()}';
+      itemPrice = variant.itemPrice;
     }
 
     final int cartIndex =
@@ -110,7 +114,7 @@ class CartNotifer extends _$CartNotifer {
       identifier: identifier,
       idItem: item.idItem,
       itemName: itemName,
-      price: item.itemPrice,
+      price: itemPrice,
       isPackage: item.isPackage,
       manualDiscount: item.manualDiscount,
       isManualPrice: item.isManualPrice,
@@ -119,11 +123,12 @@ class CartNotifer extends _$CartNotifer {
       discountIsPercent: true,
       discountTotal: 0,
       note: '',
-      total: item.itemPrice,
+      total: itemPrice,
       addedAt: DateTime.now(),
       idVariant: variant?.idVariant,
       variantName: variant?.variantName ?? '',
     );
+
     if (kDebugMode) {
       log('ADD TO CART: $itemCart');
     }
@@ -302,9 +307,14 @@ class CartNotifer extends _$CartNotifer {
   }
 
   Future<void> holdCart({required String note, bool createNew = false}) async {
-    Cart cart = state.copyWith(holdAt: DateTime.now(), notes: note);
+    Cart cart =
+        state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
     final api = TransactionApi();
-    await api.holdTransaction(cart);
+    if (cart.transcactionId != null) {
+      await api.updateHoldTransaction(cart.transcactionId!, cart);
+    } else {
+      await api.holdTransaction(cart);
+    }
     if (createNew) {
       initCart();
     } else {
@@ -312,8 +322,8 @@ class CartNotifer extends _$CartNotifer {
     }
   }
 
-  void openHoldedCart(Cart holded) {
-    Cart cart = holded.copyWith();
+  void openHoldedCart(CartHolded holded) {
+    Cart cart = holded.dataHold.copyWith(transcactionId: holded.transactionId);
     if (cart.holdAt == null) {
       cart = cart.copyWith(holdAt: DateTime.now());
     }

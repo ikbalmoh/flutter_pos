@@ -72,7 +72,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
   }
 
   void openHoldedTransaction(CartHolded holded) {
-    ref.read(cartNotiferProvider.notifier).openHoldedCart(holded.dataHold);
+    ref.read(cartNotiferProvider.notifier).openHoldedCart(holded);
     while (context.canPop()) {
       context.pop();
     }

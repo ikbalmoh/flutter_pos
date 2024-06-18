@@ -36,6 +36,7 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> logout() async {
+    state = const AsyncLoading();
     state = AsyncData(await _authRepoistory.logout());
     ref.read(outletNotifierProvider.notifier).clearOutlet();
     await _tokenRepository.remove();
