@@ -20,6 +20,7 @@ Cart _$CartFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Cart {
+  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
   int get transactionDate => throw _privateConstructorUsedError;
   String get transactionNo => throw _privateConstructorUsedError;
   String get idOutlet => throw _privateConstructorUsedError;
@@ -66,7 +67,8 @@ abstract class $CartCopyWith<$Res> {
       _$CartCopyWithImpl<$Res, Cart>;
   @useResult
   $Res call(
-      {int transactionDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      int transactionDate,
       String transactionNo,
       String idOutlet,
       String? outletName,
@@ -275,7 +277,8 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int transactionDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      int transactionDate,
       String transactionNo,
       String idOutlet,
       String? outletName,
@@ -478,7 +481,8 @@ class __$$CartImplCopyWithImpl<$Res>
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _$CartImpl extends _Cart {
   const _$CartImpl(
-      {required this.transactionDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      required this.transactionDate,
       required this.transactionNo,
       required this.idOutlet,
       this.outletName,
@@ -516,6 +520,7 @@ class _$CartImpl extends _Cart {
       _$$CartImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
   final int transactionDate;
   @override
   final String transactionNo;
@@ -706,7 +711,8 @@ class _$CartImpl extends _Cart {
 
 abstract class _Cart extends Cart {
   const factory _Cart(
-      {required final int transactionDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      required final int transactionDate,
       required final String transactionNo,
       required final String idOutlet,
       final String? outletName,
@@ -745,6 +751,7 @@ abstract class _Cart extends Cart {
   factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
   int get transactionDate;
   @override
   String get transactionNo;

@@ -1,9 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
-import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/utils/formater.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OrderItem extends StatelessWidget {
   final ItemCart item;
@@ -14,7 +13,7 @@ class OrderItem extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     String itemName = item.itemName;
-    if (item.variantName != '') {
+    if (item.variantName != '' && item.variantName != null) {
       itemName += ' - ${item.variantName}';
     }
 
@@ -73,17 +72,24 @@ class OrderItem extends StatelessWidget {
   }
 }
 
-class OrderSummary extends ConsumerWidget {
-  const OrderSummary({super.key});
+class OrderSummary extends StatelessWidget {
+  final Cart cart;
+  final Radius? radius;
+  const OrderSummary({required this.cart, this.radius, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cart = ref.watch(cartNotiferProvider);
+  Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(
+          radius ?? const Radius.circular(0),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -116,10 +122,33 @@ class OrderSummary extends ConsumerWidget {
             value: cart.subtotal,
           ),
           TwoColumn(
-            label: cart.taxName ?? 'tax_name',
+            label: 'discount'.tr(),
+            value: cart.discOverallTotal,
+          ),
+          TwoColumn(
+            label: cart.taxName ?? 'tax'.tr(),
             value: cart.ppnTotal,
           ),
-          const SizedBox(height: 7),
+          TwoColumn(
+            label: 'Grand Total',
+            value: cart.grandTotal,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Divider(
+              height: 15,
+              color: Colors.blueGrey.shade50,
+            ),
+          ),
+          TwoColumn(
+            label: 'payment_amount'.tr(),
+            value: cart.totalPayment,
+          ),
+          TwoColumn(
+            label: 'change'.tr(),
+            value: cart.change,
+          ),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -137,17 +166,17 @@ class TwoColumn extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 2.5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+            style: textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
           ),
           Text(
-            CurrencyFormat.currency(value),
-            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            CurrencyFormat.currency(value, symbol: false),
+            style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
           ),
         ],
       ),

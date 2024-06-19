@@ -20,6 +20,7 @@ CartPayment _$CartPaymentFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CartPayment {
+  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
   int? get payDate => throw _privateConstructorUsedError;
   String get paymentMethodId => throw _privateConstructorUsedError;
   String get paymentName => throw _privateConstructorUsedError;
@@ -40,7 +41,7 @@ abstract class $CartPaymentCopyWith<$Res> {
       _$CartPaymentCopyWithImpl<$Res, CartPayment>;
   @useResult
   $Res call(
-      {int? payDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp) int? payDate,
       String paymentMethodId,
       String paymentName,
       double paymentValue,
@@ -106,7 +107,7 @@ abstract class _$$CartPaymentImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? payDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp) int? payDate,
       String paymentMethodId,
       String paymentName,
       double paymentValue,
@@ -166,7 +167,7 @@ class __$$CartPaymentImplCopyWithImpl<$Res>
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _$CartPaymentImpl implements _CartPayment {
   const _$CartPaymentImpl(
-      {this.payDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp) this.payDate,
       required this.paymentMethodId,
       required this.paymentName,
       required this.paymentValue,
@@ -177,6 +178,7 @@ class _$CartPaymentImpl implements _CartPayment {
       _$$CartPaymentImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
   final int? payDate;
   @override
   final String paymentMethodId;
@@ -233,7 +235,8 @@ class _$CartPaymentImpl implements _CartPayment {
 
 abstract class _CartPayment implements CartPayment {
   const factory _CartPayment(
-      {final int? payDate,
+      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      final int? payDate,
       required final String paymentMethodId,
       required final String paymentName,
       required final double paymentValue,
@@ -244,6 +247,7 @@ abstract class _CartPayment implements CartPayment {
       _$CartPaymentImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
   int? get payDate;
   @override
   String get paymentMethodId;

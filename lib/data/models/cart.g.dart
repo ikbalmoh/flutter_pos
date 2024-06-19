@@ -7,7 +7,8 @@ part of 'cart.dart';
 // **************************************************************************
 
 _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
-      transactionDate: (json['transaction_date'] as num).toInt(),
+      transactionDate:
+          DateTimeFormater.stringToTimestamp(json['transaction_date']),
       transactionNo: json['transaction_no'] as String,
       idOutlet: json['id_outlet'] as String,
       outletName: json['outlet_name'] as String?,

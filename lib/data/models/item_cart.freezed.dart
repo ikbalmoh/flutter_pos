@@ -20,7 +20,7 @@ ItemCart _$ItemCartFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ItemCart {
-  String get identifier => throw _privateConstructorUsedError;
+  String? get identifier => throw _privateConstructorUsedError;
   String get idItem => throw _privateConstructorUsedError;
   String get itemName => throw _privateConstructorUsedError;
   @JsonKey(fromJson: Converters.dynamicToBool)
@@ -54,7 +54,7 @@ abstract class $ItemCartCopyWith<$Res> {
       _$ItemCartCopyWithImpl<$Res, ItemCart>;
   @useResult
   $Res call(
-      {String identifier,
+      {String? identifier,
       String idItem,
       String itemName,
       @JsonKey(fromJson: Converters.dynamicToBool) bool isPackage,
@@ -85,7 +85,7 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? identifier = null,
+    Object? identifier = freezed,
     Object? idItem = null,
     Object? itemName = null,
     Object? isPackage = null,
@@ -103,10 +103,10 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
     Object? variantName = freezed,
   }) {
     return _then(_value.copyWith(
-      identifier: null == identifier
+      identifier: freezed == identifier
           ? _value.identifier
           : identifier // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       idItem: null == idItem
           ? _value.idItem
           : idItem // ignore: cast_nullable_to_non_nullable
@@ -180,7 +180,7 @@ abstract class _$$ItemCartImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String identifier,
+      {String? identifier,
       String idItem,
       String itemName,
       @JsonKey(fromJson: Converters.dynamicToBool) bool isPackage,
@@ -209,7 +209,7 @@ class __$$ItemCartImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? identifier = null,
+    Object? identifier = freezed,
     Object? idItem = null,
     Object? itemName = null,
     Object? isPackage = null,
@@ -227,10 +227,10 @@ class __$$ItemCartImplCopyWithImpl<$Res>
     Object? variantName = freezed,
   }) {
     return _then(_$ItemCartImpl(
-      identifier: null == identifier
+      identifier: freezed == identifier
           ? _value.identifier
           : identifier // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       idItem: null == idItem
           ? _value.idItem
           : idItem // ignore: cast_nullable_to_non_nullable
@@ -300,7 +300,7 @@ class __$$ItemCartImplCopyWithImpl<$Res>
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _$ItemCartImpl extends _ItemCart {
   const _$ItemCartImpl(
-      {required this.identifier,
+      {this.identifier,
       required this.idItem,
       required this.itemName,
       @JsonKey(fromJson: Converters.dynamicToBool) required this.isPackage,
@@ -323,7 +323,7 @@ class _$ItemCartImpl extends _ItemCart {
       _$$ItemCartImplFromJson(json);
 
   @override
-  final String identifier;
+  final String? identifier;
   @override
   final String idItem;
   @override
@@ -431,7 +431,7 @@ class _$ItemCartImpl extends _ItemCart {
 
 abstract class _ItemCart extends ItemCart {
   const factory _ItemCart(
-      {required final String identifier,
+      {final String? identifier,
       required final String idItem,
       required final String itemName,
       @JsonKey(fromJson: Converters.dynamicToBool)
@@ -457,7 +457,7 @@ abstract class _ItemCart extends ItemCart {
       _$ItemCartImpl.fromJson;
 
   @override
-  String get identifier;
+  String? get identifier;
   @override
   String get idItem;
   @override

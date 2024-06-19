@@ -105,6 +105,28 @@ class TransactionApi {
     }
   }
 
+  Future<Pagination<Cart>> transactions(
+      {required String idOutlet, int? page, String? q}) async {
+    try {
+      final Map<String, dynamic> params = {
+        'id_outlet': idOutlet,
+        'q': q,
+        'page': page
+      };
+      final res = await api.get(ApiUrl.transaction, queryParameters: params);
+      final data = res.data['data'];
+      final pagination = Pagination<Cart>.fromJson(data, (transaction) {
+        return Cart.fromTransaction(transaction as Map<String, dynamic>);
+      });
+
+      return pagination;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Pagination<CartHolded>> holdedTransactions(
       {required String idOutlet, int? page, String? q}) async {
     try {
