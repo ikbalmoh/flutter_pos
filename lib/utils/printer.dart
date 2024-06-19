@@ -354,6 +354,11 @@ class Printer {
     }
     bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
 
+    if (isCopy) {
+      bytes += generator.text('receipt_copy'.tr(),
+          linesAfter: 1);
+    }
+
     bytes += generator.cut();
 
     return bytes;

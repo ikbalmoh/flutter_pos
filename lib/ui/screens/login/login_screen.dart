@@ -286,7 +286,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey,
                   ),
-            )
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const UpdatePatcher()
           ],
         ),
       ),
