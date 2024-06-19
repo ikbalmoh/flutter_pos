@@ -8,7 +8,7 @@ part of 'cart_payment.dart';
 
 _$CartPaymentImpl _$$CartPaymentImplFromJson(Map<String, dynamic> json) =>
     _$CartPaymentImpl(
-      payDate: (json['pay_date'] as num?)?.toInt(),
+      payDate: DateTimeFormater.stringToTimestamp(json['pay_date']),
       paymentMethodId: json['payment_method_id'] as String,
       paymentName: json['payment_name'] as String,
       paymentValue: (json['payment_value'] as num).toDouble(),

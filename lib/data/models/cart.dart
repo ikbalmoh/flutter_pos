@@ -15,6 +15,7 @@ class Cart with _$Cart {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Cart({
+    @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
     required int transactionDate,
     required String transactionNo,
     required String idOutlet,
@@ -30,8 +31,7 @@ class Cart with _$Cart {
     @JsonKey(fromJson: Converters.dynamicToBool) required bool ppnIsInclude,
     required double ppn,
     String? taxName,
-    @JsonKey(fromJson: Converters.dynamicToDouble)
-    required double ppnTotal,
+    @JsonKey(fromJson: Converters.dynamicToDouble) required double ppnTotal,
     required double grandTotal,
     required double totalPayment,
     required double change,
@@ -58,6 +58,15 @@ class Cart with _$Cart {
       item['identifier'] = item['id_item'];
     }
     return Cart.fromJson(data);
+  }
+
+  factory Cart.fromTransaction(Map<String, dynamic> json) {
+    json['transaction_date'] =
+        DateTimeFormater.stringToTimestamp(json['transaction_date']);
+    for (var item in json['items']) {
+      item['item_name'] = item['name'];
+    }
+    return Cart.fromJson(json);
   }
 
   Map<String, dynamic> toTransactionPayload() => <String, dynamic>{

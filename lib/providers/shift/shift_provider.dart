@@ -5,7 +5,6 @@ import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/repository/shift_repository.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
-import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:developer';

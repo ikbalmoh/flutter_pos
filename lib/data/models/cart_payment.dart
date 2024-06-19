@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/utils/formater.dart';
 
 part 'cart_payment.freezed.dart';
 part 'cart_payment.g.dart';
@@ -7,6 +8,7 @@ part 'cart_payment.g.dart';
 class CartPayment with _$CartPayment {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory CartPayment({
+    @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
     int? payDate,
     required String paymentMethodId,
     required String paymentName,

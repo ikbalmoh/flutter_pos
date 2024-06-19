@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
-import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:selleri/providers/outlet/outlet_list_state.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';

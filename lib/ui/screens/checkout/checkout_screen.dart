@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
-import 'package:selleri/ui/screens/checkout/order_summary.dart';
+import 'package:selleri/ui/components/cart/order_summary.dart';
 import 'package:selleri/ui/screens/checkout/payment/payment.dart';
 import 'package:selleri/ui/screens/checkout/store_transaction.dart';
 import 'package:selleri/utils/formater.dart';
@@ -45,21 +45,21 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.max,
           children: [
-            const Expanded(
+            Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 7,
                     ),
-                    OrderSummary(),
-                    SizedBox(
+                    OrderSummary(cart: ref.watch(cartNotiferProvider)),
+                    const SizedBox(
                       height: 7,
                     ),
-                    DiscountPromotion(),
-                    PaymentDetails()
+                    const DiscountPromotion(),
+                    const PaymentDetails()
                   ],
                 ),
               ),

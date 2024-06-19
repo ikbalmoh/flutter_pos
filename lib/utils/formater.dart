@@ -39,7 +39,7 @@ class DateTimeFormater {
   }
 
   static int stringToTimestamp(dynamic value) {
-    if (value is int) {
+    if (value is int || value is num) {
       return value;
     } else if (value is String) {
       try {

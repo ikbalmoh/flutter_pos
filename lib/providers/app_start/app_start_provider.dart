@@ -1,7 +1,6 @@
 import 'package:selleri/providers/app_start/app_start_state.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'dart:developer';
 

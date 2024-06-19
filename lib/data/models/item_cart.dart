@@ -15,7 +15,7 @@ class ItemCart with _$ItemCart {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ItemCart({
-    required String identifier,
+    String? identifier,
     required String idItem,
     required String itemName,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isPackage,

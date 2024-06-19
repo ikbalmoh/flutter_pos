@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/network/api.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
-import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

@@ -31,7 +31,7 @@ class CartScreen extends ConsumerWidget {
           danger: true, onConfirm: () async {
         await ref
             .read(cartNotiferProvider.notifier)
-            .removeItem(item.identifier);
+            .removeItem(item.identifier!);
       });
     }
 

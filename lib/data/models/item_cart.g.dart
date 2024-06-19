@@ -8,7 +8,7 @@ part of 'item_cart.dart';
 
 _$ItemCartImpl _$$ItemCartImplFromJson(Map<String, dynamic> json) =>
     _$ItemCartImpl(
-      identifier: json['identifier'] as String,
+      identifier: json['identifier'] as String?,
       idItem: json['id_item'] as String,
       itemName: json['item_name'] as String,
       isPackage: Converters.dynamicToBool(json['is_package']),
