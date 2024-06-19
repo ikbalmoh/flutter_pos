@@ -104,5 +104,6 @@
   "please_wait": "Please Wait",
   "please_restart": "Please Restart",
   "restart": "Restart",
-  "transaction_history": "Transaction History"
+  "transaction_history": "Transaction History",
+  "receipt_copy": "Receipt Copy"
 }

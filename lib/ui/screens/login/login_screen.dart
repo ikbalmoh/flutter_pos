@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
+import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
@@ -175,7 +176,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey,
                   ),
-            )
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const UpdatePatcher()
           ],
         ),
       ),

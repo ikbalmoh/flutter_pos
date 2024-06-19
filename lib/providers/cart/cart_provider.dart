@@ -298,6 +298,7 @@ class CartNotifer extends _$CartNotifer {
         state,
         attributes: attributeReceipts,
         size: printer.size,
+        isCopy: printCounter > 1,
       );
       ref.read(printerNotifierProvider.notifier).print(receipt);
     } on Exception catch (_) {

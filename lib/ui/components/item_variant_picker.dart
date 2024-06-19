@@ -94,6 +94,9 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
             itemCount: widget.item.variants.length,
             shrinkWrap: true,
           ),
+          const SizedBox(
+            height: 15,
+          ),
           ElevatedButton(
             onPressed:
                 selected != null ? () => onAddToCart(context, selected!) : null,

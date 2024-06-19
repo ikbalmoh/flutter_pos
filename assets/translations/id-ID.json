@@ -104,5 +104,6 @@
   "please_wait": "Mohon Tunggu",
   "please_restart": "Silahkan muat ulang aplikasi",
   "restart": "Muat Ulang",
-  "transaction_history": "Riwayat Transaksi"
+  "transaction_history": "Riwayat Transaksi",
+  "receipt_copy": "Salinan"
 }

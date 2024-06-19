@@ -99,7 +99,7 @@ class PrinterNotifier extends _$PrinterNotifier {
     await print(bytes);
   }
 
-  Future<void> print(List<int> bytes) async {
+  Future<void> print(List<int> bytes, {bool isCopy = false}) async {
     final isConnected = await PrintBluetoothThermal.connectionStatus;
     if (!isConnected) {
       state = const AsyncData(null);

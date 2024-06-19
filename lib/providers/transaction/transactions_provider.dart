@@ -1,10 +1,14 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/settings/printer_provider.dart';
+import 'package:selleri/utils/printer.dart';
 
 part 'transactions_provider.g.dart';
 
@@ -44,6 +48,24 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     } catch (e, trace) {
       log('Load Transaction Error: $e');
       state = AsyncError(e, trace);
+    }
+  }
+
+  Future<void> printReceipt(Cart cart) async {
+    try {
+      final printer = ref.read(printerNotifierProvider).value;
+      if (printer == null) {
+        throw Exception('printer_not_connected'.tr());
+      }
+      final AttributeReceipts? attributeReceipts =
+          (ref.read(outletNotifierProvider).value as OutletSelected)
+              .config
+              .attributeReceipts;
+      final receipt = await Printer.buildReceiptBytes(cart,
+          attributes: attributeReceipts, size: printer.size, isCopy: true);
+      ref.read(printerNotifierProvider.notifier).print(receipt);
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 }

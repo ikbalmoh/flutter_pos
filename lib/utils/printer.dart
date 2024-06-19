@@ -31,11 +31,10 @@ class Printer {
     return divider;
   }
 
-  static Future<List<int>> buildReceiptBytes(
-    Cart cart, {
-    AttributeReceipts? attributes,
-    PaperSize? size = PaperSize.mm58,
-  }) async {
+  static Future<List<int>> buildReceiptBytes(Cart cart,
+      {AttributeReceipts? attributes,
+      PaperSize? size = PaperSize.mm58,
+      bool isCopy = false}) async {
     log('BUILD RECEIPT: $cart');
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
@@ -189,6 +188,11 @@ class Printer {
     if (footers != null) {
       bytes += generator.text(footers,
           linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
+    }
+
+    if (isCopy) {
+      bytes += generator.text('receipt_copy'.tr(),
+          linesAfter: 1);
     }
 
     bytes += generator.cut();
