@@ -29,6 +29,7 @@ ThemeData appTheme(BuildContext context) {
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.light,
       ),
+      centerTitle: false
     ),
     textTheme: const TextTheme(
       headlineSmall: TextStyle(

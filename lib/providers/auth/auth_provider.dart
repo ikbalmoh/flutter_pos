@@ -5,6 +5,8 @@ import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'auth_state.dart';
 
+export 'auth_state.dart';
+
 part 'auth_provider.g.dart';
 
 @Riverpod(keepAlive: true)

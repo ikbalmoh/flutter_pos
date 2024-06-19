@@ -102,5 +102,6 @@
   "downloading": "Downloading...",
   "please_wait": "Please Wait",
   "please_restart": "Please Restart",
-  "restart": "Restart"
+  "restart": "Restart",
+  "transaction_history": "Transaction History"
 }

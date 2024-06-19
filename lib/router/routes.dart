@@ -8,4 +8,5 @@ class Routes {
   static const String customers = '/customers';
   static const String holded = '/holded';
   static const String printers = '/printers';
+  static const String transactions = '/transactions';
 }

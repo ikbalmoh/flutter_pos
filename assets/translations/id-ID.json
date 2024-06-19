@@ -102,5 +102,6 @@
   "downloading": "Mengunduh...",
   "please_wait": "Mohon Tunggu",
   "please_restart": "Silahkan muat ulang aplikasi",
-  "restart": "Muat Ulang"
+  "restart": "Muat Ulang",
+  "transaction_history": "Riwayat Transaksi"
 }
