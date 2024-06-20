@@ -10,7 +10,7 @@ _$SoldItemImpl _$$SoldItemImplFromJson(Map<String, dynamic> json) =>
     _$SoldItemImpl(
       idItem: json['id_item'] as String,
       name: json['name'] as String,
-      sold: (json['sold'] as num).toInt(),
+      sold: Converters.dynamicToDouble(json['sold']),
     );
 
 Map<String, dynamic> _$$SoldItemImplToJson(_$SoldItemImpl instance) =>

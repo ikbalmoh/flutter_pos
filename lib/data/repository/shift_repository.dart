@@ -134,4 +134,9 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   Future<void> clear() async {
     await storage.delete(key: StoreKey.shift.name);
   }
+
+  Future<ShiftInfo?> getShiftInfo(String shiftId) async {
+    final shiftInfo = await api.shiftInfo(shiftId);
+    return shiftInfo;
+  }
 }

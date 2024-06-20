@@ -22,7 +22,8 @@ SoldItem _$SoldItemFromJson(Map<String, dynamic> json) {
 mixin _$SoldItem {
   String get idItem => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  int get sold => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Converters.dynamicToDouble)
+  double get sold => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +36,10 @@ abstract class $SoldItemCopyWith<$Res> {
   factory $SoldItemCopyWith(SoldItem value, $Res Function(SoldItem) then) =
       _$SoldItemCopyWithImpl<$Res, SoldItem>;
   @useResult
-  $Res call({String idItem, String name, int sold});
+  $Res call(
+      {String idItem,
+      String name,
+      @JsonKey(fromJson: Converters.dynamicToDouble) double sold});
 }
 
 /// @nodoc
@@ -67,7 +71,7 @@ class _$SoldItemCopyWithImpl<$Res, $Val extends SoldItem>
       sold: null == sold
           ? _value.sold
           : sold // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
     ) as $Val);
   }
 }
@@ -80,7 +84,10 @@ abstract class _$$SoldItemImplCopyWith<$Res>
       __$$SoldItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String idItem, String name, int sold});
+  $Res call(
+      {String idItem,
+      String name,
+      @JsonKey(fromJson: Converters.dynamicToDouble) double sold});
 }
 
 /// @nodoc
@@ -110,7 +117,7 @@ class __$$SoldItemImplCopyWithImpl<$Res>
       sold: null == sold
           ? _value.sold
           : sold // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
     ));
   }
 }
@@ -120,7 +127,9 @@ class __$$SoldItemImplCopyWithImpl<$Res>
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _$SoldItemImpl implements _SoldItem {
   const _$SoldItemImpl(
-      {required this.idItem, required this.name, required this.sold});
+      {required this.idItem,
+      required this.name,
+      @JsonKey(fromJson: Converters.dynamicToDouble) required this.sold});
 
   factory _$SoldItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$SoldItemImplFromJson(json);
@@ -130,7 +139,8 @@ class _$SoldItemImpl implements _SoldItem {
   @override
   final String name;
   @override
-  final int sold;
+  @JsonKey(fromJson: Converters.dynamicToDouble)
+  final double sold;
 
   @override
   String toString() {
@@ -169,7 +179,8 @@ abstract class _SoldItem implements SoldItem {
   const factory _SoldItem(
       {required final String idItem,
       required final String name,
-      required final int sold}) = _$SoldItemImpl;
+      @JsonKey(fromJson: Converters.dynamicToDouble)
+      required final double sold}) = _$SoldItemImpl;
 
   factory _SoldItem.fromJson(Map<String, dynamic> json) =
       _$SoldItemImpl.fromJson;
@@ -179,7 +190,8 @@ abstract class _SoldItem implements SoldItem {
   @override
   String get name;
   @override
-  int get sold;
+  @JsonKey(fromJson: Converters.dynamicToDouble)
+  double get sold;
   @override
   @JsonKey(ignore: true)
   _$$SoldItemImplCopyWith<_$SoldItemImpl> get copyWith =>
