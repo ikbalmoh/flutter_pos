@@ -9,60 +9,65 @@ class AppDrawerHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final outletState =
-        ref.watch(outletNotifierProvider).value as OutletSelected;
-
-    return DrawerHeader(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: Divider.createBorderSide(context,
-              color: Colors.white, width: 0.0),
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Flexible(
-            child: Container(
-              child: outletState.config.attributeReceipts?.imagePath != null
-                  ? CachedNetworkImage(
-                      imageUrl:
-                          outletState.config.attributeReceipts!.imagePath!,
-                      height: 60,
-                      fit: BoxFit.contain,
-                    )
-                  : Image.asset(
-                      'assets/images/icon.png',
-                      height: 50,
-                      fit: BoxFit.contain,
-                    ),
+    return ref.watch(outletNotifierProvider).when(
+        data: (data) {
+          return DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                bottom: Divider.createBorderSide(context,
+                    color: Colors.white, width: 0.0),
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            (ref.watch(authNotifierProvider).value as Authenticated)
-                .user
-                .user
-                .company
-                .companyName,
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          Text(
-            outletState.outlet.outletName,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Colors.grey.shade600),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
-    );
+            child: data is OutletSelected
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          child: data.config.attributeReceipts?.imagePath !=
+                                  null
+                              ? CachedNetworkImage(
+                                  imageUrl:
+                                      data.config.attributeReceipts!.imagePath!,
+                                  height: 60,
+                                  fit: BoxFit.contain,
+                                )
+                              : Image.asset(
+                                  'assets/images/icon.png',
+                                  height: 50,
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        (ref.watch(authNotifierProvider).value as Authenticated)
+                            .user
+                            .user
+                            .company
+                            .companyName,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      Text(
+                        data.outlet.outletName,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  )
+                : Container(),
+          );
+        },
+        error: (error, _) => Container(),
+        loading: () => Container());
   }
 }

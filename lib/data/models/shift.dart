@@ -17,6 +17,7 @@ class Shift with _$Shift {
     required DateTime createdAt,
     required String outletName,
     required String createdName,
+    String? codeShift,
     DateTime? closeShift,
     int? customSalesAmount,
     String? updatedBy,
@@ -38,8 +39,6 @@ class Shift with _$Shift {
     int? expectedCash,
     int? sold,
     List<SoldItem>? soldItems,
-    List<dynamic>? refundItems,
-    List<dynamic>? attachments,
   }) = _Shift;
 
   factory Shift.fromJson(Map<String, dynamic> json) => _$ShiftFromJson(json);

@@ -105,5 +105,13 @@
   "please_restart": "Please Restart",
   "restart": "Restart",
   "transaction_history": "Transaction History",
-  "receipt_copy": "Receipt Copy"
+  "receipt_copy": "Receipt Copy",
+  "shift": "Shift",
+  "close_shift": "Close Shift",
+  "shift_active": "Shift Active",
+  "shift_inactive": "Shift Inactive",
+  "summary": "Summary",
+  "total_sales": "Total Sales",
+  "cash_sales": "Cash Sales",
+  "item_sold": "Items Sold"
 }

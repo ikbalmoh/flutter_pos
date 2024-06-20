@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/shift.dart';
+import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/network/shift.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
 import 'dart:developer';
@@ -66,5 +67,10 @@ class ShiftRepository implements ShiftRepositoryProtocol {
       return storedShift;
     }
     return null;
+  }
+
+  Future<ShiftInfo?> getShiftInfo(String shiftId) async {
+    final shiftInfo = await api.shiftInfo(shiftId);
+    return shiftInfo;
   }
 }

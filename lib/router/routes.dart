@@ -10,4 +10,5 @@ class Routes {
   static const String printers = '/printers';
   static const String transactions = '/transactions';
   static const String transactionsDetail = '/transactions-detail';
+  static const String shift = '/shiftl';
 }

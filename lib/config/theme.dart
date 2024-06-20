@@ -14,9 +14,9 @@ ThemeData appTheme(BuildContext context) {
     ),
     useMaterial3: true,
     appBarTheme: AppBarTheme(
-      elevation: 6,
+      elevation: 0,
       surfaceTintColor: Colors.white,
-      // scrolledUnderElevation: 0,
+      scrolledUnderElevation: 0,
       foregroundColor: Colors.white,
       backgroundColor: Colors.teal.shade400,
       titleTextStyle: const TextStyle(

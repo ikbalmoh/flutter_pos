@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/shift.dart';
+import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -18,7 +22,7 @@ class ShiftApi {
       "open_amount": shift.openAmount,
       "created_by": shift.createdBy
     };
-    final res = await api.post('/shifts/store', data: [data]);
+    final res = await api.post('${ApiUrl.shifts}/store', data: [data]);
     List success = res.data['data']['success'];
     if (success.isNotEmpty) {
       return Shift.fromJson(success[0]);
@@ -29,5 +33,10 @@ class ShiftApi {
   Future<void> currentShift() async {
     String? deviceId = await storage.read(key: StoreKey.device.toString());
     api.get('/info/urrent-shift/$deviceId');
+  }
+
+  Future<ShiftInfo?> shiftInfo(String shiftId) async {
+    final res = await api.get('${ApiUrl.shifts}/$shiftId');
+    return ShiftInfo.fromJson(res.data['data']);
   }
 }

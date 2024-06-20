@@ -16,6 +16,7 @@ _$ShiftImpl _$$ShiftImplFromJson(Map<String, dynamic> json) => _$ShiftImpl(
       createdAt: DateTime.parse(json['created_at'] as String),
       outletName: json['outlet_name'] as String,
       createdName: json['created_name'] as String,
+      codeShift: json['code_shift'] as String?,
       closeShift: json['close_shift'] == null
           ? null
           : DateTime.parse(json['close_shift'] as String),
@@ -43,8 +44,6 @@ _$ShiftImpl _$$ShiftImplFromJson(Map<String, dynamic> json) => _$ShiftImpl(
       soldItems: (json['sold_items'] as List<dynamic>?)
           ?.map((e) => SoldItem.fromJson(e as Map<String, dynamic>))
           .toList(),
-      refundItems: json['refund_items'] as List<dynamic>?,
-      attachments: json['attachments'] as List<dynamic>?,
     );
 
 Map<String, dynamic> _$$ShiftImplToJson(_$ShiftImpl instance) =>
@@ -58,6 +57,7 @@ Map<String, dynamic> _$$ShiftImplToJson(_$ShiftImpl instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'outlet_name': instance.outletName,
       'created_name': instance.createdName,
+      'code_shift': instance.codeShift,
       'close_shift': instance.closeShift?.toIso8601String(),
       'custom_sales_amount': instance.customSalesAmount,
       'updated_by': instance.updatedBy,
@@ -79,6 +79,4 @@ Map<String, dynamic> _$$ShiftImplToJson(_$ShiftImpl instance) =>
       'expected_cash': instance.expectedCash,
       'sold': instance.sold,
       'sold_items': instance.soldItems,
-      'refund_items': instance.refundItems,
-      'attachments': instance.attachments,
     };

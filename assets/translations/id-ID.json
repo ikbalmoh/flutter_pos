@@ -34,8 +34,8 @@
   "update_new": "Perbarui & Baru",
   "checkout": "Checkout",
   "pay": "Bayar",
-  "open_shift": "Buka Sif",
-  "start_shift": "Mulai Sif",
+  "open_shift": "Buka Shift",
+  "start_shift": "Mulai Shift",
   "starting_cash": "Kas Awal",
   "select_customer": "Pilih Pelanggan",
   "customer_detail": "Detail Pelanggan",
@@ -105,5 +105,13 @@
   "please_restart": "Silahkan muat ulang aplikasi",
   "restart": "Muat Ulang",
   "transaction_history": "Riwayat Transaksi",
-  "receipt_copy": "Salinan"
+  "receipt_copy": "Salinan",
+  "shift": "Shift",
+  "close_shift": "Tutup Shift",
+  "shift_active": "Shift Aktif",
+  "shift_inactive": "Shift Tidak Aktif",
+  "summary": "Rekap",
+  "total_sales": "Total Penjualan",
+  "cash_sales": "Penjualan Tunai",
+  "item_sold": "Produk Terjual"
 }

@@ -29,6 +29,7 @@ mixin _$Shift {
   DateTime get createdAt => throw _privateConstructorUsedError;
   String get outletName => throw _privateConstructorUsedError;
   String get createdName => throw _privateConstructorUsedError;
+  String? get codeShift => throw _privateConstructorUsedError;
   DateTime? get closeShift => throw _privateConstructorUsedError;
   int? get customSalesAmount => throw _privateConstructorUsedError;
   String? get updatedBy => throw _privateConstructorUsedError;
@@ -50,8 +51,6 @@ mixin _$Shift {
   int? get expectedCash => throw _privateConstructorUsedError;
   int? get sold => throw _privateConstructorUsedError;
   List<SoldItem>? get soldItems => throw _privateConstructorUsedError;
-  List<dynamic>? get refundItems => throw _privateConstructorUsedError;
-  List<dynamic>? get attachments => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -73,6 +72,7 @@ abstract class $ShiftCopyWith<$Res> {
       DateTime createdAt,
       String outletName,
       String createdName,
+      String? codeShift,
       DateTime? closeShift,
       int? customSalesAmount,
       String? updatedBy,
@@ -93,9 +93,7 @@ abstract class $ShiftCopyWith<$Res> {
       int? expectedEnd,
       int? expectedCash,
       int? sold,
-      List<SoldItem>? soldItems,
-      List<dynamic>? refundItems,
-      List<dynamic>? attachments});
+      List<SoldItem>? soldItems});
 }
 
 /// @nodoc
@@ -120,6 +118,7 @@ class _$ShiftCopyWithImpl<$Res, $Val extends Shift>
     Object? createdAt = null,
     Object? outletName = null,
     Object? createdName = null,
+    Object? codeShift = freezed,
     Object? closeShift = freezed,
     Object? customSalesAmount = freezed,
     Object? updatedBy = freezed,
@@ -141,8 +140,6 @@ class _$ShiftCopyWithImpl<$Res, $Val extends Shift>
     Object? expectedCash = freezed,
     Object? sold = freezed,
     Object? soldItems = freezed,
-    Object? refundItems = freezed,
-    Object? attachments = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -181,6 +178,10 @@ class _$ShiftCopyWithImpl<$Res, $Val extends Shift>
           ? _value.createdName
           : createdName // ignore: cast_nullable_to_non_nullable
               as String,
+      codeShift: freezed == codeShift
+          ? _value.codeShift
+          : codeShift // ignore: cast_nullable_to_non_nullable
+              as String?,
       closeShift: freezed == closeShift
           ? _value.closeShift
           : closeShift // ignore: cast_nullable_to_non_nullable
@@ -265,14 +266,6 @@ class _$ShiftCopyWithImpl<$Res, $Val extends Shift>
           ? _value.soldItems
           : soldItems // ignore: cast_nullable_to_non_nullable
               as List<SoldItem>?,
-      refundItems: freezed == refundItems
-          ? _value.refundItems
-          : refundItems // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
-      attachments: freezed == attachments
-          ? _value.attachments
-          : attachments // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
     ) as $Val);
   }
 }
@@ -294,6 +287,7 @@ abstract class _$$ShiftImplCopyWith<$Res> implements $ShiftCopyWith<$Res> {
       DateTime createdAt,
       String outletName,
       String createdName,
+      String? codeShift,
       DateTime? closeShift,
       int? customSalesAmount,
       String? updatedBy,
@@ -314,9 +308,7 @@ abstract class _$$ShiftImplCopyWith<$Res> implements $ShiftCopyWith<$Res> {
       int? expectedEnd,
       int? expectedCash,
       int? sold,
-      List<SoldItem>? soldItems,
-      List<dynamic>? refundItems,
-      List<dynamic>? attachments});
+      List<SoldItem>? soldItems});
 }
 
 /// @nodoc
@@ -339,6 +331,7 @@ class __$$ShiftImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? outletName = null,
     Object? createdName = null,
+    Object? codeShift = freezed,
     Object? closeShift = freezed,
     Object? customSalesAmount = freezed,
     Object? updatedBy = freezed,
@@ -360,8 +353,6 @@ class __$$ShiftImplCopyWithImpl<$Res>
     Object? expectedCash = freezed,
     Object? sold = freezed,
     Object? soldItems = freezed,
-    Object? refundItems = freezed,
-    Object? attachments = freezed,
   }) {
     return _then(_$ShiftImpl(
       id: null == id
@@ -400,6 +391,10 @@ class __$$ShiftImplCopyWithImpl<$Res>
           ? _value.createdName
           : createdName // ignore: cast_nullable_to_non_nullable
               as String,
+      codeShift: freezed == codeShift
+          ? _value.codeShift
+          : codeShift // ignore: cast_nullable_to_non_nullable
+              as String?,
       closeShift: freezed == closeShift
           ? _value.closeShift
           : closeShift // ignore: cast_nullable_to_non_nullable
@@ -484,14 +479,6 @@ class __$$ShiftImplCopyWithImpl<$Res>
           ? _value._soldItems
           : soldItems // ignore: cast_nullable_to_non_nullable
               as List<SoldItem>?,
-      refundItems: freezed == refundItems
-          ? _value._refundItems
-          : refundItems // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
-      attachments: freezed == attachments
-          ? _value._attachments
-          : attachments // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
     ));
   }
 }
@@ -510,6 +497,7 @@ class _$ShiftImpl implements _Shift {
       required this.createdAt,
       required this.outletName,
       required this.createdName,
+      this.codeShift,
       this.closeShift,
       this.customSalesAmount,
       this.updatedBy,
@@ -530,15 +518,11 @@ class _$ShiftImpl implements _Shift {
       this.expectedEnd,
       this.expectedCash,
       this.sold,
-      final List<SoldItem>? soldItems,
-      final List<dynamic>? refundItems,
-      final List<dynamic>? attachments})
+      final List<SoldItem>? soldItems})
       : _debitSales = debitSales,
         _creditSales = creditSales,
         _customSales = customSales,
-        _soldItems = soldItems,
-        _refundItems = refundItems,
-        _attachments = attachments;
+        _soldItems = soldItems;
 
   factory _$ShiftImpl.fromJson(Map<String, dynamic> json) =>
       _$$ShiftImplFromJson(json);
@@ -561,6 +545,8 @@ class _$ShiftImpl implements _Shift {
   final String outletName;
   @override
   final String createdName;
+  @override
+  final String? codeShift;
   @override
   final DateTime? closeShift;
   @override
@@ -635,29 +621,9 @@ class _$ShiftImpl implements _Shift {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<dynamic>? _refundItems;
-  @override
-  List<dynamic>? get refundItems {
-    final value = _refundItems;
-    if (value == null) return null;
-    if (_refundItems is EqualUnmodifiableListView) return _refundItems;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  final List<dynamic>? _attachments;
-  @override
-  List<dynamic>? get attachments {
-    final value = _attachments;
-    if (value == null) return null;
-    if (_attachments is EqualUnmodifiableListView) return _attachments;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   @override
   String toString() {
-    return 'Shift(id: $id, outletId: $outletId, deviceId: $deviceId, startShift: $startShift, openAmount: $openAmount, createdBy: $createdBy, createdAt: $createdAt, outletName: $outletName, createdName: $createdName, closeShift: $closeShift, customSalesAmount: $customSalesAmount, updatedBy: $updatedBy, closeAmount: $closeAmount, diffAmount: $diffAmount, refundAmount: $refundAmount, updatedAt: $updatedAt, updatedName: $updatedName, closedBy: $closedBy, income: $income, expense: $expense, cashSales: $cashSales, debitSalesAmount: $debitSalesAmount, debitSales: $debitSales, creditSalesAmount: $creditSalesAmount, creditSales: $creditSales, customSales: $customSales, expectedEnd: $expectedEnd, expectedCash: $expectedCash, sold: $sold, soldItems: $soldItems, refundItems: $refundItems, attachments: $attachments)';
+    return 'Shift(id: $id, outletId: $outletId, deviceId: $deviceId, startShift: $startShift, openAmount: $openAmount, createdBy: $createdBy, createdAt: $createdAt, outletName: $outletName, createdName: $createdName, codeShift: $codeShift, closeShift: $closeShift, customSalesAmount: $customSalesAmount, updatedBy: $updatedBy, closeAmount: $closeAmount, diffAmount: $diffAmount, refundAmount: $refundAmount, updatedAt: $updatedAt, updatedName: $updatedName, closedBy: $closedBy, income: $income, expense: $expense, cashSales: $cashSales, debitSalesAmount: $debitSalesAmount, debitSales: $debitSales, creditSalesAmount: $creditSalesAmount, creditSales: $creditSales, customSales: $customSales, expectedEnd: $expectedEnd, expectedCash: $expectedCash, sold: $sold, soldItems: $soldItems)';
   }
 
   @override
@@ -682,6 +648,8 @@ class _$ShiftImpl implements _Shift {
                 other.outletName == outletName) &&
             (identical(other.createdName, createdName) ||
                 other.createdName == createdName) &&
+            (identical(other.codeShift, codeShift) ||
+                other.codeShift == codeShift) &&
             (identical(other.closeShift, closeShift) ||
                 other.closeShift == closeShift) &&
             (identical(other.customSalesAmount, customSalesAmount) ||
@@ -720,11 +688,7 @@ class _$ShiftImpl implements _Shift {
                 other.expectedCash == expectedCash) &&
             (identical(other.sold, sold) || other.sold == sold) &&
             const DeepCollectionEquality()
-                .equals(other._soldItems, _soldItems) &&
-            const DeepCollectionEquality()
-                .equals(other._refundItems, _refundItems) &&
-            const DeepCollectionEquality()
-                .equals(other._attachments, _attachments));
+                .equals(other._soldItems, _soldItems));
   }
 
   @JsonKey(ignore: true)
@@ -740,6 +704,7 @@ class _$ShiftImpl implements _Shift {
         createdAt,
         outletName,
         createdName,
+        codeShift,
         closeShift,
         customSalesAmount,
         updatedBy,
@@ -760,9 +725,7 @@ class _$ShiftImpl implements _Shift {
         expectedEnd,
         expectedCash,
         sold,
-        const DeepCollectionEquality().hash(_soldItems),
-        const DeepCollectionEquality().hash(_refundItems),
-        const DeepCollectionEquality().hash(_attachments)
+        const DeepCollectionEquality().hash(_soldItems)
       ]);
 
   @JsonKey(ignore: true)
@@ -790,6 +753,7 @@ abstract class _Shift implements Shift {
       required final DateTime createdAt,
       required final String outletName,
       required final String createdName,
+      final String? codeShift,
       final DateTime? closeShift,
       final int? customSalesAmount,
       final String? updatedBy,
@@ -810,9 +774,7 @@ abstract class _Shift implements Shift {
       final int? expectedEnd,
       final int? expectedCash,
       final int? sold,
-      final List<SoldItem>? soldItems,
-      final List<dynamic>? refundItems,
-      final List<dynamic>? attachments}) = _$ShiftImpl;
+      final List<SoldItem>? soldItems}) = _$ShiftImpl;
 
   factory _Shift.fromJson(Map<String, dynamic> json) = _$ShiftImpl.fromJson;
 
@@ -834,6 +796,8 @@ abstract class _Shift implements Shift {
   String get outletName;
   @override
   String get createdName;
+  @override
+  String? get codeShift;
   @override
   DateTime? get closeShift;
   @override
@@ -876,10 +840,6 @@ abstract class _Shift implements Shift {
   int? get sold;
   @override
   List<SoldItem>? get soldItems;
-  @override
-  List<dynamic>? get refundItems;
-  @override
-  List<dynamic>? get attachments;
   @override
   @JsonKey(ignore: true)
   _$$ShiftImplCopyWith<_$ShiftImpl> get copyWith =>

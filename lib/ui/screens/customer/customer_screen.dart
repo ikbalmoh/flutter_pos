@@ -111,9 +111,10 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
               iconTheme: const IconThemeData(color: Colors.black87),
               actionsIconTheme: const IconThemeData(color: Colors.black87),
               titleTextStyle: const TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18),
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
             ),
       body: customers.when(
         data: (data) => data.data!.isNotEmpty
@@ -180,7 +181,10 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                   children: [
                     Text(
                       'no_data'.tr(args: ['customer'.tr()]),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Colors.grey),
                     )
                   ],
                 ),
