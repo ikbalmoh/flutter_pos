@@ -9,6 +9,7 @@ class AppDrawerHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    AuthState? authState = ref.watch(authNotifierProvider).value;
     return ref.watch(outletNotifierProvider).when(
         data: (data) {
           return DrawerHeader(
@@ -45,11 +46,9 @@ class AppDrawerHeader extends ConsumerWidget {
                         height: 20,
                       ),
                       Text(
-                        (ref.watch(authNotifierProvider).value as Authenticated)
-                            .user
-                            .user
-                            .company
-                            .companyName,
+                        authState is Authenticated
+                            ? authState.user.user.company.companyName
+                            : '',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       Text(

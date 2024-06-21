@@ -80,7 +80,7 @@
   "price": "Harga",
   "quantity": "Stok",
   "current_quantity": "Stok Saat Ini",
-  "update": "Perbarui",
+  "update": "Perbaui",
   "updated": "Diperbarui",
   "synced": "Disinkronkan",
   "update_current_transaction": "Perbarui Transaksi Saat Ini",
@@ -113,5 +113,10 @@
   "summary": "Rekap",
   "total_sales": "Total Penjualan",
   "cash_sales": "Penjualan Tunai",
-  "item_sold": "Produk Terjual"
+  "item_sold": "Produk Terjual",
+  "expected_cash": "Uang Kas Seharusnya",
+  "there_is_no": "Tidak ada {}",
+  "income": "Pemasukan",
+  "expense": "Pengeluaran",
+  "refund": "Pengembalian"
 }

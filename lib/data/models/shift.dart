@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/shift_payment.dart';
 import 'sold_item.dart';
 
 part 'shift.freezed.dart';
@@ -31,10 +32,10 @@ class Shift with _$Shift {
     double? expense,
     double? cashSales,
     double? debitSalesAmount,
-    List<dynamic>? debitSales,
     double? creditSalesAmount,
-    List<dynamic>? creditSales,
-    List<dynamic>? customSales,
+    List<ShiftPayment>? debitSales,
+    List<ShiftPayment>? creditSales,
+    List<ShiftPayment>? customSales,
     int? expectedEnd,
     int? expectedCash,
     int? sold,

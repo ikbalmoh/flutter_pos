@@ -113,5 +113,10 @@
   "summary": "Summary",
   "total_sales": "Total Sales",
   "cash_sales": "Cash Sales",
-  "item_sold": "Items Sold"
+  "item_sold": "Items Sold",
+  "expected_cash": "Expected Cash",
+  "there_is_no": "There is no {}",
+  "income": "Income",
+  "expense": "Expense",
+  "refund": "Refund"
 }

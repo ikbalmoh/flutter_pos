@@ -70,7 +70,12 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   }
 
   Future<ShiftInfo?> getShiftInfo(String shiftId) async {
-    final shiftInfo = await api.shiftInfo(shiftId);
-    return shiftInfo;
+    try {
+      final shiftInfo = await api.shiftInfo(shiftId);
+      return shiftInfo;
+    } catch (e, stackTrack) {
+      log('SHIFT INFO ERROR: $e => $stackTrack');
+      rethrow;
+    }
   }
 }

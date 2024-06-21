@@ -13,9 +13,15 @@ _$ShiftSummaryImpl _$$ShiftSummaryImplFromJson(Map<String, dynamic> json) =>
       expense: (json['Expense'] as num).toDouble(),
       income: (json['Income'] as num).toDouble(),
       refunded: (json['Refunded'] as num).toDouble(),
-      debitSales: json['debit_sales'] as List<dynamic>,
-      creditSales: json['credit_sales'] as List<dynamic>,
-      customSales: json['custom_sales'] as List<dynamic>,
+      debitSales: (json['debit_sales'] as List<dynamic>?)
+          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      creditSales: (json['credit_sales'] as List<dynamic>?)
+          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      customSales: (json['custom_sales'] as List<dynamic>?)
+          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
+          .toList(),
       expectedEnd: (json['expected_end'] as num).toDouble(),
       expectedCashEnd: (json['expected_cash_end'] as num).toDouble(),
       actualCash: (json['actual_cash'] as num).toDouble(),

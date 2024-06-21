@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/shift.dart';
-import 'package:selleri/data/models/shift_info.dart';
-import 'package:selleri/providers/shift/shift_info_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/screens/shift/components/shift_active.dart';
 import 'package:selleri/ui/screens/shift/components/shift_inactive.dart';
-import 'components/shift_summary.dart';
+import 'components/shift_summary_card.dart';
 
 class ShiftScreen extends ConsumerStatefulWidget {
   const ShiftScreen({super.key});
@@ -57,7 +55,7 @@ class _ShiftScreenState extends ConsumerState<ShiftScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: shift != null
-              ? [const ShiftActive(), const ShiftSummary()]
+              ? [const ShiftActive(), const ShiftSummaryCards()]
               : [const ShiftInactive()],
         ),
       ),

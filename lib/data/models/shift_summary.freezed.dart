@@ -28,9 +28,9 @@ mixin _$ShiftSummary {
   double get income => throw _privateConstructorUsedError;
   @JsonKey(name: 'Refunded')
   double get refunded => throw _privateConstructorUsedError;
-  List<dynamic> get debitSales => throw _privateConstructorUsedError;
-  List<dynamic> get creditSales => throw _privateConstructorUsedError;
-  List<dynamic> get customSales => throw _privateConstructorUsedError;
+  List<ShiftPayment>? get debitSales => throw _privateConstructorUsedError;
+  List<ShiftPayment>? get creditSales => throw _privateConstructorUsedError;
+  List<ShiftPayment>? get customSales => throw _privateConstructorUsedError;
   double get expectedEnd => throw _privateConstructorUsedError;
   double get expectedCashEnd => throw _privateConstructorUsedError;
   double get actualCash => throw _privateConstructorUsedError;
@@ -54,9 +54,9 @@ abstract class $ShiftSummaryCopyWith<$Res> {
       @JsonKey(name: 'Expense') double expense,
       @JsonKey(name: 'Income') double income,
       @JsonKey(name: 'Refunded') double refunded,
-      List<dynamic> debitSales,
-      List<dynamic> creditSales,
-      List<dynamic> customSales,
+      List<ShiftPayment>? debitSales,
+      List<ShiftPayment>? creditSales,
+      List<ShiftPayment>? customSales,
       double expectedEnd,
       double expectedCashEnd,
       double actualCash,
@@ -81,9 +81,9 @@ class _$ShiftSummaryCopyWithImpl<$Res, $Val extends ShiftSummary>
     Object? expense = null,
     Object? income = null,
     Object? refunded = null,
-    Object? debitSales = null,
-    Object? creditSales = null,
-    Object? customSales = null,
+    Object? debitSales = freezed,
+    Object? creditSales = freezed,
+    Object? customSales = freezed,
     Object? expectedEnd = null,
     Object? expectedCashEnd = null,
     Object? actualCash = null,
@@ -110,18 +110,18 @@ class _$ShiftSummaryCopyWithImpl<$Res, $Val extends ShiftSummary>
           ? _value.refunded
           : refunded // ignore: cast_nullable_to_non_nullable
               as double,
-      debitSales: null == debitSales
+      debitSales: freezed == debitSales
           ? _value.debitSales
           : debitSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
-      creditSales: null == creditSales
+              as List<ShiftPayment>?,
+      creditSales: freezed == creditSales
           ? _value.creditSales
           : creditSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
-      customSales: null == customSales
+              as List<ShiftPayment>?,
+      customSales: freezed == customSales
           ? _value.customSales
           : customSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
+              as List<ShiftPayment>?,
       expectedEnd: null == expectedEnd
           ? _value.expectedEnd
           : expectedEnd // ignore: cast_nullable_to_non_nullable
@@ -156,9 +156,9 @@ abstract class _$$ShiftSummaryImplCopyWith<$Res>
       @JsonKey(name: 'Expense') double expense,
       @JsonKey(name: 'Income') double income,
       @JsonKey(name: 'Refunded') double refunded,
-      List<dynamic> debitSales,
-      List<dynamic> creditSales,
-      List<dynamic> customSales,
+      List<ShiftPayment>? debitSales,
+      List<ShiftPayment>? creditSales,
+      List<ShiftPayment>? customSales,
       double expectedEnd,
       double expectedCashEnd,
       double actualCash,
@@ -181,9 +181,9 @@ class __$$ShiftSummaryImplCopyWithImpl<$Res>
     Object? expense = null,
     Object? income = null,
     Object? refunded = null,
-    Object? debitSales = null,
-    Object? creditSales = null,
-    Object? customSales = null,
+    Object? debitSales = freezed,
+    Object? creditSales = freezed,
+    Object? customSales = freezed,
     Object? expectedEnd = null,
     Object? expectedCashEnd = null,
     Object? actualCash = null,
@@ -210,18 +210,18 @@ class __$$ShiftSummaryImplCopyWithImpl<$Res>
           ? _value.refunded
           : refunded // ignore: cast_nullable_to_non_nullable
               as double,
-      debitSales: null == debitSales
+      debitSales: freezed == debitSales
           ? _value._debitSales
           : debitSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
-      creditSales: null == creditSales
+              as List<ShiftPayment>?,
+      creditSales: freezed == creditSales
           ? _value._creditSales
           : creditSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
-      customSales: null == customSales
+              as List<ShiftPayment>?,
+      customSales: freezed == customSales
           ? _value._customSales
           : customSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
+              as List<ShiftPayment>?,
       expectedEnd: null == expectedEnd
           ? _value.expectedEnd
           : expectedEnd // ignore: cast_nullable_to_non_nullable
@@ -252,9 +252,9 @@ class _$ShiftSummaryImpl implements _ShiftSummary {
       @JsonKey(name: 'Expense') required this.expense,
       @JsonKey(name: 'Income') required this.income,
       @JsonKey(name: 'Refunded') required this.refunded,
-      required final List<dynamic> debitSales,
-      required final List<dynamic> creditSales,
-      required final List<dynamic> customSales,
+      required final List<ShiftPayment>? debitSales,
+      required final List<ShiftPayment>? creditSales,
+      required final List<ShiftPayment>? customSales,
       required this.expectedEnd,
       required this.expectedCashEnd,
       required this.actualCash,
@@ -279,28 +279,34 @@ class _$ShiftSummaryImpl implements _ShiftSummary {
   @override
   @JsonKey(name: 'Refunded')
   final double refunded;
-  final List<dynamic> _debitSales;
+  final List<ShiftPayment>? _debitSales;
   @override
-  List<dynamic> get debitSales {
+  List<ShiftPayment>? get debitSales {
+    final value = _debitSales;
+    if (value == null) return null;
     if (_debitSales is EqualUnmodifiableListView) return _debitSales;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_debitSales);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<dynamic> _creditSales;
+  final List<ShiftPayment>? _creditSales;
   @override
-  List<dynamic> get creditSales {
+  List<ShiftPayment>? get creditSales {
+    final value = _creditSales;
+    if (value == null) return null;
     if (_creditSales is EqualUnmodifiableListView) return _creditSales;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_creditSales);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<dynamic> _customSales;
+  final List<ShiftPayment>? _customSales;
   @override
-  List<dynamic> get customSales {
+  List<ShiftPayment>? get customSales {
+    final value = _customSales;
+    if (value == null) return null;
     if (_customSales is EqualUnmodifiableListView) return _customSales;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_customSales);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -384,9 +390,9 @@ abstract class _ShiftSummary implements ShiftSummary {
       @JsonKey(name: 'Expense') required final double expense,
       @JsonKey(name: 'Income') required final double income,
       @JsonKey(name: 'Refunded') required final double refunded,
-      required final List<dynamic> debitSales,
-      required final List<dynamic> creditSales,
-      required final List<dynamic> customSales,
+      required final List<ShiftPayment>? debitSales,
+      required final List<ShiftPayment>? creditSales,
+      required final List<ShiftPayment>? customSales,
       required final double expectedEnd,
       required final double expectedCashEnd,
       required final double actualCash,
@@ -409,11 +415,11 @@ abstract class _ShiftSummary implements ShiftSummary {
   @JsonKey(name: 'Refunded')
   double get refunded;
   @override
-  List<dynamic> get debitSales;
+  List<ShiftPayment>? get debitSales;
   @override
-  List<dynamic> get creditSales;
+  List<ShiftPayment>? get creditSales;
   @override
-  List<dynamic> get customSales;
+  List<ShiftPayment>? get customSales;
   @override
   double get expectedEnd;
   @override
