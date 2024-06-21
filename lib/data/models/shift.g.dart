@@ -34,10 +34,16 @@ _$ShiftImpl _$$ShiftImplFromJson(Map<String, dynamic> json) => _$ShiftImpl(
       expense: (json['expense'] as num?)?.toDouble(),
       cashSales: (json['cash_sales'] as num?)?.toDouble(),
       debitSalesAmount: (json['debit_sales_amount'] as num?)?.toDouble(),
-      debitSales: json['debit_sales'] as List<dynamic>?,
       creditSalesAmount: (json['credit_sales_amount'] as num?)?.toDouble(),
-      creditSales: json['credit_sales'] as List<dynamic>?,
-      customSales: json['custom_sales'] as List<dynamic>?,
+      debitSales: (json['debit_sales'] as List<dynamic>?)
+          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      creditSales: (json['credit_sales'] as List<dynamic>?)
+          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      customSales: (json['custom_sales'] as List<dynamic>?)
+          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
+          .toList(),
       expectedEnd: (json['expected_end'] as num?)?.toInt(),
       expectedCash: (json['expected_cash'] as num?)?.toInt(),
       sold: (json['sold'] as num?)?.toInt(),
@@ -71,8 +77,8 @@ Map<String, dynamic> _$$ShiftImplToJson(_$ShiftImpl instance) =>
       'expense': instance.expense,
       'cash_sales': instance.cashSales,
       'debit_sales_amount': instance.debitSalesAmount,
-      'debit_sales': instance.debitSales,
       'credit_sales_amount': instance.creditSalesAmount,
+      'debit_sales': instance.debitSales,
       'credit_sales': instance.creditSales,
       'custom_sales': instance.customSales,
       'expected_end': instance.expectedEnd,

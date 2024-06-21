@@ -43,10 +43,10 @@ mixin _$Shift {
   double? get expense => throw _privateConstructorUsedError;
   double? get cashSales => throw _privateConstructorUsedError;
   double? get debitSalesAmount => throw _privateConstructorUsedError;
-  List<dynamic>? get debitSales => throw _privateConstructorUsedError;
   double? get creditSalesAmount => throw _privateConstructorUsedError;
-  List<dynamic>? get creditSales => throw _privateConstructorUsedError;
-  List<dynamic>? get customSales => throw _privateConstructorUsedError;
+  List<ShiftPayment>? get debitSales => throw _privateConstructorUsedError;
+  List<ShiftPayment>? get creditSales => throw _privateConstructorUsedError;
+  List<ShiftPayment>? get customSales => throw _privateConstructorUsedError;
   int? get expectedEnd => throw _privateConstructorUsedError;
   int? get expectedCash => throw _privateConstructorUsedError;
   int? get sold => throw _privateConstructorUsedError;
@@ -86,10 +86,10 @@ abstract class $ShiftCopyWith<$Res> {
       double? expense,
       double? cashSales,
       double? debitSalesAmount,
-      List<dynamic>? debitSales,
       double? creditSalesAmount,
-      List<dynamic>? creditSales,
-      List<dynamic>? customSales,
+      List<ShiftPayment>? debitSales,
+      List<ShiftPayment>? creditSales,
+      List<ShiftPayment>? customSales,
       int? expectedEnd,
       int? expectedCash,
       int? sold,
@@ -132,8 +132,8 @@ class _$ShiftCopyWithImpl<$Res, $Val extends Shift>
     Object? expense = freezed,
     Object? cashSales = freezed,
     Object? debitSalesAmount = freezed,
-    Object? debitSales = freezed,
     Object? creditSalesAmount = freezed,
+    Object? debitSales = freezed,
     Object? creditSales = freezed,
     Object? customSales = freezed,
     Object? expectedEnd = freezed,
@@ -234,22 +234,22 @@ class _$ShiftCopyWithImpl<$Res, $Val extends Shift>
           ? _value.debitSalesAmount
           : debitSalesAmount // ignore: cast_nullable_to_non_nullable
               as double?,
-      debitSales: freezed == debitSales
-          ? _value.debitSales
-          : debitSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
       creditSalesAmount: freezed == creditSalesAmount
           ? _value.creditSalesAmount
           : creditSalesAmount // ignore: cast_nullable_to_non_nullable
               as double?,
+      debitSales: freezed == debitSales
+          ? _value.debitSales
+          : debitSales // ignore: cast_nullable_to_non_nullable
+              as List<ShiftPayment>?,
       creditSales: freezed == creditSales
           ? _value.creditSales
           : creditSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<ShiftPayment>?,
       customSales: freezed == customSales
           ? _value.customSales
           : customSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<ShiftPayment>?,
       expectedEnd: freezed == expectedEnd
           ? _value.expectedEnd
           : expectedEnd // ignore: cast_nullable_to_non_nullable
@@ -301,10 +301,10 @@ abstract class _$$ShiftImplCopyWith<$Res> implements $ShiftCopyWith<$Res> {
       double? expense,
       double? cashSales,
       double? debitSalesAmount,
-      List<dynamic>? debitSales,
       double? creditSalesAmount,
-      List<dynamic>? creditSales,
-      List<dynamic>? customSales,
+      List<ShiftPayment>? debitSales,
+      List<ShiftPayment>? creditSales,
+      List<ShiftPayment>? customSales,
       int? expectedEnd,
       int? expectedCash,
       int? sold,
@@ -345,8 +345,8 @@ class __$$ShiftImplCopyWithImpl<$Res>
     Object? expense = freezed,
     Object? cashSales = freezed,
     Object? debitSalesAmount = freezed,
-    Object? debitSales = freezed,
     Object? creditSalesAmount = freezed,
+    Object? debitSales = freezed,
     Object? creditSales = freezed,
     Object? customSales = freezed,
     Object? expectedEnd = freezed,
@@ -447,22 +447,22 @@ class __$$ShiftImplCopyWithImpl<$Res>
           ? _value.debitSalesAmount
           : debitSalesAmount // ignore: cast_nullable_to_non_nullable
               as double?,
-      debitSales: freezed == debitSales
-          ? _value._debitSales
-          : debitSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
       creditSalesAmount: freezed == creditSalesAmount
           ? _value.creditSalesAmount
           : creditSalesAmount // ignore: cast_nullable_to_non_nullable
               as double?,
+      debitSales: freezed == debitSales
+          ? _value._debitSales
+          : debitSales // ignore: cast_nullable_to_non_nullable
+              as List<ShiftPayment>?,
       creditSales: freezed == creditSales
           ? _value._creditSales
           : creditSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<ShiftPayment>?,
       customSales: freezed == customSales
           ? _value._customSales
           : customSales // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<ShiftPayment>?,
       expectedEnd: freezed == expectedEnd
           ? _value.expectedEnd
           : expectedEnd // ignore: cast_nullable_to_non_nullable
@@ -511,10 +511,10 @@ class _$ShiftImpl implements _Shift {
       this.expense,
       this.cashSales,
       this.debitSalesAmount,
-      final List<dynamic>? debitSales,
       this.creditSalesAmount,
-      final List<dynamic>? creditSales,
-      final List<dynamic>? customSales,
+      final List<ShiftPayment>? debitSales,
+      final List<ShiftPayment>? creditSales,
+      final List<ShiftPayment>? customSales,
       this.expectedEnd,
       this.expectedCash,
       this.sold,
@@ -573,9 +573,11 @@ class _$ShiftImpl implements _Shift {
   final double? cashSales;
   @override
   final double? debitSalesAmount;
-  final List<dynamic>? _debitSales;
   @override
-  List<dynamic>? get debitSales {
+  final double? creditSalesAmount;
+  final List<ShiftPayment>? _debitSales;
+  @override
+  List<ShiftPayment>? get debitSales {
     final value = _debitSales;
     if (value == null) return null;
     if (_debitSales is EqualUnmodifiableListView) return _debitSales;
@@ -583,11 +585,9 @@ class _$ShiftImpl implements _Shift {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<ShiftPayment>? _creditSales;
   @override
-  final double? creditSalesAmount;
-  final List<dynamic>? _creditSales;
-  @override
-  List<dynamic>? get creditSales {
+  List<ShiftPayment>? get creditSales {
     final value = _creditSales;
     if (value == null) return null;
     if (_creditSales is EqualUnmodifiableListView) return _creditSales;
@@ -595,9 +595,9 @@ class _$ShiftImpl implements _Shift {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<dynamic>? _customSales;
+  final List<ShiftPayment>? _customSales;
   @override
-  List<dynamic>? get customSales {
+  List<ShiftPayment>? get customSales {
     final value = _customSales;
     if (value == null) return null;
     if (_customSales is EqualUnmodifiableListView) return _customSales;
@@ -623,7 +623,7 @@ class _$ShiftImpl implements _Shift {
 
   @override
   String toString() {
-    return 'Shift(id: $id, outletId: $outletId, deviceId: $deviceId, startShift: $startShift, openAmount: $openAmount, createdBy: $createdBy, createdAt: $createdAt, outletName: $outletName, createdName: $createdName, codeShift: $codeShift, closeShift: $closeShift, customSalesAmount: $customSalesAmount, updatedBy: $updatedBy, closeAmount: $closeAmount, diffAmount: $diffAmount, refundAmount: $refundAmount, updatedAt: $updatedAt, updatedName: $updatedName, closedBy: $closedBy, income: $income, expense: $expense, cashSales: $cashSales, debitSalesAmount: $debitSalesAmount, debitSales: $debitSales, creditSalesAmount: $creditSalesAmount, creditSales: $creditSales, customSales: $customSales, expectedEnd: $expectedEnd, expectedCash: $expectedCash, sold: $sold, soldItems: $soldItems)';
+    return 'Shift(id: $id, outletId: $outletId, deviceId: $deviceId, startShift: $startShift, openAmount: $openAmount, createdBy: $createdBy, createdAt: $createdAt, outletName: $outletName, createdName: $createdName, codeShift: $codeShift, closeShift: $closeShift, customSalesAmount: $customSalesAmount, updatedBy: $updatedBy, closeAmount: $closeAmount, diffAmount: $diffAmount, refundAmount: $refundAmount, updatedAt: $updatedAt, updatedName: $updatedName, closedBy: $closedBy, income: $income, expense: $expense, cashSales: $cashSales, debitSalesAmount: $debitSalesAmount, creditSalesAmount: $creditSalesAmount, debitSales: $debitSales, creditSales: $creditSales, customSales: $customSales, expectedEnd: $expectedEnd, expectedCash: $expectedCash, sold: $sold, soldItems: $soldItems)';
   }
 
   @override
@@ -674,10 +674,10 @@ class _$ShiftImpl implements _Shift {
                 other.cashSales == cashSales) &&
             (identical(other.debitSalesAmount, debitSalesAmount) ||
                 other.debitSalesAmount == debitSalesAmount) &&
-            const DeepCollectionEquality()
-                .equals(other._debitSales, _debitSales) &&
             (identical(other.creditSalesAmount, creditSalesAmount) ||
                 other.creditSalesAmount == creditSalesAmount) &&
+            const DeepCollectionEquality()
+                .equals(other._debitSales, _debitSales) &&
             const DeepCollectionEquality()
                 .equals(other._creditSales, _creditSales) &&
             const DeepCollectionEquality()
@@ -718,8 +718,8 @@ class _$ShiftImpl implements _Shift {
         expense,
         cashSales,
         debitSalesAmount,
-        const DeepCollectionEquality().hash(_debitSales),
         creditSalesAmount,
+        const DeepCollectionEquality().hash(_debitSales),
         const DeepCollectionEquality().hash(_creditSales),
         const DeepCollectionEquality().hash(_customSales),
         expectedEnd,
@@ -767,10 +767,10 @@ abstract class _Shift implements Shift {
       final double? expense,
       final double? cashSales,
       final double? debitSalesAmount,
-      final List<dynamic>? debitSales,
       final double? creditSalesAmount,
-      final List<dynamic>? creditSales,
-      final List<dynamic>? customSales,
+      final List<ShiftPayment>? debitSales,
+      final List<ShiftPayment>? creditSales,
+      final List<ShiftPayment>? customSales,
       final int? expectedEnd,
       final int? expectedCash,
       final int? sold,
@@ -825,13 +825,13 @@ abstract class _Shift implements Shift {
   @override
   double? get debitSalesAmount;
   @override
-  List<dynamic>? get debitSales;
-  @override
   double? get creditSalesAmount;
   @override
-  List<dynamic>? get creditSales;
+  List<ShiftPayment>? get debitSales;
   @override
-  List<dynamic>? get customSales;
+  List<ShiftPayment>? get creditSales;
+  @override
+  List<ShiftPayment>? get customSales;
   @override
   int? get expectedEnd;
   @override

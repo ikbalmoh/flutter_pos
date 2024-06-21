@@ -68,8 +68,14 @@ class ShiftActive extends ConsumerWidget {
                         return [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Rp'),
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  top: 8,
+                                ),
+                                child: const Text('Rp'),
+                              ),
                               Text(
                                 CurrencyFormat.currency(
                                   data?.summary.expectedCashEnd ?? 0,
@@ -78,6 +84,20 @@ class ShiftActive extends ConsumerWidget {
                                 style: textTheme.headlineMedium
                                     ?.copyWith(fontWeight: FontWeight.w600),
                               ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Tooltip(
+                                message: 'expected_cash'.tr(),
+                                decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Icon(
+                                  Icons.info,
+                                  size: 15,
+                                  color: Colors.blueGrey.shade400,
+                                ),
+                              )
                             ],
                           ),
                           const SizedBox(height: 5),
