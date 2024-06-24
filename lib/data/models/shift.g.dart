@@ -30,26 +30,6 @@ _$ShiftImpl _$$ShiftImplFromJson(Map<String, dynamic> json) => _$ShiftImpl(
           : DateTime.parse(json['updated_at'] as String),
       updatedName: json['updated_name'] as String?,
       closedBy: json['closed_by'] as String?,
-      income: (json['income'] as num?)?.toDouble(),
-      expense: (json['expense'] as num?)?.toDouble(),
-      cashSales: (json['cash_sales'] as num?)?.toDouble(),
-      debitSalesAmount: (json['debit_sales_amount'] as num?)?.toDouble(),
-      creditSalesAmount: (json['credit_sales_amount'] as num?)?.toDouble(),
-      debitSales: (json['debit_sales'] as List<dynamic>?)
-          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      creditSales: (json['credit_sales'] as List<dynamic>?)
-          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      customSales: (json['custom_sales'] as List<dynamic>?)
-          ?.map((e) => ShiftPayment.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      expectedEnd: (json['expected_end'] as num?)?.toInt(),
-      expectedCash: (json['expected_cash'] as num?)?.toInt(),
-      sold: (json['sold'] as num?)?.toInt(),
-      soldItems: (json['sold_items'] as List<dynamic>?)
-          ?.map((e) => SoldItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$$ShiftImplToJson(_$ShiftImpl instance) =>
@@ -73,16 +53,4 @@ Map<String, dynamic> _$$ShiftImplToJson(_$ShiftImpl instance) =>
       'updated_at': instance.updatedAt?.toIso8601String(),
       'updated_name': instance.updatedName,
       'closed_by': instance.closedBy,
-      'income': instance.income,
-      'expense': instance.expense,
-      'cash_sales': instance.cashSales,
-      'debit_sales_amount': instance.debitSalesAmount,
-      'credit_sales_amount': instance.creditSalesAmount,
-      'debit_sales': instance.debitSales,
-      'credit_sales': instance.creditSales,
-      'custom_sales': instance.customSales,
-      'expected_end': instance.expectedEnd,
-      'expected_cash': instance.expectedCash,
-      'sold': instance.sold,
-      'sold_items': instance.soldItems,
     };

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/models/shift_info.dart';
