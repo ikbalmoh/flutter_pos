@@ -142,7 +142,6 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                 price = _priceFormater.getUnformattedValue().toDouble();
               });
             },
-            // controller: priceController,
             readOnly: widget.item.isManualPrice,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
