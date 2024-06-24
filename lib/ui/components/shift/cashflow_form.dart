@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/providers/shift/shift_info_provider.dart';
+import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/ui/components/generic/button_selection.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 import 'package:selleri/utils/app_alert.dart';

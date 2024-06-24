@@ -4,8 +4,10 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/providers/shift/shift_list_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/formater.dart';
@@ -17,7 +19,8 @@ class ShiftHistoryScreen extends ConsumerStatefulWidget {
   ConsumerState<ShiftHistoryScreen> createState() => _ShiftHistoryScreenState();
 }
 
-class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen> {
+class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
+    with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
 
@@ -68,6 +71,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () =>
@@ -169,7 +173,8 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen> {
                                   : Container(),
                             ],
                           ),
-                          onTap: () {},
+                          onTap: () => context.pushNamed(Routes.shiftDetail,
+                              pathParameters: {"id": shift.id}),
                         );
                       },
                       itemCount: data.data!.length + 1,
@@ -202,4 +207,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
 import 'package:selleri/ui/screens/holded/holded_screen.dart';
+import 'package:selleri/ui/screens/shift/shift_history_detail.dart';
 import 'package:selleri/ui/screens/shift/shift_screen.dart';
 import 'package:selleri/ui/screens/splash/splash_screen.dart';
 import 'package:selleri/ui/screens/login/login_screen.dart';
@@ -90,6 +91,14 @@ GoRouter router(RouterRef ref) {
           name: Routes.shift,
           path: Routes.shift,
           builder: (context, state) => const ShiftScreen(),
+        ),
+        GoRoute(
+          name: Routes.shiftDetail,
+          path: '${Routes.shift}/:id',
+          builder: (context, state) {
+            final String shiftId = state.pathParameters['id'] ?? '';
+            return ShiftHistoryDetailScreen(shiftId: shiftId);
+          },
         ),
       ],
       refreshListenable: appState,

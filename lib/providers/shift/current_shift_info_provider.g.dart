@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'shift_info_provider.dart';
+part of 'current_shift_info_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator

@@ -1,6 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:selleri/data/models/shift_payment.dart';
-import 'sold_item.dart';
 
 part 'shift.freezed.dart';
 part 'shift.g.dart';

@@ -135,5 +135,6 @@
   "reload": "Muat Ulang",
   "save": "Simpan",
   "saving": "Meyimpan {}",
-  "successfully_stored": "{} berhasil disimpan"
+  "successfully_stored": "{} berhasil disimpan",
+  "shift_detail": "Detail Shift"
 }

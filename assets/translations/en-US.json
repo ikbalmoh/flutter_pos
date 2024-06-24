@@ -135,5 +135,6 @@
   "reload": "Reload",
   "save": "Save",
   "saving": "Saving {}",
-  "successfully_stored": "{} is successfully stored"
+  "successfully_stored": "{} is successfully stored",
+  "shift_detail": "Shift Detail"
 }

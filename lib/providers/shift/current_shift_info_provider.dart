@@ -5,7 +5,7 @@ import 'package:selleri/data/repository/shift_repository.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:uuid/uuid.dart';
 
-part 'shift_info_provider.g.dart';
+part 'current_shift_info_provider.g.dart';
 
 var uuid = const Uuid();
 
