@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/constants/store_key.dart';
+import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/utils/fetch.dart';
@@ -61,6 +63,29 @@ class ShiftApi {
     } on DioException catch (e) {
       throw Exception(e);
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Pagination<Shift>> shifts(
+      {required String idOutlet, int? page, String? q}) async {
+    try {
+      final Map<String, dynamic> params = {
+        'id_outlet': idOutlet,
+        'q': q,
+        'page': page
+      };
+      final res = await api.get(ApiUrl.shifts, queryParameters: params);
+      final data = res.data['data'];
+      final pagination = Pagination<Shift>.fromJson(data, (shift) {
+        return Shift.fromJson(shift as Map<String, dynamic>);
+      });
+
+      return pagination;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } on Exception catch (e) {
+      log('LIST SHIFT API ERROR: $e');
       rethrow;
     }
   }
