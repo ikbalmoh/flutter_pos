@@ -78,4 +78,15 @@ class ShiftRepository implements ShiftRepositoryProtocol {
       rethrow;
     }
   }
+
+  Future<void> storeCashflow(Map<String, dynamic> data) async {
+    try {
+      log('STORE CASHFLOW: $data');
+      final cashflow = await api.storeCashflow(data);
+      return cashflow;
+    } catch (e, stackTrack) {
+      log('STORE CASHFLOW ERROR: $e => $stackTrack');
+      rethrow;
+    }
+  }
 }

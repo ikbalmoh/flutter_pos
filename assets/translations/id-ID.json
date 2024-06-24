@@ -118,5 +118,22 @@
   "there_is_no": "Tidak ada {}",
   "income": "Pemasukan",
   "expense": "Pengeluaran",
-  "refund": "Pengembalian"
+  "refund": "Pengembalian",
+  "cashflow": "Arus Kas",
+  "deposit": "Setoran",
+  "add": "Tambahkan {}",
+  "amount": "Jumlah",
+  "date": "Tanggal",
+  "attachments": "Lampiran",
+  "description": "Deskipsi",
+  "photo": "Foto",
+  "image": "Gambar",
+  "images": "Gambar",
+  "current": "Saat Ini",
+  "history": "Riwayat",
+  "retry": "Coba Lagi",
+  "reload": "Muat Ulang",
+  "save": "Simpan",
+  "saving": "Meyimpan {}",
+  "successfully_stored": "{} berhasil disimpan"
 }

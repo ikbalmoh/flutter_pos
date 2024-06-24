@@ -13,23 +13,23 @@ ThemeData appTheme(BuildContext context) {
       brightness: Brightness.light,
     ),
     useMaterial3: true,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       elevation: 0,
-      surfaceTintColor: Colors.white,
+      surfaceTintColor: Colors.teal,
       scrolledUnderElevation: 0,
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.teal.shade400,
-      titleTextStyle: const TextStyle(
-          color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18),
-      actionsIconTheme: const IconThemeData(
-        color: Colors.white,
+      foregroundColor: Colors.teal,
+      backgroundColor: Colors.white,
+      titleTextStyle: TextStyle(
+          color: Colors.teal, fontWeight: FontWeight.w600, fontSize: 18),
+      actionsIconTheme: IconThemeData(
+        color: Colors.black54,
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.teal.shade400,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
       ),
-      centerTitle: false
+      centerTitle: false,
     ),
     textTheme: const TextTheme(
       headlineSmall: TextStyle(

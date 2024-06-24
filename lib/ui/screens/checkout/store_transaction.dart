@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/router/routes.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
+import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 import 'package:selleri/utils/formater.dart';
 
 class StoreTransaction extends ConsumerStatefulWidget {
@@ -88,7 +88,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
       child: status == Status.loading
-          ? const TransactionLoading()
+          ? const LoadingPlaceholder()
           : status == Status.success
               ? TransactionSuccess(
                   onReset: resetCart,
@@ -96,25 +96,6 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
                 )
               : TransactionError(
                   onRetry: submitTransaction, onReset: resetCart),
-    );
-  }
-}
-
-class TransactionLoading extends StatelessWidget {
-  const TransactionLoading({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 30),
-        const LoadingIndicator(color: Colors.teal),
-        const SizedBox(height: 40),
-        Text('transaction_loading'.tr()),
-        const SizedBox(height: 30),
-      ],
     );
   }
 }

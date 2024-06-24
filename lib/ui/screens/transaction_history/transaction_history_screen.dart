@@ -105,90 +105,107 @@ class _TransactionHistoryScreenState
                 ],
               ),
         drawer: const AppDrawer(),
-        body: ref.watch(transactionsNotifierProvider).when(
-              data: (data) => data.data!.isNotEmpty
-                  ? ListView.builder(
-                      controller: _scrollController,
-                      itemBuilder: (context, idx) {
-                        if (idx + 1 > data.data!.length) {
-                          if (data.currentPage >= data.lastPage) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              child: Center(
-                                child: Text(
-                                  'x_data_displayed'.tr(
-                                    args: [data.total.toString()],
-                                  ),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: Colors.grey.shade600,
+        body: RefreshIndicator(
+            onRefresh: () => ref
+                .read(transactionsNotifierProvider.notifier)
+                .loadTransactions(page: 1),
+            child: ref.watch(transactionsNotifierProvider).when(
+                  data: (data) => data.data!.isNotEmpty
+                      ? ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          controller: _scrollController,
+                          itemBuilder: (context, idx) {
+                            if (idx + 1 > data.data!.length) {
+                              if (data.currentPage >= data.lastPage) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 10),
+                                  child: Center(
+                                    child: Text(
+                                      'x_data_displayed'.tr(
+                                        args: [data.total.toString()],
                                       ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 10),
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: LoadingIndicator(color: Colors.teal),
+                                  ),
+                                ),
+                              );
+                            }
+                            Cart cart = data.data![idx];
+                            return ListTile(
+                              title: Text(cart.transactionNo),
+                              trailing: Text(
+                                CurrencyFormat.currency(
+                                  cart.grandTotal,
+                                  symbol: true,
+                                ),
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              shape: Border(
+                                bottom: BorderSide(
+                                  width: 0.5,
+                                  color: Colors.blueGrey.shade50,
+                                ),
+                              ),
+                              titleTextStyle:
+                                  Theme.of(context).textTheme.bodyMedium,
+                              subtitleTextStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.grey.shade600),
+                              subtitle: Text(
+                                DateTimeFormater.msToString(
+                                    cart.transactionDate,
+                                    format: 'd MMM y HH:mm'),
+                              ),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      TransactionDetailScreen(cart: cart),
                                 ),
                               ),
                             );
-                          }
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: LoadingIndicator(color: Colors.teal),
-                              ),
-                            ),
-                          );
-                        }
-                        Cart cart = data.data![idx];
-                        return ListTile(
-                          title: Text(cart.transactionNo),
-                          subtitle:
-                              Text(CurrencyFormat.currency(cart.grandTotal)),
-                          shape: Border(
-                            bottom: BorderSide(
-                              width: 0.5,
-                              color: Colors.blueGrey.shade50,
-                            ),
+                          },
+                          itemCount: data.data!.length + 1,
+                        )
+                      : Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'no_data'.tr(args: ['customer'.tr()]),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: Colors.grey),
+                              )
+                            ],
                           ),
-                          trailing: Text(
-                            DateTimeFormater.msToString(cart.transactionDate,
-                                format: 'dd/MM HH:mm'),
-                          ),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  TransactionDetailScreen(cart: cart),
-                            ),
-                          ),
-                        );
-                      },
-                      itemCount: data.data!.length + 1,
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'no_data'.tr(args: ['customer'.tr()]),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.grey),
-                          )
-                        ],
-                      ),
-                    ),
-              error: (e, stack) => null,
-              loading: () => const LoadingWidget(
-                color: Colors.teal,
-              ),
-              skipError: true,
-            ));
+                        ),
+                  error: (e, stack) => Container(),
+                  loading: () => const LoadingWidget(
+                    color: Colors.teal,
+                  ),
+                  skipError: true,
+                )));
   }
 }

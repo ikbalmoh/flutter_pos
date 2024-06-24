@@ -12,4 +12,5 @@ class ApiUrl {
   static const String hold = '/hold-transaction';
   static const String storeFcmToken = '/fcm-token/store';
   static const String shifts = '/shifts';
+  static const String cashFlows = '/cash-flows';
 }

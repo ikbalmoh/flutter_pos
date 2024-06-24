@@ -1,13 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/data/models/shift.dart';
-import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
-import 'package:selleri/ui/screens/shift/components/shift_active.dart';
-import 'package:selleri/ui/screens/shift/components/shift_inactive.dart';
-import 'components/shift_summary_card.dart';
+import 'package:selleri/ui/screens/shift/current_shift_screen.dart';
+import 'package:selleri/ui/screens/shift/shift_history_screen.dart';
 
 class ShiftScreen extends ConsumerStatefulWidget {
   const ShiftScreen({super.key});
@@ -19,45 +17,49 @@ class ShiftScreen extends ConsumerStatefulWidget {
 class _ShiftScreenState extends ConsumerState<ShiftScreen> {
   @override
   Widget build(BuildContext context) {
-    final Shift? shift = ref.watch(shiftNotifierProvider).value;
-
-    final color =
-        shift == null ? Colors.red.shade100 : Colors.lightGreen.shade100;
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: color,
-        iconTheme: const IconThemeData(color: Colors.black87),
-        actionsIconTheme: const IconThemeData(color: Colors.black87),
-        titleTextStyle: const TextStyle(
-          color: Colors.black87,
-          fontWeight: FontWeight.w600,
-          fontSize: 18,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('shift'.tr()),
+          automaticallyImplyLeading: false,
+          leading: Builder(builder: (context) {
+            return IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                icon: const Icon(Icons.menu));
+          }),
+          bottom: TabBar(tabs: [
+            Tab(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(CupertinoIcons.list_bullet_below_rectangle),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text('current'.tr())
+                ],
+              ),
+            ),
+            Tab(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(CupertinoIcons.calendar),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text('history'.tr())
+                ],
+              ),
+            ),
+          ]),
         ),
-        elevation: 0,
-        title: Text('shift'.tr()),
-        automaticallyImplyLeading: false,
-        leading: Builder(builder: (context) {
-          return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: const Icon(Icons.menu));
-        }),
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: color,
-          statusBarBrightness: Brightness.dark,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-      ),
-      drawer: const AppDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: shift != null
-              ? [const ShiftActive(), const ShiftSummaryCards()]
-              : [const ShiftInactive()],
-        ),
+        drawer: const AppDrawer(),
+        body: const TabBarView(
+            children: [CurrentShiftScreen(), ShiftHistoryScreen()]),
       ),
     );
   }

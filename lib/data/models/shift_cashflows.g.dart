@@ -8,7 +8,9 @@ part of 'shift_cashflows.dart';
 
 _$ShiftCashFlowsImpl _$$ShiftCashFlowsImplFromJson(Map<String, dynamic> json) =>
     _$ShiftCashFlowsImpl(
-      data: json['data'] as List<dynamic>,
+      data: (json['data'] as List<dynamic>)
+          .map((e) => ShiftCashflow.fromJson(e as Map<String, dynamic>))
+          .toList(),
       total: (json['total'] as num).toDouble(),
     );
 

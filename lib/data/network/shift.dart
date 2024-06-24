@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/constants/store_key.dart';
@@ -36,5 +37,31 @@ class ShiftApi {
   Future<ShiftInfo?> shiftInfo(String shiftId) async {
     final res = await api.get('${ApiUrl.shifts}/$shiftId');
     return ShiftInfo.fromJson(res.data['data']);
+  }
+
+  Future storeCashflow(Map<String, dynamic> data) async {
+    try {
+      final Map<String, dynamic> mapData = {
+        "cash_flows[0][id]": data['id'],
+        "cash_flows[0][shift_id]": data['shift_id'],
+        "cash_flows[0][outlet_id]": data['outlet_id'],
+        "cash_flows[0][trans_date]": data['trans_date'],
+        "cash_flows[0][status]": data['status'],
+        "cash_flows[0][amount]": data['amount'],
+        "cash_flows[0][descriptions]": data['descriptions']
+      };
+      for (var i = 0; i < data['images']?.length; i++) {
+        final img = data['images'][i];
+        mapData['cash_flows[0]images[$i]'] =
+            await MultipartFile.fromFile(img.path, filename: img.name);
+      }
+      final FormData formData = FormData.fromMap(mapData);
+      final res = await api.post(ApiUrl.cashFlows, data: formData);
+      return res;
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

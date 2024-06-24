@@ -7,7 +7,7 @@ part of 'transactions_provider.dart';
 // **************************************************************************
 
 String _$transactionsNotifierHash() =>
-    r'fc9c3faa74cea9dc1e289f6d16ec72f02de6680c';
+    r'fcfd0719653cc3502633e733597011bc68a07462';
 
 /// See also [TransactionsNotifier].
 @ProviderFor(TransactionsNotifier)

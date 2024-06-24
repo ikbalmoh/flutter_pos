@@ -20,7 +20,7 @@ ShiftCashFlows _$ShiftCashFlowsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ShiftCashFlows {
-  List<dynamic> get data => throw _privateConstructorUsedError;
+  List<ShiftCashflow> get data => throw _privateConstructorUsedError;
   double get total => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -35,7 +35,7 @@ abstract class $ShiftCashFlowsCopyWith<$Res> {
           ShiftCashFlows value, $Res Function(ShiftCashFlows) then) =
       _$ShiftCashFlowsCopyWithImpl<$Res, ShiftCashFlows>;
   @useResult
-  $Res call({List<dynamic> data, double total});
+  $Res call({List<ShiftCashflow> data, double total});
 }
 
 /// @nodoc
@@ -58,7 +58,7 @@ class _$ShiftCashFlowsCopyWithImpl<$Res, $Val extends ShiftCashFlows>
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
+              as List<ShiftCashflow>,
       total: null == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
@@ -75,7 +75,7 @@ abstract class _$$ShiftCashFlowsImplCopyWith<$Res>
       __$$ShiftCashFlowsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<dynamic> data, double total});
+  $Res call({List<ShiftCashflow> data, double total});
 }
 
 /// @nodoc
@@ -96,7 +96,7 @@ class __$$ShiftCashFlowsImplCopyWithImpl<$Res>
       data: null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
+              as List<ShiftCashflow>,
       total: null == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
@@ -110,15 +110,15 @@ class __$$ShiftCashFlowsImplCopyWithImpl<$Res>
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _$ShiftCashFlowsImpl implements _ShiftCashFlows {
   const _$ShiftCashFlowsImpl(
-      {required final List<dynamic> data, required this.total})
+      {required final List<ShiftCashflow> data, required this.total})
       : _data = data;
 
   factory _$ShiftCashFlowsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ShiftCashFlowsImplFromJson(json);
 
-  final List<dynamic> _data;
+  final List<ShiftCashflow> _data;
   @override
-  List<dynamic> get data {
+  List<ShiftCashflow> get data {
     if (_data is EqualUnmodifiableListView) return _data;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_data);
@@ -163,14 +163,14 @@ class _$ShiftCashFlowsImpl implements _ShiftCashFlows {
 
 abstract class _ShiftCashFlows implements ShiftCashFlows {
   const factory _ShiftCashFlows(
-      {required final List<dynamic> data,
+      {required final List<ShiftCashflow> data,
       required final double total}) = _$ShiftCashFlowsImpl;
 
   factory _ShiftCashFlows.fromJson(Map<String, dynamic> json) =
       _$ShiftCashFlowsImpl.fromJson;
 
   @override
-  List<dynamic> get data;
+  List<ShiftCashflow> get data;
   @override
   double get total;
   @override

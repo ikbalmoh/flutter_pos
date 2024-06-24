@@ -118,5 +118,22 @@
   "there_is_no": "There is no {}",
   "income": "Income",
   "expense": "Expense",
-  "refund": "Refund"
+  "refund": "Refund",
+  "cashflow": "Cashflow",
+  "deposit": "Deposit",
+  "add": "Add {}",
+  "amount": "Amount",
+  "date": "Date",
+  "attachments": "Lampiran",
+  "description": "Description",
+  "photo": "Photo",
+  "image": "Image",
+  "images": "Images",
+  "current": "Current",
+  "history": "History",
+  "retry": "Retry",
+  "reload": "Reload",
+  "save": "Save",
+  "saving": "Saving {}",
+  "successfully_stored": "{} is successfully stored"
 }
