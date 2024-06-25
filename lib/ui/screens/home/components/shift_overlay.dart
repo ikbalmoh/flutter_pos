@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/open_shift.dart';
+import 'package:selleri/ui/components/shift/open_shift_button.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 
 class ShiftOverlay extends ConsumerWidget {
@@ -34,16 +34,9 @@ class ShiftOverlay extends ConsumerWidget {
       AsyncData(:final value) => value == null
           ? Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.3),
-                child: Center(
-                  child: SizedBox(
-                    width: 150,
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.playlist_add_sharp),
-                      label: Text('open_shift'.tr()),
-                      onPressed: () => showOpenShift(context),
-                    ),
-                  ),
+                color: Colors.black12,
+                child: const Center(
+                  child: OpenShiftButton(),
                 ),
               ),
             )

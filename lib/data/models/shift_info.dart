@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/shift_cashflows.dart';
 import 'package:selleri/data/models/shift_summary.dart';
+import 'package:selleri/utils/formater.dart';
 import 'sold_item.dart';
 
 part 'shift_info.freezed.dart';
@@ -17,7 +18,7 @@ class ShiftInfo with _$ShiftInfo {
     required String openedBy,
     String? closedBy,
     required DateTime openShift,
-    String? closeShift,
+    @JsonKey(fromJson: DateTimeFormater.stringToDateTime) DateTime? closeShift,
     required double saldoKas,
     required double selisih,
     required ShiftCashFlows cashFlows,
@@ -27,6 +28,6 @@ class ShiftInfo with _$ShiftInfo {
     required List<dynamic> attachments,
   }) = _ShiftInfo;
 
-  factory ShiftInfo.fromJson(Map<String, dynamic> json) => _$ShiftInfoFromJson(json);
+  factory ShiftInfo.fromJson(Map<String, dynamic> json) =>
+      _$ShiftInfoFromJson(json);
 }
-

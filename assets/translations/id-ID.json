@@ -114,7 +114,7 @@
   "total_sales": "Total Penjualan",
   "cash_sales": "Penjualan Tunai",
   "item_sold": "Produk Terjual",
-  "expected_cash": "Uang Kas Seharusnya",
+  "expected_cash": "Uang Tunai Seharusnya",
   "there_is_no": "Tidak ada {}",
   "income": "Pemasukan",
   "expense": "Pengeluaran",
@@ -142,5 +142,7 @@
   "edit": "Edit {}",
   "delete_n": "Hapus {}",
   "saved": "Disimpan",
-  "deleted": "Dihapus"
+  "deleted": "Dihapus",
+  "available_cash": "Uang Tunai yang Ada",
+  "different": "Selisih"
 }

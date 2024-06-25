@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/repository/shift_repository.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/utils/formater.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:developer';
 
@@ -61,11 +63,31 @@ class ShiftNotifier extends _$ShiftNotifier {
     }
   }
 
-  Future<void> closeShift(double closeAmount) async {
-    final shift = state.value
-        ?.copyWith(closeAmount: closeAmount, closeShift: DateTime.now());
-    // Send to API
-    await _shiftRepository.close(shift);
-    state = const AsyncData(null);
+  Future<void> closeShift({
+    required double closeAmount,
+    required double diffAmount,
+    required double refundAmount,
+    List<XFile>? attachments,
+  }) async {
+    final String idUser =
+        (ref.read(authNotifierProvider).value as Authenticated)
+            .user
+            .user
+            .idUser;
+    try {
+      Map<String, dynamic> payload = {
+        "close_shift": DateTimeFormater.dateToString(DateTime.now()),
+        "close_amount": closeAmount,
+        "diff_amount": diffAmount,
+        "refund_amount": refundAmount,
+        "attachments": attachments,
+        "updated_by": idUser,
+        "_method": "PUT"
+      };
+      await _shiftRepository.close(state.value!.id, payload);
+      state = const AsyncData(null);
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

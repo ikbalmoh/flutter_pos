@@ -64,7 +64,10 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   void pickCashflowDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      firstDate: DateTime(DateTime.now().year),
+      firstDate: DateTime(transDate.millisecondsSinceEpoch >
+              DateTime.now().millisecondsSinceEpoch
+          ? DateTime.now().year
+          : transDate.year),
       lastDate: DateTime.now(),
       initialDate: transDate,
     );

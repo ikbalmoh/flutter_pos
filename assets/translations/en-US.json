@@ -142,5 +142,7 @@
   "edit": "Edit {}",
   "delete_n": "Delete {}",
   "saved": "Saved",
-  "deleted": "Deleted"
+  "deleted": "Deleted",
+  "available_cash": "Available Cash",
+  "different": "Different"
 }

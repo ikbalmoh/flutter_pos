@@ -15,7 +15,8 @@ _$ShiftInfoImpl _$$ShiftInfoImplFromJson(Map<String, dynamic> json) =>
       openedBy: json['opened_by'] as String,
       closedBy: json['closed_by'] as String?,
       openShift: DateTime.parse(json['open_shift'] as String),
-      closeShift: json['close_shift'] as String?,
+      closeShift:
+          DateTimeFormater.stringToDateTime(json['close_shift'] as String),
       saldoKas: (json['saldo_kas'] as num).toDouble(),
       selisih: (json['selisih'] as num).toDouble(),
       cashFlows:
@@ -37,7 +38,7 @@ Map<String, dynamic> _$$ShiftInfoImplToJson(_$ShiftInfoImpl instance) =>
       'opened_by': instance.openedBy,
       'closed_by': instance.closedBy,
       'open_shift': instance.openShift.toIso8601String(),
-      'close_shift': instance.closeShift,
+      'close_shift': instance.closeShift?.toIso8601String(),
       'saldo_kas': instance.saldoKas,
       'selisih': instance.selisih,
       'cash_flows': instance.cashFlows,

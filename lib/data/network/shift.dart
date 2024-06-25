@@ -41,6 +41,27 @@ class ShiftApi {
     return ShiftInfo.fromJson(res.data['data']);
   }
 
+  Future closeShift(String id, Map<String, dynamic> data) async {
+    try {
+      final Map<String, dynamic> mapData = Map.from(data);
+      if (data['images'] != null) {
+        for (var i = 0; i < data['images']?.length; i++) {
+          final img = data['images'][i];
+          mapData['cash_flows[0][images][$i]'] =
+              await MultipartFile.fromFile(img.path, filename: img.name);
+        }
+      }
+      log('STORE CLOSE SHIFT: $mapData');
+      final FormData formData = FormData.fromMap(mapData);
+      final res = await api.post('${ApiUrl.shifts}/$id/closing', data: formData);
+      return res;
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future storeCashflow(Map<String, dynamic> data) async {
     try {
       final Map<String, dynamic> mapData = {

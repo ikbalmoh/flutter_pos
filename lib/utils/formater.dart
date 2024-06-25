@@ -1,5 +1,6 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:intl/intl.dart';
+import 'package:validators/validators.dart';
 
 class CurrencyFormat {
   static String currency(dynamic number,
@@ -34,8 +35,11 @@ class DateTimeFormater {
     return DateFormat(format).format(value);
   }
 
-  static DateTime stringToDateTime(String value) {
-    return DateTime.parse(value);
+  static DateTime? stringToDateTime(String value) {
+    if (isDate(value)) {
+      return DateTime.parse(value);
+    }
+    return null;
   }
 
   static int stringToTimestamp(dynamic value) {

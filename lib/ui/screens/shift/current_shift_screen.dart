@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/models/shift_cashflow.dart';
+import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/shift/cashflow_form.dart';
+import 'package:selleri/ui/components/shift/close_shift_form.dart';
 import 'package:selleri/ui/screens/shift/components/active_shift_info.dart';
 import 'package:selleri/ui/screens/shift/components/shift_cashflows.dart';
 import 'package:selleri/ui/screens/shift/components/shift_inactive.dart';
@@ -22,27 +24,26 @@ class CurrentShiftScreen extends ConsumerStatefulWidget {
 
 class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     with AutomaticKeepAliveClientMixin {
-  void onAddCashflow() {
+  void onShowCashflowForm({ShiftCashflow? cashflow}) {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
         enableDrag: false,
         builder: (context) {
-          return const CashflowForm();
+          return CashflowForm(cashflow: cashflow);
         });
   }
 
-  void onEditCashflow(ShiftCashflow cashflow) {
+  void onCloseShift(ShiftInfo shiftInfo) {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
         enableDrag: false,
         builder: (context) {
-          return PopScope(
-            canPop: false,
-            child: CashflowForm(cashflow: cashflow),
+          return CloseShiftForm(
+            shift: shiftInfo,
           );
         });
   }
@@ -63,11 +64,15 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                       data: (data) {
                         return Column(
                           children: [
-                            ActiveShiftInfo(shiftInfo: data!),
+                            ActiveShiftInfo(
+                              shiftInfo: data!,
+                              onCloseShift: () => onCloseShift(data),
+                            ),
                             ShiftSummaryCards(shiftInfo: data),
                             ShiftCashflows(
                               cashflows: data.cashFlows.data,
-                              onEdit: onEditCashflow,
+                              onEdit: (cashflow) =>
+                                  onShowCashflowForm(cashflow: cashflow),
                             )
                           ],
                         );
@@ -90,7 +95,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
       floatingActionButton: shift != null
           ? ref.watch(shiftInfoNotifierProvider).value != null
               ? FloatingActionButton.extended(
-                  onPressed: onAddCashflow,
+                  onPressed: onShowCashflowForm,
                   label: Text(
                     'cashflow'.tr(),
                   ),

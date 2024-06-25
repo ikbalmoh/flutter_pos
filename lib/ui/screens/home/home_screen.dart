@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/update_patcher.dart';
@@ -101,23 +102,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     icon: const Icon(Icons.menu));
               }),
-              actions: [
-                IconButton(
-                  tooltip: 'search'.tr(),
-                  onPressed: () => setState(() {
-                    searchVisible = true;
-                  }),
-                  icon: const Icon(Icons.search),
-                ),
-                IconButton(
-                  tooltip: 'holded_transactions'.tr(),
-                  onPressed: () {
-                    context.push(Routes.holded);
-                  },
-                  icon: const Icon(CupertinoIcons.folder),
-                ),
-                const HomeMenu()
-              ],
+              actions: ref.watch(shiftNotifierProvider).value == null
+                  ? []
+                  : [
+                      IconButton(
+                        tooltip: 'search'.tr(),
+                        onPressed: () => setState(() {
+                          searchVisible = true;
+                        }),
+                        icon: const Icon(Icons.search),
+                      ),
+                      IconButton(
+                        tooltip: 'holded_transactions'.tr(),
+                        onPressed: () {
+                          context.push(Routes.holded);
+                        },
+                        icon: const Icon(CupertinoIcons.folder),
+                      ),
+                      const HomeMenu()
+                    ],
             ),
       body: Stack(
         children: [

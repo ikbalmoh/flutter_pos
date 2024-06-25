@@ -15,7 +15,7 @@ part 'shift_repository.g.dart';
 ShiftRepository shiftRepository(ShiftRepositoryRef ref) => ShiftRepository(ref);
 
 abstract class ShiftRepositoryProtocol {
-  Future<void> close(Shift shift);
+  Future<void> close(String id, Map<String, dynamic> data);
 
   Future<Shift?> saveShift(Shift outlet);
 
@@ -30,9 +30,15 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   final api = ShiftApi();
 
   @override
-  Future<void> close(Shift? shift) async {
-    const storage = FlutterSecureStorage();
-    await storage.delete(key: StoreKey.shift.toString());
+  Future<void> close(String id, Map<String, dynamic> payload) async {
+    try {
+      const storage = FlutterSecureStorage();
+      await api.closeShift(id, payload);
+      await storage.delete(key: StoreKey.shift.toString());
+    } catch (e, stackTrack) {
+      log('CLOSE SHIFT ERROR: $e => $stackTrack');
+      rethrow;
+    }
   }
 
   @override
@@ -45,7 +51,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
         final shift = Shift.fromJson(json.decode(stringShift));
         final outlet = await outletRepository.retrieveOutlet();
         if (outlet?.idOutlet != shift.outletId) {
-          await close(shift);
+          await storage.delete(key: StoreKey.shift.toString());
           return null;
         }
         return shift;
