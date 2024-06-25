@@ -50,8 +50,11 @@ class ShiftApi {
         "cash_flows[0][trans_date]": data['trans_date'],
         "cash_flows[0][status]": data['status'],
         "cash_flows[0][amount]": data['amount'],
-        "cash_flows[0][descriptions]": data['descriptions']
+        "cash_flows[0][descriptions]": data['descriptions'],
       };
+      if (data['deleted_at'] != null) {
+        mapData["cash_flows[0][deleted_at]"] = data['deleted_at'];
+      }
       if (data['images'] != null) {
         for (var i = 0; i < data['images']?.length; i++) {
           final img = data['images'][i];

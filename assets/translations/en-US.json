@@ -136,6 +136,11 @@
   "save": "Save",
   "saving": "Saving {}",
   "successfully_stored": "{} is successfully stored",
+  "successfully_updated": "{} is successfully updated",
+  "successfully_deleted": "{} is successfully deleted",
   "shift_detail": "Shift Detail",
-  "edit": "Edit {}"
+  "edit": "Edit {}",
+  "delete_n": "Delete {}",
+  "saved": "Saved",
+  "deleted": "Deleted"
 }

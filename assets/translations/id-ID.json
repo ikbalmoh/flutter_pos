@@ -15,7 +15,7 @@
   "no_items": "Tidak Ada Barang",
   "delete": "Hapus",
   "remove_from_cart": "Buang dari keranjang",
-  "are_you_sure": "Yakin hapus?",
+  "are_you_sure": "Apa Anda Yakin?",
   "pay_finish": "Selesaikan Transaksi",
   "order_summary": "Ringkasan Pesanan",
   "discount": "Diskon",
@@ -136,6 +136,11 @@
   "save": "Simpan",
   "saving": "Meyimpan {}",
   "successfully_stored": "{} berhasil disimpan",
+  "successfully_updated": "{} berhasil diperbarui",
+  "successfully_deleted": "{} berhasil dihapus",
   "shift_detail": "Detail Shift",
-  "edit": "Edit {}"
+  "edit": "Edit {}",
+  "delete_n": "Hapus {}",
+  "saved": "Disimpan",
+  "deleted": "Dihapus"
 }

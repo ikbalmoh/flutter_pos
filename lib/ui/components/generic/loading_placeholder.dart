@@ -19,7 +19,7 @@ class LoadingPlaceholder extends StatelessWidget {
           const LoadingIndicator(color: Colors.teal),
           const SizedBox(height: 30),
           Text(
-            label ?? 'transaction_loading'.tr(),
+            label ?? 'please_wait'.tr(),
             style: Theme.of(context)
                 .textTheme
                 .titleSmall

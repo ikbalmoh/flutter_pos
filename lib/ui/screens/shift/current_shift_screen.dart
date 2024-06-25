@@ -29,10 +29,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         isScrollControlled: true,
         enableDrag: false,
         builder: (context) {
-          return const PopScope(
-            canPop: false,
-            child: CashflowForm(),
-          );
+          return const CashflowForm();
         });
   }
 
