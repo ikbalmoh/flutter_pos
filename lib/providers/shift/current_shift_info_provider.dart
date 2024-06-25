@@ -42,13 +42,12 @@ class ShiftInfoNotifier extends _$ShiftInfoNotifier {
     if (shift == null) {
       return;
     }
-    Map<String, dynamic> payload = Map.from({
-      ...data,
-      'id': uuid.v4(),
-      'shift_id': shift.id,
-      'outlet_id': shift.outletId
-    });
-    await ref.read(shiftRepositoryProvider).storeCashflow(payload);
+    if (data['id'] == null) {
+      data['id'] = uuid.v4();
+    }
+    data['shift_id'] = shift.id;
+    data['outlet_id'] = shift.outletId;
+    await ref.read(shiftRepositoryProvider).storeCashflow(data);
     reload();
     if (onSubmited != null) {
       onSubmited();

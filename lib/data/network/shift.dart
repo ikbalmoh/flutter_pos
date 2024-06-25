@@ -52,11 +52,20 @@ class ShiftApi {
         "cash_flows[0][amount]": data['amount'],
         "cash_flows[0][descriptions]": data['descriptions']
       };
-      for (var i = 0; i < data['images']?.length; i++) {
-        final img = data['images'][i];
-        mapData['cash_flows[0]images[$i]'] =
-            await MultipartFile.fromFile(img.path, filename: img.name);
+      if (data['images'] != null) {
+        for (var i = 0; i < data['images']?.length; i++) {
+          final img = data['images'][i];
+          mapData['cash_flows[0][images][$i]'] =
+              await MultipartFile.fromFile(img.path, filename: img.name);
+        }
       }
+      if (data['remove_images'] != null) {
+        for (var i = 0; i < data['remove_images']?.length; i++) {
+          final id = data['remove_images'][i];
+          mapData['cash_flows[0][remove_images][$i]'] = id;
+        }
+      }
+      log('STORE CASHFLOW: $mapData');
       final FormData formData = FormData.fromMap(mapData);
       final res = await api.post(ApiUrl.cashFlows, data: formData);
       return res;

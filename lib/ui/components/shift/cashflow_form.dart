@@ -9,15 +9,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/shift_cashflow.dart';
+import 'package:selleri/data/models/shift_cashflow_image.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/ui/components/generic/button_selection.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
+import 'package:selleri/ui/components/picked_image.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CashflowForm extends ConsumerStatefulWidget {
-  const CashflowForm({super.key});
+  const CashflowForm({this.cashflow, super.key});
+
+  final ShiftCashflow? cashflow;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CashflowFormState();
@@ -31,8 +36,24 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   double amount = 0;
   String descriptions = '';
   List<XFile> images = [];
+  List<ShiftCashflowImage> prevImages = [];
+  List<int> removeImages = [];
 
   bool isLoading = false;
+
+  @override
+  void initState() {
+    if (widget.cashflow != null) {
+      setState(() {
+        status = widget.cashflow!.status;
+        amount = widget.cashflow!.amount;
+        transDate = widget.cashflow!.transDate;
+        descriptions = widget.cashflow!.descriptions ?? '';
+        prevImages = widget.cashflow!.images;
+      });
+    }
+    super.initState();
+  }
 
   void onChangeCashflowType(int type) {
     setState(() {
@@ -74,6 +95,14 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
     });
   }
 
+  void onRemovePrevImage(int id) {
+    setState(() {
+      prevImages = List<ShiftCashflowImage>.from(prevImages)
+        ..removeWhere((img) => img.id == id);
+      removeImages = List<int>.from(removeImages)..add(id);
+    });
+  }
+
   String statusName() {
     switch (status) {
       case 1:
@@ -90,14 +119,18 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
       isLoading = true;
     });
     try {
-      final Map<String, dynamic> mapData = {
+      Map<String, dynamic> mapData = {
         "trans_date": transDate.millisecondsSinceEpoch / 1000,
         "status": status,
         "amount": amount,
         "descriptions": descriptions,
-        "images": images
+        "images": images,
+        "remove_images": removeImages,
       };
-      await ref.read(shiftInfoNotifierProvider.notifier).submitCashflow(
+      if (widget.cashflow != null) {
+        mapData["id"] = widget.cashflow?.id ?? '';
+      }
+      ref.read(shiftInfoNotifierProvider.notifier).submitCashflow(
         mapData,
         onSubmited: () {
           context.pop();
@@ -143,9 +176,23 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                       ),
                     ),
                   ),
-                  child: Text(
-                    'add'.tr(args: ['cashflow'.tr()]),
-                    style: Theme.of(context).textTheme.titleMedium,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        (widget.cashflow == null ? 'add' : 'edit')
+                            .tr(args: ['cashflow'.tr()]),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.grey,
+                          size: 18,
+                        ),
+                      )
+                    ],
                   ),
                 ),
                 SingleChildScrollView(
@@ -217,7 +264,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: TextFormField(
                     inputFormatters: <TextInputFormatter>[_amountFormater],
-                    initialValue: '0',
+                    initialValue: _amountFormater.formatDouble(amount),
                     onChanged: (value) {
                       setState(() {
                         amount =
@@ -258,6 +305,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: TextFormField(
+                    initialValue: descriptions,
                     onChanged: (value) => setState(() {
                       descriptions = value;
                     }),
@@ -299,13 +347,24 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                         height: 10,
                       ),
                       Wrap(
-                        children: List.generate(images.length, (index) {
-                          XFile image = images[index];
-                          return PickedImage(
-                            image: image,
-                            onDelete: () => onDeleteImage(index),
-                          );
-                        }),
+                        children: [
+                          ...List.generate(prevImages.length, (index) {
+                            return PickedImage(
+                              source: prevImages[index].uri,
+                              sourceType: SourceType.uri,
+                              onDelete: () =>
+                                  onRemovePrevImage(prevImages[index].id),
+                            );
+                          }),
+                          ...List.generate(images.length, (index) {
+                            XFile image = images[index];
+                            return PickedImage(
+                              source: image.path,
+                              sourceType: SourceType.path,
+                              onDelete: () => onDeleteImage(index),
+                            );
+                          })
+                        ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -352,15 +411,17 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      TextButton(
-                        style:
-                            TextButton.styleFrom(foregroundColor: Colors.grey),
-                        onPressed: () => context.pop(),
-                        child: Text('cancel'.tr()),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      widget.cashflow != null
+                          ? Container(
+                              margin: const EdgeInsets.only(right: 15),
+                              child: IconButton(
+                                style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red),
+                                onPressed: () => context.pop(),
+                                icon: const Icon(CupertinoIcons.trash),
+                              ),
+                            )
+                          : Container(),
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -373,11 +434,11 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                           onPressed: isLoading ||
                                   amount == 0 ||
                                   descriptions == '' ||
-                                  images.isEmpty
+                                  (images.isEmpty && prevImages.isEmpty)
                               ? null
                               : submitCashflow,
                           child: Text(
-                            '${statusName()} ${CurrencyFormat.currency(amount)}',
+                            '${widget.cashflow != null ? 'update'.tr() : 'save'.tr()} ${statusName()}',
                           ),
                         ),
                       ),
@@ -387,58 +448,5 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
               ],
             ),
           );
-  }
-}
-
-class PickedImage extends StatelessWidget {
-  const PickedImage({
-    super.key,
-    required this.image,
-    required this.onDelete,
-  });
-
-  final XFile image;
-  final Function() onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10, right: 10),
-      height: 90,
-      width: 90,
-      decoration: BoxDecoration(
-        color: Colors.blueGrey.shade50,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Image.file(
-              File(image.path),
-              fit: BoxFit.cover,
-              width: 90,
-              height: 90,
-            ),
-          ),
-          Positioned(
-            top: 5,
-            right: 5,
-            child: IconButton(
-              iconSize: 15,
-              constraints: const BoxConstraints(),
-              style: IconButton.styleFrom(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  backgroundColor: Colors.white.withOpacity(0.4)),
-              padding: const EdgeInsets.all(3),
-              onPressed: onDelete,
-              icon: const Icon(
-                Icons.close_rounded,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
   }
 }

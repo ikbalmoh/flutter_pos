@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/utils/formater.dart';
 
 class CashflowItem extends StatelessWidget {
-  final String label;
-  final double value;
-  final DateTime date;
-  final int type; // 1 = expense, 2 = income, 3 = deposit
+  final ShiftCashflow cashflow;
   final Function()? onTap;
 
   const CashflowItem({
     super.key,
-    required this.label,
-    required this.value,
-    required this.date,
-    required this.type,
+    required this.cashflow,
     this.onTap,
   });
 
@@ -54,20 +49,21 @@ class CashflowItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {},
+      onTap: onTap,
       minTileHeight: 0,
       leading: Container(
         width: 35,
         height: 35,
         decoration: BoxDecoration(
-            color: getColor(type), borderRadius: BorderRadius.circular(25)),
-        child: getIcon(type),
+            color: getColor(cashflow.status),
+            borderRadius: BorderRadius.circular(25)),
+        child: getIcon(cashflow.status),
       ),
-      title: Text(label),
-      subtitle:
-          Text(DateTimeFormater.dateToString(date, format: 'd MMM y, HH:mm')),
+      title: Text(cashflow.codeCf),
+      subtitle: Text(DateTimeFormater.dateToString(cashflow.transDate,
+          format: 'd MMM y, HH:mm')),
       trailing: Text(
-        CurrencyFormat.currency(value),
+        CurrencyFormat.currency(cashflow.amount),
         style: Theme.of(context).textTheme.titleSmall,
       ),
       subtitleTextStyle: Theme.of(context)

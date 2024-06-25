@@ -16,7 +16,9 @@ class ActiveShiftInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      color: Colors.lightGreen.shade100,
+      color: shiftInfo.closeShift == null || shiftInfo.closeShift == '-'
+          ? Colors.lightGreen.shade100
+          : Colors.red.shade100,
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
       child: SizedBox(
@@ -80,24 +82,6 @@ class ActiveShiftInfo extends StatelessWidget {
                       Row(
                         children: [
                           const Icon(
-                            Icons.play_arrow,
-                            size: 16,
-                            color: Colors.green,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            DateTimeFormater.dateToString(shiftInfo.openShift,
-                                format: 'EEE, d MMM ' 'yy HH:mm'),
-                            style: textTheme.bodySmall
-                                ?.copyWith(color: Colors.black54),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Icon(
                             Icons.key,
                             size: 16,
                             color: Colors.grey,
@@ -108,6 +92,24 @@ class ActiveShiftInfo extends StatelessWidget {
                             style: textTheme.bodySmall
                                 ?.copyWith(color: Colors.black54),
                             textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.play_arrow,
+                            size: 16,
+                            color: Colors.green,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            DateTimeFormater.dateToString(shiftInfo.openShift,
+                                format: 'd MMM ' 'yy HH:mm'),
+                            style: textTheme.bodySmall
+                                ?.copyWith(color: Colors.black54),
+                            textAlign: TextAlign.left,
                           ),
                         ],
                       ),

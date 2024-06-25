@@ -16,7 +16,7 @@ class ShiftCashflow with _$ShiftCashflow {
     required int status,
     required double amount,
     required List<ShiftCashflowImage> images,
-    String? description,
+    String? descriptions,
   }) = _ShiftCashflow;
 
   factory ShiftCashflow.fromJson(Map<String, dynamic> json) =>

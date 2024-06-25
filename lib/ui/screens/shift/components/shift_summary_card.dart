@@ -12,7 +12,6 @@ class ShiftSummaryCards extends StatelessWidget {
   const ShiftSummaryCards({required this.shiftInfo, super.key});
 
   final ShiftInfo shiftInfo;
-
   @override
   Widget build(BuildContext context) {
     void onShowRecap(ShiftSummary summary) {

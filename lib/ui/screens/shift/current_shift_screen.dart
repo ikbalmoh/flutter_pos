@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/shift.dart';
+import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
@@ -35,6 +36,20 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         });
   }
 
+  void onEditCashflow(ShiftCashflow cashflow) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        enableDrag: false,
+        builder: (context) {
+          return PopScope(
+            canPop: false,
+            child: CashflowForm(cashflow: cashflow),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -53,7 +68,10 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                           children: [
                             ActiveShiftInfo(shiftInfo: data!),
                             ShiftSummaryCards(shiftInfo: data),
-                            ShiftCashflows(cashflows: data.cashFlows.data)
+                            ShiftCashflows(
+                              cashflows: data.cashFlows.data,
+                              onEdit: onEditCashflow,
+                            )
                           ],
                         );
                       },

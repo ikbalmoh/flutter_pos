@@ -18,7 +18,7 @@ _$ShiftCashflowImpl _$$ShiftCashflowImplFromJson(Map<String, dynamic> json) =>
       images: (json['images'] as List<dynamic>)
           .map((e) => ShiftCashflowImage.fromJson(e as Map<String, dynamic>))
           .toList(),
-      description: json['description'] as String?,
+      descriptions: json['descriptions'] as String?,
     );
 
 Map<String, dynamic> _$$ShiftCashflowImplToJson(_$ShiftCashflowImpl instance) =>
@@ -31,5 +31,5 @@ Map<String, dynamic> _$$ShiftCashflowImplToJson(_$ShiftCashflowImpl instance) =>
       'status': instance.status,
       'amount': instance.amount,
       'images': instance.images,
-      'description': instance.description,
+      'descriptions': instance.descriptions,
     };
