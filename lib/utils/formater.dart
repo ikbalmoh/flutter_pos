@@ -106,8 +106,11 @@ class DateTimeFormater {
     return DateFormat(format).format(value);
   }
 
-  static DateTime stringToDateTime(String value) {
-    return DateTime.parse(value);
+  static DateTime? stringToDateTime(String value) {
+    if (isDate(value)) {
+      return DateTime.parse(value);
+    }
+    return null;
   }
 
   static int stringToTimestamp(dynamic value) {

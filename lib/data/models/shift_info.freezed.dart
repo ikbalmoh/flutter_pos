@@ -27,7 +27,8 @@ mixin _$ShiftInfo {
   String get openedBy => throw _privateConstructorUsedError;
   String? get closedBy => throw _privateConstructorUsedError;
   DateTime get openShift => throw _privateConstructorUsedError;
-  String? get closeShift => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+  DateTime? get closeShift => throw _privateConstructorUsedError;
   double get saldoKas => throw _privateConstructorUsedError;
   double get selisih => throw _privateConstructorUsedError;
   ShiftCashFlows get cashFlows => throw _privateConstructorUsedError;
@@ -55,7 +56,8 @@ abstract class $ShiftInfoCopyWith<$Res> {
       String openedBy,
       String? closedBy,
       DateTime openShift,
-      String? closeShift,
+      @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+      DateTime? closeShift,
       double saldoKas,
       double selisih,
       ShiftCashFlows cashFlows,
@@ -129,7 +131,7 @@ class _$ShiftInfoCopyWithImpl<$Res, $Val extends ShiftInfo>
       closeShift: freezed == closeShift
           ? _value.closeShift
           : closeShift // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       saldoKas: null == saldoKas
           ? _value.saldoKas
           : saldoKas // ignore: cast_nullable_to_non_nullable
@@ -194,7 +196,8 @@ abstract class _$$ShiftInfoImplCopyWith<$Res>
       String openedBy,
       String? closedBy,
       DateTime openShift,
-      String? closeShift,
+      @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+      DateTime? closeShift,
       double saldoKas,
       double selisih,
       ShiftCashFlows cashFlows,
@@ -268,7 +271,7 @@ class __$$ShiftInfoImplCopyWithImpl<$Res>
       closeShift: freezed == closeShift
           ? _value.closeShift
           : closeShift // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       saldoKas: null == saldoKas
           ? _value.saldoKas
           : saldoKas // ignore: cast_nullable_to_non_nullable
@@ -313,7 +316,7 @@ class _$ShiftInfoImpl implements _ShiftInfo {
       required this.openedBy,
       this.closedBy,
       required this.openShift,
-      this.closeShift,
+      @JsonKey(fromJson: DateTimeFormater.stringToDateTime) this.closeShift,
       required this.saldoKas,
       required this.selisih,
       required this.cashFlows,
@@ -343,7 +346,8 @@ class _$ShiftInfoImpl implements _ShiftInfo {
   @override
   final DateTime openShift;
   @override
-  final String? closeShift;
+  @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+  final DateTime? closeShift;
   @override
   final double saldoKas;
   @override
@@ -459,7 +463,8 @@ abstract class _ShiftInfo implements ShiftInfo {
       required final String openedBy,
       final String? closedBy,
       required final DateTime openShift,
-      final String? closeShift,
+      @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+      final DateTime? closeShift,
       required final double saldoKas,
       required final double selisih,
       required final ShiftCashFlows cashFlows,
@@ -486,7 +491,8 @@ abstract class _ShiftInfo implements ShiftInfo {
   @override
   DateTime get openShift;
   @override
-  String? get closeShift;
+  @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+  DateTime? get closeShift;
   @override
   double get saldoKas;
   @override

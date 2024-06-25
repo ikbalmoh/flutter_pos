@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/utils/formater.dart';
 
 class OpenShift extends ConsumerStatefulWidget {
   const OpenShift({super.key});
@@ -12,7 +13,9 @@ class OpenShift extends ConsumerStatefulWidget {
 }
 
 class _OpenShiftState extends ConsumerState<OpenShift> {
-  final TextEditingController _controller = TextEditingController();
+  final _amountFormater = CurrencyFormat.currencyInput();
+
+  double amount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,13 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
     return AlertDialog(
       title: Text('open_shift'.tr()),
       content: TextFormField(
-        controller: _controller,
+        inputFormatters: [_amountFormater],
+        initialValue: _amountFormater.formatDouble(amount),
+        onChanged: (value) {
+          setState(() {
+            amount = _amountFormater.getUnformattedValue().toDouble();
+          });
+        },
         textAlign: TextAlign.right,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
@@ -64,7 +73,7 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
         TextButton(
             onPressed: () {
               ref.read(shiftNotifierProvider.notifier).openShift(
-                    double.parse(_controller.text),
+                    amount,
                   );
               context.pop();
             },

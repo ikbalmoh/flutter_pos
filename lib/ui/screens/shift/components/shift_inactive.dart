@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
+import 'package:selleri/ui/components/shift/open_shift_button.dart';
 
 class ShiftInactive extends ConsumerWidget {
   const ShiftInactive({super.key});
@@ -43,17 +44,7 @@ class ShiftInactive extends ConsumerWidget {
           const SizedBox(
             height: 25,
           ),
-          SizedBox(
-            width: 160,
-            height: 45,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25))),
-              onPressed: () {},
-              child: Text('open_shift'.tr()),
-            ),
-          ),
+          const OpenShiftButton()
         ],
       ),
     );
