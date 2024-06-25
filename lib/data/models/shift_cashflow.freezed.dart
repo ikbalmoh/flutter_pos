@@ -28,7 +28,7 @@ mixin _$ShiftCashflow {
   int get status => throw _privateConstructorUsedError;
   double get amount => throw _privateConstructorUsedError;
   List<ShiftCashflowImage> get images => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
+  String? get descriptions => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -51,7 +51,7 @@ abstract class $ShiftCashflowCopyWith<$Res> {
       int status,
       double amount,
       List<ShiftCashflowImage> images,
-      String? description});
+      String? descriptions});
 }
 
 /// @nodoc
@@ -75,7 +75,7 @@ class _$ShiftCashflowCopyWithImpl<$Res, $Val extends ShiftCashflow>
     Object? status = null,
     Object? amount = null,
     Object? images = null,
-    Object? description = freezed,
+    Object? descriptions = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -110,9 +110,9 @@ class _$ShiftCashflowCopyWithImpl<$Res, $Val extends ShiftCashflow>
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
               as List<ShiftCashflowImage>,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
+      descriptions: freezed == descriptions
+          ? _value.descriptions
+          : descriptions // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -135,7 +135,7 @@ abstract class _$$ShiftCashflowImplCopyWith<$Res>
       int status,
       double amount,
       List<ShiftCashflowImage> images,
-      String? description});
+      String? descriptions});
 }
 
 /// @nodoc
@@ -157,7 +157,7 @@ class __$$ShiftCashflowImplCopyWithImpl<$Res>
     Object? status = null,
     Object? amount = null,
     Object? images = null,
-    Object? description = freezed,
+    Object? descriptions = freezed,
   }) {
     return _then(_$ShiftCashflowImpl(
       id: null == id
@@ -192,9 +192,9 @@ class __$$ShiftCashflowImplCopyWithImpl<$Res>
           ? _value._images
           : images // ignore: cast_nullable_to_non_nullable
               as List<ShiftCashflowImage>,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
+      descriptions: freezed == descriptions
+          ? _value.descriptions
+          : descriptions // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -213,7 +213,7 @@ class _$ShiftCashflowImpl implements _ShiftCashflow {
       required this.status,
       required this.amount,
       required final List<ShiftCashflowImage> images,
-      this.description})
+      this.descriptions})
       : _images = images;
 
   factory _$ShiftCashflowImpl.fromJson(Map<String, dynamic> json) =>
@@ -242,11 +242,11 @@ class _$ShiftCashflowImpl implements _ShiftCashflow {
   }
 
   @override
-  final String? description;
+  final String? descriptions;
 
   @override
   String toString() {
-    return 'ShiftCashflow(id: $id, codeCf: $codeCf, transDate: $transDate, shiftId: $shiftId, outletId: $outletId, status: $status, amount: $amount, images: $images, description: $description)';
+    return 'ShiftCashflow(id: $id, codeCf: $codeCf, transDate: $transDate, shiftId: $shiftId, outletId: $outletId, status: $status, amount: $amount, images: $images, descriptions: $descriptions)';
   }
 
   @override
@@ -264,8 +264,8 @@ class _$ShiftCashflowImpl implements _ShiftCashflow {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
-            (identical(other.description, description) ||
-                other.description == description));
+            (identical(other.descriptions, descriptions) ||
+                other.descriptions == descriptions));
   }
 
   @JsonKey(ignore: true)
@@ -280,7 +280,7 @@ class _$ShiftCashflowImpl implements _ShiftCashflow {
       status,
       amount,
       const DeepCollectionEquality().hash(_images),
-      description);
+      descriptions);
 
   @JsonKey(ignore: true)
   @override
@@ -306,7 +306,7 @@ abstract class _ShiftCashflow implements ShiftCashflow {
       required final int status,
       required final double amount,
       required final List<ShiftCashflowImage> images,
-      final String? description}) = _$ShiftCashflowImpl;
+      final String? descriptions}) = _$ShiftCashflowImpl;
 
   factory _ShiftCashflow.fromJson(Map<String, dynamic> json) =
       _$ShiftCashflowImpl.fromJson;
@@ -328,7 +328,7 @@ abstract class _ShiftCashflow implements ShiftCashflow {
   @override
   List<ShiftCashflowImage> get images;
   @override
-  String? get description;
+  String? get descriptions;
   @override
   @JsonKey(ignore: true)
   _$$ShiftCashflowImplCopyWith<_$ShiftCashflowImpl> get copyWith =>
