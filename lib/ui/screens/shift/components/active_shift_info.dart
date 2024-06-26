@@ -3,9 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/shift_info.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/utils/formater.dart';
 
-class ActiveShiftInfo extends StatelessWidget {
+class ActiveShiftInfo extends ConsumerWidget {
   const ActiveShiftInfo(
       {required this.shiftInfo, this.onCloseShift, super.key});
 
@@ -13,7 +14,7 @@ class ActiveShiftInfo extends StatelessWidget {
   final Function()? onCloseShift;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
     bool active = shiftInfo.closeShift == null;
     return Container(
@@ -39,24 +40,43 @@ class ActiveShiftInfo extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'cash'.tr(),
-                        style: textTheme.bodySmall
-                            ?.copyWith(color: Colors.black54),
-                      ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text('Rp'),
-                          Text(
-                            CurrencyFormat.currency(
-                              shiftInfo.summary.expectedCashEnd,
-                              symbol: false,
-                            ),
-                            style: textTheme.headlineMedium
-                                ?.copyWith(fontWeight: FontWeight.w600),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'cash'.tr(),
+                                style: textTheme.bodySmall
+                                    ?.copyWith(color: Colors.black54),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Rp'),
+                                  Text(
+                                    CurrencyFormat.currency(
+                                      shiftInfo.summary.expectedCashEnd,
+                                      symbol: false,
+                                    ),
+                                    style: textTheme.headlineMedium
+                                        ?.copyWith(fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
+                          IconButton(
+                            onPressed: () => ref
+                                .read(shiftNotifierProvider.notifier)
+                                .print(shiftInfo),
+                            icon: const Icon(CupertinoIcons.printer),
+                            tooltip: 'print'.tr(),
+                          )
                         ],
                       ),
                       const SizedBox(height: 10),

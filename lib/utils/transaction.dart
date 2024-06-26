@@ -86,6 +86,8 @@ class ShiftUtil {
           label: 'total_transaction'.tr(args: ['']),
           value: summary.cashSales - summary.refunded),
       SummaryItem(label: 'expected_cash'.tr(), value: summary.expectedCashEnd),
+      SummaryItem(label: 'available_cash'.tr(), value: summary.actualCash),
+      SummaryItem(label: 'different'.tr(), value: summary.different),
     ];
 
     summaries.addAll(recap);

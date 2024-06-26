@@ -8,7 +8,10 @@ import 'package:image/image.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/outlet_config.dart';
+import 'package:selleri/data/models/shift_info.dart';
+import 'package:selleri/data/models/shift_summary.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:selleri/utils/transaction.dart';
 
 class Printer {
   static String stripHtmlIfNeeded(String text) {
@@ -191,9 +194,116 @@ class Printer {
     }
 
     if (isCopy) {
-      bytes += generator.text('receipt_copy'.tr(),
-          linesAfter: 1);
+      bytes += generator.text('receipt_copy'.tr(), linesAfter: 1);
     }
+
+    bytes += generator.cut();
+
+    return bytes;
+  }
+
+  static Future<List<int>> buildShiftReportBytes(ShiftInfo shift,
+      {AttributeReceipts? attributes,
+      PaperSize? size = PaperSize.mm58,
+      bool isCopy = false}) async {
+    log('BUILD SHIFT RERORT: $shift');
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(PaperSize.mm58, profile);
+    List<int> bytes = [];
+
+    late Image? img;
+    String? headers;
+
+    if (attributes != null) {
+      if (attributes.imageBase64 != null) {
+        final Uint8List imgBytes =
+            const Base64Decoder().convert(attributes.imageBase64!);
+        img = decodeImage(imgBytes);
+      }
+      headers = Printer.stripHtmlIfNeeded(attributes.headers ?? '');
+    }
+
+    if (img != null) {
+      img = copyResize(img, height: 120);
+      bytes += generator.imageRaster(img, align: PosAlign.center);
+    }
+
+    bytes += generator.text(shift.outletName ?? '',
+        styles: const PosStyles(align: PosAlign.center, bold: true),
+        linesAfter: 1);
+
+    if (headers != null) {
+      bytes += generator.text(headers,
+          linesAfter: 1, styles: const PosStyles(align: PosAlign.center));
+    }
+
+    // info
+    bytes +=
+        generator.text('SHIFT REPORT', styles: const PosStyles(bold: true));
+    bytes += generator.text('Code: ${shift.codeShift}');
+    bytes += generator.text('${'cashier'.tr()}: ${shift.openedBy}');
+    bytes += generator.text(
+        'Open: ${DateTimeFormater.dateToString(shift.openShift, format: 'dd/MM/y HH:mm')}');
+    bytes += generator.text(
+        'Close: ${shift.closeShift != null ? DateTimeFormater.dateToString(shift.closeShift!, format: 'dd/MM/y HH:mm') : '-'}');
+    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+
+    final List<SummaryItem> summaries = ShiftUtil.paymentList(shift.summary);
+    for (var summary in summaries) {
+      if (summary.isTotal == true) {
+        bytes +=
+            generator.text(summary.label, styles: const PosStyles(bold: true));
+      } else {
+        bytes += generator.row([
+          PosColumn(
+            text: ' ${summary.label}',
+            width: 8,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: CurrencyFormat.currency(summary.value, symbol: false),
+            width: 4,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
+    }
+
+    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+    bytes += generator.row([
+      PosColumn(
+        text: 'item_sold'.tr(),
+        width: 8,
+        styles: const PosStyles(bold: true),
+      ),
+      PosColumn(
+        text: CurrencyFormat.currency(
+            shift.soldItems.isNotEmpty
+                ? shift.soldItems
+                    .map((sold) => sold.sold)
+                    .reduce((a, b) => a + b)
+                : 0,
+            symbol: false),
+        width: 4,
+        styles: const PosStyles(align: PosAlign.right, bold: true),
+      ),
+    ]);
+    for (var i = 0; i < shift.soldItems.length; i++) {
+      final item = shift.soldItems[i];
+      bytes += generator.row([
+        PosColumn(
+          text: ' ${item.name}',
+          width: 10,
+          styles: const PosStyles(align: PosAlign.left),
+        ),
+        PosColumn(
+          text: CurrencyFormat.currency(item.sold, symbol: false),
+          width: 2,
+          styles: const PosStyles(align: PosAlign.right),
+        ),
+      ]);
+    }
+    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
 
     bytes += generator.cut();
 
