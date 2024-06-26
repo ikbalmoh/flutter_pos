@@ -34,6 +34,12 @@ class AppDrawerHeader extends ConsumerWidget {
                                       data.config.attributeReceipts!.imagePath!,
                                   height: 60,
                                   fit: BoxFit.contain,
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    'assets/images/icon.png',
+                                    height: 50,
+                                    fit: BoxFit.contain,
+                                  ),
                                 )
                               : Image.asset(
                                   'assets/images/icon.png',
