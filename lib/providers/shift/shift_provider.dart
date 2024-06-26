@@ -163,4 +163,22 @@ class Shift extends _$Shift {
       rethrow;
     }
   }
+
+  Future<void> print(ShiftInfo info) async {
+    try {
+      final printer = ref.read(printerNotifierProvider).value;
+      if (printer == null) {
+        throw Exception('printer_not_connected'.tr());
+      }
+      final AttributeReceipts? attributeReceipts =
+          (ref.read(outletNotifierProvider).value as OutletSelected)
+              .config
+              .attributeReceipts;
+      final receipt = await Printer.buildShiftReportBytes(info,
+          attributes: attributeReceipts, size: printer.size);
+      ref.read(printerNotifierProvider.notifier).print(receipt);
+    } on Exception catch (_) {
+      rethrow;
+    }
+  }
 }
