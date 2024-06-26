@@ -9,10 +9,7 @@ class CustomerApi {
 
   Future<Pagination<Customer>> customers(
       {int page = 1, String search = ''}) async {
-    final Map<String, dynamic> queryParameters = {
-      'page': page,
-      'q': search
-    };
+    final Map<String, dynamic> queryParameters = {'page': page, 'q': search};
     try {
       final res =
           await api.get(ApiUrl.customers, queryParameters: queryParameters);
@@ -21,6 +18,18 @@ class CustomerApi {
         return Customer.fromJson(customer as Map<String, dynamic>);
       });
       return pagination;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<Customer> storeCustomer(Map<String, dynamic> payload) async {
+    try {
+      final res = await api.post(ApiUrl.customers, data: payload);
+      final data = res.data['data'];
+      return Customer.fromJson(data);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {

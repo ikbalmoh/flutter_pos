@@ -4,6 +4,8 @@ import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/network/customer.dart';
 import 'dart:developer';
 
+import 'package:selleri/providers/cart/cart_provider.dart';
+
 part 'customer_list_provider.g.dart';
 
 @riverpod
@@ -12,7 +14,8 @@ class CustomerListNotifier extends _$CustomerListNotifier {
   FutureOr<Pagination<Customer>> build() async {
     final api = CustomerApi();
     try {
-      final customers = await api.customers();
+      final name = ref.read(cartNotiferProvider).customerName;
+      final customers = await api.customers(page: 1, search: name ?? '');
       return customers;
     } on Exception catch (e) {
       log('CUSTOMERS ERROR: $e');
@@ -44,7 +47,16 @@ class CustomerListNotifier extends _$CustomerListNotifier {
       state = AsyncData(customers);
     } catch (e, trace) {
       log('Load Customer Error: $e');
-      state = AsyncError(e, trace);
+      if (state is AsyncLoading) {
+        state = AsyncError(e, trace);
+      }
     }
+  }
+
+  Future<void> submitNewCustomer(Map<String, dynamic> payload) async {
+    final api = CustomerApi();
+    final Customer customer = await api.storeCustomer(payload);
+    ref.read(cartNotiferProvider.notifier).selectCustomer(customer);
+    loadCustomers(page: 1, search: customer.customerName);
   }
 }

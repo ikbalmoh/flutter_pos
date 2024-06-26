@@ -144,5 +144,8 @@
   "saved": "Disimpan",
   "deleted": "Dihapus",
   "available_cash": "Uang Tunai yang Ada",
-  "different": "Selisih"
+  "different": "Selisih",
+  "new": "{} Baru",
+  "dob": "Tgl Lahir",
+  "field_required": "{} harus diisi"
 }

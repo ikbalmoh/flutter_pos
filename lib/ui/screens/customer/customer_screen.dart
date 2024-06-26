@@ -8,6 +8,7 @@ import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/customer/customer_list_provider.dart';
 import 'package:selleri/router/routes.dart';
+import 'package:selleri/ui/components/customer/customer_form.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/customer/customer_detail.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
@@ -28,6 +29,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
 
   @override
   void initState() {
+    final name = ref.read(cartNotiferProvider).customerName;
+    if(name != null) {
+      setState(() {
+        searchVisible = true;
+        _searchController.text = name;
+      });
+    }
     super.initState();
     _scrollController.addListener(loadMore);
   }
@@ -58,6 +66,17 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
             search: _searchController.text,
           );
     }
+  }
+
+  void onCreateNewCustomer() {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        enableDrag: false,
+        builder: (context) {
+          return CustomerForm(query: _searchController.text);
+        });
   }
 
   @override
@@ -185,7 +204,19 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                           .textTheme
                           .bodySmall
                           ?.copyWith(color: Colors.grey),
-                    )
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    _searchController.text.length >= 3
+                        ? TextButton.icon(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                foregroundColor: Colors.white),
+                            onPressed: onCreateNewCustomer,
+                            icon: const Icon(Icons.add),
+                            label: Text('new'.tr(args: ['customer'.tr()])))
+                        : Container()
                   ],
                 ),
               ),

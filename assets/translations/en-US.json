@@ -144,5 +144,8 @@
   "saved": "Saved",
   "deleted": "Deleted",
   "available_cash": "Available Cash",
-  "different": "Different"
+  "different": "Different",
+  "new": "New {}",
+  "dob": "Date of Birth",
+  "field_required": "{} is required"
 }
