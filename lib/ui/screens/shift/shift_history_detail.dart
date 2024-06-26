@@ -32,7 +32,10 @@ class _ShiftHistoryDetailScreenState
               data: (data) {
                 return Column(
                   children: [
-                    ActiveShiftInfo(shiftInfo: data!),
+                    ActiveShiftInfo(
+                      shiftInfo: data!,
+                      showPrintButton: true,
+                    ),
                     ShiftSummaryCards(shiftInfo: data),
                     ShiftCashflows(cashflows: data.cashFlows.data)
                   ],

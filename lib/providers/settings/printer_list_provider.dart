@@ -31,8 +31,8 @@ class PrinterListNotifier extends _$PrinterListNotifier {
 
       final bool isPermissionGranted =
           await PrintBluetoothThermal.isPermissionBluetoothGranted;
+      log('PERMISSION NOT GRANTED: $isPermissionGranted');
       if (!isPermissionGranted) {
-        log('PERMISSION NOT GRANTED');
         throw Exception('Permission not granted');
       }
 

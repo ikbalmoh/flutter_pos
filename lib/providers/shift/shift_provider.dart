@@ -68,13 +68,12 @@ class ShiftNotifier extends _$ShiftNotifier {
     }
   }
 
-  Future<void> closeShift(
-    ShiftInfo shift, {
-    required double closeAmount,
-    required double diffAmount,
-    required double refundAmount,
-    List<XFile>? attachments,
-  }) async {
+  Future<void> closeShift(ShiftInfo shift,
+      {required double closeAmount,
+      required double diffAmount,
+      required double refundAmount,
+      List<XFile>? attachments,
+      bool printReport = true}) async {
     final user =
         (ref.read(authNotifierProvider).value as Authenticated).user.user;
     try {
@@ -97,7 +96,9 @@ class ShiftNotifier extends _$ShiftNotifier {
             actualCash: closeAmount,
             different: diffAmount,
           ));
-      await print(shiftInfo);
+      if (printReport) {
+        print(shiftInfo);
+      }
     } catch (e) {
       throw Exception(e);
     }

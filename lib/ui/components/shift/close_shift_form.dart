@@ -40,6 +40,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   List<XFile> images = [];
 
   bool isLoading = false;
+  bool printReport = true;
 
   Future pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
@@ -73,6 +74,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
             diffAmount: summary.expectedCashEnd - amount,
             refundAmount: summary.refunded,
             attachments: images,
+            printReport: printReport,
           );
       // ignore: use_build_context_synchronously
       context.pop();
@@ -85,6 +87,21 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
       });
     }
   }
+
+  final WidgetStateProperty<Icon?> printIcon =
+      WidgetStateProperty.resolveWith<Icon?>(
+    (Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        return const Icon(
+          CupertinoIcons.printer_fill,
+          color: Colors.teal,
+        );
+      }
+      return const Icon(
+        CupertinoIcons.printer,
+      );
+    },
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -269,19 +286,36 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
+                    child: Row(
+                      children: [
+                        Switch(
+                          thumbIcon: printIcon,
+                          value: printReport,
+                          onChanged: (bool value) {
+                            setState(() {
+                              printReport = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30),
+                                ),
+                              ),
+                            ),
+                            onPressed: isLoading
+                                ? null
+                                : submitCloseShift,
+                            child: Text(
+                              'close_shift'.tr(),
+                            ),
                           ),
                         ),
-                      ),
-                      onPressed:
-                          isLoading || amount == 0 ? null : submitCloseShift,
-                      child: Text(
-                        'close_shift'.tr(),
-                      ),
+                      ],
                     ),
                   ),
                 ],

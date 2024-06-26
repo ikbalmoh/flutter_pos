@@ -8,10 +8,14 @@ import 'package:selleri/utils/formater.dart';
 
 class ActiveShiftInfo extends ConsumerWidget {
   const ActiveShiftInfo(
-      {required this.shiftInfo, this.onCloseShift, super.key});
+      {required this.shiftInfo,
+      this.onCloseShift,
+      this.showPrintButton,
+      super.key});
 
   final ShiftInfo shiftInfo;
   final Function()? onCloseShift;
+  final bool? showPrintButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,13 +74,15 @@ class ActiveShiftInfo extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          IconButton(
-                            onPressed: () => ref
-                                .read(shiftNotifierProvider.notifier)
-                                .print(shiftInfo),
-                            icon: const Icon(CupertinoIcons.printer),
-                            tooltip: 'print'.tr(),
-                          )
+                          showPrintButton == true
+                              ? IconButton(
+                                  onPressed: () => ref
+                                      .read(shiftNotifierProvider.notifier)
+                                      .print(shiftInfo),
+                                  icon: const Icon(CupertinoIcons.printer),
+                                  tooltip: 'print'.tr(),
+                                )
+                              : Container()
                         ],
                       ),
                       const SizedBox(height: 10),
