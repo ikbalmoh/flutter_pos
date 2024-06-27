@@ -6,7 +6,7 @@ part of 'outlet_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$outletNotifierHash() => r'2f411697e6eba696d68648afe03978a969c72ec4';
+String _$outletNotifierHash() => r'a5deee6ba1fcde6e53d5238ac2c6ed117a625e16';
 
 /// See also [OutletNotifier].
 @ProviderFor(OutletNotifier)

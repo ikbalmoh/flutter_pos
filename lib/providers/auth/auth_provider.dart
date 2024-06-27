@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
@@ -39,8 +40,14 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> logout() async {
     state = const AsyncLoading();
-    state = AsyncData(await _authRepoistory.logout());
-    ref.read(outletNotifierProvider.notifier).clearOutlet();
-    await _tokenRepository.remove();
+    try {
+      await _authRepoistory.logout();
+    } catch (e) {
+      log('LOGOUT ERROR: $e');
+    } finally {
+      ref.read(outletNotifierProvider.notifier).clearOutlet();
+      await _tokenRepository.remove();
+      state = AsyncData(UnAuthenticated());
+    }
   }
 }

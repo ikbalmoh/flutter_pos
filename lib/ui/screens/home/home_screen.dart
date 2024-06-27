@@ -14,6 +14,7 @@ import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
 import 'package:selleri/ui/screens/home/components/shift_overlay.dart';
+import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/app_alert.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/screens/home/components/item_container.dart';
@@ -59,9 +60,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void onSignOut() {
     AppAlert.confirm(context,
         title: 'logout'.tr(),
-        subtitle: 'logout_confirmation'.tr(),
-        onConfirm: () => ref.read(authNotifierProvider.notifier).logout(),
-        confirmLabel: 'logout'.tr());
+        subtitle: 'logout_confirmation'.tr(), onConfirm: () {
+      ref.read(authNotifierProvider.notifier).logout();
+    }, confirmLabel: 'logout'.tr());
   }
 
   @override
@@ -169,7 +170,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
           const ShiftOverlay(),
-          const UpdatePatcher()
+          const UpdatePatcher(),
+          ref.watch(authNotifierProvider).when(
+                data: (_) => Container(),
+                error: (_, stackTrace) => Container(),
+                loading: () => Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.3),
+                    child: const Center(
+                      child: LoadingIndicator(color: Colors.teal),
+                    ),
+                  ),
+                ),
+              )
         ],
       ),
       drawer: const AppDrawer(),

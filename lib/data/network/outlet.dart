@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/utils/fetch.dart';
@@ -28,7 +29,13 @@ class OutletApi {
       "fcm_token": token
     };
 
-    final res = await api.post(ApiUrl.storeFcmToken, data: data);
-    return res.data;
+    try {
+      final res = await api.post(ApiUrl.storeFcmToken, data: data);
+      return res.data;
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

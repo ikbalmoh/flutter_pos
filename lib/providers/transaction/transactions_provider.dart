@@ -64,7 +64,7 @@ class TransactionsNotifier extends _$TransactionsNotifier {
       final receipt = await Printer.buildReceiptBytes(cart,
           attributes: attributeReceipts, size: printer.size, isCopy: true);
       ref.read(printerNotifierProvider.notifier).print(receipt);
-    } on Exception catch (_) {
+    } catch (error) {
       rethrow;
     }
   }

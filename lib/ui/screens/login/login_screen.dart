@@ -93,15 +93,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          'selleri',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium
-                              ?.copyWith(
-                                color: Colors.teal.shade400,
-                                fontWeight: FontWeight.w500,
-                              ),
+                        Image.asset(
+                          'assets/images/icon.png',
+                          height: 50,
+                          width: 200,
+                          fit: BoxFit.contain,
                         ),
                         const SizedBox(height: 40),
                         TextFormField(

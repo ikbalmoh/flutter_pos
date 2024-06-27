@@ -55,6 +55,10 @@ class CartNotifer extends _$CartNotifer {
 
   void initCart() async {
     try {
+      if (ref.read(authNotifierProvider).value is! Authenticated) {
+        return;
+      }
+
       final outletState =
           ref.read(outletNotifierProvider).value as OutletSelected;
 

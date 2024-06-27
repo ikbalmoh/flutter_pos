@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/cart/order_summary.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 class TransactionDetailScreen extends ConsumerWidget {
   final Cart cart;
@@ -19,9 +20,7 @@ class TransactionDetailScreen extends ConsumerWidget {
         ref.read(transactionsNotifierProvider.notifier).printReceipt(cart);
       } catch (e) {
         log('PRINT FAILED: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        AppAlert.snackbar(context, e.toString());
       }
     }
 

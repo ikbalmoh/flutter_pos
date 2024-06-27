@@ -38,168 +38,178 @@ class Printer {
       {AttributeReceipts? attributes,
       PaperSize? size = PaperSize.mm58,
       bool isCopy = false}) async {
-    log('BUILD RECEIPT: $cart');
-    final profile = await CapabilityProfile.load();
-    final generator = Generator(PaperSize.mm58, profile);
-    List<int> bytes = [];
+    try {
+      log('BUILD RECEIPT: $cart\n$attributes');
+      final profile = await CapabilityProfile.load();
+      final generator = Generator(PaperSize.mm58, profile);
+      List<int> bytes = [];
 
-    late Image? img;
-    String? headers;
-    String? footers;
+      Image? img;
+      String? headers;
+      String? footers;
 
-    if (attributes != null) {
-      if (attributes.imageBase64 != null) {
-        final Uint8List imgBytes =
-            const Base64Decoder().convert(attributes.imageBase64!);
-        img = decodeImage(imgBytes);
+      if (attributes != null) {
+        if (attributes.imageBase64 != null && attributes.imageBase64 != '') {
+          try {
+            final Uint8List imgBytes =
+                const Base64Decoder().convert(attributes.imageBase64!);
+            img = decodeImage(imgBytes);
+          } catch (e) {
+            log('Cannot decode header image: $e');
+            log('${attributes.imageBase64}');
+          }
+        }
+        headers = Printer.stripHtmlIfNeeded(attributes.headers ?? '');
+        footers = Printer.stripHtmlIfNeeded(attributes.footers ?? '');
       }
-      headers = Printer.stripHtmlIfNeeded(attributes.headers ?? '');
-      footers = Printer.stripHtmlIfNeeded(attributes.footers ?? '');
-    }
 
-    if (img != null) {
-      img = copyResize(img, height: 120);
-      bytes += generator.imageRaster(img, align: PosAlign.center);
-    }
+      if (img != null) {
+        img = copyResize(img, height: 120);
+        bytes += generator.imageRaster(img, align: PosAlign.center);
+      }
 
-    bytes += generator.text(cart.outletName ?? '',
-        styles: const PosStyles(align: PosAlign.center, bold: true),
-        linesAfter: 1);
+      bytes += generator.text(cart.outletName ?? '',
+          styles: const PosStyles(align: PosAlign.center, bold: true),
+          linesAfter: 1);
 
-    if (headers != null) {
-      bytes += generator.text(headers,
-          linesAfter: 1, styles: const PosStyles(align: PosAlign.center));
-    }
+      if (headers != null) {
+        bytes += generator.text(headers,
+            linesAfter: 1, styles: const PosStyles(align: PosAlign.center));
+      }
 
-    // info
-    bytes += generator.text('No: ${cart.transactionNo}');
-    bytes += generator.text('Cashier: ${cart.createdName ?? '-'}');
-    bytes += generator.text(
-        'Date: ${DateTimeFormater.msToString(cart.transactionDate * 1000, format: 'dd/MM/y HH:mm')}');
-    bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
-    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+      // info
+      bytes += generator.text('No: ${cart.transactionNo}');
+      bytes += generator.text('Cashier: ${cart.createdName ?? '-'}');
+      bytes += generator.text(
+          'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate * 1000, format: 'dd/MM/y HH:mm') : ''}');
+      bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
+      bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
 
-    // items
-    for (ItemCart item in cart.items) {
-      bytes += generator.text(item.itemName);
-      bytes += generator.row([
-        PosColumn(
-          text:
-              '${item.quantity} x ${CurrencyFormat.currency(item.price, symbol: false)}',
-          width: 9,
-          styles: const PosStyles(align: PosAlign.left),
-        ),
-        PosColumn(
-          text: CurrencyFormat.currency(
-            item.price * item.quantity,
-            symbol: false,
-          ),
-          width: 3,
-          styles: const PosStyles(align: PosAlign.right),
-        ),
-      ]);
-      if (item.discountTotal > 0) {
+      // items
+      for (ItemCart item in cart.items) {
+        bytes += generator.text(item.itemName);
         bytes += generator.row([
           PosColumn(
-            text: 'discount'.tr(),
+            text:
+                '${item.quantity} x ${CurrencyFormat.currency(item.price, symbol: false)}',
             width: 9,
             styles: const PosStyles(align: PosAlign.left),
           ),
           PosColumn(
-            text:
-                '-${CurrencyFormat.currency(item.discountTotal, symbol: false)}',
+            text: CurrencyFormat.currency(
+              item.price * item.quantity,
+              symbol: false,
+            ),
             width: 3,
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
+        if (item.discountTotal > 0) {
+          bytes += generator.row([
+            PosColumn(
+              text: 'discount'.tr(),
+              width: 9,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text:
+                  '-${CurrencyFormat.currency(item.discountTotal, symbol: false)}',
+              width: 3,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
       }
-    }
-    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
-    // subtotal
-    bytes += generator.row([
-      PosColumn(
-        text: 'Subtotal',
-        width: 9,
-        styles: const PosStyles(align: PosAlign.left),
-      ),
-      PosColumn(
-        text: CurrencyFormat.currency(cart.subtotal, symbol: false),
-        width: 3,
-        styles: const PosStyles(align: PosAlign.right),
-      ),
-    ]);
-    bytes += generator.row([
-      PosColumn(
-        text: 'discount'.tr(),
-        width: 8,
-        styles: const PosStyles(align: PosAlign.left),
-      ),
-      PosColumn(
-        text:
-            '-${CurrencyFormat.currency(cart.discOverallTotal, symbol: false)}',
-        width: 4,
-        styles: const PosStyles(align: PosAlign.right),
-      ),
-    ]);
-    bytes += generator.row([
-      PosColumn(
-        text: 'Total',
-        width: 8,
-        styles: const PosStyles(align: PosAlign.left),
-      ),
-      PosColumn(
-        text: CurrencyFormat.currency(cart.total, symbol: false),
-        width: 4,
-        styles: const PosStyles(align: PosAlign.right),
-      ),
-    ]);
-    // Payments
-    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
-    bytes += generator.text('payments'.tr());
-    for (var payment in cart.payments) {
+      bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+      // subtotal
       bytes += generator.row([
         PosColumn(
-          text: payment.paymentName,
-          width: 7,
+          text: 'Subtotal',
+          width: 9,
           styles: const PosStyles(align: PosAlign.left),
         ),
         PosColumn(
-          text: CurrencyFormat.currency(payment.paymentValue, symbol: false),
-          width: 5,
+          text: CurrencyFormat.currency(cart.subtotal, symbol: false),
+          width: 3,
           styles: const PosStyles(align: PosAlign.right),
         ),
       ]);
+      bytes += generator.row([
+        PosColumn(
+          text: 'discount'.tr(),
+          width: 8,
+          styles: const PosStyles(align: PosAlign.left),
+        ),
+        PosColumn(
+          text:
+              '-${CurrencyFormat.currency(cart.discOverallTotal, symbol: false)}',
+          width: 4,
+          styles: const PosStyles(align: PosAlign.right),
+        ),
+      ]);
+      bytes += generator.row([
+        PosColumn(
+          text: 'Total',
+          width: 8,
+          styles: const PosStyles(align: PosAlign.left),
+        ),
+        PosColumn(
+          text: CurrencyFormat.currency(cart.total, symbol: false),
+          width: 4,
+          styles: const PosStyles(align: PosAlign.right),
+        ),
+      ]);
+      // Payments
+      bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+      bytes += generator.text('payments'.tr());
+      for (var payment in cart.payments) {
+        bytes += generator.row([
+          PosColumn(
+            text: payment.paymentName,
+            width: 7,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: CurrencyFormat.currency(payment.paymentValue, symbol: false),
+            width: 5,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
+      // Change
+      bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+      bytes += generator.row([
+        PosColumn(
+          text: 'change'.tr(),
+          width: 8,
+          styles: const PosStyles(align: PosAlign.left),
+        ),
+        PosColumn(
+          text: CurrencyFormat.currency(cart.change, symbol: false),
+          width: 4,
+          styles: const PosStyles(align: PosAlign.right),
+        ),
+      ]);
+
+      // footer
+      bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58),
+          linesAfter: 1);
+      if (footers != null) {
+        bytes += generator.text(footers,
+            linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
+      }
+
+      if (isCopy) {
+        bytes += generator.text('receipt_copy'.tr(), linesAfter: 1);
+      }
+
+      bytes += generator.cut();
+
+      return bytes;
+    } catch (e, stackTrace) {
+      log('BUILD RECEIPT ERROR: $e\n$stackTrace');
+      rethrow;
     }
-    // Change
-    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
-    bytes += generator.row([
-      PosColumn(
-        text: 'change'.tr(),
-        width: 8,
-        styles: const PosStyles(align: PosAlign.left),
-      ),
-      PosColumn(
-        text: CurrencyFormat.currency(cart.change, symbol: false),
-        width: 4,
-        styles: const PosStyles(align: PosAlign.right),
-      ),
-    ]);
-
-    // footer
-    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58),
-        linesAfter: 1);
-    if (footers != null) {
-      bytes += generator.text(footers,
-          linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
-    }
-
-    if (isCopy) {
-      bytes += generator.text('receipt_copy'.tr(), linesAfter: 1);
-    }
-
-    bytes += generator.cut();
-
-    return bytes;
   }
 
   static Future<List<int>> buildShiftReportBytes(ShiftInfo shift,
@@ -215,7 +225,7 @@ class Printer {
     String? headers;
 
     if (attributes != null) {
-      if (attributes.imageBase64 != null) {
+      if (attributes.imageBase64 != null && attributes.imageBase64 != '') {
         final Uint8List imgBytes =
             const Base64Decoder().convert(attributes.imageBase64!);
         img = decodeImage(imgBytes);

@@ -90,6 +90,14 @@ class FcmNotifier extends _$FcmNotifier {
       state = AsyncValue.data(token);
       log("FCM TOKEN: $token");
 
+      final authenticated =
+          ref.read(authNotifierProvider).value is Authenticated;
+      if (!authenticated) return;
+
+      final outletActive =
+          ref.read(outletNotifierProvider).value is OutletSelected;
+      if (!outletActive) return;
+
       if (token != null) {
         await api.storeFcmToken(token: token, outletId: idOutlet);
       }

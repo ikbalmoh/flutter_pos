@@ -121,4 +121,8 @@ class ShiftNotifier extends _$ShiftNotifier {
       rethrow;
     }
   }
+
+  void offShift() {
+    state = const AsyncData(null);
+  }
 }
