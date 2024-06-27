@@ -181,4 +181,8 @@ class Shift extends _$Shift {
       rethrow;
     }
   }
+
+  void offShift() {
+    state = const AsyncData(null);
+  }
 }

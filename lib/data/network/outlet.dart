@@ -96,7 +96,13 @@ class OutletApi {
       "fcm_token": token
     };
 
-    final res = await api.post(ApiUrl.storeFcmToken, data: data);
-    return res.data;
+    try {
+      final res = await api.post(ApiUrl.storeFcmToken, data: data);
+      return res.data;
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      rethrow;
+    }
   }
 }
