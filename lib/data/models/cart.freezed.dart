@@ -25,7 +25,7 @@ mixin _$Cart {
   String get transactionNo => throw _privateConstructorUsedError;
   String get idOutlet => throw _privateConstructorUsedError;
   String? get outletName => throw _privateConstructorUsedError;
-  String? get transcactionId => throw _privateConstructorUsedError;
+  String? get idTransaction => throw _privateConstructorUsedError;
   String get shiftId => throw _privateConstructorUsedError;
   double get subtotal => throw _privateConstructorUsedError;
   @JsonKey(fromJson: Converters.dynamicToBool)
@@ -55,6 +55,9 @@ mixin _$Cart {
   List<CartPayment> get payments => throw _privateConstructorUsedError;
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool get isApp => throw _privateConstructorUsedError;
+  DateTime? get deletedAt => throw _privateConstructorUsedError;
+  String? get deletedBy => throw _privateConstructorUsedError;
+  String? get deleteReason => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -72,7 +75,7 @@ abstract class $CartCopyWith<$Res> {
       String transactionNo,
       String idOutlet,
       String? outletName,
-      String? transcactionId,
+      String? idTransaction,
       String shiftId,
       double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
@@ -97,7 +100,10 @@ abstract class $CartCopyWith<$Res> {
       String? createdName,
       List<ItemCart> items,
       List<CartPayment> payments,
-      @JsonKey(fromJson: Converters.dynamicToBool) bool isApp});
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isApp,
+      DateTime? deletedAt,
+      String? deletedBy,
+      String? deleteReason});
 }
 
 /// @nodoc
@@ -117,7 +123,7 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? transactionNo = null,
     Object? idOutlet = null,
     Object? outletName = freezed,
-    Object? transcactionId = freezed,
+    Object? idTransaction = freezed,
     Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
@@ -143,6 +149,9 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
     Object? items = null,
     Object? payments = null,
     Object? isApp = null,
+    Object? deletedAt = freezed,
+    Object? deletedBy = freezed,
+    Object? deleteReason = freezed,
   }) {
     return _then(_value.copyWith(
       transactionDate: null == transactionDate
@@ -161,9 +170,9 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
               as String?,
-      transcactionId: freezed == transcactionId
-          ? _value.transcactionId
-          : transcactionId // ignore: cast_nullable_to_non_nullable
+      idTransaction: freezed == idTransaction
+          ? _value.idTransaction
+          : idTransaction // ignore: cast_nullable_to_non_nullable
               as String?,
       shiftId: null == shiftId
           ? _value.shiftId
@@ -265,6 +274,18 @@ class _$CartCopyWithImpl<$Res, $Val extends Cart>
           ? _value.isApp
           : isApp // ignore: cast_nullable_to_non_nullable
               as bool,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      deletedBy: freezed == deletedBy
+          ? _value.deletedBy
+          : deletedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      deleteReason: freezed == deleteReason
+          ? _value.deleteReason
+          : deleteReason // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -282,7 +303,7 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String transactionNo,
       String idOutlet,
       String? outletName,
-      String? transcactionId,
+      String? idTransaction,
       String shiftId,
       double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) bool discIsPercent,
@@ -307,7 +328,10 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
       String? createdName,
       List<ItemCart> items,
       List<CartPayment> payments,
-      @JsonKey(fromJson: Converters.dynamicToBool) bool isApp});
+      @JsonKey(fromJson: Converters.dynamicToBool) bool isApp,
+      DateTime? deletedAt,
+      String? deletedBy,
+      String? deleteReason});
 }
 
 /// @nodoc
@@ -324,7 +348,7 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? transactionNo = null,
     Object? idOutlet = null,
     Object? outletName = freezed,
-    Object? transcactionId = freezed,
+    Object? idTransaction = freezed,
     Object? shiftId = null,
     Object? subtotal = null,
     Object? discIsPercent = null,
@@ -350,6 +374,9 @@ class __$$CartImplCopyWithImpl<$Res>
     Object? items = null,
     Object? payments = null,
     Object? isApp = null,
+    Object? deletedAt = freezed,
+    Object? deletedBy = freezed,
+    Object? deleteReason = freezed,
   }) {
     return _then(_$CartImpl(
       transactionDate: null == transactionDate
@@ -368,9 +395,9 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.outletName
           : outletName // ignore: cast_nullable_to_non_nullable
               as String?,
-      transcactionId: freezed == transcactionId
-          ? _value.transcactionId
-          : transcactionId // ignore: cast_nullable_to_non_nullable
+      idTransaction: freezed == idTransaction
+          ? _value.idTransaction
+          : idTransaction // ignore: cast_nullable_to_non_nullable
               as String?,
       shiftId: null == shiftId
           ? _value.shiftId
@@ -472,6 +499,18 @@ class __$$CartImplCopyWithImpl<$Res>
           ? _value.isApp
           : isApp // ignore: cast_nullable_to_non_nullable
               as bool,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      deletedBy: freezed == deletedBy
+          ? _value.deletedBy
+          : deletedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      deleteReason: freezed == deleteReason
+          ? _value.deleteReason
+          : deleteReason // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -486,7 +525,7 @@ class _$CartImpl extends _Cart {
       required this.transactionNo,
       required this.idOutlet,
       this.outletName,
-      this.transcactionId,
+      this.idTransaction,
       required this.shiftId,
       required this.subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool) required this.discIsPercent,
@@ -511,7 +550,10 @@ class _$CartImpl extends _Cart {
       this.createdName,
       required final List<ItemCart> items,
       required final List<CartPayment> payments,
-      @JsonKey(fromJson: Converters.dynamicToBool) required this.isApp})
+      @JsonKey(fromJson: Converters.dynamicToBool) required this.isApp,
+      this.deletedAt,
+      this.deletedBy,
+      this.deleteReason})
       : _items = items,
         _payments = payments,
         super._();
@@ -529,7 +571,7 @@ class _$CartImpl extends _Cart {
   @override
   final String? outletName;
   @override
-  final String? transcactionId;
+  final String? idTransaction;
   @override
   final String shiftId;
   @override
@@ -596,10 +638,16 @@ class _$CartImpl extends _Cart {
   @override
   @JsonKey(fromJson: Converters.dynamicToBool)
   final bool isApp;
+  @override
+  final DateTime? deletedAt;
+  @override
+  final String? deletedBy;
+  @override
+  final String? deleteReason;
 
   @override
   String toString() {
-    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, transcactionId: $transcactionId, shiftId: $shiftId, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, description: $description, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments, isApp: $isApp)';
+    return 'Cart(transactionDate: $transactionDate, transactionNo: $transactionNo, idOutlet: $idOutlet, outletName: $outletName, idTransaction: $idTransaction, shiftId: $shiftId, subtotal: $subtotal, discIsPercent: $discIsPercent, discOverall: $discOverall, discOverallTotal: $discOverallTotal, discPromotionsTotal: $discPromotionsTotal, total: $total, ppnIsInclude: $ppnIsInclude, ppn: $ppn, taxName: $taxName, ppnTotal: $ppnTotal, grandTotal: $grandTotal, totalPayment: $totalPayment, change: $change, idCustomer: $idCustomer, customerName: $customerName, notes: $notes, description: $description, personInCharge: $personInCharge, holdAt: $holdAt, createdBy: $createdBy, createdName: $createdName, items: $items, payments: $payments, isApp: $isApp, deletedAt: $deletedAt, deletedBy: $deletedBy, deleteReason: $deleteReason)';
   }
 
   @override
@@ -615,8 +663,8 @@ class _$CartImpl extends _Cart {
                 other.idOutlet == idOutlet) &&
             (identical(other.outletName, outletName) ||
                 other.outletName == outletName) &&
-            (identical(other.transcactionId, transcactionId) ||
-                other.transcactionId == transcactionId) &&
+            (identical(other.idTransaction, idTransaction) ||
+                other.idTransaction == idTransaction) &&
             (identical(other.shiftId, shiftId) || other.shiftId == shiftId) &&
             (identical(other.subtotal, subtotal) ||
                 other.subtotal == subtotal) &&
@@ -656,7 +704,13 @@ class _$CartImpl extends _Cart {
                 other.createdName == createdName) &&
             const DeepCollectionEquality().equals(other._items, _items) &&
             const DeepCollectionEquality().equals(other._payments, _payments) &&
-            (identical(other.isApp, isApp) || other.isApp == isApp));
+            (identical(other.isApp, isApp) || other.isApp == isApp) &&
+            (identical(other.deletedAt, deletedAt) ||
+                other.deletedAt == deletedAt) &&
+            (identical(other.deletedBy, deletedBy) ||
+                other.deletedBy == deletedBy) &&
+            (identical(other.deleteReason, deleteReason) ||
+                other.deleteReason == deleteReason));
   }
 
   @JsonKey(ignore: true)
@@ -667,7 +721,7 @@ class _$CartImpl extends _Cart {
         transactionNo,
         idOutlet,
         outletName,
-        transcactionId,
+        idTransaction,
         shiftId,
         subtotal,
         discIsPercent,
@@ -692,7 +746,10 @@ class _$CartImpl extends _Cart {
         createdName,
         const DeepCollectionEquality().hash(_items),
         const DeepCollectionEquality().hash(_payments),
-        isApp
+        isApp,
+        deletedAt,
+        deletedBy,
+        deleteReason
       ]);
 
   @JsonKey(ignore: true)
@@ -716,7 +773,7 @@ abstract class _Cart extends Cart {
       required final String transactionNo,
       required final String idOutlet,
       final String? outletName,
-      final String? transcactionId,
+      final String? idTransaction,
       required final String shiftId,
       required final double subtotal,
       @JsonKey(fromJson: Converters.dynamicToBool)
@@ -744,8 +801,10 @@ abstract class _Cart extends Cart {
       final String? createdName,
       required final List<ItemCart> items,
       required final List<CartPayment> payments,
-      @JsonKey(fromJson: Converters.dynamicToBool)
-      required final bool isApp}) = _$CartImpl;
+      @JsonKey(fromJson: Converters.dynamicToBool) required final bool isApp,
+      final DateTime? deletedAt,
+      final String? deletedBy,
+      final String? deleteReason}) = _$CartImpl;
   const _Cart._() : super._();
 
   factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
@@ -760,7 +819,7 @@ abstract class _Cart extends Cart {
   @override
   String? get outletName;
   @override
-  String? get transcactionId;
+  String? get idTransaction;
   @override
   String get shiftId;
   @override
@@ -815,6 +874,12 @@ abstract class _Cart extends Cart {
   @override
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool get isApp;
+  @override
+  DateTime? get deletedAt;
+  @override
+  String? get deletedBy;
+  @override
+  String? get deleteReason;
   @override
   @JsonKey(ignore: true)
   _$$CartImplCopyWith<_$CartImpl> get copyWith =>

@@ -94,7 +94,7 @@ class Cart extends _$Cart {
     return emptyItems;
   }
 
-  void initCart() async {
+  Future<void> initCart() async {
     try {
       if (ref.read(authNotifierProvider).value is! Authenticated) {
         return;

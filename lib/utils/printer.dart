@@ -432,7 +432,13 @@ class Printer {
       }
 
       if (isCopy) {
-        bytes += generator.text('receipt_copy'.tr(), linesAfter: 1);
+        bytes += generator.text('receipt_copy'.tr(),
+            styles: const PosStyles(align: PosAlign.center));
+        bytes += generator.text(
+            DateTimeFormater.dateToString(DateTime.now(),
+                format: 'dd/MM/y HH:mm'),
+            linesAfter: 1,
+            styles: const PosStyles(align: PosAlign.center));
       }
 
       bytes += generator.cut();
