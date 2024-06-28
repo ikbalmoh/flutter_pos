@@ -61,9 +61,14 @@ class ItemRepository implements ItemRepositoryProtocol {
     int? lastUpdate;
     if (fromLastSync == true) {
       String? lastSync = await storage.read(key: syncKey);
-      lastUpdate = lastSync != null
-          ? (int.parse(lastSync) / 1000).round()
-          : (DateTime.now().millisecondsSinceEpoch / 1000).round();
+      DateTime syncDateTime = lastSync != null
+          ? DateTime.fromMillisecondsSinceEpoch(int.parse(lastSync))
+          : DateTime.now();
+      lastUpdate = (syncDateTime
+                  .subtract(const Duration(hours: 1))
+                  .millisecondsSinceEpoch /
+              1000)
+          .floor();
     }
 
     try {
