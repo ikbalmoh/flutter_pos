@@ -64,14 +64,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     });
   }
 
-  void onSignOut() {
-    AppAlert.confirm(context,
-        title: 'logout'.tr(),
-        subtitle: 'logout_confirmation'.tr(), onConfirm: () {
-      ref.read(authNotifierProvider.notifier).logout();
-    }, confirmLabel: 'logout'.tr());
-  }
-
   @override
   void initState() {
     loadShift();
