@@ -18,7 +18,10 @@ class HomeMenu extends ConsumerWidget {
       AppAlert.confirm(
         context,
         title: 'logout_confirmation'.tr(),
-        onConfirm: () => ref.read(authNotifierProvider.notifier).logout(),
+        onConfirm: () {
+          context.pushReplacementNamed(Routes.login);
+          ref.read(authNotifierProvider.notifier).logout();
+        },
         confirmLabel: 'logout'.tr(),
       );
     }
