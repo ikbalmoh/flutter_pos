@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -23,6 +24,10 @@ class HomeMenu extends ConsumerWidget {
     }
 
     return MenuAnchor(
+      style: MenuStyle(backgroundColor:
+          WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+        return Colors.white;
+      })),
       builder:
           (BuildContext context, MenuController controller, Widget? child) {
         return IconButton(
@@ -47,9 +52,9 @@ class HomeMenu extends ConsumerWidget {
         MenuItemButton(
           onPressed: () => context.push(Routes.customers),
           leadingIcon: Icon(
-            Icons.account_box,
+            CupertinoIcons.rectangle_stack_person_crop,
             color: ref.watch(cartNotiferProvider).idCustomer == null
-                ? Colors.grey.shade800
+                ? Colors.blueGrey.shade500
                 : Colors.green.shade600,
           ),
           child: Text(ref.watch(cartNotiferProvider).customerName ??
@@ -58,8 +63,8 @@ class HomeMenu extends ConsumerWidget {
         MenuItemButton(
           onPressed: () => ref.read(cartNotiferProvider.notifier).initCart(),
           leadingIcon: Icon(
-            Icons.file_copy,
-            color: Colors.grey.shade800,
+            CupertinoIcons.doc,
+            color: Colors.blueGrey.shade500,
           ),
           child: Text('new_transaction'.tr()),
         ),
@@ -72,8 +77,8 @@ class HomeMenu extends ConsumerWidget {
                 ? Colors.green.shade500
                 : Colors.red.shade600,
             child: Icon(
-              Icons.print,
-              color: Colors.grey.shade600,
+              CupertinoIcons.printer,
+              color: Colors.blueGrey.shade400,
             ),
           ),
           child:
@@ -82,7 +87,7 @@ class HomeMenu extends ConsumerWidget {
         MenuItemButton(
           onPressed: onSignOut,
           leadingIcon: const Icon(
-            Icons.logout,
+            CupertinoIcons.square_arrow_left,
             color: Colors.red,
           ),
           child: Text('logout'.tr()),

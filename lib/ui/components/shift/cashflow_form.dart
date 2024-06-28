@@ -14,7 +14,7 @@ import 'package:selleri/data/models/shift_cashflow_image.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/ui/components/generic/button_selection.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
-import 'package:selleri/ui/components/picked_image.dart';
+import 'package:selleri/ui/components/generic/picked_image.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
@@ -309,18 +309,6 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                           style: labelStyle,
                         ),
                         alignLabelWithHint: true,
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 0.5,
-                            color: Colors.blueGrey.shade100,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 0.5,
-                            color: Colors.teal,
-                          ),
-                        ),
                       ),
                     ),
                   ),
@@ -332,26 +320,12 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                         descriptions = value;
                       }),
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.only(
-                            left: 0, top: 10, right: 0, bottom: 15),
                         label: Text(
                           'description'.tr(),
                           style: labelStyle,
                         ),
                         hintText: 'add'.tr(args: ['description'.tr()]),
                         alignLabelWithHint: true,
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 0.5,
-                            color: Colors.blueGrey.shade100,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 0.5,
-                            color: Colors.teal,
-                          ),
-                        ),
                       ),
                     ),
                   ),

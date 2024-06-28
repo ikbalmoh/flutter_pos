@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/network/transaction.dart';
+import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/utils/printer.dart';
@@ -66,6 +66,47 @@ class TransactionsNotifier extends _$TransactionsNotifier {
       ref.read(printerNotifierProvider.notifier).print(receipt);
     } catch (error) {
       rethrow;
+    }
+  }
+
+  Future<Cart> cancelTransaction(Cart cart,
+      {required String deleteReason}) async {
+    try {
+      final api = TransactionApi();
+
+      final userId = (ref.read(authNotifierProvider).value as Authenticated)
+          .user
+          .user
+          .idUser;
+
+      final transaction = cart.copyWith(
+          deletedAt: DateTime.now(),
+          deleteReason: deleteReason,
+          deletedBy: userId);
+
+      log('DELETE TRANSACTION: $transaction');
+
+      final res = await api.storeTransaction(transaction);
+
+      if (res.isEmpty) {
+        throw Exception('transaction_error'.tr());
+      }
+
+      final index = state.value?.data!
+          .indexWhere((t) => t.idTransaction == transaction.idTransaction);
+
+      final transactions = List<Cart>.from(state.value!.data!);
+      if (index != null) {
+        transactions[index] = transaction;
+      }
+
+      log('TRANSACTION DELETED: $index => $transaction');
+      state = AsyncData(state.value!.copyWith(data: transactions));
+
+      return transaction;
+    } catch (e) {
+      log('CANCEL TRANSACTION ERROR: $e');
+      throw Exception(e);
     }
   }
 }

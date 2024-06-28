@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/ui/components/open_shift.dart';
+import 'package:selleri/ui/components/shift/open_shift.dart';
 import 'package:selleri/ui/components/shift/open_shift_button.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 

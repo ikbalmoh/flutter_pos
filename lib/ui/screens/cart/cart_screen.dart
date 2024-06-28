@@ -6,8 +6,8 @@ import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/router/routes.dart';
-import 'package:selleri/ui/components/cart_item.dart';
-import 'package:selleri/ui/components/edit_cart_item.dart';
+import 'package:selleri/ui/components/cart/cart_item.dart';
+import 'package:selleri/ui/components/cart/edit_cart_item_form.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
@@ -40,7 +40,7 @@ class CartScreen extends ConsumerWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
-        builder: (BuildContext context) => EditCartItem(
+        builder: (BuildContext context) => EditCartItemForm(
           item: item,
           onDelete: () => onDeleteItem(item),
         ),

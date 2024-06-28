@@ -4,23 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
-import 'package:selleri/ui/components/discount_type_toggle.dart';
-import 'package:selleri/ui/components/qty_editor.dart';
+import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
+import 'package:selleri/ui/components/generic/qty_editor.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class EditCartItem extends ConsumerStatefulWidget {
+class EditCartItemForm extends ConsumerStatefulWidget {
   final ItemCart item;
   final Function onDelete;
 
-  const EditCartItem({super.key, required this.item, required this.onDelete});
+  const EditCartItemForm({super.key, required this.item, required this.onDelete});
 
   @override
-  ConsumerState<EditCartItem> createState() => _EditCartItemState();
+  ConsumerState<EditCartItemForm> createState() => _EditCartItemFormState();
 }
 
-class _EditCartItemState extends ConsumerState<EditCartItem> {
+class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
   final noteController = TextEditingController();
 
   final _priceFormater = CurrencyFormat.currencyInput();
@@ -159,18 +159,6 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                 style: labelStyle,
               ),
               alignLabelWithHint: true,
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
-                ),
-              ),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.teal,
-                ),
-              ),
             ),
           ),
           Container(
@@ -219,18 +207,6 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
                 style: labelStyle,
               ),
               alignLabelWithHint: true,
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
-                ),
-              ),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.teal,
-                ),
-              ),
               suffix: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: DiscountTypeToggle(
@@ -244,24 +220,12 @@ class _EditCartItemState extends ConsumerState<EditCartItem> {
             controller: noteController,
             decoration: InputDecoration(
               contentPadding:
-                  const EdgeInsets.only(left: 0, top: 15, right: 0, bottom: 15),
+                  const EdgeInsets.only(left: 0, top: 10, right: 0, bottom: 10),
               label: Text(
                 'note'.tr(),
                 style: labelStyle,
               ),
               alignLabelWithHint: true,
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
-                ),
-              ),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.teal,
-                ),
-              ),
             ),
           ),
           const SizedBox(

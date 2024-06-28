@@ -15,7 +15,7 @@ import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/generic/button_selection.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
-import 'package:selleri/ui/components/picked_image.dart';
+import 'package:selleri/ui/components/generic/picked_image.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
@@ -175,30 +175,6 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                             style: labelStyle,
                           ),
                           alignLabelWithHint: true,
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.blueGrey.shade100,
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.teal,
-                            ),
-                          ),
-                          errorBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.red,
-                            ),
-                          ),
-                          focusedErrorBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.red,
-                            ),
-                          ),
                         ),
                       ),
                     ),
@@ -256,18 +232,6 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                             style: labelStyle,
                           ),
                           alignLabelWithHint: true,
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.blueGrey.shade100,
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.teal,
-                            ),
-                          ),
                         ),
                       ),
                     ),
@@ -294,18 +258,6 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                             style: labelStyle,
                           ),
                           alignLabelWithHint: true,
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.blueGrey.shade100,
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.teal,
-                            ),
-                          ),
                         ),
                       ),
                     ),
@@ -333,18 +285,6 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                             style: labelStyle,
                           ),
                           alignLabelWithHint: true,
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.blueGrey.shade100,
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.teal,
-                            ),
-                          ),
                         ),
                       ),
                     ),
@@ -356,26 +296,12 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                           address = value;
                         }),
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 0, top: 10, right: 0, bottom: 15),
                           label: Text(
                             'address'.tr(),
                             style: labelStyle,
                           ),
                           hintText: 'add'.tr(args: ['address'.tr()]),
                           alignLabelWithHint: true,
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.blueGrey.shade100,
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 0.5,
-                              color: Colors.teal,
-                            ),
-                          ),
                         ),
                       ),
                     ),

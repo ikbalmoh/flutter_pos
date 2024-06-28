@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/cart.dart';
@@ -157,6 +158,17 @@ class _TransactionHistoryScreenState
                                 ),
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
+                              leading: cart.deletedAt != null
+                                  ? const Icon(
+                                      CupertinoIcons
+                                          .xmark_circle_fill,
+                                      color: Colors.red,
+                                    )
+                                  : const Icon(
+                                      CupertinoIcons
+                                          .checkmark_alt_circle_fill,
+                                      color: Colors.green,
+                                    ),
                               shape: Border(
                                 bottom: BorderSide(
                                   width: 0.5,

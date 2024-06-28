@@ -12,7 +12,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
       transactionNo: json['transaction_no'] as String,
       idOutlet: json['id_outlet'] as String,
       outletName: json['outlet_name'] as String?,
-      transcactionId: json['transcaction_id'] as String?,
+      idTransaction: json['id_transaction'] as String?,
       shiftId: json['shift_id'] as String,
       subtotal: (json['subtotal'] as num).toDouble(),
       discIsPercent: Converters.dynamicToBool(json['disc_is_percent']),
@@ -44,6 +44,11 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
           .map((e) => CartPayment.fromJson(e as Map<String, dynamic>))
           .toList(),
       isApp: Converters.dynamicToBool(json['is_app']),
+      deletedAt: json['deleted_at'] == null
+          ? null
+          : DateTime.parse(json['deleted_at'] as String),
+      deletedBy: json['deleted_by'] as String?,
+      deleteReason: json['delete_reason'] as String?,
     );
 
 Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
@@ -52,7 +57,7 @@ Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
       'transaction_no': instance.transactionNo,
       'id_outlet': instance.idOutlet,
       'outlet_name': instance.outletName,
-      'transcaction_id': instance.transcactionId,
+      'id_transaction': instance.idTransaction,
       'shift_id': instance.shiftId,
       'subtotal': instance.subtotal,
       'disc_is_percent': instance.discIsPercent,
@@ -78,4 +83,7 @@ Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
       'items': instance.items,
       'payments': instance.payments,
       'is_app': instance.isApp,
+      'deleted_at': instance.deletedAt?.toIso8601String(),
+      'deleted_by': instance.deletedBy,
+      'delete_reason': instance.deleteReason,
     };

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:selleri/ui/components/open_shift.dart';
+import 'package:selleri/ui/components/shift/open_shift.dart';
 
 class OpenShiftButton extends StatelessWidget {
   const OpenShiftButton({super.key});

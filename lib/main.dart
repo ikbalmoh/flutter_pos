@@ -15,6 +15,7 @@ import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -89,6 +90,8 @@ Future initServices() async {
   } else {
     log('FCM NOTIFICATION: User declined or has not accepted permission');
   }
+
+  WakelockPlus.enable();
 }
 
 Future<void> main() async {

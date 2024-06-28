@@ -20,7 +20,7 @@ class Cart with _$Cart {
     required String transactionNo,
     required String idOutlet,
     String? outletName,
-    String? transcactionId,
+    String? idTransaction,
     required String shiftId,
     required double subtotal,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool discIsPercent,
@@ -46,6 +46,9 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     required List<CartPayment> payments,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
+    DateTime? deletedAt,
+    String? deletedBy,
+    String? deleteReason,
   }) = _Cart;
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
@@ -61,6 +64,7 @@ class Cart with _$Cart {
   }
 
   factory Cart.fromTransaction(Map<String, dynamic> json) {
+    json['transcaction_id'] = json['id_transaction'];
     json['transaction_date'] =
         DateTimeFormater.stringToTimestamp(json['transaction_date']);
     for (var item in json['items']) {
@@ -70,6 +74,7 @@ class Cart with _$Cart {
   }
 
   Map<String, dynamic> toTransactionPayload() => <String, dynamic>{
+        "id_transaction": idTransaction,
         "id_outlet": idOutlet,
         "shift_id": shiftId,
         "created_by": createdBy,
@@ -102,6 +107,11 @@ class Cart with _$Cart {
         ),
         "vouchers": [],
         "refunds": [],
-        "promotions": []
+        "promotions": [],
+        "deleted_at": deletedAt != null
+            ? DateTimeFormater.dateToString(deletedAt!)
+            : null,
+        "deleted_by": deletedBy,
+        "delete_reason": deleteReason
       };
 }

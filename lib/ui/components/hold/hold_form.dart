@@ -119,24 +119,10 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                 });
               },
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(
-                    left: 0, top: 15, right: 0, bottom: 15),
                 label: Text(
                   'note'.tr(),
                 ),
                 alignLabelWithHint: true,
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0.5,
-                    color: Colors.blueGrey.shade100,
-                  ),
-                ),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0.5,
-                    color: Colors.teal,
-                  ),
-                ),
               ),
             ),
             const SizedBox(height: 20),

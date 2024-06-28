@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
-import 'package:selleri/ui/components/discount_type_toggle.dart';
+import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
 import 'package:selleri/utils/formater.dart';
 
 class AddDiscountOverall extends ConsumerStatefulWidget {
@@ -128,18 +128,6 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
                 style: labelStyle,
               ),
               alignLabelWithHint: true,
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
-                ),
-              ),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.5,
-                  color: Colors.teal,
-                ),
-              ),
               suffix: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: DiscountTypeToggle(

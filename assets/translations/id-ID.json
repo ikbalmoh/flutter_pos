@@ -147,5 +147,11 @@
   "different": "Selisih",
   "new": "{} Baru",
   "dob": "Tgl Lahir",
-  "field_required": "{} harus diisi"
+  "field_required": "{} harus diisi",
+  "cancel_transaction": "Batalkan Transaksi",
+  "cancelation_reason": "Alasan Pembatalan",
+  "canceled": "Dibatalalkan",
+  "submit": "Kirim",
+  "cancel_transaction_confirmation": "Saya yakin untuk menghapus transaksi ini",
+  "transaction_canceled": "Transaksi Dibatalalkan"
 }

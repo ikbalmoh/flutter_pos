@@ -48,18 +48,6 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
             style: labelStyle,
           ),
           alignLabelWithHint: true,
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              width: 0.5,
-              color: Colors.blueGrey.shade100,
-            ),
-          ),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(
-              width: 0.5,
-              color: Colors.teal,
-            ),
-          ),
         ),
       ),
       actions: [

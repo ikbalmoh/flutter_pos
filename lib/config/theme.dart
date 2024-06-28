@@ -13,18 +13,18 @@ ThemeData appTheme(BuildContext context) {
       brightness: Brightness.light,
     ),
     useMaterial3: true,
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       elevation: 0,
       surfaceTintColor: Colors.teal,
       scrolledUnderElevation: 0,
       foregroundColor: Colors.teal,
       backgroundColor: Colors.white,
-      titleTextStyle: TextStyle(
+      titleTextStyle: const TextStyle(
           color: Colors.teal, fontWeight: FontWeight.w600, fontSize: 18),
       actionsIconTheme: IconThemeData(
-        color: Colors.black54,
+        color: Colors.blueGrey.shade500,
       ),
-      systemOverlayStyle: SystemUiOverlayStyle(
+      systemOverlayStyle: const SystemUiOverlayStyle(
         statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
@@ -109,40 +109,32 @@ ThemeData appTheme(BuildContext context) {
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      enabledBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
+      hintStyle: Theme.of(context)
+          .textTheme
+          .bodySmall
+          ?.copyWith(color: Colors.grey.shade400),
+      enabledBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          width: 1,
-          color: Colors.grey.shade400,
+          width: 0.5,
+          color: Colors.blueGrey.shade100,
         ),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
+      focusedBorder: const UnderlineInputBorder(
         borderSide: BorderSide(
-          width: 1,
-          color: Colors.teal.shade400,
+          width: 0.5,
+          color: Colors.teal,
         ),
       ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
+      errorBorder: UnderlineInputBorder(
         borderSide: BorderSide(
           width: 1,
           color: Colors.red.shade400,
         ),
       ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
+      focusedErrorBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          width: 1,
-          color: Colors.teal.shade400,
+          width: 0.5,
+          color: Colors.red.shade400,
         ),
       ),
       labelStyle: TextStyle(
@@ -151,7 +143,7 @@ ThemeData appTheme(BuildContext context) {
       ),
       contentPadding: const EdgeInsets.symmetric(
         vertical: 10,
-        horizontal: 15,
+        horizontal: 0,
       ),
     ),
     pageTransitionsTheme: const PageTransitionsTheme(

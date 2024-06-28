@@ -147,5 +147,10 @@
   "different": "Different",
   "new": "New {}",
   "dob": "Date of Birth",
-  "field_required": "{} is required"
+  "field_required": "{} is required",
+  "cancel_transaction": "Cancel Transaction",
+  "canceled": "Canceled",
+  "submit": "Submit",
+  "cancel_transaction_confirmation": "I's sure to cancel this transaction",
+  "transaction_canceled": "Transaction Canceled"
 }

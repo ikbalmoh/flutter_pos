@@ -53,7 +53,7 @@ class CartNotifer extends _$CartNotifer {
     );
   }
 
-  void initCart() async {
+  Future<void> initCart() async {
     try {
       if (ref.read(authNotifierProvider).value is! Authenticated) {
         return;
@@ -94,6 +94,9 @@ class CartNotifer extends _$CartNotifer {
   }
 
   void addToCart(Item item, {ItemVariant? variant}) async {
+    if (state.idOutlet == '') {
+      await initCart();
+    }
     String identifier = item.idItem;
     String itemName = item.itemName;
     double itemPrice = item.itemPrice;
@@ -314,8 +317,8 @@ class CartNotifer extends _$CartNotifer {
     Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
     final api = TransactionApi();
-    if (cart.transcactionId != null) {
-      await api.updateHoldTransaction(cart.transcactionId!, cart);
+    if (cart.idTransaction != null) {
+      await api.updateHoldTransaction(cart.idTransaction!, cart);
     } else {
       await api.holdTransaction(cart);
     }
@@ -327,7 +330,7 @@ class CartNotifer extends _$CartNotifer {
   }
 
   void openHoldedCart(CartHolded holded) {
-    Cart cart = holded.dataHold.copyWith(transcactionId: holded.transactionId);
+    Cart cart = holded.dataHold.copyWith(idTransaction: holded.transactionId);
     if (cart.holdAt == null) {
       cart = cart.copyWith(holdAt: DateTime.now());
     }
