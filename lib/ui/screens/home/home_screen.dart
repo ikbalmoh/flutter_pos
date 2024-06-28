@@ -33,6 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String idCategory = '';
   String search = '';
   Timer? _debounce;
+  bool inSync = false;
 
   bool searchVisible = false;
   TextEditingController textEditingController = TextEditingController();
@@ -68,9 +69,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    // Load items
-    ref.read(itemsStreamProvider().notifier).loadItems();
+    loadItems();
     super.initState();
+  }
+
+  Future<void> loadItems() async {
+    if (inSync) return;
+    setState(() {
+      inSync = true;
+    });
+    await ref.read(itemsStreamProvider().notifier).loadItems();
+    setState(() {
+      inSync = false;
+    });
   }
 
   @override
@@ -123,68 +134,71 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const HomeMenu()
                     ],
             ),
-      body: Stack(
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.max,
+      body: RefreshIndicator(
+          onRefresh: loadItems,
+          child: Stack(
             children: [
-              ref.watch(cartNotiferProvider).holdAt == null
-                  ? Container()
-                  : Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.shade800,
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(0)),
-                      ),
-                      child: Text(
-                        ref.watch(cartNotiferProvider).transactionNo,
-                        style: const TextStyle(
-                          color: Colors.white,
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  ref.watch(cartNotiferProvider).holdAt == null
+                      ? Container()
+                      : Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade800,
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(0)),
+                          ),
+                          child: Text(
+                            ref.watch(cartNotiferProvider).transactionNo,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                    height: searchVisible ? 0 : 56,
+                    child: ItemCategories(
+                      active: idCategory,
+                      onChange: onChangeCategory,
+                    ),
+                  ),
+                  Expanded(
+                    child: ItemContainer(
+                      scrollController: scrollController,
+                      idCategory: idCategory,
+                      search: search,
+                    ),
+                  ),
+                  cart.items.isNotEmpty
+                      ? BottomActions(
+                          cart: cart,
+                        )
+                      : Container(),
+                ],
+              ),
+              inSync ? const LinearProgressIndicator() : Container(),
+              const ShiftOverlay(),
+              const UpdatePatcher(),
+              ref.watch(authNotifierProvider).when(
+                    data: (_) => Container(),
+                    error: (_, stackTrace) => Container(),
+                    loading: () => Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.3),
+                        child: const Center(
+                          child: LoadingIndicator(color: Colors.teal),
                         ),
                       ),
                     ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeInOut,
-                height: searchVisible ? 0 : 56,
-                child: ItemCategories(
-                  active: idCategory,
-                  onChange: onChangeCategory,
-                ),
-              ),
-              Expanded(
-                child: ItemContainer(
-                  scrollController: scrollController,
-                  idCategory: idCategory,
-                  search: search,
-                ),
-              ),
-              cart.items.isNotEmpty
-                  ? BottomActions(
-                      cart: cart,
-                    )
-                  : Container(),
+                  )
             ],
-          ),
-          const ShiftOverlay(),
-          const UpdatePatcher(),
-          ref.watch(authNotifierProvider).when(
-                data: (_) => Container(),
-                error: (_, stackTrace) => Container(),
-                loading: () => Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.3),
-                    child: const Center(
-                      child: LoadingIndicator(color: Colors.teal),
-                    ),
-                  ),
-                ),
-              )
-        ],
-      ),
+          )),
       drawer: const AppDrawer(),
     );
   }

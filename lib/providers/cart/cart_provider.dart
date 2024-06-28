@@ -308,7 +308,7 @@ class CartNotifer extends _$CartNotifer {
         isCopy: printCounter > 1,
       );
       ref.read(printerNotifierProvider.notifier).print(receipt);
-    } on Exception catch (_) {
+    } catch (e) {
       rethrow;
     }
   }

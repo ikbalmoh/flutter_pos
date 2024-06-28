@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class StoreTransaction extends ConsumerStatefulWidget {
@@ -39,9 +40,9 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
     ref.read(cartNotiferProvider.notifier).initCart();
   }
 
-  void onPrintReceipt() {
+  void onPrintReceipt() async {
     try {
-      ref
+      await ref
           .read(cartNotiferProvider.notifier)
           .printReceipt(printCounter: printCounter);
       setState(() {
@@ -49,9 +50,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       });
     } catch (e) {
       log('PRINT FAILED: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      AppAlert.snackbar(context, e.toString());
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/category.dart';
@@ -19,13 +21,14 @@ class ItemsStream extends _$ItemsStream {
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
     if (!refresh && !objectBox.itemBox.isEmpty()) {
-      return;
+      return syncItems();
     }
 
     List<Category> categories = await itemRepository.fetchCategoris();
     for (var i = 0; i < categories.length; i++) {
       Category category = categories[i];
-      List<Item> items = await itemRepository.fetchItems(category.idCategory);
+      List<Item> items =
+          await itemRepository.fetchItems(idCategory: category.idCategory);
 
       objectBox.putItems(items);
     }
@@ -45,5 +48,14 @@ class ItemsStream extends _$ItemsStream {
       messages.add('synced'.tr().toLowerCase());
       AppAlert.toast(messages.join(' '));
     }
+  }
+
+  Future<void> syncItems() async {
+    log('SYNC ITEMS');
+    List<Item> items =
+        await ref.read(itemRepositoryProvider).fetchItems(fromLastSync: true);
+
+    objectBox.putItems(items);
+    log('SYNCED ITEMS: $items');
   }
 }

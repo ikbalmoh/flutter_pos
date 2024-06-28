@@ -10,10 +10,11 @@ class ItemApi {
     return res.data;
   }
 
-  Future items(String idOutlet, {String? idCategory}) async {
+  Future items(String idOutlet, {String? idCategory, int? lastUpdate}) async {
     Map<String, dynamic> query = {
       'is_app': 1,
       'id_outlet': idOutlet,
+      'last_update': lastUpdate,
     };
     if (idCategory != null) {
       query['id_category'] = idCategory;

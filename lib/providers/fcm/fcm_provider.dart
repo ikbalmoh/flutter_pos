@@ -66,7 +66,7 @@ class FcmNotifier extends _$FcmNotifier {
           break;
 
         case 'sync':
-          // sync to api
+          ref.read(itemsStreamProvider().notifier).syncItems();
           break;
 
         default:
