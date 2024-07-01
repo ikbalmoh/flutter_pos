@@ -58,7 +58,7 @@ class ShiftNotifier extends _$ShiftNotifier {
       openAmount: openAmount,
     );
     try {
-      final storedShift = await _shiftRepository.saveShift(shift);
+      final storedShift = await _shiftRepository.startShift(shift);
       state = AsyncData(storedShift);
     } on DioException catch (e) {
       String message = e.response?.data['msg'] ?? e.message;
@@ -124,6 +124,9 @@ class ShiftNotifier extends _$ShiftNotifier {
   void initShift() async {
     log('INIT SHIFT');
     final shift = await _shiftRepository.retrieveShift();
+    if (shift != null) {
+      await _shiftRepository.saveShift(shift);
+    }
     state = AsyncData(shift);
   }
 

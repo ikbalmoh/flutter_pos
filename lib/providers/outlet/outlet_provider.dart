@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
-import 'package:selleri/providers/shift/shift_provider.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

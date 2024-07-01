@@ -35,11 +35,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
-          title: Text('checkout'.tr()),
-          actions: [
-            IconButton(
-                onPressed: () {}, icon: const Icon(Icons.more_vert_rounded))
-          ],
+          title: Text('payment'.tr(args: [''])),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

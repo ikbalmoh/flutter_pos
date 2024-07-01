@@ -17,7 +17,9 @@ ShiftRepository shiftRepository(ShiftRepositoryRef ref) => ShiftRepository(ref);
 abstract class ShiftRepositoryProtocol {
   Future<void> close(String id, Map<String, dynamic> data);
 
-  Future<Shift?> saveShift(Shift outlet);
+  Future<Shift?> startShift(Shift outlet);
+
+  Future<void> saveShift(Shift outlet);
 
   Future<Shift?> retrieveShift();
 }
@@ -46,11 +48,11 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     try {
       final outletRepository = _ref.read(outletRepositoryProvider);
       const storage = FlutterSecureStorage();
-      String? stringShift = await storage.read(key: StoreKey.shift.toString());
       final outlet = await outletRepository.retrieveOutlet();
       if (outlet == null) {
         return null;
       }
+      String? stringShift = await storage.read(key: StoreKey.shift.toString());
       if (stringShift != null) {
         final shift = Shift.fromJson(json.decode(stringShift));
         if (outlet.idOutlet != shift.outletId) {
@@ -70,13 +72,10 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   }
 
   @override
-  Future<Shift?> saveShift(Shift shift) async {
+  Future<Shift?> startShift(Shift shift) async {
     final storedShift = await api.startShift(shift);
     if (storedShift != null) {
-      const storage = FlutterSecureStorage();
-      final shiftJson = storedShift.toJson();
-      final stringShift = json.encode(shiftJson);
-      await storage.write(key: StoreKey.shift.toString(), value: stringShift);
+      await saveShift(storedShift);
       return storedShift;
     }
     return null;
@@ -100,5 +99,13 @@ class ShiftRepository implements ShiftRepositoryProtocol {
       log('STORE CASHFLOW ERROR: $e => $stackTrack');
       rethrow;
     }
+  }
+
+  @override
+  Future<void> saveShift(Shift shift) async {
+    const storage = FlutterSecureStorage();
+    final shiftJson = shift.toJson();
+    final stringShift = json.encode(shiftJson);
+    await storage.write(key: StoreKey.shift.toString(), value: stringShift);
   }
 }
