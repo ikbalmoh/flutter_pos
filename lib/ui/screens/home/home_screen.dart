@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -118,7 +119,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     loadItems();
-    ref.read(shiftNotifierProvider.notifier).initShift();
+    if (!ref.read(shiftNotifierProvider).hasValue) {
+      ref.read(shiftNotifierProvider.notifier).initShift();
+    }
     super.initState();
   }
 
