@@ -25,7 +25,7 @@ class AppDrawerMenu extends StatelessWidget {
         selectedColor: Colors.teal,
         selected: GoRouterState.of(context).name == route,
         title: Text(title),
-        onTap: () => context.goNamed(route),
+        onTap: () => context.pushNamed(route),
         leading: icon,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),

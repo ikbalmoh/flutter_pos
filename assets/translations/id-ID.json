@@ -153,5 +153,6 @@
   "canceled": "Dibatalalkan",
   "submit": "Kirim",
   "cancel_transaction_confirmation": "Saya yakin untuk menghapus transaksi ini",
-  "transaction_canceled": "Transaksi Dibatalalkan"
+  "transaction_canceled": "Transaksi Dibatalalkan",
+  "please_open_shift": "Silahkan Buka Shift untuk Memulai Transaksi"
 }

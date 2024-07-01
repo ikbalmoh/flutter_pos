@@ -287,7 +287,7 @@ class CartNotifer extends _$CartNotifer {
         throw Exception('transaction_error'.tr());
       }
     } catch (e) {
-      throw Exception(e);
+      rethrow;
     }
   }
 

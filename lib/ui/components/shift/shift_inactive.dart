@@ -10,8 +10,9 @@ class ShiftInactive extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    final authState = ref.watch(authNotifierProvider).value;
     return Container(
-      // color: Colors.red.shade100,
+      color: Colors.white,
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(15),
       child: Column(
@@ -28,7 +29,7 @@ class ShiftInactive extends ConsumerWidget {
             height: 25,
           ),
           Text(
-            'Hi, ${(ref.watch(authNotifierProvider).value as Authenticated).user.user.name}!',
+            'Hi, ${authState is Authenticated ? authState.user.user.name : ''}!',
             style: textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
@@ -36,7 +37,7 @@ class ShiftInactive extends ConsumerWidget {
             height: 10,
           ),
           Text(
-            'shift_inactive'.tr(),
+            'please_open_shift'.tr(),
             textAlign: TextAlign.center,
             style:
                 textTheme.titleSmall?.copyWith(color: Colors.blueGrey.shade700),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -19,7 +20,6 @@ class HomeMenu extends ConsumerWidget {
         context,
         title: 'logout_confirmation'.tr(),
         onConfirm: () {
-          context.pushReplacementNamed(Routes.login);
           ref.read(authNotifierProvider.notifier).logout();
         },
         confirmLabel: 'logout'.tr(),
@@ -52,26 +52,31 @@ class HomeMenu extends ConsumerWidget {
         );
       },
       menuChildren: [
-        MenuItemButton(
-          onPressed: () => context.push(Routes.customers),
-          leadingIcon: Icon(
-            CupertinoIcons.rectangle_stack_person_crop,
-            color: ref.watch(cartNotiferProvider).idCustomer == null
-                ? Colors.blueGrey.shade500
-                : Colors.green.shade600,
-          ),
-          child: Text(ref.watch(cartNotiferProvider).customerName ??
-              'select_customer'.tr()),
-        ),
-        MenuItemButton(
-          onPressed: () => ref.read(cartNotiferProvider.notifier).initCart(),
-          leadingIcon: Icon(
-            CupertinoIcons.doc,
-            color: Colors.blueGrey.shade500,
-          ),
-          child: Text('new_transaction'.tr()),
-        ),
-        const PopupMenuDivider(),
+        ...ref.watch(shiftNotifierProvider).value == null
+            ? []
+            : [
+                MenuItemButton(
+                  onPressed: () => context.push(Routes.customers),
+                  leadingIcon: Icon(
+                    CupertinoIcons.rectangle_stack_person_crop,
+                    color: ref.watch(cartNotiferProvider).idCustomer == null
+                        ? Colors.blueGrey.shade500
+                        : Colors.green.shade600,
+                  ),
+                  child: Text(ref.watch(cartNotiferProvider).customerName ??
+                      'select_customer'.tr()),
+                ),
+                MenuItemButton(
+                  onPressed: () =>
+                      ref.read(cartNotiferProvider.notifier).initCart(),
+                  leadingIcon: Icon(
+                    CupertinoIcons.doc,
+                    color: Colors.blueGrey.shade500,
+                  ),
+                  child: Text('new_transaction'.tr()),
+                ),
+                const PopupMenuDivider(),
+              ],
         MenuItemButton(
           onPressed: () => context.push(Routes.printers),
           leadingIcon: Badge(

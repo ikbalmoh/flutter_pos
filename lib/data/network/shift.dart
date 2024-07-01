@@ -41,6 +41,14 @@ class ShiftApi {
     return ShiftInfo.fromJson(res.data['data']);
   }
 
+  Future<Shift?> activeShift(String outletId) async {
+    final res = await api.get('${ApiUrl.shifts}/$outletId/mobile');
+    if (res.data['data'] == null) {
+      return null;
+    }
+    return Shift.fromJson(res.data['data']);
+  }
+
   Future closeShift(String id, Map<String, dynamic> data) async {
     try {
       final Map<String, dynamic> mapData = Map.from(data);
@@ -53,7 +61,8 @@ class ShiftApi {
       }
       log('STORE CLOSE SHIFT: $mapData');
       final FormData formData = FormData.fromMap(mapData);
-      final res = await api.post('${ApiUrl.shifts}/$id/closing', data: formData);
+      final res =
+          await api.post('${ApiUrl.shifts}/$id/closing', data: formData);
       return res;
     } on DioException catch (e) {
       throw Exception(e);

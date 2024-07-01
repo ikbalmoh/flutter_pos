@@ -152,5 +152,6 @@
   "canceled": "Canceled",
   "submit": "Submit",
   "cancel_transaction_confirmation": "I's sure to cancel this transaction",
-  "transaction_canceled": "Transaction Canceled"
+  "transaction_canceled": "Transaction Canceled",
+  "please_open_shift": "Please start shift to create a transaction"
 }

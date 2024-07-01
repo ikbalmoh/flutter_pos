@@ -23,6 +23,7 @@ enum Status { loading, success, error }
 class _StoreTransactionState extends ConsumerState<StoreTransaction> {
   Status status = Status.loading;
   int printCounter = 0;
+  String error = '';
 
   @override
   void initState() {
@@ -68,9 +69,10 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       });
       onPrintReceipt();
     } catch (e) {
-      log('TRANSACTION ERROR: $e');
+      log('TRANSACTION ERROR: ${e.toString()}');
       setState(() {
         status = Status.error;
+        error = e.toString();
       });
     }
   }
@@ -95,7 +97,10 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
                   onPrintReceipt: onPrintReceipt,
                 )
               : TransactionError(
-                  onRetry: submitTransaction, onReset: resetCart),
+                  onRetry: submitTransaction,
+                  onReset: resetCart,
+                  error: error,
+                ),
     );
   }
 }
@@ -168,8 +173,9 @@ class TransactionSuccess extends ConsumerWidget {
 class TransactionError extends StatelessWidget {
   final Function() onReset;
   final Function() onRetry;
+  final String? error;
   const TransactionError(
-      {required this.onRetry, super.key, required this.onReset});
+      {required this.onRetry, this.error, super.key, required this.onReset});
 
   @override
   Widget build(BuildContext context) {
@@ -183,6 +189,11 @@ class TransactionError extends StatelessWidget {
         Text(
           'transaction_error'.tr(),
           style: textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
+        ),
+        const SizedBox(height: 14),
+        Text(
+          error ?? '',
+          style: textTheme.bodySmall?.copyWith(color: Colors.grey.shade500),
         ),
         const SizedBox(height: 40),
         Row(

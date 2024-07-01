@@ -11,7 +11,7 @@ import 'package:selleri/ui/components/shift/cashflow_form.dart';
 import 'package:selleri/ui/components/shift/close_shift_form.dart';
 import 'package:selleri/ui/screens/shift/components/active_shift_info.dart';
 import 'package:selleri/ui/screens/shift/components/shift_cashflows.dart';
-import 'package:selleri/ui/screens/shift/components/shift_inactive.dart';
+import 'package:selleri/ui/components/shift/shift_inactive.dart';
 import 'components/shift_summary_card.dart';
 
 class CurrentShiftScreen extends ConsumerStatefulWidget {

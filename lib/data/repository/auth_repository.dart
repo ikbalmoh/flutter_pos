@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -15,7 +17,7 @@ AuthRepository authRepository(AuthRepositoryRef ref) => AuthRepository(ref);
 
 abstract class AuthRepositoryProtocol {
   Future<AuthState> login(String username, String password);
-  Future<AuthState> logout();
+  Future<void> logout();
 }
 
 class AuthRepository implements AuthRepositoryProtocol {
@@ -57,10 +59,16 @@ class AuthRepository implements AuthRepositoryProtocol {
   }
 
   @override
-  Future<AuthState> logout() async {
-    final tokenRepository = _ref.read(tokenRepositoryProvider);
-    await tokenRepository.remove();
-
-    return Future.delayed(const Duration(seconds: 3), () => UnAuthenticated());
+  Future<void> logout() async {
+    try {
+      await api.logout();
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? e.message;
+      throw Exception(message);
+    } catch (e) {
+      log('API LOGOUT ERROR: $e');
+    } finally {
+      _ref.read(tokenRepositoryProvider).remove();
+    }
   }
 }

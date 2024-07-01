@@ -15,7 +15,6 @@ import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
 import 'package:selleri/ui/screens/home/components/shift_overlay.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
-import 'package:selleri/utils/app_alert.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/screens/home/components/item_container.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
@@ -62,6 +61,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     loadItems();
+    ref.read(shiftNotifierProvider.notifier).initShift();
     super.initState();
   }
 
@@ -106,25 +106,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     icon: const Icon(Icons.menu));
               }),
-              actions: ref.watch(shiftNotifierProvider).value == null
-                  ? []
-                  : [
-                      IconButton(
-                        tooltip: 'search'.tr(),
-                        onPressed: () => setState(() {
-                          searchVisible = true;
-                        }),
-                        icon: const Icon(Icons.search),
-                      ),
-                      IconButton(
-                        tooltip: 'holded_transactions'.tr(),
-                        onPressed: () {
-                          context.push(Routes.holded);
-                        },
-                        icon: const Icon(CupertinoIcons.folder),
-                      ),
-                      const HomeMenu()
-                    ],
+              actions: [
+                ...ref.watch(shiftNotifierProvider).value == null
+                    ? []
+                    : [
+                        IconButton(
+                          tooltip: 'search'.tr(),
+                          onPressed: () => setState(() {
+                            searchVisible = true;
+                          }),
+                          icon: const Icon(Icons.search),
+                        ),
+                        IconButton(
+                          tooltip: 'holded_transactions'.tr(),
+                          onPressed: () {
+                            context.push(Routes.holded);
+                          },
+                          icon: const Icon(CupertinoIcons.folder),
+                        ),
+                      ],
+                const HomeMenu()
+              ],
             ),
       body: RefreshIndicator(
           onRefresh: loadItems,
@@ -174,7 +176,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       : Container(),
                 ],
               ),
-              inSync ? const LinearProgressIndicator() : Container(),
               const ShiftOverlay(),
               const UpdatePatcher(),
               ref.watch(authNotifierProvider).when(

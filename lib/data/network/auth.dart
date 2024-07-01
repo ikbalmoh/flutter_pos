@@ -25,4 +25,8 @@ class AuthApi {
     final res = await api.get(ApiUrl.user);
     return res.data;
   }
+
+  Future<void> logout() async {
+    await api.post(ApiUrl.logout);
+  }
 }

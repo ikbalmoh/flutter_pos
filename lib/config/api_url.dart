@@ -1,5 +1,6 @@
 class ApiUrl {
   static const String auth = '/oauth/token';
+  static const String logout = '/logout';
   static const String user = '/login-info';
   static const String outlets = '/outlets';
   static const String outletConfig = '/info/outlets-config';

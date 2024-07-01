@@ -47,13 +47,20 @@ class ShiftRepository implements ShiftRepositoryProtocol {
       final outletRepository = _ref.read(outletRepositoryProvider);
       const storage = FlutterSecureStorage();
       String? stringShift = await storage.read(key: StoreKey.shift.toString());
+      final outlet = await outletRepository.retrieveOutlet();
+      if (outlet == null) {
+        return null;
+      }
       if (stringShift != null) {
         final shift = Shift.fromJson(json.decode(stringShift));
-        final outlet = await outletRepository.retrieveOutlet();
-        if (outlet?.idOutlet != shift.outletId) {
+        if (outlet.idOutlet != shift.outletId) {
           await storage.delete(key: StoreKey.shift.toString());
           return null;
         }
+        return shift;
+      } else {
+        log('CHECKING ACTIVE SHIFT FROM SERVER...');
+        final Shift? shift = await api.activeShift(outlet.idOutlet);
         return shift;
       }
     } catch (e) {

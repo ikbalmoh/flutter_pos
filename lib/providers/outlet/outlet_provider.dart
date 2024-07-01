@@ -46,6 +46,8 @@ class OutletNotifier extends _$OutletNotifier {
   Future<void> clearOutlet() async {
     await _outletRepository.remove();
     state = AsyncData(OutletNotSelected());
-    ref.read(shiftNotifierProvider.notifier).offShift();
+    // Future.delayed(const Duration(seconds: 1), () {
+    //   ref.read(shiftNotifierProvider.notifier).offShift();
+    // });
   }
 }

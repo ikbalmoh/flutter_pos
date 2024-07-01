@@ -27,8 +27,7 @@ class ShiftNotifier extends _$ShiftNotifier {
 
   @override
   FutureOr<Shift?> build() async {
-    final shift = await _shiftRepository.retrieveShift();
-    return shift;
+    return future;
   }
 
   Future<void> openShift(double openAmount) async {
@@ -120,6 +119,16 @@ class ShiftNotifier extends _$ShiftNotifier {
     } on Exception catch (_) {
       rethrow;
     }
+  }
+
+  void initShift() async {
+    log('INIT SHIFT');
+    final shift = await _shiftRepository.retrieveShift();
+    state = AsyncData(shift);
+  }
+
+  void shiftLoading() {
+    state = const AsyncLoading();
   }
 
   void offShift() {

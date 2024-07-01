@@ -3,7 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
+import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 import 'auth_state.dart';
 
 export 'auth_state.dart';
@@ -39,15 +41,19 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> logout() async {
-    state = const AsyncLoading();
+    ref.read(shiftNotifierProvider.notifier).shiftLoading();
     try {
+      state = AsyncData(UnAuthenticated());
+      log('API LOGOUT');
       await _authRepoistory.logout();
     } catch (e) {
       log('LOGOUT ERROR: $e');
     } finally {
-      ref.read(outletNotifierProvider.notifier).clearOutlet();
-      await _tokenRepository.remove();
-      state = AsyncData(UnAuthenticated());
+      log('API LOGOUT DONE');
     }
+    await ref.read(outletNotifierProvider.notifier).clearOutlet();
+    ref.invalidate(itemsStreamProvider);
+    ref.invalidate(outletNotifierProvider);
+    ref.invalidate(shiftNotifierProvider);
   }
 }
