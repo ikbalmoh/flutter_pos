@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
@@ -41,11 +42,11 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> logout() async {
+    ref.read(shiftNotifierProvider.notifier).shiftLoading();
     try {
       log('API LOGOUT');
       await _authRepoistory.logout();
-    state = AsyncData(UnAuthenticated());
-      
+      state = AsyncData(UnAuthenticated());
     } catch (e) {
       log('LOGOUT ERROR: $e');
     } finally {
@@ -53,6 +54,7 @@ class AuthNotifier extends _$AuthNotifier {
     }
     await ref.read(outletNotifierProvider.notifier).clearOutlet();
     ref.invalidate(itemsStreamProvider);
+    ref.invalidate(cartNotiferProvider);
     ref.invalidate(outletNotifierProvider);
     ref.invalidate(shiftNotifierProvider);
   }

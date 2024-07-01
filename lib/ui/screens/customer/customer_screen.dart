@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/customer/customer_list_provider.dart';
-import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/customer/customer_form.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/customer/customer_detail.dart';
@@ -88,7 +87,6 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
       while (context.canPop() == true) {
         context.pop();
       }
-      context.pushReplacementNamed(Routes.home);
       ref.read(cartNotiferProvider.notifier).selectCustomer(customer);
     }
 
