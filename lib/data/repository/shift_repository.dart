@@ -154,4 +154,12 @@ class ShiftRepository implements ShiftRepositoryProtocol {
       rethrow;
     }
   }
+
+  @override
+  Future<void> saveShift(Shift shift) async {
+    const storage = FlutterSecureStorage();
+    final shiftJson = shift.toJson();
+    final stringShift = json.encode(shiftJson);
+    await storage.write(key: StoreKey.shift.toString(), value: stringShift);
+  }
 }

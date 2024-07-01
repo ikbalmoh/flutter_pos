@@ -185,6 +185,9 @@ class Shift extends _$Shift {
   void initShift() async {
     log('INIT SHIFT');
     final shift = await _shiftRepository.retrieveShift();
+    if (shift != null) {
+      await _shiftRepository.saveShift(shift);
+    }
     state = AsyncData(shift);
   }
 
