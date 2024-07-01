@@ -41,11 +41,11 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> logout() async {
-    ref.read(shiftNotifierProvider.notifier).shiftLoading();
     try {
-      state = AsyncData(UnAuthenticated());
       log('API LOGOUT');
       await _authRepoistory.logout();
+    state = AsyncData(UnAuthenticated());
+      
     } catch (e) {
       log('LOGOUT ERROR: $e');
     } finally {

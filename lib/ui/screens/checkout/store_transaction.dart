@@ -37,7 +37,6 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
     while (context.canPop() == true) {
       context.pop();
     }
-    context.pushReplacementNamed(Routes.home);
     ref.read(cartNotiferProvider.notifier).initCart();
   }
 

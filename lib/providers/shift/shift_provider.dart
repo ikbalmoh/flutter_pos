@@ -123,6 +123,10 @@ class ShiftNotifier extends _$ShiftNotifier {
 
   void initShift() async {
     log('INIT SHIFT');
+    if (state.value != null) {
+      log('SHIFT ACTIVE: ${state.value}');
+      return;
+    }
     final shift = await _shiftRepository.retrieveShift();
     if (shift != null) {
       await _shiftRepository.saveShift(shift);

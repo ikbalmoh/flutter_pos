@@ -77,10 +77,6 @@ android {
             applicationIdSuffix ".staging"
             manifestPlaceholders = [applicationLabel: "[Staging] Selleri"]
         }
-        production {
-            dimension "mode"
-            manifestPlaceholders = [applicationLabel: "Selleri"]
-        }
     }
 }
 

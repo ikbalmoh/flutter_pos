@@ -1,8 +1,11 @@
 import 'package:selleri/providers/app_start/app_start_state.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'dart:developer';
+
+import 'package:selleri/providers/shift/shift_provider.dart';
 
 part 'app_start_provider.g.dart';
 
@@ -17,7 +20,9 @@ class AppStartNotifier extends _$AppStartNotifier {
 
     log('AUTH STATE ${authState.value.toString()}');
     log('OUTLET STATE: ${outletState.value}');
-    if (outletState.value is OutletSelected) {
+    if (authState.value is Authenticated &&
+        outletState.value is OutletSelected) {
+      log('OUTLET SELECTED');
       return const AppStartState.selectedOutlet();
     }
 
