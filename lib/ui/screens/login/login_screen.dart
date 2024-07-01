@@ -288,7 +288,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             const UpdatePatcher()
           ],

@@ -118,6 +118,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     loadItems();
+    ref.read(shiftNotifierProvider.notifier).initShift();
     super.initState();
   }
 

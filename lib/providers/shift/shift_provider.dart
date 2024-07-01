@@ -182,6 +182,16 @@ class Shift extends _$Shift {
     }
   }
 
+  void initShift() async {
+    log('INIT SHIFT');
+    final shift = await _shiftRepository.retrieveShift();
+    state = AsyncData(shift);
+  }
+
+  void shiftLoading() {
+    state = const AsyncLoading();
+  }
+
   void offShift() {
     state = const AsyncData(null);
   }
