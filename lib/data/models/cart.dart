@@ -74,7 +74,7 @@ class Cart with _$Cart {
   }
 
   Map<String, dynamic> toTransactionPayload() => <String, dynamic>{
-        "id_transaction": idTransaction,
+        "id_transaction": deletedAt != null ? idTransaction : null,
         "id_outlet": idOutlet,
         "shift_id": shiftId,
         "created_by": createdBy,
