@@ -117,10 +117,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
+    loadShift();
     loadItems();
-    if (!ref.read(shiftNotifierProvider).hasValue) {
-      ref.read(shiftNotifierProvider.notifier).initShift();
-    }
     super.initState();
   }
 
@@ -133,6 +131,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     setState(() {
       inSync = false;
     });
+  }
+
+  Future<void> loadShift() async {
+    final currentShift = ref.read(shiftNotifierProvider).value;
+    if (currentShift == null) {
+      ref.read(shiftNotifierProvider.notifier).initShift();
+    }
   }
 
   @override

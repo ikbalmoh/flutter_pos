@@ -162,4 +162,9 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     final stringShift = json.encode(shiftJson);
     await storage.write(key: StoreKey.shift.toString(), value: stringShift);
   }
+
+  @override
+  Future<void> clear() async {
+    await storage.delete(key: StoreKey.shift.toString());
+  }
 }
