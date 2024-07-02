@@ -165,7 +165,8 @@ class TransactionApi {
 
   Future updateHoldTransaction(String transactionId, Cart cart) async {
     try {
-      final json = cart.toJson();
+      var json = cart.toJson();
+      json['transaction_id'] = transactionId;
       final List<Map<String, dynamic>> data = [json];
       final res = await api.put('${ApiUrl.hold}/$transactionId', data: data);
 
