@@ -116,11 +116,10 @@ class DateTimeFormater {
   static int stringToTimestamp(dynamic value) {
     if (value is int || value is num) {
       return value;
-    } else if (value is String) {
-      try {
+    }
+    if (value is String) {
+      if (isDate(value)) {
         return DateTime.parse(value).millisecondsSinceEpoch;
-      } catch (e) {
-        return DateTime.now().millisecondsSinceEpoch;
       }
     }
     return DateTime.now().millisecondsSinceEpoch;
