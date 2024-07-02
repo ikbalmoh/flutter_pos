@@ -7,35 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:957311922583:android:25d7f240b00cc6942794d2",
-        "android_client_info": {
-          "package_name": "com.dgti.selleri"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:957311922583:android:a50e521c44edf66a2794d2",
         "android_client_info": {
           "package_name": "com.dgti.selleri.debug"
@@ -87,6 +58,64 @@
             "certificate_hash": "2807878ff7f11682d560aa15ad3c8ef6ebdd3acb"
           }
         },
+        {
+          "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957311922583:android:3cf6cde1763ae2a62794d2",
+        "android_client_info": {
+          "package_name": "com.dgti.selleripos.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957311922583:android:beaea6232a392c9c2794d2",
+        "android_client_info": {
+          "package_name": "com.dgti.selleripos.staging"
+        }
+      },
+      "oauth_client": [
         {
           "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
           "client_type": 3

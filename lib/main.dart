@@ -12,15 +12,17 @@ import 'package:selleri/data/objectbox.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'dart:developer';
+import 'firebase_options.dart' as firebase_option;
+import 'firebase_options_dev.dart' as firebase_option_dev;
+import 'firebase_options_staging.dart' as firebase_option_staging;
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
 Future initServices() async {
-  log('INITIALIZING APP ...');
+  log('INITIALIZING APP $appFlavor ...');
 
   await EasyLocalization.ensureInitialized();
 
@@ -37,7 +39,7 @@ Future initServices() async {
     return true;
   };
 
-  String env = appFlavor == 'production' ? ".env" : ".env.staging";
+  String env = appFlavor == 'release' ? ".env" : ".env.staging";
 
   await dotenv.load(fileName: env);
 
@@ -61,14 +63,23 @@ Future initServices() async {
 
   const storage = FlutterSecureStorage();
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   if (deviceId != null && deviceId.isNotEmpty) {
     storage.write(key: StoreKey.device.toString(), value: deviceId);
   }
 
+  var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
+  if (appFlavor == 'staging') {
+    firebaseOptions =
+        firebase_option_staging.DefaultFirebaseOptions.currentPlatform;
+  } else if (appFlavor == 'dev') {
+    firebaseOptions =
+        firebase_option_dev.DefaultFirebaseOptions.currentPlatform;
+  }
+
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: firebaseOptions,
   );
 
   FirebaseMessaging messaging = FirebaseMessaging.instance;

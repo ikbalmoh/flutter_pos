@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options.dart';
+/// import 'firebase_options_staging.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -50,23 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAF3ioqyBnzSCjVwwPPtlECgsOFMCh05kg',
-    appId: '1:107680786292:android:861a01a1b53c7aa13cee21',
-    messagingSenderId: '107680786292',
-    projectId: 'selleri-486e6',
-    databaseURL: 'https://selleri-486e6.firebaseio.com',
-    storageBucket: 'selleri-486e6.appspot.com',
+    apiKey: 'AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U',
+    appId: '1:957311922583:android:beaea6232a392c9c2794d2',
+    messagingSenderId: '957311922583',
+    projectId: 'selleri-dev',
+    storageBucket: 'selleri-dev.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCwdSF-h8TkFuNsigTAGFYffxactoLkY7U',
-    appId: '1:107680786292:ios:3c654a26a84ca4af3cee21',
-    messagingSenderId: '107680786292',
-    projectId: 'selleri-486e6',
-    databaseURL: 'https://selleri-486e6.firebaseio.com',
-    storageBucket: 'selleri-486e6.appspot.com',
-    androidClientId: '107680786292-md9uile1r6mdrp4496ft1jqh9vlbssql.apps.googleusercontent.com',
-    iosBundleId: 'com.dgti.selleripos',
+    apiKey: 'AIzaSyDELX5rGF1RQfCkrBMSjw4MU42qSds2Mbw',
+    appId: '1:957311922583:ios:4e02442229fe35d42794d2',
+    messagingSenderId: '957311922583',
+    projectId: 'selleri-dev',
+    storageBucket: 'selleri-dev.appspot.com',
+    androidClientId: '957311922583-i8l8po7sbpval4skd5jfdsd5s43440a6.apps.googleusercontent.com',
+    iosBundleId: 'com.dgti.selleripos.staging',
   );
-
 }
