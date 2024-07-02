@@ -78,7 +78,7 @@ class Cart with _$Cart {
         "id_outlet": idOutlet,
         "shift_id": shiftId,
         "created_by": createdBy,
-        "transaction_date": transactionDate,
+        "transaction_date": (transactionDate / 1000).floor(),
         "transaction_no": transactionNo,
         "id_customer": idCustomer ?? '',
         "subtotal": subtotal,

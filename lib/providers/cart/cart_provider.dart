@@ -30,7 +30,7 @@ class CartNotifer extends _$CartNotifer {
   Cart emptyCart() {
     return Cart(
       transactionNo: '',
-      transactionDate: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
+      transactionDate: DateTime.now().millisecondsSinceEpoch,
       items: [],
       subtotal: 0,
       total: 0,
@@ -102,7 +102,7 @@ class CartNotifer extends _$CartNotifer {
     double itemPrice = item.itemPrice;
 
     if (item.isPackage) {
-      identifier += (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+      identifier += (DateTime.now().millisecondsSinceEpoch).toString();
     } else if (variant != null) {
       identifier += '-v${variant.idVariant.toString()}';
       itemPrice = variant.itemPrice;
@@ -331,6 +331,7 @@ class CartNotifer extends _$CartNotifer {
 
   void openHoldedCart(CartHolded holded) {
     Cart cart = holded.dataHold.copyWith(idTransaction: holded.transactionId);
+    log('OPEN HOLDED CART\n$holded\n$cart');
     if (cart.holdAt == null) {
       cart = cart.copyWith(holdAt: DateTime.now());
     }
