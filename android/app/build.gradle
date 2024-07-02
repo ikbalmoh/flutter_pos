@@ -32,7 +32,7 @@ if (flutterVersionName == null) {
    }
 
 android {
-    namespace "com.dgti.selleri"
+    namespace "com.dgti.selleripos"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 

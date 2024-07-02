@@ -74,7 +74,7 @@ Future initServices() async {
 
   const storage = FlutterSecureStorage();
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   if (deviceId != null && deviceId.isNotEmpty) {
     storage.write(key: StoreKey.device.name, value: deviceId);
@@ -85,6 +85,15 @@ Future initServices() async {
   if (appFlavor == 'stage') {
     firebaseOptions =
         firebase_option_stage.DefaultFirebaseOptions.currentPlatform;
+  } else if (appFlavor == 'dev') {
+    firebaseOptions =
+        firebase_option_dev.DefaultFirebaseOptions.currentPlatform;
+  }
+
+  var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
+  if (appFlavor == 'staging') {
+    firebaseOptions =
+        firebase_option_staging.DefaultFirebaseOptions.currentPlatform;
   } else if (appFlavor == 'dev') {
     firebaseOptions =
         firebase_option_dev.DefaultFirebaseOptions.currentPlatform;
