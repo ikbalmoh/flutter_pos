@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
@@ -52,10 +53,13 @@ class AuthNotifier extends _$AuthNotifier {
     } finally {
       log('API LOGOUT DONE');
     }
-    await ref.read(outletNotifierProvider.notifier).clearOutlet();
-    ref.invalidate(itemsStreamProvider);
-    ref.invalidate(cartNotiferProvider);
-    ref.invalidate(outletNotifierProvider);
-    ref.invalidate(shiftNotifierProvider);
+    Future.delayed(const Duration(seconds: 1), () async {
+      await ref.read(outletNotifierProvider.notifier).clearOutlet();
+      objectBox.clearAll();
+      ref.invalidate(itemsStreamProvider);
+      ref.invalidate(cartNotiferProvider);
+      ref.invalidate(outletNotifierProvider);
+      ref.invalidate(shiftNotifierProvider);
+    });
   }
 }

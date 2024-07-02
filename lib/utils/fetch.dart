@@ -47,7 +47,7 @@ class CustomInterceptors extends Interceptor {
     }
 
     if (kDebugMode) {
-      log('REQUEST[${options.method}]\n => URI: ${options.uri}\n => DATA: ${options.data}');
+      log('REQUEST[${options.method}]\n => URI: ${options.uri}\n => DATA: ${options.data}\n => DEVICE: ${options.headers['device']}');
     }
 
     return super.onRequest(options, handler);

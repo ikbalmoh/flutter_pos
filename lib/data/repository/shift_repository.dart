@@ -17,6 +17,8 @@ ShiftRepository shiftRepository(ShiftRepositoryRef ref) => ShiftRepository(ref);
 abstract class ShiftRepositoryProtocol {
   Future<void> close(String id, Map<String, dynamic> data);
 
+  Future<void> clear();
+
   Future<Shift?> startShift(Shift outlet);
 
   Future<void> saveShift(Shift outlet);
@@ -107,5 +109,10 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     final shiftJson = shift.toJson();
     final stringShift = json.encode(shiftJson);
     await storage.write(key: StoreKey.shift.toString(), value: stringShift);
+  }
+
+  @override
+  Future<void> clear() async {
+    await storage.delete(key: StoreKey.shift.toString());
   }
 }

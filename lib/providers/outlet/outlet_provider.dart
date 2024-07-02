@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -45,8 +46,6 @@ class OutletNotifier extends _$OutletNotifier {
   Future<void> clearOutlet() async {
     await _outletRepository.remove();
     state = AsyncData(OutletNotSelected());
-    // Future.delayed(const Duration(seconds: 1), () {
-    //   ref.read(shiftNotifierProvider.notifier).offShift();
-    // });
+    ref.read(shiftNotifierProvider.notifier).offShift();
   }
 }

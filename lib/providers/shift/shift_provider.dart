@@ -138,7 +138,8 @@ class ShiftNotifier extends _$ShiftNotifier {
     state = const AsyncLoading();
   }
 
-  void offShift() {
-    state = const AsyncData(null);
+  Future<void> offShift() async {
+    await _shiftRepository.clear();
+    state = const AsyncValue.loading();
   }
 }
