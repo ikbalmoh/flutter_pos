@@ -106,12 +106,13 @@ class TransactionApi {
   }
 
   Future<Pagination<Cart>> transactions(
-      {required String idOutlet, int? page, String? q}) async {
+      {required String idOutlet, int? page, String? q, String? shiftId}) async {
     try {
       final Map<String, dynamic> params = {
         'id_outlet': idOutlet,
         'q': q,
-        'page': page
+        'page': page,
+        'shift_id': shiftId,
       };
       final res = await api.get(ApiUrl.transaction, queryParameters: params);
       final data = res.data['data'];
