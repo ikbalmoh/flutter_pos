@@ -8,6 +8,7 @@ import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/utils/printer.dart';
 
 part 'transactions_provider.g.dart';
@@ -19,8 +20,9 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     try {
       final api = TransactionApi();
       final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
-      final transactions =
-          await api.transactions(idOutlet: outlet.outlet.idOutlet);
+      final shiftId = ref.read(shiftNotifierProvider).value?.id;
+      final transactions = await api.transactions(
+          idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
       return transactions;
     } catch (e, stackTrace) {
       log('LIST TRANSCATION ERROR: $e\n=> $stackTrace');
@@ -28,7 +30,8 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     }
   }
 
-  Future<void> loadTransactions({int page = 1, String search = ''}) async {
+  Future<void> loadTransactions(
+      {int page = 1, String search = '', bool? currentShift = false}) async {
     if (page == 1) {
       state = const AsyncLoading();
     } else {
@@ -37,8 +40,15 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     final api = TransactionApi();
     try {
       final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
+      String? shiftId;
+      if (currentShift == true) {
+        shiftId = ref.read(shiftNotifierProvider).value?.id;
+      }
       var customers = await api.transactions(
-          page: page, q: search, idOutlet: outlet.outlet.idOutlet);
+          page: page,
+          q: search,
+          idOutlet: outlet.outlet.idOutlet,
+          shiftId: shiftId);
       List<Cart> data = List.from(state.value?.data as Iterable<Cart>);
       if (page > 1) {
         data = data..addAll(customers.data as Iterable<Cart>);

@@ -78,7 +78,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
           );
       // ignore: use_build_context_synchronously
       context.pop();
-      AppAlert.toast('closed'.tr());
+      AppAlert.toast('shift_closed'.tr());
     } on Exception catch (e, stackTrace) {
       log('submit cashflow error: $e => $stackTrace');
       AppAlert.toast(e.toString());
@@ -295,9 +295,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                                 ),
                               ),
                             ),
-                            onPressed: isLoading
-                                ? null
-                                : submitCloseShift,
+                            onPressed: isLoading ? null : submitCloseShift,
                             child: Text(
                               'close_shift'.tr(),
                             ),
