@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/shift/open_shift.dart';
 import 'package:selleri/ui/components/shift/shift_inactive.dart';
@@ -19,16 +18,6 @@ class ShiftOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(shiftNotifierProvider, (previous, next) {
-      next.whenData((value) {
-        // Open shift
-        if (value == null) {
-          showOpenShift(context);
-        } else {
-          ref.read(cartNotiferProvider.notifier).initCart();
-        }
-      });
-    });
 
     return switch (ref.watch(shiftNotifierProvider)) {
       AsyncData(:final value) => value == null

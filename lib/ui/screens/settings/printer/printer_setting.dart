@@ -13,8 +13,6 @@ class PrinterSetting extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentPrinter = ref.watch(printerNotifierProvider).value;
-
     void onSelectPrinter(BluetoothInfo device) {
       showModalBottomSheet(
           context: context,
@@ -57,7 +55,11 @@ class PrinterSetting extends ConsumerWidget {
                               d.macAdress,
                               style: TextStyle(color: Colors.grey.shade600),
                             ),
-                            trailing: currentPrinter?.macAddress == d.macAdress
+                            trailing: ref
+                                        .watch(printerNotifierProvider)
+                                        .value
+                                        ?.macAddress ==
+                                    d.macAdress
                                 ? const Icon(
                                     Icons.check_circle_rounded,
                                     color: Colors.teal,

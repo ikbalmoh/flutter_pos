@@ -49,6 +49,7 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
           ),
           alignLabelWithHint: true,
         ),
+        autofocus: true,
       ),
       actions: [
         TextButton(

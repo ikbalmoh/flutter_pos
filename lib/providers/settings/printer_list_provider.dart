@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,30 +20,29 @@ class PrinterListNotifier extends _$PrinterListNotifier {
     try {
       log('START SCAN PRINTERS...');
 
-      final bool isBluetoothEnabled =
-          await PrintBluetoothThermal.bluetoothEnabled;
-      log('BLUETOOTH ENABLED? $isBluetoothEnabled');
-      if (!isBluetoothEnabled) {
-        throw Exception('bluetooth disabled');
-      }
-
       final scanPermission = await Permission.bluetoothScan.request();
       log('Scan permission : ${scanPermission.isGranted}');
 
-      final bool isPermissionGranted =
-          await PrintBluetoothThermal.isPermissionBluetoothGranted;
-      log('PERMISSION NOT GRANTED: $isPermissionGranted');
-      if (!isPermissionGranted) {
+      final bluetoothPermission = await Permission.bluetoothConnect.request();
+      log('Connect permission : ${bluetoothPermission.isGranted}');
+
+      if (!scanPermission.isGranted || !bluetoothPermission.isGranted) {
         throw Exception('Permission not granted');
       }
 
       final List<BluetoothInfo> devices =
           await PrintBluetoothThermal.pairedBluetooths;
       log('SCAN RESULTS: $devices');
-      state = AsyncData(devices);
+      if (devices.isNotEmpty) {
+        state = AsyncData(devices);
+      } else {
+        throw 'no_device_found'.tr();
+      }
     } catch (e) {
       log('SCAN PRINTER ERROR: $e');
       state = AsyncError(e, StackTrace.current);
+    } finally {
+      log('SCAN PRINTER DONE');
     }
   }
 }
