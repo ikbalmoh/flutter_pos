@@ -89,6 +89,7 @@ Future initServices() async {
     firebaseOptions =
         firebase_option_dev.DefaultFirebaseOptions.currentPlatform;
   }
+  storage.write(key: StoreKey.deviceName.toString(), value: deviceName);
 
   var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
   if (appFlavor == 'staging') {

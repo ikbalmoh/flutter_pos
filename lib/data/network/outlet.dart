@@ -82,8 +82,37 @@ class OutletApi {
   }
 
   Future<Map<String, dynamic>> configs(String id) async {
-    final res = await api.get('${ApiUrl.outletConfig}/$id');
-    return res.data['data'];
+    try {
+      final res = await api.get('${ApiUrl.outletConfig}/$id');
+      return res.data['data'];
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? e.message;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> info(String id) async {
+    try {
+      String? deviceId = await storage.read(key: StoreKey.device.toString());
+      String? deviceName =
+          await storage.read(key: StoreKey.deviceName.toString());
+
+      final Map<String, dynamic> queryParameters = {
+        'device_id': deviceId,
+        'device_name': deviceName,
+      };
+
+      final res = await api.get(
+        '${ApiUrl.outletInfo}/$id',
+        queryParameters: queryParameters,
+      );
+      return res.data;
+    } on DioException catch (e) {
+      throw e.response?.data['msg'] ?? e.message;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<dynamic> storeFcmToken(
