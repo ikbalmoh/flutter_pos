@@ -10,7 +10,13 @@ class CurrencyFormat {
       symbol: symbol ? 'Rp' : '',
       decimalDigits: decimalDigit,
     );
-    return currencyFormatter.format(number);
+    if (number is num) {
+      if (number < 0) {
+        return '$number';
+      }
+      return currencyFormatter.format(number);
+    }
+    return number;
   }
 
   static num reverse(String formated,

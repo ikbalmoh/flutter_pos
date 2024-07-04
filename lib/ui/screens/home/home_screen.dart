@@ -174,6 +174,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       scrollController: scrollController,
                       idCategory: idCategory,
                       search: search,
+                      allowEmptyStock: outlet.value is OutletSelected
+                          ? (outlet.value as OutletSelected).config.stockMinus
+                          : false,
                     ),
                   ),
                   cart.items.isNotEmpty

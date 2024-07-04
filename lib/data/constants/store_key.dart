@@ -1,5 +1,6 @@
 enum StoreKey {
   device,
+  deviceName,
   token,
   user,
   outlet,

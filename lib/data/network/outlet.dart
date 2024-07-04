@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/data/constants/store_key.dart';
+import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/config/api_url.dart';
 
@@ -9,14 +10,51 @@ const storage = FlutterSecureStorage();
 class OutletApi {
   final api = fetch();
 
-  Future outlets() async {
-    final res = await api.get(ApiUrl.outlets, queryParameters: {'is_app': 1});
-    return res.data;
+  Future<List<Outlet>> outlets() async {
+    try {
+      final res = await api.get(ApiUrl.outlets, queryParameters: {'is_app': 1});
+      List<Outlet> outlets =
+          List<Outlet>.from(res.data['data'].map((o) => Outlet.fromJson(o)));
+      return outlets;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? e.message;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> configs(String id) async {
-    final res = await api.get('${ApiUrl.outletConfig}/$id');
-    return res.data['data'];
+    try {
+      final res = await api.get('${ApiUrl.outletConfig}/$id');
+      return res.data['data'];
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? e.message;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> info(String id) async {
+    try {
+      String? deviceId = await storage.read(key: StoreKey.device.toString());
+      String? deviceName =
+          await storage.read(key: StoreKey.deviceName.toString());
+
+      final Map<String, dynamic> queryParameters = {
+        'device_id': deviceId,
+        'device_name': deviceName,
+      };
+
+      final res = await api.get(
+        '${ApiUrl.outletInfo}/$id',
+        queryParameters: queryParameters,
+      );
+      return res.data;
+    } on DioException catch (e) {
+      throw e.response?.data['msg'] ?? e.message;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<dynamic> storeFcmToken(

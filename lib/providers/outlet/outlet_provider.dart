@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
@@ -32,14 +31,14 @@ class OutletNotifier extends _$OutletNotifier {
     state = AsyncData(OutletLoading());
     try {
       _outletRepository.saveOutlet(outlet);
+      await _outletRepository.fetchOutletInfo(outlet.idOutlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
       state = AsyncData(OutletSelected(outlet: outlet, config: config));
       if (onSelected != null) {
         onSelected(config);
       }
-    } on DioException catch (e) {
-      String message = e.response?.data['message'] ?? e.message;
-      state = AsyncData(OutletFailure(message: message));
+    } catch (e) {
+      state = AsyncData(OutletFailure(message: e.toString()));
     }
   }
 

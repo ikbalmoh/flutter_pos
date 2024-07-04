@@ -1,10 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ErrorHandler extends StatelessWidget {
-  const ErrorHandler({super.key, required this.error, this.stackTrace});
+  const ErrorHandler(
+      {super.key, required this.error, this.stackTrace, this.onRetry});
 
   final String error;
   final String? stackTrace;
+  final Function()? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,7 @@ class ErrorHandler extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           const Icon(
-            Icons.dangerous_outlined,
+            CupertinoIcons.exclamationmark_circle,
             size: 80,
             color: Colors.red,
           ),
@@ -28,7 +32,7 @@ class ErrorHandler extends StatelessWidget {
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
-                .bodyMedium
+                .titleMedium
                 ?.copyWith(color: Colors.red),
           ),
           const SizedBox(
@@ -37,9 +41,23 @@ class ErrorHandler extends StatelessWidget {
           stackTrace != null
               ? Text(
                   stackTrace.toString(),
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.black54),
+                  textAlign: TextAlign.center,
                 )
               : Container(),
+          const SizedBox(
+            height: 10,
+          ),
+          onRetry != null
+              ? TextButton.icon(
+                  onPressed: onRetry,
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  icon: const Icon(CupertinoIcons.refresh),
+                  label: Text('reload'.tr()))
+              : Container()
         ],
       ),
     );

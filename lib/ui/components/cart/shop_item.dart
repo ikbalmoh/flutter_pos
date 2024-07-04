@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/utils/formater.dart';
@@ -55,32 +56,82 @@ class ShopItem extends StatelessWidget {
                           const BorderRadius.vertical(top: Radius.circular(10)),
                       color: Colors.grey.shade200,
                     ),
-                    child: item.image != null && item.image != ''
-                        ? ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(10)),
-                            child: CachedNetworkImage(
-                              imageUrl: item.image!,
-                              width: double.maxFinite,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Center(
-                                child: CircularProgressIndicator(
-                                  backgroundColor: Colors.blueGrey.shade300,
+                    child: Stack(
+                      children: [
+                        item.image != null && item.image != ''
+                            ? ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(10)),
+                                child: CachedNetworkImage(
+                                  imageUrl: item.image!,
+                                  width: double.maxFinite,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Center(
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.blueGrey.shade300,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: Text(
+                                  item.itemName.substring(0, 3).toUpperCase(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall
+                                      ?.copyWith(
+                                        color: Colors.grey.shade400,
+                                      ),
                                 ),
                               ),
-                            ),
-                          )
-                        : Center(
-                            child: Text(
-                              item.itemName.substring(0, 3).toUpperCase(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall
-                                  ?.copyWith(
-                                    color: Colors.grey.shade400,
-                                  ),
-                            ),
-                          ),
+                        Positioned(
+                            bottom: 5,
+                            left: 5,
+                            child: item.stockItem <= 0
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.red.shade100
+                                            .withOpacity(0.5),
+                                        borderRadius: BorderRadius.circular(3)),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                    child: Text(
+                                      CurrencyFormat.currency(
+                                        'out_of_stock'.tr(),
+                                        symbol: false,
+                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(color: Colors.red),
+                                    ),
+                                  )
+                                : item.stockItem <= 10
+                                    ? Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.amber.shade100
+                                                .withOpacity(0.5),
+                                            borderRadius:
+                                                BorderRadius.circular(3)),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                        child: Text(
+                                          CurrencyFormat.currency(
+                                            'low_stock'.tr(),
+                                            symbol: false,
+                                          ),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                  color: Colors.amber.shade700),
+                                        ),
+                                      )
+                                    : Container())
+                      ],
+                    ),
                   ),
                 ),
                 Container(

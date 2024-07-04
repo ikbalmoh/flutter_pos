@@ -21,6 +21,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       isDismissible: false,
       enableDrag: false,
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       builder: (context) => const PopScope(
         canPop: false,

@@ -44,19 +44,24 @@ Future initServices() async {
   await dotenv.load(fileName: env);
 
   String? deviceId = '';
+  String? deviceName = '';
 
   if (defaultTargetPlatform == TargetPlatform.android) {
     AndroidDeviceInfo deviceInfo = await deviceInfoPlugin.androidInfo;
     deviceId = deviceInfo.fingerprint;
+    deviceName = deviceInfo.device;
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
     IosDeviceInfo deviceInfo = await deviceInfoPlugin.iosInfo;
     deviceId = deviceInfo.identifierForVendor;
+    deviceName = deviceInfo.name;
   } else if (defaultTargetPlatform == TargetPlatform.macOS) {
     MacOsDeviceInfo deviceInfo = await deviceInfoPlugin.macOsInfo;
     deviceId = deviceInfo.systemGUID;
+    deviceName = deviceInfo.computerName;
   } else {
     WebBrowserInfo deviceInfo = await deviceInfoPlugin.webBrowserInfo;
     deviceId = deviceInfo.userAgent;
+    deviceName = deviceInfo.browserName.name;
   }
 
   log('Device ID: $deviceId');
@@ -68,6 +73,7 @@ Future initServices() async {
   if (deviceId != null && deviceId.isNotEmpty) {
     storage.write(key: StoreKey.device.toString(), value: deviceId);
   }
+  storage.write(key: StoreKey.deviceName.toString(), value: deviceName);
 
   var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
   if (appFlavor == 'staging') {

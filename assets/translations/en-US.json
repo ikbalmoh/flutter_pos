@@ -155,5 +155,7 @@
   "transaction_canceled": "Transaction Canceled",
   "please_open_shift": "Please start shift to create a transaction",
   "current_shift": "Current Shift",
-  "shift_closed": "Shift Closed"
+  "shift_closed": "Shift Closed",
+  "out_of_stock": "Out of Stock",
+  "low_stock": "Low Stock"
 }

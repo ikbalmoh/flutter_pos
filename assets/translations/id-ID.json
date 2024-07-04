@@ -156,5 +156,7 @@
   "transaction_canceled": "Transaksi Dibatalalkan",
   "please_open_shift": "Silahkan Buka Shift untuk Memulai Transaksi",
   "current_shift": "Shift Berjalan",
-  "shift_closed": "Shift Ditutup"
+  "shift_closed": "Shift Ditutup",
+  "out_of_stock": "Kosong",
+  "low_stock": "Stok Menipis"
 }

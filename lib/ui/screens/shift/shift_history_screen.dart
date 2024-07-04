@@ -9,6 +9,7 @@ import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/providers/shift/shift_list_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/error_handler.dart';
+import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -199,8 +200,11 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                 error: e.toString(),
                 stackTrace: stack.toString(),
               ),
-              loading: () => const LoadingWidget(
-                color: Colors.teal,
+              loading: () => ListView.builder(
+                itemCount: 10,
+                itemBuilder: (context, index) => const ItemListSkeleton(leading: false,),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
               ),
               skipError: true,
             ),

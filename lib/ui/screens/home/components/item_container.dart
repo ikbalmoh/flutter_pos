@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/ui/components/item/item_info.dart';
@@ -9,19 +11,32 @@ import 'package:selleri/ui/components/cart/shop_item.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 class ItemContainer extends ConsumerWidget {
   final ScrollController? scrollController;
 
   final String idCategory;
   final String search;
+  final bool? allowEmptyStock;
 
   const ItemContainer({
     this.scrollController,
     required this.idCategory,
     required this.search,
+    this.allowEmptyStock,
     super.key,
   });
+
+  void onAddToCart(BuildContext context, WidgetRef ref,
+      {required Item item, ItemVariant? variant}) {
+    double stock = variant?.stockItem ?? item.stockItem;
+    if (stock <= 0 && allowEmptyStock == false) {
+      AppAlert.snackbar(context, 'out_of_stock'.tr());
+      return;
+    }
+    ref.read(cartNotiferProvider.notifier).addToCart(item, variant: variant);
+  }
 
   void showVariants(BuildContext context, Item item, WidgetRef ref) {
     showModalBottomSheet(
@@ -32,9 +47,12 @@ class ItemContainer extends ConsumerWidget {
         builder: (BuildContext context) {
           return ItemVariantPicker(
             item: item,
-            onSelect: (variant) => ref
-                .read(cartNotiferProvider.notifier)
-                .addToCart(item, variant: variant),
+            onSelect: (variant) => onAddToCart(
+              context,
+              ref,
+              item: item,
+              variant: variant,
+            ),
           );
         });
   }
@@ -77,7 +95,7 @@ class ItemContainer extends ConsumerWidget {
                     item: item,
                     qtyOnCart: qtyOnCart,
                     onAddToCart: (item) =>
-                        ref.read(cartNotiferProvider.notifier).addToCart(item),
+                        onAddToCart(context, ref, item: item),
                     addQty: (idItem) => ref
                         .read(cartNotiferProvider.notifier)
                         .updateQty(idItem),

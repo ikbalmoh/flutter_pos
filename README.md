@@ -5,19 +5,25 @@
 - Flutter 3.22.2
 - Shorebird
 
-## Flavor
-- dev
-- staging
-- production
+### Generate Provider or Model
 
-## Build APK Staging
+- run `dart run build_runner build -d` or `dart run build_runner watch -d` once provider or model are changed
+
+### Build APK Staging
 
 ```
 shorebird release android --flavor staging  --flutter-version=3.22.2 --artifact apk
 ```
 
-## Release Patch
+### Release Patch
 
 ```
-shorebird patch android --flavor staging
+shorebird patch android --flavor [flavorName]
 ```
+
+
+## Available Flavor
+
+- dev
+- staging
+- release
