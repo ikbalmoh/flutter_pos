@@ -4,6 +4,7 @@ import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/shift/open_shift.dart';
 import 'package:selleri/ui/components/shift/shift_inactive.dart';
+import 'package:selleri/ui/components/shift/shift_skeleton.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 
 class ShiftOverlay extends ConsumerWidget {
