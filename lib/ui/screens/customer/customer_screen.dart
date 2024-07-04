@@ -8,9 +8,10 @@ import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/customer/customer_list_provider.dart';
 import 'package:selleri/ui/components/customer/customer_form.dart';
+import 'package:selleri/ui/components/error_handler.dart';
+import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/customer/customer_detail.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
 
 class CustomerScreen extends ConsumerStatefulWidget {
   const CustomerScreen({super.key});
@@ -29,7 +30,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
   @override
   void initState() {
     final name = ref.read(cartNotiferProvider).customerName;
-    if(name != null) {
+    if (name != null) {
       setState(() {
         searchVisible = true;
         _searchController.text = name;
@@ -80,7 +81,6 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final customers = ref.watch(customerListNotifierProvider);
     final selectedCustomer = ref.watch(cartNotiferProvider).idCustomer;
 
     void onSelectCustomer(customer) {
@@ -133,97 +133,101 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                 fontSize: 18,
               ),
             ),
-      body: customers.when(
-        data: (data) => data.data!.isNotEmpty
-            ? ListView.builder(
-                controller: _scrollController,
-                itemBuilder: (context, idx) {
-                  if (idx + 1 > data.data!.length) {
-                    if (data.currentPage >= data.lastPage) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 10),
-                        child: Center(
-                          child: Text(
-                            'x_data_displayed'.tr(
-                              args: [data.total.toString()],
-                            ),
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey.shade600,
+      body: RefreshIndicator(
+          onRefresh: () => ref
+              .read(customerListNotifierProvider.notifier)
+              .loadCustomers(page: 1, search: _searchController.text),
+          child: ref.watch(customerListNotifierProvider).when(
+                data: (data) => data.data!.isNotEmpty
+                    ? ListView.builder(
+                        controller: _scrollController,
+                        itemBuilder: (context, idx) {
+                          if (idx + 1 > data.data!.length) {
+                            if (data.currentPage >= data.lastPage) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 10),
+                                child: Center(
+                                  child: Text(
+                                    'x_data_displayed'.tr(
+                                      args: [data.total.toString()],
                                     ),
-                          ),
-                        ),
-                      );
-                    }
-                    return const Center(
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: LoadingIndicator(color: Colors.teal),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: Colors.grey.shade600,
+                                        ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return const ItemListSkeleton(leading: false);
+                          }
+                          Customer customer = data.data![idx];
+                          bool selected =
+                              selectedCustomer == customer.idCustomer;
+                          return ListTile(
+                            title: Text(customer.customerName.trim()),
+                            subtitle: Text(customer.code.trim()),
+                            shape: Border(
+                              bottom: BorderSide(
+                                width: 0.5,
+                                color: Colors.blueGrey.shade50,
+                              ),
+                            ),
+                            onTap: () => showCustomerSheet(customer),
+                            trailing: selected
+                                ? const Icon(
+                                    Icons.check_circle,
+                                    color: Colors.teal,
+                                  )
+                                : null,
+                          );
+                        },
+                        itemCount: data.data!.length + 1,
+                      )
+                    : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'no_data'.tr(args: ['customer'.tr()]),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.grey),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _searchController.text.length >= 3
+                                ? TextButton.icon(
+                                    style: TextButton.styleFrom(
+                                        backgroundColor: Colors.teal,
+                                        foregroundColor: Colors.white),
+                                    onPressed: onCreateNewCustomer,
+                                    icon: const Icon(Icons.add),
+                                    label:
+                                        Text('new'.tr(args: ['customer'.tr()])))
+                                : Container()
+                          ],
                         ),
                       ),
-                    );
-                  }
-                  Customer customer = data.data![idx];
-                  bool selected = selectedCustomer == customer.idCustomer;
-                  return ListTile(
-                    title: Text(customer.customerName.trim()),
-                    subtitle: Text(customer.code.trim()),
-                    shape: Border(
-                      bottom: BorderSide(
-                        width: 0.5,
-                        color: Colors.blueGrey.shade50,
-                      ),
-                    ),
-                    onTap: () => showCustomerSheet(customer),
-                    trailing: selected
-                        ? const Icon(
-                            Icons.check_circle,
-                            color: Colors.teal,
-                          )
-                        : null,
-                  );
-                },
-                itemCount: data.data!.length + 1,
-              )
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'no_data'.tr(args: ['customer'.tr()]),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.grey),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _searchController.text.length >= 3
-                        ? TextButton.icon(
-                            style: TextButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                foregroundColor: Colors.white),
-                            onPressed: onCreateNewCustomer,
-                            icon: const Icon(Icons.add),
-                            label: Text('new'.tr(args: ['customer'.tr()])))
-                        : Container()
-                  ],
+                error: (e, stack) => ErrorHandler(
+                  error: e.toString(),
+                  stackTrace: stack.toString(),
                 ),
-              ),
-        error: (e, stack) => null,
-        loading: () => const LoadingWidget(
-          color: Colors.teal,
-        ),
-        skipError: true,
-      ),
+                loading: () => ListView.builder(
+                  itemCount: 10,
+                  itemBuilder: (context, _) => const ItemListSkeleton(
+                    leading: false,
+                  ),
+                ),
+                skipError: true,
+              )),
     );
   }
 }

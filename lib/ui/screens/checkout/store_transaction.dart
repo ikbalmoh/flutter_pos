@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,7 +49,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
         printCounter++;
       });
     } catch (e) {
-      log('PRINT FAILED: $e');
+      log('PRINT TRANSACTION FAILED: $e');
       // ignore: use_build_context_synchronously
       AppAlert.snackbar(context, e.toString());
     }
@@ -66,8 +67,8 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
         status = Status.success;
       });
       onPrintReceipt();
-    } catch (e) {
-      log('TRANSACTION ERROR: ${e.toString()}');
+    } catch (e, stackTrace) {
+      log('TRANSACTION ERROR: ${e.toString()}\n${stackTrace.toString()}');
       setState(() {
         status = Status.error;
         error = e.toString();
@@ -183,7 +184,10 @@ class TransactionError extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(height: 30),
+        const SizedBox(height: 20),
+        const Icon(CupertinoIcons.exclamationmark_circle,
+            color: Colors.red, size: 50),
+        const SizedBox(height: 20),
         Text(
           'transaction_error'.tr(),
           style: textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
@@ -204,14 +208,15 @@ class TransactionError extends StatelessWidget {
             ),
             const SizedBox(width: 15),
             Expanded(
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: onRetry,
                 style: ElevatedButton.styleFrom(
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
                 ),
-                child: Text(
+                icon: const Icon(CupertinoIcons.refresh),
+                label: Text(
                   'try_again'.tr(),
                 ),
               ),

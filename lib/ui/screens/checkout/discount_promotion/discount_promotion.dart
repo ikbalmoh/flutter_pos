@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_item.dart';
-import 'package:selleri/ui/screens/checkout/discount_promotion/promotion_item.dart';
+// import 'package:selleri/ui/screens/checkout/discount_promotion/promotion_item.dart';
 
 class DiscountPromotion extends StatelessWidget {
   const DiscountPromotion({super.key});
@@ -32,7 +32,10 @@ class DiscountPromotion extends StatelessWidget {
               ),
             ),
             child: const Column(
-              children: [DiscountItem(), PromotionItem()],
+              children: [
+                DiscountItem(),
+                // PromotionItem(),
+              ],
             ),
           )
         ],

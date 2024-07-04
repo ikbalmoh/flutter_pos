@@ -30,7 +30,7 @@ class CustomerListNotifier extends _$CustomerListNotifier {
     );
   }
 
-  void loadCustomers({int page = 1, String search = ''}) async {
+  Future<void> loadCustomers({int page = 1, String search = ''}) async {
     if (page == 1) {
       state = const AsyncLoading();
     } else {

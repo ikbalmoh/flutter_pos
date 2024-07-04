@@ -13,7 +13,6 @@ import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/transaction_history/transaction_detail_screen.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/formater.dart';
 
 class TransactionHistoryScreen extends ConsumerStatefulWidget {
