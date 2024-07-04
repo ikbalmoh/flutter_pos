@@ -36,11 +36,14 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   int status = 1;
   DateTime transDate = DateTime.now();
   double amount = 0;
-  double diffAmount = 0;
   List<XFile> images = [];
 
   bool isLoading = false;
   bool printReport = true;
+
+  double diffAmount() {
+    return (amount - widget.shift.summary.expectedCashEnd).abs();
+  }
 
   Future pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
@@ -62,6 +65,18 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     });
   }
 
+  void onSubmit() {
+    if (diffAmount() != 0) {
+      AppAlert.confirm(context,
+          title: 'are_you_sure'.tr(),
+          subtitle: 'available_cash_different'.tr(),
+          onConfirm: submitCloseShift,
+          confirmLabel: 'close_shift'.tr());
+    } else {
+      submitCloseShift();
+    }
+  }
+
   void submitCloseShift({bool? isDelete}) async {
     setState(() {
       isLoading = true;
@@ -71,7 +86,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
       await ref.read(shiftNotifierProvider.notifier).closeShift(
             widget.shift,
             closeAmount: amount,
-            diffAmount: summary.expectedCashEnd - amount,
+            diffAmount: diffAmount(),
             refundAmount: summary.refunded,
             attachments: images,
             printReport: printReport,
@@ -79,9 +94,10 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
       // ignore: use_build_context_synchronously
       context.pop();
       AppAlert.toast('shift_closed'.tr());
-    } on Exception catch (e, stackTrace) {
-      log('submit cashflow error: $e => $stackTrace');
+    } catch (e, stackTrace) {
+      log('close shift error: $e => $stackTrace');
       AppAlert.toast(e.toString());
+    } finally {
       setState(() {
         isLoading = false;
       });
@@ -210,6 +226,20 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                       ),
                     ),
                   ),
+                  diffAmount() != 0
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5, right: 15, left: 15),
+                          child: Text(
+                            '${'different'.tr()} ${CurrencyFormat.currency(diffAmount())}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: Colors.red),
+                            textAlign: TextAlign.end,
+                          ),
+                        )
+                      : Container(),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 15),
@@ -295,7 +325,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                                 ),
                               ),
                             ),
-                            onPressed: isLoading ? null : submitCloseShift,
+                            onPressed: isLoading ? null : onSubmit,
                             child: Text(
                               'close_shift'.tr(),
                             ),

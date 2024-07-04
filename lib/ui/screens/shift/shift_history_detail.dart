@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/shift/detail_shift_info_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
+import 'package:selleri/ui/components/shift/shift_skeleton.dart';
 import 'package:selleri/ui/screens/shift/components/active_shift_info.dart';
 import 'package:selleri/ui/screens/shift/components/shift_cashflows.dart';
 import 'package:selleri/ui/screens/shift/components/shift_summary_card.dart';
@@ -45,13 +46,7 @@ class _ShiftHistoryDetailScreenState
                 error: error.toString(),
                 stackTrace: stackTrace.toString(),
               ),
-              loading: () => const Column(
-                children: [
-                  ActiveShiftInfoSkeleton(),
-                  ShiftSummaryCardSkeleton(),
-                  ShiftCashflowsSkeleton()
-                ],
-              ),
+              loading: () => const ShiftSkeleon(),
             ),
       ),
     );

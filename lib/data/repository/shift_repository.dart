@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -75,12 +76,18 @@ class ShiftRepository implements ShiftRepositoryProtocol {
 
   @override
   Future<Shift?> startShift(Shift shift) async {
-    final storedShift = await api.startShift(shift);
-    if (storedShift != null) {
-      await saveShift(storedShift);
-      return storedShift;
+    try {
+      final storedShift = await api.startShift(shift);
+      if (storedShift != null) {
+        await saveShift(storedShift);
+        return storedShift;
+      }
+      return null;
+    } on DioException catch (e) {
+      throw e.response?.data['msg'] ?? e.message;
+    } catch (e) {
+      rethrow;
     }
-    return null;
   }
 
   Future<ShiftInfo?> getShiftInfo(String shiftId) async {

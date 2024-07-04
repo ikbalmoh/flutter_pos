@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class ActiveShiftInfo extends ConsumerWidget {
@@ -21,6 +22,15 @@ class ActiveShiftInfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
     bool active = shiftInfo.closeShift == null;
+
+    void onPrint() async {
+      try {
+        await ref.read(shiftNotifierProvider.notifier).printShift(shiftInfo, throwError: true);
+      } catch (e) {
+        AppAlert.toast(e.toString());
+      }
+    }
+
     return Container(
       color: active ? Colors.lightGreen.shade100 : Colors.grey.shade200,
       width: MediaQuery.of(context).size.width,
@@ -76,9 +86,7 @@ class ActiveShiftInfo extends ConsumerWidget {
                           ),
                           showPrintButton == true
                               ? IconButton(
-                                  onPressed: () => ref
-                                      .read(shiftNotifierProvider.notifier)
-                                      .print(shiftInfo),
+                                  onPressed: onPrint,
                                   icon: const Icon(CupertinoIcons.printer),
                                   tooltip: 'print'.tr(),
                                 )
@@ -230,57 +238,3 @@ class ActiveShiftInfo extends ConsumerWidget {
   }
 }
 
-class ActiveShiftInfoSkeleton extends ConsumerWidget {
-  const ActiveShiftInfoSkeleton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      color: Colors.lightGreen.shade100,
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Card(
-          color: Colors.white,
-          margin: const EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          elevation: 3,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 150,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  width: 140,
-                  height: 20,
-                  decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(5)),
-                ),
-                const SizedBox(height: 15),
-                Container(
-                  width: double.infinity,
-                  height: 80,
-                  decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

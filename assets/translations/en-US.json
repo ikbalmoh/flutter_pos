@@ -157,5 +157,6 @@
   "current_shift": "Current Shift",
   "shift_closed": "Shift Closed",
   "out_of_stock": "Out of Stock",
-  "low_stock": "Low Stock"
+  "low_stock": "Low Stock",
+  "available_cash_different": "Entered Available Cash is Different with Expected Ending Cash"
 }

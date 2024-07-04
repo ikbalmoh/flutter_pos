@@ -60,10 +60,8 @@ class ShiftNotifier extends _$ShiftNotifier {
     try {
       final storedShift = await _shiftRepository.startShift(shift);
       state = AsyncData(storedShift);
-    } on DioException catch (e) {
-      String message = e.response?.data['msg'] ?? e.message;
-      log('OPEN SHIFT FAILED: $message');
-      state = AsyncError(e, StackTrace.current);
+    } catch (e, stackTrace) {
+      state = AsyncError(e, stackTrace);
     }
   }
 
@@ -75,7 +73,10 @@ class ShiftNotifier extends _$ShiftNotifier {
       bool printReport = true}) async {
     final user =
         (ref.read(authNotifierProvider).value as Authenticated).user.user;
+    final Shift currentShift = state.value!;
     try {
+      state = const AsyncLoading();
+
       final closeShift = DateTime.now();
       Map<String, dynamic> payload = {
         "close_shift": DateTimeFormater.dateToString(closeShift),
@@ -88,6 +89,7 @@ class ShiftNotifier extends _$ShiftNotifier {
       };
       await _shiftRepository.close(state.value!.id, payload);
       state = const AsyncData(null);
+
       ShiftInfo shiftInfo = shift.copyWith(
           closeShift: closeShift,
           closedBy: user.idUser,
@@ -96,18 +98,19 @@ class ShiftNotifier extends _$ShiftNotifier {
             different: diffAmount,
           ));
       if (printReport) {
-        print(shiftInfo);
+        printShift(shiftInfo);
       }
     } catch (e) {
-      throw Exception(e);
+      state = AsyncData(currentShift);
+      rethrow;
     }
   }
 
-  Future<void> print(ShiftInfo info) async {
+  Future<void> printShift(ShiftInfo info, {bool? throwError}) async {
     try {
       final printer = ref.read(printerNotifierProvider).value;
       if (printer == null) {
-        throw Exception('printer_not_connected'.tr());
+        throw 'printer_not_connected'.tr();
       }
       final AttributeReceipts? attributeReceipts =
           (ref.read(outletNotifierProvider).value as OutletSelected)
@@ -116,8 +119,10 @@ class ShiftNotifier extends _$ShiftNotifier {
       final receipt = await Printer.buildShiftReportBytes(info,
           attributes: attributeReceipts, size: printer.size);
       ref.read(printerNotifierProvider.notifier).print(receipt);
-    } on Exception catch (_) {
-      rethrow;
+    } catch (e) {
+      if (throwError == true) {
+        rethrow;
+      }
     }
   }
 

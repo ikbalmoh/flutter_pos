@@ -50,8 +50,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       });
     } catch (e) {
       log('PRINT TRANSACTION FAILED: $e');
-      // ignore: use_build_context_synchronously
-      AppAlert.snackbar(context, e.toString());
+      AppAlert.toast(e.toString());
     }
   }
 

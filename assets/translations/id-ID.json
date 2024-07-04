@@ -15,7 +15,7 @@
   "no_items": "Tidak Ada Barang",
   "delete": "Hapus",
   "remove_from_cart": "Buang dari keranjang",
-  "are_you_sure": "Apa Anda Yakin?",
+  "are_you_sure": "Apakah Anda Yakin?",
   "pay_finish": "Selesaikan Transaksi",
   "order_summary": "Ringkasan Pesanan",
   "discount": "Diskon",
@@ -158,5 +158,6 @@
   "current_shift": "Shift Berjalan",
   "shift_closed": "Shift Ditutup",
   "out_of_stock": "Kosong",
-  "low_stock": "Stok Menipis"
+  "low_stock": "Stok Menipis",
+  "available_cash_different": "Ada Selisih Antara Uang Tunai yang Anda Masukkan dengan Uang Kas Seharusnya"
 }

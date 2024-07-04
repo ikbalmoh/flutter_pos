@@ -70,33 +70,3 @@ class ShiftCashflows extends ConsumerWidget {
     );
   }
 }
-
-class ShiftCashflowsSkeleton extends ConsumerWidget {
-  const ShiftCashflowsSkeleton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            'cashflow'.tr(),
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-        const SizedBox(height: 5),
-        ListView.builder(
-          itemCount: 4,
-          itemBuilder: (context, index) => const ItemListSkeleton(),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-        ),
-      ],
-    );
-  }
-}
