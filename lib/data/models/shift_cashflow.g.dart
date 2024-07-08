@@ -30,6 +30,6 @@ Map<String, dynamic> _$$ShiftCashflowImplToJson(_$ShiftCashflowImpl instance) =>
       'outlet_id': instance.outletId,
       'status': instance.status,
       'amount': instance.amount,
-      'images': instance.images,
+      'images': instance.images.map((e) => e.toJson()).toList(),
       'descriptions': instance.descriptions,
     };

@@ -85,6 +85,21 @@ class Outlet extends _$Outlet {
     }
   }
 
+  Future<void> refreshConfig(List<String> only) async {
+    log('OUTLET STATE: ${state.value}');
+    if (state.value is OutletSelected) {
+      final outletState = state.value as OutletSelected;
+      final config = await _outletRepository.fetchOutletConfig(
+        outletState.outlet.idOutlet,
+        only: only,
+        current: outletState.config,
+      );
+      log('NEW CONFIG: $config');
+      state =
+          AsyncData(OutletSelected(outlet: outletState.outlet, config: config));
+    }
+  }
+
   Future<void> clearOutlet() async {
     await _outletRepository.remove();
     state = AsyncData(OutletNotSelected());

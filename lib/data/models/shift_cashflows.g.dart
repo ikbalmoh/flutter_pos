@@ -17,6 +17,6 @@ _$ShiftCashFlowsImpl _$$ShiftCashFlowsImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$ShiftCashFlowsImplToJson(
         _$ShiftCashFlowsImpl instance) =>
     <String, dynamic>{
-      'data': instance.data,
+      'data': instance.data.map((e) => e.toJson()).toList(),
       'total': instance.total,
     };

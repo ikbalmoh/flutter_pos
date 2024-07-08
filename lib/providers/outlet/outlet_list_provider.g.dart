@@ -7,7 +7,7 @@ part of 'outlet_list_provider.dart';
 // **************************************************************************
 
 String _$outletListNotifierHash() =>
-    r'7ef321d23234472e5ac391ffd1959c392b90c886';
+    r'70d83f23717d45a5ef51bc2608d0513e593c1b4e';
 
 /// See also [OutletListNotifier].
 @ProviderFor(OutletListNotifier)
