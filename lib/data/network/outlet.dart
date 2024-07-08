@@ -23,9 +23,14 @@ class OutletApi {
     }
   }
 
-  Future<Map<String, dynamic>> configs(String id) async {
+  Future<Map<String, dynamic>> configs(
+    String id, {
+    List<String>? only = const [],
+  }) async {
     try {
-      final res = await api.get('${ApiUrl.outletConfig}/$id');
+      Map<String, dynamic> params = {"only[]": only};
+      final res =
+          await api.get('${ApiUrl.outletConfig}/$id', queryParameters: params);
       return res.data['data'];
     } on DioException catch (e) {
       throw e.response?.data['message'] ?? e.message;

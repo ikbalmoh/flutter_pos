@@ -1,207 +1,151 @@
 import 'dart:convert';
 
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'payment_method.dart';
 
+part 'outlet_config.freezed.dart';
 part 'outlet_config.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class OutletConfig {
-  String? locale;
-  String? serverTime;
-  Subscriptions? subscriptions;
-  bool? offlineTransaction;
-  bool? syncBeforeCloseShift;
-  int? maxOffline;
-  bool? saleWithPic;
-  bool? customerTransMandatory;
-  bool? stockMinus;
-  bool? partialPayment;
-  bool? taxable;
-  bool? extraItem;
-  bool? autoShift;
-  int? decimalPlaces;
-  int? defaultOpenAmount;
-  bool? discountOverall;
-  int? defaultPaper;
-  bool? attachmentShiftMandatory;
-  bool? generateSku;
-  bool? generateBarcode;
-  Tax? tax;
-  List<PinSetting>? pinSettings;
-  List<UserHasPin>? userHasPin;
-  List<PaymentMethod> paymentMethods;
-  List<int>? nominalCash;
-  List<RefundReason>? refundReasons;
-  List<String>? addOns;
-  AttributeReceipts? attributeReceipts;
-  List<Akun>? akunBiaya;
-  List<Akun>? akunPendapatan;
-  List<Akun>? akunSetoran;
-  List<ListUser>? listUser;
-  int? saldoAkunKas;
-  CustomMandatory? customMandatory;
+@freezed
+class OutletConfig with _$OutletConfig {
+  const OutletConfig._();
 
-  OutletConfig({
-    this.locale,
-    this.serverTime,
-    this.subscriptions,
-    this.offlineTransaction,
-    this.syncBeforeCloseShift,
-    this.maxOffline,
-    this.saleWithPic,
-    this.customerTransMandatory,
-    this.stockMinus,
-    this.partialPayment,
-    this.taxable,
-    this.extraItem,
-    this.autoShift,
-    this.decimalPlaces,
-    this.defaultOpenAmount,
-    this.discountOverall,
-    this.defaultPaper,
-    this.attachmentShiftMandatory,
-    this.generateSku,
-    this.generateBarcode,
-    this.tax,
-    this.pinSettings,
-    this.userHasPin,
-    required this.paymentMethods,
-    this.nominalCash,
-    this.refundReasons,
-    this.addOns,
-    this.attributeReceipts,
-    this.akunBiaya,
-    this.akunPendapatan,
-    this.akunSetoran,
-    this.listUser,
-    this.saldoAkunKas,
-    this.customMandatory,
-  });
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory OutletConfig({
+    String? locale,
+    String? serverTime,
+    Subscriptions? subscriptions,
+    bool? offlineTransaction,
+    bool? syncBeforeCloseShift,
+    int? maxOffline,
+    bool? saleWithPic,
+    bool? customerTransMandatory,
+    bool? stockMinus,
+    bool? partialPayment,
+    bool? taxable,
+    bool? extraItem,
+    bool? autoShift,
+    int? decimalPlaces,
+    int? defaultOpenAmount,
+    bool? discountOverall,
+    int? defaultPaper,
+    bool? attachmentShiftMandatory,
+    bool? generateSku,
+    bool? generateBarcode,
+    Tax? tax,
+    List<PinSetting>? pinSettings,
+    List<UserHasPin>? userHasPin,
+    List<PaymentMethod>? paymentMethods,
+    List<int>? nominalCash,
+    List<RefundReason>? refundReasons,
+    List<String>? addOns,
+    AttributeReceipts? attributeReceipts,
+    List<Akun>? akunBiaya,
+    List<Akun>? akunPendapatan,
+    List<Akun>? akunSetoran,
+    List<ListUser>? listUser,
+    int? saldoAkunKas,
+    CustomMandatory? customMandatory,
+  }) = _OutletConfig;
 
   factory OutletConfig.fromJson(Map<String, dynamic> json) =>
       _$OutletConfigFromJson(json);
-
-  Map<String, dynamic> toJson() => _$OutletConfigToJson(this);
-
-  @override
-  String toString() {
-    final jsonToken = toJson();
-    return json.encode(jsonToken);
-  }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class Akun {
-  int idAkun;
-  String kodeAkun;
-  String namaAkun;
-  String? keterangan;
-
-  Akun({
-    required this.idAkun,
-    required this.kodeAkun,
-    required this.namaAkun,
-    this.keterangan,
-  });
+@freezed
+class Akun with _$Akun {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory Akun({
+    required int idAkun,
+    required String kodeAkun,
+    required String namaAkun,
+    String? keterangan,
+  }) = _Akun;
 
   factory Akun.fromJson(Map<String, dynamic> json) => _$AkunFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AkunToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class AttributeReceipts {
-  String? headers;
-  String? footers;
-  String? imagePath;
-  String? imageBase64;
-
-  AttributeReceipts({
-    this.headers,
-    this.footers,
-    this.imagePath,
-    this.imageBase64,
-  });
+@freezed
+class AttributeReceipts with _$AttributeReceipts {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory AttributeReceipts({
+    String? headers,
+    String? footers,
+    String? imagePath,
+    String? imageBase64,
+  }) = _AttributeReceipts;
 
   factory AttributeReceipts.fromJson(Map<String, dynamic> json) =>
       _$AttributeReceiptsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AttributeReceiptsToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class CustomMandatory {
-  List<String>? customers;
-
-  CustomMandatory({
-    this.customers,
-  });
+@freezed
+class CustomMandatory with _$CustomMandatory {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory CustomMandatory({
+    List<String>? customers,
+  }) = _CustomMandatory;
 
   factory CustomMandatory.fromJson(Map<String, dynamic> json) =>
       _$CustomMandatoryFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CustomMandatoryToJson(this);
+  @override
+  String toString() {
+    final jsonData = toJson();
+    return json.encode(jsonData);
+  }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class ListUser {
-  String id;
-  String username;
-  String name;
-  String? phone;
-  List<String>? rolesName;
-
-  ListUser({
-    required this.id,
-    required this.username,
-    required this.name,
-    this.phone,
-    this.rolesName,
-  });
+@freezed
+class ListUser with _$ListUser {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory ListUser({
+    required String id,
+    required String username,
+    required String name,
+    String? phone,
+    List<String>? rolesName,
+  }) = _ListUser;
 
   factory ListUser.fromJson(Map<String, dynamic> json) =>
       _$ListUserFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ListUserToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class PinSetting {
-  String name;
-  bool locked;
-  String? description;
-
-  PinSetting({
-    required this.name,
-    required this.locked,
-    this.description,
-  });
+@freezed
+class PinSetting with _$PinSetting {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory PinSetting({
+    required String name,
+    required bool locked,
+    String? description,
+  }) = _PinSetting;
 
   factory PinSetting.fromJson(Map<String, dynamic> json) =>
       _$PinSettingFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PinSettingToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
@@ -224,95 +168,81 @@ class RefundReason {
 
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class Subscriptions {
-  SubscriptionLimit transaction;
-  SubscriptionLimit customer;
-
-  Subscriptions({
-    required this.transaction,
-    required this.customer,
-  });
+@freezed
+class Subscriptions with _$Subscriptions {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory Subscriptions({
+    required SubscriptionLimit transaction,
+    required SubscriptionLimit customer,
+  }) = _Subscriptions;
 
   factory Subscriptions.fromJson(Map<String, dynamic> json) =>
       _$SubscriptionsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SubscriptionsToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class SubscriptionLimit {
-  int max;
-  int current;
-
-  SubscriptionLimit({
-    required this.max,
-    required this.current,
-  });
+@freezed
+class SubscriptionLimit with _$SubscriptionLimit {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory SubscriptionLimit({
+    required int max,
+    required int current,
+  }) = _SubscriptionLimit;
 
   factory SubscriptionLimit.fromJson(Map<String, dynamic> json) =>
       _$SubscriptionLimitFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SubscriptionLimitToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class Tax {
-  String taxName;
-  double percentage;
-  bool isInclude;
-
-  Tax({
-    required this.taxName,
-    required this.percentage,
-    required this.isInclude,
-  });
+@freezed
+class Tax with _$Tax {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory Tax({
+    required String taxName,
+    required double percentage,
+    required bool isInclude,
+  }) = _Tax;
 
   factory Tax.fromJson(Map<String, dynamic> json) => _$TaxFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TaxToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class UserHasPin {
-  String userId;
-  String userName;
-  String userPin;
-  List<String>? rolesName;
-
-  UserHasPin({
-    required this.userId,
-    required this.userName,
-    required this.userPin,
-    this.rolesName,
-  });
+@freezed
+class UserHasPin with _$UserHasPin {
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  const factory UserHasPin({
+    required String userId,
+    required String userName,
+    required String userPin,
+    List<String>? rolesName,
+  }) = _UserHasPin;
 
   factory UserHasPin.fromJson(Map<String, dynamic> json) =>
       _$UserHasPinFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserHasPinToJson(this);
-
   @override
   String toString() {
-    return toJson().toString();
+    final jsonData = toJson();
+    return json.encode(jsonData);
   }
 }

@@ -33,5 +33,5 @@ Map<String, dynamic> _$$CartHoldedImplToJson(_$CartHoldedImpl instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'created_name': instance.createdName,
       'description': instance.description,
-      'data_hold': instance.dataHold,
+      'data_hold': instance.dataHold.toJson(),
     };

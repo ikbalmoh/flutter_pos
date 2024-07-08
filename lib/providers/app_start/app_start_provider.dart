@@ -16,8 +16,7 @@ class AppStartNotifier extends _$AppStartNotifier {
     final outletState = ref.watch(outletNotifierProvider);
     final authState = ref.watch(authNotifierProvider);
 
-    log('AUTH STATE ${authState.value.toString()}');
-    log('OUTLET STATE: ${outletState.value}');
+    log('AUTHENTICATED? ${authState.value is Authenticated ? true : false}');
     if (authState.value is Authenticated &&
         outletState.value is OutletSelected) {
       log('OUTLET SELECTED');

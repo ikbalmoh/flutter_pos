@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -30,6 +31,22 @@ class FcmNotifier extends _$FcmNotifier {
       );
     }
     return null;
+  }
+
+  Timer? _debounceSync;
+
+  void manualSync(List<String> sources, List<String>? configOnly) {
+    if (_debounceSync?.isActive ?? false) _debounceSync?.cancel();
+    _debounceSync = Timer(const Duration(seconds: 1), () async {
+      if (sources.contains('items')) {
+        await ref.read(itemsStreamProvider().notifier).syncItems();
+      }
+      if (sources.contains('config')) {
+        final only = configOnly ?? [];
+        log('CONFIG ONLY: $configOnly');
+        await ref.read(outletNotifierProvider.notifier).refreshConfig(only);
+      }
+    });
   }
 
   Future<String?> retrieveFcmToken() async {
@@ -66,7 +83,10 @@ class FcmNotifier extends _$FcmNotifier {
           break;
 
         case 'sync':
-          ref.read(itemsStreamProvider().notifier).syncItems();
+          final sources = List<String>.from(jsonData['sources'] ?? []);
+          final config = List<String>.from(jsonData['config_only'] ?? []);
+          log('TRIGGER SYNC\n => soruce: $sources\n => config: $config');
+          manualSync(sources, config);
           break;
 
         default:
@@ -104,8 +124,13 @@ class FcmNotifier extends _$FcmNotifier {
 
       String prefix = dotenv.env['APP_ID'] ?? 'selleri';
 
-      await messaging.subscribeToTopic('$prefix-$idCompany');
-      await messaging.subscribeToTopic('$prefix-$idOutlet');
+      String companyTopic = '$prefix-$idCompany';
+      String outletTopic = '$prefix-$idOutlet';
+
+      await messaging.subscribeToTopic(companyTopic);
+      await messaging.subscribeToTopic(outletTopic);
+
+      log('FCM SUBSCRIBED\n$companyTopic\n$outletTopic');
     }
   }
 }

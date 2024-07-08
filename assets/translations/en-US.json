@@ -158,5 +158,6 @@
   "shift_closed": "Shift Closed",
   "out_of_stock": "Out of Stock",
   "low_stock": "Low Stock",
-  "available_cash_different": "Entered Available Cash is Different with Expected Ending Cash"
+  "available_cash_different": "Entered Available Cash is Different with Expected Ending Cash",
+  "autoshift_note": "A new shift will be automatically opened once this shift closed"
 }

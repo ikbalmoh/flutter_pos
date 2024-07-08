@@ -25,8 +25,8 @@ class PaymentMethods extends ConsumerWidget {
         (ref.read(outletNotifierProvider).value as OutletSelected)
             .config
             .paymentMethods
-            .where((p) => p.type == type)
-            .toList();
+            ?.where((p) => p.type == type)
+            .toList() ?? [];
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 15),

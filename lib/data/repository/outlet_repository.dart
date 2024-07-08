@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
@@ -48,14 +49,22 @@ class OutletRepository implements OutletRepositoryProtocol {
 
   @override
   Future<OutletConfig?> retrieveOutletConfig() async {
-    const storage = FlutterSecureStorage();
-    String? outletConfigString =
-        await storage.read(key: StoreKey.outletConfig.toString());
-    if (outletConfigString != null) {
-      final jsonConfig = json.decode(outletConfigString);
-      return OutletConfig.fromJson(jsonConfig);
+    try {
+      const storage = FlutterSecureStorage();
+      String? outletConfigString =
+          await storage.read(key: StoreKey.outletConfig.toString());
+      log('RETRIEVE CONFIG: $outletConfigString');
+      if (outletConfigString != null) {
+        final jsonConfig = json.decode(outletConfigString);
+        log('JSON CONFIG: $jsonConfig');
+        final config = OutletConfig.fromJson(jsonConfig);
+        return config;
+      }
+      return null;
+    } catch (e) {
+      log('RETRIEVE CONFIG FAILED: $e');
+      return null;
     }
-    return null;
   }
 
   @override
@@ -67,9 +76,11 @@ class OutletRepository implements OutletRepositoryProtocol {
 
   @override
   Future<void> saveOutletConfig(OutletConfig config) async {
+    final configString = json.encode(config.toJson());
+    log('SAVE CONFIG: $configString');
     const storage = FlutterSecureStorage();
     await storage.write(
-        key: StoreKey.outletConfig.toString(), value: config.toString());
+        key: StoreKey.outletConfig.toString(), value: configString);
   }
 
   @override
@@ -83,12 +94,25 @@ class OutletRepository implements OutletRepositoryProtocol {
   }
 
   @override
-  Future<OutletConfig> fetchOutletConfig(String idOutlet) async {
+  Future<OutletConfig> fetchOutletConfig(String idOutlet,
+      {List<String>? only = const [], OutletConfig? current}) async {
     final api = OutletApi();
     try {
-      final configJson = await api.configs(idOutlet);
+      var configJson = await api.configs(idOutlet, only: only);
+
+      if (current != null) {
+        log('CURRENT CONFIG: $current');
+        configJson = configJson..addAll(current.toJson());
+      }
+
+      log('NEW CONFIG: $configJson');
+
       final OutletConfig config = OutletConfig.fromJson(configJson);
+
+      log('CONFIG CLASS:\n$configJson\n$config');
+
       saveOutletConfig(config);
+
       return config;
     } catch (e) {
       rethrow;

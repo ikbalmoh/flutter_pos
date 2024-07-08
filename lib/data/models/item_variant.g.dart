@@ -32,5 +32,5 @@ Map<String, dynamic> _$ItemVariantToJson(ItemVariant instance) =>
       'sku_number': instance.skuNumber,
       'barcode_number': instance.barcodeNumber,
       'promotions': instance.promotions,
-      'image': instance.image,
+      'image': instance.image?.toJson(),
     };

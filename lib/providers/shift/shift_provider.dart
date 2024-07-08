@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -65,12 +64,15 @@ class ShiftNotifier extends _$ShiftNotifier {
     }
   }
 
-  Future<void> closeShift(ShiftInfo shift,
-      {required double closeAmount,
-      required double diffAmount,
-      required double refundAmount,
-      List<XFile>? attachments,
-      bool printReport = true}) async {
+  Future<void> closeShift(
+    ShiftInfo shift, {
+    required double closeAmount,
+    required double diffAmount,
+    required double refundAmount,
+    List<XFile>? attachments,
+    bool printReport = true,
+    bool reopen = false,
+  }) async {
     final user =
         (ref.read(authNotifierProvider).value as Authenticated).user.user;
     final Shift currentShift = state.value!;
@@ -88,15 +90,21 @@ class ShiftNotifier extends _$ShiftNotifier {
         "_method": "PUT"
       };
       await _shiftRepository.close(state.value!.id, payload);
-      state = const AsyncData(null);
+
+      if (reopen) {
+        await openShift(closeAmount);
+      } else {
+        state = const AsyncData(null);
+      }
 
       ShiftInfo shiftInfo = shift.copyWith(
-          closeShift: closeShift,
-          closedBy: user.idUser,
-          summary: shift.summary.copyWith(
-            actualCash: closeAmount,
-            different: diffAmount,
-          ));
+        closeShift: closeShift,
+        closedBy: user.idUser,
+        summary: shift.summary.copyWith(
+          actualCash: closeAmount,
+          different: diffAmount,
+        ),
+      );
       if (printReport) {
         printShift(shiftInfo);
       }

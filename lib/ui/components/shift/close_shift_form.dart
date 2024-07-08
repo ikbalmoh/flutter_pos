@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/data/models/shift_cashflow_image.dart';
 import 'package:selleri/data/models/shift_info.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/generic/button_selection.dart';
@@ -40,6 +41,22 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
 
   bool isLoading = false;
   bool printReport = true;
+  bool isAutoShift = false;
+  bool isAttachmentRequired = false;
+
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    OutletState? outletState = ref.read(outletNotifierProvider).value;
+    if (outletState is OutletSelected) {
+      setState(() {
+        isAttachmentRequired =
+            outletState.config.attachmentShiftMandatory ?? false;
+        isAutoShift = outletState.config.autoShift ?? false;
+      });
+    }
+    super.initState();
+  }
 
   double diffAmount() {
     return (amount - widget.shift.summary.expectedCashEnd).abs();
@@ -65,7 +82,12 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     });
   }
 
-  void onSubmit() {
+  void onSubmit(BuildContext context) {
+    if (images.isEmpty && isAttachmentRequired) {
+      AppAlert.snackbar(
+          context, 'field_required'.tr(args: ['attachments'.tr()]));
+      return;
+    }
     if (diffAmount() != 0) {
       AppAlert.confirm(context,
           title: 'are_you_sure'.tr(),
@@ -90,6 +112,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
             refundAmount: summary.refunded,
             attachments: images,
             printReport: printReport,
+            reopen: isAutoShift,
           );
       // ignore: use_build_context_synchronously
       context.pop();
@@ -242,12 +265,14 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                       : Container(),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 15),
+                      horizontal: 15,
+                      vertical: 15,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'attachments'.tr(),
+                          "${'attachments'.tr()} ${isAttachmentRequired ? '*' : ''}",
                           style: labelStyle,
                         ),
                         const SizedBox(
@@ -299,9 +324,23 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  isAutoShift
+                      ? Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.amber.shade200,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 7.5),
+                            child: Text(
+                              'autoshift_note'.tr(),
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ),
+                        )
+                      : const SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
@@ -325,7 +364,8 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                                 ),
                               ),
                             ),
-                            onPressed: isLoading ? null : onSubmit,
+                            onPressed:
+                                isLoading ? null : () => onSubmit(context),
                             child: Text(
                               'close_shift'.tr(),
                             ),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart/cart_item.dart';
 import 'package:selleri/ui/components/cart/edit_cart_item_form.dart';
@@ -47,6 +48,20 @@ class CartScreen extends ConsumerWidget {
       );
     }
 
+    void onCheckout() {
+      final outletState = ref.read(outletNotifierProvider).value;
+      bool isCustomerRequired = outletState is OutletSelected
+          ? (outletState.config.customerTransMandatory ?? false)
+          : false;
+
+      if (isCustomerRequired && cart.idCustomer == null) {
+        AppAlert.toast('select_customer'.tr());
+        context.push(Routes.customers);
+      } else {
+        context.push(Routes.checkout);
+      }
+    }
+
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
@@ -69,7 +84,10 @@ class CartScreen extends ConsumerWidget {
                     itemCount: cart.items.length,
                   ),
                 ),
-                CartActions(cart: cart),
+                CartActions(
+                  cart: cart,
+                  onSubmit: onCheckout,
+                ),
               ],
             )
           : Center(
@@ -83,9 +101,11 @@ class CartActions extends StatelessWidget {
   const CartActions({
     super.key,
     required this.cart,
+    required this.onSubmit,
   });
 
   final Cart cart;
+  final Function() onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +153,7 @@ class CartActions extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),
                       ),
-                      onPressed: () => context.push(Routes.checkout),
+                      onPressed: onSubmit,
                       icon: const Icon(CupertinoIcons.creditcard_fill),
                       label: Text('payments'.tr().toUpperCase()),
                     ),

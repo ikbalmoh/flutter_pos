@@ -6,7 +6,21 @@ part of 'outlet_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
+RefundReason _$RefundReasonFromJson(Map<String, dynamic> json) => RefundReason(
+      id: json['id'] as String,
+      reason: json['reason'] as String,
+      needNotes: json['need_notes'] as bool,
+    );
+
+Map<String, dynamic> _$RefundReasonToJson(RefundReason instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'reason': instance.reason,
+      'need_notes': instance.needNotes,
+    };
+
+_$OutletConfigImpl _$$OutletConfigImplFromJson(Map<String, dynamic> json) =>
+    _$OutletConfigImpl(
       locale: json['locale'] as String?,
       serverTime: json['server_time'] as String?,
       subscriptions: json['subscriptions'] == null
@@ -39,8 +53,8 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
       userHasPin: (json['user_has_pin'] as List<dynamic>?)
           ?.map((e) => UserHasPin.fromJson(e as Map<String, dynamic>))
           .toList(),
-      paymentMethods: (json['payment_methods'] as List<dynamic>)
-          .map((e) => PaymentMethod.fromJson(e as Map<String, dynamic>))
+      paymentMethods: (json['payment_methods'] as List<dynamic>?)
+          ?.map((e) => PaymentMethod.fromJson(e as Map<String, dynamic>))
           .toList(),
       nominalCash: (json['nominal_cash'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
@@ -73,11 +87,11 @@ OutletConfig _$OutletConfigFromJson(Map<String, dynamic> json) => OutletConfig(
               json['custom_mandatory'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$OutletConfigToJson(OutletConfig instance) =>
+Map<String, dynamic> _$$OutletConfigImplToJson(_$OutletConfigImpl instance) =>
     <String, dynamic>{
       'locale': instance.locale,
       'server_time': instance.serverTime,
-      'subscriptions': instance.subscriptions,
+      'subscriptions': instance.subscriptions?.toJson(),
       'offline_transaction': instance.offlineTransaction,
       'sync_before_close_shift': instance.syncBeforeCloseShift,
       'max_offline': instance.maxOffline,
@@ -95,45 +109,50 @@ Map<String, dynamic> _$OutletConfigToJson(OutletConfig instance) =>
       'attachment_shift_mandatory': instance.attachmentShiftMandatory,
       'generate_sku': instance.generateSku,
       'generate_barcode': instance.generateBarcode,
-      'tax': instance.tax,
-      'pin_settings': instance.pinSettings,
-      'user_has_pin': instance.userHasPin,
-      'payment_methods': instance.paymentMethods,
+      'tax': instance.tax?.toJson(),
+      'pin_settings': instance.pinSettings?.map((e) => e.toJson()).toList(),
+      'user_has_pin': instance.userHasPin?.map((e) => e.toJson()).toList(),
+      'payment_methods':
+          instance.paymentMethods?.map((e) => e.toJson()).toList(),
       'nominal_cash': instance.nominalCash,
-      'refund_reasons': instance.refundReasons,
+      'refund_reasons': instance.refundReasons?.map((e) => e.toJson()).toList(),
       'add_ons': instance.addOns,
-      'attribute_receipts': instance.attributeReceipts,
-      'akun_biaya': instance.akunBiaya,
-      'akun_pendapatan': instance.akunPendapatan,
-      'akun_setoran': instance.akunSetoran,
-      'list_user': instance.listUser,
+      'attribute_receipts': instance.attributeReceipts?.toJson(),
+      'akun_biaya': instance.akunBiaya?.map((e) => e.toJson()).toList(),
+      'akun_pendapatan':
+          instance.akunPendapatan?.map((e) => e.toJson()).toList(),
+      'akun_setoran': instance.akunSetoran?.map((e) => e.toJson()).toList(),
+      'list_user': instance.listUser?.map((e) => e.toJson()).toList(),
       'saldo_akun_kas': instance.saldoAkunKas,
-      'custom_mandatory': instance.customMandatory,
+      'custom_mandatory': instance.customMandatory?.toJson(),
     };
 
-Akun _$AkunFromJson(Map<String, dynamic> json) => Akun(
+_$AkunImpl _$$AkunImplFromJson(Map<String, dynamic> json) => _$AkunImpl(
       idAkun: (json['id_akun'] as num).toInt(),
       kodeAkun: json['kode_akun'] as String,
       namaAkun: json['nama_akun'] as String,
       keterangan: json['keterangan'] as String?,
     );
 
-Map<String, dynamic> _$AkunToJson(Akun instance) => <String, dynamic>{
+Map<String, dynamic> _$$AkunImplToJson(_$AkunImpl instance) =>
+    <String, dynamic>{
       'id_akun': instance.idAkun,
       'kode_akun': instance.kodeAkun,
       'nama_akun': instance.namaAkun,
       'keterangan': instance.keterangan,
     };
 
-AttributeReceipts _$AttributeReceiptsFromJson(Map<String, dynamic> json) =>
-    AttributeReceipts(
+_$AttributeReceiptsImpl _$$AttributeReceiptsImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AttributeReceiptsImpl(
       headers: json['headers'] as String?,
       footers: json['footers'] as String?,
       imagePath: json['image_path'] as String?,
       imageBase64: json['image_base64'] as String?,
     );
 
-Map<String, dynamic> _$AttributeReceiptsToJson(AttributeReceipts instance) =>
+Map<String, dynamic> _$$AttributeReceiptsImplToJson(
+        _$AttributeReceiptsImpl instance) =>
     <String, dynamic>{
       'headers': instance.headers,
       'footers': instance.footers,
@@ -141,19 +160,22 @@ Map<String, dynamic> _$AttributeReceiptsToJson(AttributeReceipts instance) =>
       'image_base64': instance.imageBase64,
     };
 
-CustomMandatory _$CustomMandatoryFromJson(Map<String, dynamic> json) =>
-    CustomMandatory(
+_$CustomMandatoryImpl _$$CustomMandatoryImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CustomMandatoryImpl(
       customers: (json['customers'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
     );
 
-Map<String, dynamic> _$CustomMandatoryToJson(CustomMandatory instance) =>
+Map<String, dynamic> _$$CustomMandatoryImplToJson(
+        _$CustomMandatoryImpl instance) =>
     <String, dynamic>{
       'customers': instance.customers,
     };
 
-ListUser _$ListUserFromJson(Map<String, dynamic> json) => ListUser(
+_$ListUserImpl _$$ListUserImplFromJson(Map<String, dynamic> json) =>
+    _$ListUserImpl(
       id: json['id'] as String,
       username: json['username'] as String,
       name: json['name'] as String,
@@ -163,7 +185,8 @@ ListUser _$ListUserFromJson(Map<String, dynamic> json) => ListUser(
           .toList(),
     );
 
-Map<String, dynamic> _$ListUserToJson(ListUser instance) => <String, dynamic>{
+Map<String, dynamic> _$$ListUserImplToJson(_$ListUserImpl instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'username': instance.username,
       'name': instance.name,
@@ -171,71 +194,62 @@ Map<String, dynamic> _$ListUserToJson(ListUser instance) => <String, dynamic>{
       'roles_name': instance.rolesName,
     };
 
-PinSetting _$PinSettingFromJson(Map<String, dynamic> json) => PinSetting(
+_$PinSettingImpl _$$PinSettingImplFromJson(Map<String, dynamic> json) =>
+    _$PinSettingImpl(
       name: json['name'] as String,
       locked: json['locked'] as bool,
       description: json['description'] as String?,
     );
 
-Map<String, dynamic> _$PinSettingToJson(PinSetting instance) =>
+Map<String, dynamic> _$$PinSettingImplToJson(_$PinSettingImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'locked': instance.locked,
       'description': instance.description,
     };
 
-RefundReason _$RefundReasonFromJson(Map<String, dynamic> json) => RefundReason(
-      id: json['id'] as String,
-      reason: json['reason'] as String,
-      needNotes: json['need_notes'] as bool,
-    );
-
-Map<String, dynamic> _$RefundReasonToJson(RefundReason instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'reason': instance.reason,
-      'need_notes': instance.needNotes,
-    };
-
-Subscriptions _$SubscriptionsFromJson(Map<String, dynamic> json) =>
-    Subscriptions(
+_$SubscriptionsImpl _$$SubscriptionsImplFromJson(Map<String, dynamic> json) =>
+    _$SubscriptionsImpl(
       transaction: SubscriptionLimit.fromJson(
           json['transaction'] as Map<String, dynamic>),
       customer:
           SubscriptionLimit.fromJson(json['customer'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$SubscriptionsToJson(Subscriptions instance) =>
+Map<String, dynamic> _$$SubscriptionsImplToJson(_$SubscriptionsImpl instance) =>
     <String, dynamic>{
-      'transaction': instance.transaction,
-      'customer': instance.customer,
+      'transaction': instance.transaction.toJson(),
+      'customer': instance.customer.toJson(),
     };
 
-SubscriptionLimit _$SubscriptionLimitFromJson(Map<String, dynamic> json) =>
-    SubscriptionLimit(
+_$SubscriptionLimitImpl _$$SubscriptionLimitImplFromJson(
+        Map<String, dynamic> json) =>
+    _$SubscriptionLimitImpl(
       max: (json['max'] as num).toInt(),
       current: (json['current'] as num).toInt(),
     );
 
-Map<String, dynamic> _$SubscriptionLimitToJson(SubscriptionLimit instance) =>
+Map<String, dynamic> _$$SubscriptionLimitImplToJson(
+        _$SubscriptionLimitImpl instance) =>
     <String, dynamic>{
       'max': instance.max,
       'current': instance.current,
     };
 
-Tax _$TaxFromJson(Map<String, dynamic> json) => Tax(
+_$TaxImpl _$$TaxImplFromJson(Map<String, dynamic> json) => _$TaxImpl(
       taxName: json['tax_name'] as String,
       percentage: (json['percentage'] as num).toDouble(),
       isInclude: json['is_include'] as bool,
     );
 
-Map<String, dynamic> _$TaxToJson(Tax instance) => <String, dynamic>{
+Map<String, dynamic> _$$TaxImplToJson(_$TaxImpl instance) => <String, dynamic>{
       'tax_name': instance.taxName,
       'percentage': instance.percentage,
       'is_include': instance.isInclude,
     };
 
-UserHasPin _$UserHasPinFromJson(Map<String, dynamic> json) => UserHasPin(
+_$UserHasPinImpl _$$UserHasPinImplFromJson(Map<String, dynamic> json) =>
+    _$UserHasPinImpl(
       userId: json['user_id'] as String,
       userName: json['user_name'] as String,
       userPin: json['user_pin'] as String,
@@ -244,7 +258,7 @@ UserHasPin _$UserHasPinFromJson(Map<String, dynamic> json) => UserHasPin(
           .toList(),
     );
 
-Map<String, dynamic> _$UserHasPinToJson(UserHasPin instance) =>
+Map<String, dynamic> _$$UserHasPinImplToJson(_$UserHasPinImpl instance) =>
     <String, dynamic>{
       'user_id': instance.userId,
       'user_name': instance.userName,

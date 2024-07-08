@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
 import 'package:selleri/ui/components/cart/order_summary.dart';
 import 'package:selleri/ui/screens/checkout/payment/payment.dart';
@@ -33,6 +34,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final cart = ref.watch(cartNotiferProvider);
+
+    OutletState? outletState = ref.watch(outletNotifierProvider).value;
+    bool isPartialEnabled = outletState is OutletSelected
+        ? (outletState.config.partialPayment ?? false)
+        : false;
+
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
@@ -93,8 +100,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                               ? Colors.teal
                               : Colors.red,
                         ),
-                        onPressed:
-                            cart.totalPayment > 0 ? onStoreTransaction : null,
+                        onPressed: cart.payments.isNotEmpty &&
+                                (cart.totalPayment >= cart.grandTotal ||
+                                    isPartialEnabled)
+                            ? onStoreTransaction
+                            : null,
                         child: Text(
                             '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
                       )

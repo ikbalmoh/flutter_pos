@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/add_discount_overall.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +25,18 @@ class DiscountItem extends ConsumerWidget {
           });
     }
 
+    OutletState? outletState = ref.watch(outletNotifierProvider).value;
+
+    bool isDiscountOverallEnabled = outletState is OutletSelected
+        ? (outletState.config.discountOverall ?? false)
+        : false;
+
     return Material(
       color: Colors.white,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30))),
       child: InkWell(
-        onTap: showDiscountOverall,
+        onTap: isDiscountOverallEnabled ? showDiscountOverall : null,
         splashColor: Colors.blueGrey.shade50,
         highlightColor: Colors.blueGrey.shade100,
         child: Padding(

@@ -54,8 +54,15 @@ class AuthRepository implements AuthRepositoryProtocol {
   }
 
   Future<User?> fetchUser() async {
-    final json = await api.user();
-    return User.fromJson(json);
+    try {
+      final json = await api.user();
+      return User.fromJson(json);
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? e.message;
+      throw message;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override

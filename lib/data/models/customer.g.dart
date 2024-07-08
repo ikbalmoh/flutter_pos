@@ -63,5 +63,5 @@ Map<String, dynamic> _$$CustomerImplToJson(_$CustomerImpl instance) =>
       'is_member': instance.isMember,
       'expired_date': instance.expiredDate?.toIso8601String(),
       'group_names': instance.groupNames,
-      'groups': instance.groups,
+      'groups': instance.groups?.map((e) => e.toJson()).toList(),
     };

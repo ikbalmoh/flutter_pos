@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
@@ -33,12 +35,28 @@ class OutletNotifier extends _$OutletNotifier {
       _outletRepository.saveOutlet(outlet);
       await _outletRepository.fetchOutletInfo(outlet.idOutlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
+      log('CONFIG LOADED: $config');
       state = AsyncData(OutletSelected(outlet: outlet, config: config));
       if (onSelected != null) {
         onSelected(config);
       }
     } catch (e) {
       state = AsyncData(OutletFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> refreshConfig(List<String> only) async {
+    log('OUTLET STATE: ${state.value}');
+    if (state.value is OutletSelected) {
+      final outletState = state.value as OutletSelected;
+      final config = await _outletRepository.fetchOutletConfig(
+        outletState.outlet.idOutlet,
+        only: only,
+        current: outletState.config,
+      );
+      log('NEW CONFIG: $config');
+      state =
+          AsyncData(OutletSelected(outlet: outletState.outlet, config: config));
     }
   }
 

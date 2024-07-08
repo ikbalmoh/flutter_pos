@@ -23,7 +23,7 @@ class OutletSelected extends OutletState {
   const OutletSelected({required this.outlet, required this.config});
 
   @override
-  List<Object> get props => [outlet];
+  List<Object> get props => [outlet, config];
 
   @override
   bool get stringify => true;

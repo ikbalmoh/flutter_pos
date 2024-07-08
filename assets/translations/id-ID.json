@@ -159,5 +159,6 @@
   "shift_closed": "Shift Ditutup",
   "out_of_stock": "Kosong",
   "low_stock": "Stok Menipis",
-  "available_cash_different": "Ada Selisih Antara Uang Tunai yang Anda Masukkan dengan Uang Kas Seharusnya"
+  "available_cash_different": "Ada Selisih Antara Uang Tunai yang Anda Masukkan dengan Uang Kas Seharusnya",
+  "autoshift_note": "Shift baru akan dibuka secara otomotis setelah shift ini ditutup"
 }

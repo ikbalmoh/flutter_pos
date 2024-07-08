@@ -41,9 +41,9 @@ Map<String, dynamic> _$$ShiftInfoImplToJson(_$ShiftInfoImpl instance) =>
       'close_shift': instance.closeShift?.toIso8601String(),
       'saldo_kas': instance.saldoKas,
       'selisih': instance.selisih,
-      'cash_flows': instance.cashFlows,
-      'summary': instance.summary,
-      'sold_items': instance.soldItems,
+      'cash_flows': instance.cashFlows.toJson(),
+      'summary': instance.summary.toJson(),
+      'sold_items': instance.soldItems.map((e) => e.toJson()).toList(),
       'refund_items': instance.refundItems,
       'attachments': instance.attachments,
     };
