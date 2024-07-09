@@ -122,7 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           onPressed: () => setState(() {
                             searchVisible = true;
                           }),
-                          icon: const Icon(Icons.search),
+                          icon: const Icon(CupertinoIcons.search),
                         ),
                         IconButton(
                           tooltip: 'holded_transactions'.tr(),

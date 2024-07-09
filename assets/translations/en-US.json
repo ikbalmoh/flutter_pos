@@ -159,5 +159,10 @@
   "out_of_stock": "Out of Stock",
   "low_stock": "Low Stock",
   "available_cash_different": "Entered Available Cash is Different with Expected Ending Cash",
-  "autoshift_note": "A new shift will be automatically opened once this shift closed"
+  "autoshift_note": "A new shift will be automatically opened once this shift closed",
+  "download": "Download",
+  "download_n": "Download {}",
+  "sales_report": "Sales Report",
+  "downloaded": "Downloaded",
+  "stored_at": "File storad at {}"
 }

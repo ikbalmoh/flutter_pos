@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
-import 'package:selleri/ui/components/summary_card.dart';
+import 'package:selleri/ui/components/shift/summary_card.dart';
 
 class ActiveShiftInfoSkeleton extends StatelessWidget {
   const ActiveShiftInfoSkeleton({super.key});

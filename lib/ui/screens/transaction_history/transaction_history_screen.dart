@@ -12,6 +12,7 @@ import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
+import 'package:selleri/ui/components/transaction/transaction_report_downloader.dart';
 import 'package:selleri/ui/screens/transaction_history/transaction_detail_screen.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -28,12 +29,13 @@ class _TransactionHistoryScreenState
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
 
-  bool currentShift = true;
+  bool currentShift = false;
   bool searchVisible = false;
   Timer? _debounce;
 
   @override
   void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
     _searchController.addListener(() => onSearchItems(_searchController.text));
     _scrollController.addListener(loadMore);
     super.initState();
@@ -72,6 +74,16 @@ class _TransactionHistoryScreenState
           search: _searchController.text,
           currentShift: currentShift);
     }
+  }
+
+  void showSalesReportDownloader() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        builder: (context) {
+          return const TransactionReportDownloader();
+        });
   }
 
   Widget shiftFilter() {
@@ -153,7 +165,12 @@ class _TransactionHistoryScreenState
                   onPressed: () => setState(() {
                     searchVisible = true;
                   }),
-                  icon: const Icon(Icons.search),
+                  icon: const Icon(CupertinoIcons.search),
+                ),
+                IconButton(
+                  tooltip: 'download'.tr(),
+                  onPressed: showSalesReportDownloader,
+                  icon: const Icon(CupertinoIcons.doc_chart),
                 ),
               ],
             ),

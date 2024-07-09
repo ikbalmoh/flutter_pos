@@ -20,7 +20,7 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     try {
       final api = TransactionApi();
       final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
-      final shiftId = ref.read(shiftNotifierProvider).value?.id;
+      String? shiftId = ref.watch(shiftNotifierProvider).value?.id;
       final transactions = await api.transactions(
           idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
       return transactions;

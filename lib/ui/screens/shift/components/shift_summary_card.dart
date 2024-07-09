@@ -4,7 +4,7 @@ import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/models/sold_item.dart';
 import 'package:selleri/ui/components/shift/sales_summary.dart';
 import 'package:selleri/ui/components/shift/sold_items.dart';
-import 'package:selleri/ui/components/summary_card.dart';
+import 'package:selleri/ui/components/shift/summary_card.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:selleri/data/models/shift_summary.dart';
 
