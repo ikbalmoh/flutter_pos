@@ -131,6 +131,19 @@ class HomeMenu extends ConsumerWidget {
                 ),
               ],
         MenuItemButton(
+          onPressed: () =>
+              ref.read(appSettingsNotifierProvider.notifier).changeItemLayout(),
+          leadingIcon: Icon(
+              ref.watch(appSettingsNotifierProvider).itemLayoutGrid
+                  ? CupertinoIcons.rectangle_grid_1x2
+                  : CupertinoIcons.square_grid_2x2_fill),
+          child: Text(
+            ref.watch(appSettingsNotifierProvider).itemLayoutGrid
+                ? 'list_view'.tr()
+                : 'grid_view'.tr(),
+          ),
+        ),
+        MenuItemButton(
           onPressed: () => context.push(Routes.printers),
           leadingIcon: Badge(
             smallSize: 8,
