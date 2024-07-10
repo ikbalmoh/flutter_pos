@@ -88,6 +88,13 @@ class Printer {
       // items
       for (ItemCart item in cart.items) {
         bytes += generator.text(item.itemName);
+        if (item.isPackage && item.details.isNotEmpty) {
+          for (var i = 0; i < item.details.length; i++) {
+            final detail = item.details[i];
+            bytes += generator
+                .text(' - ${detail.quantityItem} x ${detail.itemName}');
+          }
+        }
         bytes += generator.row([
           PosColumn(
             text:

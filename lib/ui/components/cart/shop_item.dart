@@ -1,6 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -85,51 +85,13 @@ class ShopItem extends StatelessWidget {
                                 ),
                               ),
                         Positioned(
-                            bottom: 5,
-                            left: 5,
-                            child: item.stockItem <= 0
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.red.shade100
-                                            .withOpacity(0.5),
-                                        borderRadius: BorderRadius.circular(3)),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 5,
-                                    ),
-                                    child: Text(
-                                      CurrencyFormat.currency(
-                                        'out_of_stock'.tr(),
-                                        symbol: false,
-                                      ),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(color: Colors.red),
-                                    ),
-                                  )
-                                : item.stockItem <= 10
-                                    ? Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.amber.shade100
-                                                .withOpacity(0.5),
-                                            borderRadius:
-                                                BorderRadius.circular(3)),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                        ),
-                                        child: Text(
-                                          CurrencyFormat.currency(
-                                            'low_stock'.tr(),
-                                            symbol: false,
-                                          ),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                  color: Colors.amber.shade700),
-                                        ),
-                                      )
-                                    : Container())
+                          bottom: 5,
+                          left: 5,
+                          child: StockBadge(
+                            stockItem: item.stockItem,
+                            stockControl: item.stockControl,
+                          ),
+                        )
                       ],
                     ),
                   ),

@@ -41,6 +41,7 @@ mixin _$ItemCart {
   @JsonKey(fromJson: Converters.dynamicToNum)
   num? get idVariant => throw _privateConstructorUsedError;
   String? get variantName => throw _privateConstructorUsedError;
+  List<ItemPackage> get details => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -69,7 +70,8 @@ abstract class $ItemCartCopyWith<$Res> {
       double total,
       String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
-      String? variantName});
+      String? variantName,
+      List<ItemPackage> details});
 }
 
 /// @nodoc
@@ -101,6 +103,7 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
     Object? note = freezed,
     Object? idVariant = freezed,
     Object? variantName = freezed,
+    Object? details = null,
   }) {
     return _then(_value.copyWith(
       identifier: freezed == identifier
@@ -167,6 +170,10 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
           ? _value.variantName
           : variantName // ignore: cast_nullable_to_non_nullable
               as String?,
+      details: null == details
+          ? _value.details
+          : details // ignore: cast_nullable_to_non_nullable
+              as List<ItemPackage>,
     ) as $Val);
   }
 }
@@ -195,7 +202,8 @@ abstract class _$$ItemCartImplCopyWith<$Res>
       double total,
       String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
-      String? variantName});
+      String? variantName,
+      List<ItemPackage> details});
 }
 
 /// @nodoc
@@ -225,6 +233,7 @@ class __$$ItemCartImplCopyWithImpl<$Res>
     Object? note = freezed,
     Object? idVariant = freezed,
     Object? variantName = freezed,
+    Object? details = null,
   }) {
     return _then(_$ItemCartImpl(
       identifier: freezed == identifier
@@ -291,6 +300,10 @@ class __$$ItemCartImplCopyWithImpl<$Res>
           ? _value.variantName
           : variantName // ignore: cast_nullable_to_non_nullable
               as String?,
+      details: null == details
+          ? _value._details
+          : details // ignore: cast_nullable_to_non_nullable
+              as List<ItemPackage>,
     ));
   }
 }
@@ -316,8 +329,10 @@ class _$ItemCartImpl extends _ItemCart {
       required this.total,
       this.note,
       @JsonKey(fromJson: Converters.dynamicToNum) this.idVariant,
-      this.variantName})
-      : super._();
+      this.variantName,
+      required final List<ItemPackage> details})
+      : _details = details,
+        super._();
 
   factory _$ItemCartImpl.fromJson(Map<String, dynamic> json) =>
       _$$ItemCartImplFromJson(json);
@@ -359,6 +374,13 @@ class _$ItemCartImpl extends _ItemCart {
   final num? idVariant;
   @override
   final String? variantName;
+  final List<ItemPackage> _details;
+  @override
+  List<ItemPackage> get details {
+    if (_details is EqualUnmodifiableListView) return _details;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_details);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -391,7 +413,8 @@ class _$ItemCartImpl extends _ItemCart {
             (identical(other.idVariant, idVariant) ||
                 other.idVariant == idVariant) &&
             (identical(other.variantName, variantName) ||
-                other.variantName == variantName));
+                other.variantName == variantName) &&
+            const DeepCollectionEquality().equals(other._details, _details));
   }
 
   @JsonKey(ignore: true)
@@ -413,7 +436,8 @@ class _$ItemCartImpl extends _ItemCart {
       total,
       note,
       idVariant,
-      variantName);
+      variantName,
+      const DeepCollectionEquality().hash(_details));
 
   @JsonKey(ignore: true)
   @override
@@ -450,7 +474,8 @@ abstract class _ItemCart extends ItemCart {
       required final double total,
       final String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) final num? idVariant,
-      final String? variantName}) = _$ItemCartImpl;
+      final String? variantName,
+      required final List<ItemPackage> details}) = _$ItemCartImpl;
   const _ItemCart._() : super._();
 
   factory _ItemCart.fromJson(Map<String, dynamic> json) =
@@ -493,6 +518,8 @@ abstract class _ItemCart extends ItemCart {
   num? get idVariant;
   @override
   String? get variantName;
+  @override
+  List<ItemPackage> get details;
   @override
   @JsonKey(ignore: true)
   _$$ItemCartImplCopyWith<_$ItemCartImpl> get copyWith =>

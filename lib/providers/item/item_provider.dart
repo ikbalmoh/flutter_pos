@@ -18,19 +18,24 @@ class ItemsStream extends _$ItemsStream {
   }
 
   Future<void> loadItems({bool refresh = false}) async {
+    log('LOAD ITEMS: $refresh');
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
+
+    List<Category> categories =
+        await itemRepository.fetchCategoris(refresh: true);
+
+    if (refresh) {
+      for (var i = 0; i < categories.length; i++) {
+        Category category = categories[i];
+        List<Item> items =
+            await itemRepository.fetchItems(idCategory: category.idCategory);
+
+        objectBox.putItems(items);
+      }
+    }
 
     if (!refresh && !objectBox.itemBox.isEmpty()) {
       return syncItems();
-    }
-
-    List<Category> categories = await itemRepository.fetchCategoris();
-    for (var i = 0; i < categories.length; i++) {
-      Category category = categories[i];
-      List<Item> items =
-          await itemRepository.fetchItems(idCategory: category.idCategory);
-
-      objectBox.putItems(items);
     }
   }
 
@@ -58,5 +63,10 @@ class ItemsStream extends _$ItemsStream {
 
     objectBox.putItems(items);
     log('SYNCED ITEMS: $items');
+  }
+
+  double getItemStock(String idItem) {
+    final item = objectBox.getItem(idItem);
+    return item?.stockItem ?? 0;
   }
 }

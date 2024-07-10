@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/network/api.dart';
+import 'package:selleri/data/repository/item_repository.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
@@ -38,6 +39,9 @@ class FcmNotifier extends _$FcmNotifier {
   void manualSync(List<String> sources, List<String>? configOnly) {
     if (_debounceSync?.isActive ?? false) _debounceSync?.cancel();
     _debounceSync = Timer(const Duration(seconds: 1), () async {
+      if (sources.contains('categories')) {
+        await ref.read(itemRepositoryProvider).fetchCategoris(refresh: true);
+      }
       if (sources.contains('items')) {
         await ref.read(itemsStreamProvider().notifier).syncItems();
       }

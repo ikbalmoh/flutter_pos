@@ -133,6 +133,7 @@ class CartNotifer extends _$CartNotifer {
       addedAt: DateTime.now(),
       idVariant: variant?.idVariant,
       variantName: variant?.variantName ?? '',
+      details: item.packageItems,
     );
 
     if (kDebugMode) {

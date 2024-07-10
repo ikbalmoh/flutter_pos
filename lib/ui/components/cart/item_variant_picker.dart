@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:go_router/go_router.dart';
 
@@ -79,20 +80,23 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
           const SizedBox(
             height: 7.5,
           ),
-          ListView.builder(
-            itemBuilder: (context, idx) {
-              ItemVariant variant = widget.item.variants[idx];
-              return VariantItem(
-                  variant: variant,
-                  selected: selected?.idVariant == variant.idVariant,
-                  onSelect: (v) {
-                    setState(() {
-                      selected = v;
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, idx) {
+                ItemVariant variant = widget.item.variants[idx];
+                return VariantItem(
+                    variant: variant,
+                    stockControl: widget.item.stockControl,
+                    selected: selected?.idVariant == variant.idVariant,
+                    onSelect: (v) {
+                      setState(() {
+                        selected = v;
+                      });
                     });
-                  });
-            },
-            itemCount: widget.item.variants.length,
-            shrinkWrap: true,
+              },
+              itemCount: widget.item.variants.length,
+              shrinkWrap: true,
+            ),
           ),
           const SizedBox(
             height: 15,
@@ -117,14 +121,17 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
 }
 
 class VariantItem extends StatelessWidget {
-  const VariantItem(
-      {super.key,
-      required this.variant,
-      this.selected = false,
-      required this.onSelect});
+  const VariantItem({
+    super.key,
+    required this.variant,
+    this.selected = false,
+    required this.stockControl,
+    required this.onSelect,
+  });
 
   final ItemVariant variant;
   final bool selected;
+  final bool stockControl;
   final Function(ItemVariant) onSelect;
 
   @override
@@ -150,12 +157,23 @@ class VariantItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(
-                    variant.variantName,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: textColor),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        variant.variantName,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: textColor),
+                      ),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      StockBadge(
+                          stockItem: variant.stockItem,
+                          stockControl: stockControl)
+                    ],
                   ),
                 ),
                 Text(

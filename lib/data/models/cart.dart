@@ -48,7 +48,7 @@ class Cart with _$Cart {
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
     String? deletedBy,
-    String? deleteReason,
+    String? deleteReason
   }) = _Cart;
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
