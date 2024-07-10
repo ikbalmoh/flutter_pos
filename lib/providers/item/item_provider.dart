@@ -52,6 +52,7 @@ class ItemsStream extends _$ItemsStream {
 
   Future<void> syncItems() async {
     log('SYNC ITEMS');
+
     List<Item> items =
         await ref.read(itemRepositoryProvider).fetchItems(fromLastSync: true);
 

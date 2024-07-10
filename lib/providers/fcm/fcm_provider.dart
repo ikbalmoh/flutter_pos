@@ -102,35 +102,39 @@ class FcmNotifier extends _$FcmNotifier {
       {required String idCompany, required String idOutlet}) async {
     final api = OutletApi();
 
-    String? token = await retrieveFcmToken();
-    company = idCompany;
-    outlet = idOutlet;
+    try {
+      String? token = await retrieveFcmToken();
+      company = idCompany;
+      outlet = idOutlet;
 
-    if (state.value != token) {
-      state = AsyncValue.data(token);
-      log("FCM TOKEN: $token");
+      if (state.value != token) {
+        state = AsyncValue.data(token);
+        log("FCM TOKEN: $token");
 
-      final authenticated =
-          ref.read(authNotifierProvider).value is Authenticated;
-      if (!authenticated) return;
+        final authenticated =
+            ref.read(authNotifierProvider).value is Authenticated;
+        if (!authenticated) return;
 
-      final outletActive =
-          ref.read(outletNotifierProvider).value is OutletSelected;
-      if (!outletActive) return;
+        final outletActive =
+            ref.read(outletNotifierProvider).value is OutletSelected;
+        if (!outletActive) return;
 
-      if (token != null) {
-        await api.storeFcmToken(token: token, outletId: idOutlet);
+        if (token != null) {
+          await api.storeFcmToken(token: token, outletId: idOutlet);
+        }
+
+        String prefix = dotenv.env['APP_ID'] ?? 'selleri';
+
+        String companyTopic = '$prefix-$idCompany';
+        String outletTopic = '$prefix-$idOutlet';
+
+        await messaging.subscribeToTopic(companyTopic);
+        await messaging.subscribeToTopic(outletTopic);
+
+        log('FCM SUBSCRIBED\n$companyTopic\n$outletTopic');
       }
-
-      String prefix = dotenv.env['APP_ID'] ?? 'selleri';
-
-      String companyTopic = '$prefix-$idCompany';
-      String outletTopic = '$prefix-$idOutlet';
-
-      await messaging.subscribeToTopic(companyTopic);
-      await messaging.subscribeToTopic(outletTopic);
-
-      log('FCM SUBSCRIBED\n$companyTopic\n$outletTopic');
+    } catch (e) {
+      log('FCM SUBSCRIPTION ERROR: $e');
     }
   }
 }

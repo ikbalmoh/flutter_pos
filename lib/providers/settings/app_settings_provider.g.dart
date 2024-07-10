@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'transactions_provider.dart';
+part of 'app_settings_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$transactionsNotifierHash() =>
-    r'34c7b53fc870852ff6180cb9fdadbc94d5e11c1d';
+String _$appSettingsNotifierHash() =>
+    r'216af45d07d961694aebd1048c2eca53e797f173';
 
-/// See also [TransactionsNotifier].
-@ProviderFor(TransactionsNotifier)
-final transactionsNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    TransactionsNotifier, Pagination<Cart>>.internal(
-  TransactionsNotifier.new,
-  name: r'transactionsNotifierProvider',
+/// See also [AppSettingsNotifier].
+@ProviderFor(AppSettingsNotifier)
+final appSettingsNotifierProvider =
+    NotifierProvider<AppSettingsNotifier, AppSettings>.internal(
+  AppSettingsNotifier.new,
+  name: r'appSettingsNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$transactionsNotifierHash,
+      : _$appSettingsNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$TransactionsNotifier = AutoDisposeAsyncNotifier<Pagination<Cart>>;
+typedef _$AppSettingsNotifier = Notifier<AppSettings>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -164,5 +164,7 @@
   "download_n": "Download {}",
   "sales_report": "Sales Report",
   "downloaded": "Downloaded",
-  "stored_at": "File storad at {}"
+  "stored_at": "File storad at {}",
+  "list_view": "List View",
+  "grid_view": "Tampilan Grid View"
 }

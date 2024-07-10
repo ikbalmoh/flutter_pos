@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
@@ -77,6 +78,19 @@ class HomeMenu extends ConsumerWidget {
                 ),
                 const PopupMenuDivider(),
               ],
+        MenuItemButton(
+          onPressed: () =>
+              ref.read(appSettingsNotifierProvider.notifier).changeItemLayout(),
+          leadingIcon: Icon(
+              ref.watch(appSettingsNotifierProvider).itemLayoutGrid
+                  ? CupertinoIcons.rectangle_grid_1x2
+                  : CupertinoIcons.square_grid_2x2_fill),
+          child: Text(
+            ref.watch(appSettingsNotifierProvider).itemLayoutGrid
+                ? 'list_view'.tr()
+                : 'grid_view'.tr(),
+          ),
+        ),
         MenuItemButton(
           onPressed: () => context.push(Routes.printers),
           leadingIcon: Badge(
