@@ -41,7 +41,7 @@ class FcmNotifier extends _$FcmNotifier {
     if (_debounceSync?.isActive ?? false) _debounceSync?.cancel();
     _debounceSync = Timer(const Duration(seconds: 1), () async {
       if (sources.contains('categories')) {
-        await ref.read(itemRepositoryProvider).fetchCategoris(refresh: true);
+        await ref.read(itemRepositoryProvider).fetchCategoris();
       }
       if (sources.contains('items')) {
         await ref.read(itemsStreamProvider().notifier).syncItems();

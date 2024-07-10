@@ -22,9 +22,9 @@ class ItemsStream extends _$ItemsStream {
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
     List<Category> categories =
-        await itemRepository.fetchCategoris(refresh: true);
+        await itemRepository.fetchCategoris();
 
-    if (refresh) {
+    if (refresh || objectBox.itemBox.isEmpty()) {
       for (var i = 0; i < categories.length; i++) {
         Category category = categories[i];
         List<Item> items =
@@ -32,9 +32,7 @@ class ItemsStream extends _$ItemsStream {
 
         objectBox.putItems(items);
       }
-    }
-
-    if (!refresh && !objectBox.itemBox.isEmpty()) {
+    } else {
       return syncItems();
     }
   }
