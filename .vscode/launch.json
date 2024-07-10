@@ -11,6 +11,13 @@
       "args": ["--flavor", "dev"]
     },
     {
+      "name": "Selleri [STAGE] (Profile Mode)",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "dev"],
+      "flutterMode": "profile"
+    },
+    {
       "name": "Staging",
       "request": "launch",
       "type": "dart",

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/network/api.dart';
 import 'package:selleri/data/repository/item_repository.dart';
@@ -59,10 +60,13 @@ class FcmNotifier extends _$FcmNotifier {
   }
 
   void handleFcmMessage(RemoteMessage message) {
-    log('INCOMING FCM MESSAGE');
+    log('FCM INCOMING MESSAGE');
+    log('FCM message : ${message.toMap()}');
 
     if (message.notification != null) {
-      log('message contained a notification: ${message.notification}');
+      log('FCM message contained a notification: ${message.notification?.toMap()}');
+      Fluttertoast.showToast(msg: message.notification?.body ?? '-');
+
       // Show local notification
       // Fetch Notification
     }
