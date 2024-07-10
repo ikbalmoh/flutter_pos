@@ -41,7 +41,7 @@ mixin _$ItemCart {
   @JsonKey(fromJson: Converters.dynamicToNum)
   num? get idVariant => throw _privateConstructorUsedError;
   String? get variantName => throw _privateConstructorUsedError;
-  List<ItemPackage> get details => throw _privateConstructorUsedError;
+  List<ItemCartDetail> get details => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -71,7 +71,7 @@ abstract class $ItemCartCopyWith<$Res> {
       String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
       String? variantName,
-      List<ItemPackage> details});
+      List<ItemCartDetail> details});
 }
 
 /// @nodoc
@@ -173,7 +173,7 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
       details: null == details
           ? _value.details
           : details // ignore: cast_nullable_to_non_nullable
-              as List<ItemPackage>,
+              as List<ItemCartDetail>,
     ) as $Val);
   }
 }
@@ -203,7 +203,7 @@ abstract class _$$ItemCartImplCopyWith<$Res>
       String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
       String? variantName,
-      List<ItemPackage> details});
+      List<ItemCartDetail> details});
 }
 
 /// @nodoc
@@ -303,7 +303,7 @@ class __$$ItemCartImplCopyWithImpl<$Res>
       details: null == details
           ? _value._details
           : details // ignore: cast_nullable_to_non_nullable
-              as List<ItemPackage>,
+              as List<ItemCartDetail>,
     ));
   }
 }
@@ -330,7 +330,7 @@ class _$ItemCartImpl extends _ItemCart {
       this.note,
       @JsonKey(fromJson: Converters.dynamicToNum) this.idVariant,
       this.variantName,
-      required final List<ItemPackage> details})
+      required final List<ItemCartDetail> details})
       : _details = details,
         super._();
 
@@ -374,9 +374,9 @@ class _$ItemCartImpl extends _ItemCart {
   final num? idVariant;
   @override
   final String? variantName;
-  final List<ItemPackage> _details;
+  final List<ItemCartDetail> _details;
   @override
-  List<ItemPackage> get details {
+  List<ItemCartDetail> get details {
     if (_details is EqualUnmodifiableListView) return _details;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_details);
@@ -475,7 +475,7 @@ abstract class _ItemCart extends ItemCart {
       final String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) final num? idVariant,
       final String? variantName,
-      required final List<ItemPackage> details}) = _$ItemCartImpl;
+      required final List<ItemCartDetail> details}) = _$ItemCartImpl;
   const _ItemCart._() : super._();
 
   factory _ItemCart.fromJson(Map<String, dynamic> json) =
@@ -519,7 +519,7 @@ abstract class _ItemCart extends ItemCart {
   @override
   String? get variantName;
   @override
-  List<ItemPackage> get details;
+  List<ItemCartDetail> get details;
   @override
   @JsonKey(ignore: true)
   _$$ItemCartImplCopyWith<_$ItemCartImpl> get copyWith =>

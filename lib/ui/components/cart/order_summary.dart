@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
-import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/utils/formater.dart';
 
 class OrderItem extends StatelessWidget {
@@ -39,14 +38,14 @@ class OrderItem extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 7),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List<ItemPackage>.from(item.details)
+                            children: item.details
                                 .map(
                                   (itemPackage) => Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '- ${itemPackage.quantityItem} x',
+                                        '- ${itemPackage.quantity} x',
                                         style: textTheme.bodySmall
                                             ?.copyWith(color: Colors.black54),
                                       ),
@@ -55,7 +54,7 @@ class OrderItem extends StatelessWidget {
                                       ),
                                       Expanded(
                                         child: Text(
-                                          itemPackage.itemName,
+                                          itemPackage.name,
                                           style: textTheme.bodySmall
                                               ?.copyWith(color: Colors.black54),
                                         ),

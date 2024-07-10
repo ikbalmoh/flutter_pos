@@ -5,7 +5,6 @@ import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:uuid/uuid.dart';
-import 'package:selleri/data/models/item_package.dart';
 
 part 'item_cart.freezed.dart';
 part 'item_cart.g.dart';

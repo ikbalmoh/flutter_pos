@@ -27,7 +27,7 @@ _$ItemCartImpl _$$ItemCartImplFromJson(Map<String, dynamic> json) =>
       idVariant: Converters.dynamicToNum(json['id_variant']),
       variantName: json['variant_name'] as String?,
       details: (json['details'] as List<dynamic>)
-          .map((e) => ItemPackage.fromJson(e as Map<String, dynamic>))
+          .map((e) => ItemCartDetail.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
