@@ -123,4 +123,9 @@ class ItemsStream extends _$ItemsStream {
     final item = objectBox.getItem(idItem);
     return item?.stockItem ?? 0;
   }
+
+  double getItemStock(String idItem) {
+    final item = objectBox.getItem(idItem);
+    return item?.stockItem ?? 0;
+  }
 }

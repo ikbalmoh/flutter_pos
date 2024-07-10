@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/utils/formater.dart';
 
 class OrderItem extends StatelessWidget {
@@ -33,6 +34,39 @@ class OrderItem extends StatelessWidget {
                     itemName,
                     style: textTheme.bodyMedium,
                   ),
+                  item.details.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 7),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: List<ItemPackage>.from(item.details)
+                                .map(
+                                  (itemPackage) => Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '- ${itemPackage.quantityItem} x',
+                                        style: textTheme.bodySmall
+                                            ?.copyWith(color: Colors.black54),
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          itemPackage.itemName,
+                                          style: textTheme.bodySmall
+                                              ?.copyWith(color: Colors.black54),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        )
+                      : Container(),
                   Text(
                     ' ${item.quantity} x ${CurrencyFormat.currency(item.price)}',
                     style: textTheme.bodySmall

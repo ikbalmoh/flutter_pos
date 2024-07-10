@@ -34,9 +34,9 @@ class ItemRepository implements ItemRepositoryProtocol {
   late final outletState = ref.read(outletRepositoryProvider);
 
   @override
-  Future<List<Category>> fetchCategoris() async {
+  Future<List<Category>> fetchCategoris({bool refresh = false}) async {
     final storedCategories = objectBox.categories();
-    if (storedCategories.isNotEmpty) {
+    if (storedCategories.isNotEmpty && !refresh) {
       return storedCategories;
     }
     try {

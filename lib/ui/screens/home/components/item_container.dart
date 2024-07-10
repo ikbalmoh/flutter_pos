@@ -13,7 +13,6 @@ import 'package:selleri/ui/components/cart/shop_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/app_alert.dart';
-import 'package:selleri/utils/formater.dart';
 
 class ItemContainer extends ConsumerWidget {
   final ScrollController? scrollController;

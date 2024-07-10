@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/utils/formater.dart';
 
 class CartItem extends StatefulWidget {
