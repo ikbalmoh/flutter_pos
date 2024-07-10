@@ -38,6 +38,9 @@ class _TransactionHistoryScreenState
     WidgetsFlutterBinding.ensureInitialized();
     _searchController.addListener(() => onSearchItems(_searchController.text));
     _scrollController.addListener(loadMore);
+    setState(() {
+      currentShift = ref.read(shiftNotifierProvider).value != null;
+    });
     super.initState();
   }
 

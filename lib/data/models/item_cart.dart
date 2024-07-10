@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/converters/generic.dart';
+import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:uuid/uuid.dart';
-import 'package:selleri/data/models/item_package.dart';
 
 part 'item_cart.freezed.dart';
 part 'item_cart.g.dart';
@@ -33,7 +33,7 @@ class ItemCart with _$ItemCart {
       String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
       String? variantName,
-      required List<ItemPackage> details}) = _ItemCart;
+      required List<ItemCartDetail> details}) = _ItemCart;
 
   factory ItemCart.fromJson(Map<String, dynamic> json) =>
       _$ItemCartFromJson(json);
@@ -56,12 +56,7 @@ class ItemCart with _$ItemCart {
         "note": note,
         "item_name": itemName,
         "details": isPackage && details.isNotEmpty
-            ?  details.map((itemPackage) {
-                Map<String, dynamic> detail = itemPackage.toJson();
-                detail['quantity'] = itemPackage.quantityItem;
-                detail['name'] = itemPackage.itemName;
-                return detail;
-              }).toList()
+            ? details.map((itemPackage) => itemPackage.toJson()).toList()
             : [],
       };
 }

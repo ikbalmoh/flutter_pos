@@ -56,7 +56,7 @@ class TransactionsNotifier extends _$TransactionsNotifier {
       }
       state = AsyncData(customers);
     } catch (e, trace) {
-      log('Load Transaction Error: $e');
+      log('Load Transaction Error: $e\n$trace');
       state = AsyncError(e, trace);
     }
   }

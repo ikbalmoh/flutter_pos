@@ -37,7 +37,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       if (outlet == null) {
         return [];
       }
-      final data = await api.categories(outlet!.idOutlet);
+      final data = await api.categories(outlet.idOutlet);
       final categories = List<Category>.from(
           data['data'].map((json) => Category.fromJson(json)));
       objectBox.putCategories(categories);

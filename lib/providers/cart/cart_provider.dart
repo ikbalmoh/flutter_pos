@@ -7,6 +7,7 @@ import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/network/transaction.dart';
@@ -133,7 +134,17 @@ class CartNotifer extends _$CartNotifer {
       addedAt: DateTime.now(),
       idVariant: variant?.idVariant,
       variantName: variant?.variantName ?? '',
-      details: item.packageItems,
+      details: item.packageItems
+          .map(
+            (pkg) => ItemCartDetail(
+              itemId: pkg.idItem,
+              name: pkg.itemName,
+              variantId: pkg.variantId,
+              quantity: pkg.quantityItem,
+              itemPrice: pkg.itemPrice,
+            ),
+          )
+          .toList(),
     );
 
     if (kDebugMode) {

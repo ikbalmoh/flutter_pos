@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_cart.dart';
-import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/utils/formater.dart';
 
 class CartItem extends StatefulWidget {
@@ -55,20 +54,20 @@ class _CartItemState extends State<CartItem> {
                 widget.item.details.isNotEmpty
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List<ItemPackage>.from(widget.item.details)
+                        children: widget.item.details
                             .map(
                               (itemPackage) => Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${itemPackage.quantityItem} x ',
+                                    '${itemPackage.quantity} x ',
                                     style: textTheme.bodySmall
                                         ?.copyWith(color: Colors.black54),
                                   ),
                                   Expanded(
                                     child: Text(
-                                      itemPackage.itemName,
+                                      itemPackage.name,
                                       style: textTheme.bodySmall
                                           ?.copyWith(color: Colors.black54),
                                     ),
