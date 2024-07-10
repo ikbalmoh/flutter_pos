@@ -7,7 +7,7 @@ part of 'printer_list_provider.dart';
 // **************************************************************************
 
 String _$printerListNotifierHash() =>
-    r'05cd2b88b94cb553ecc26bdcbeca90af831de7c7';
+    r'18182b52167f365ac4417d77b577973299d73cb1';
 
 /// See also [PrinterListNotifier].
 @ProviderFor(PrinterListNotifier)

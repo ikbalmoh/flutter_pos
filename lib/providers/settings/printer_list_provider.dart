@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,14 +21,28 @@ class PrinterListNotifier extends _$PrinterListNotifier {
     try {
       log('START SCAN PRINTERS...');
 
-      final scanPermission = await Permission.bluetoothScan.request();
-      log('Scan permission : ${scanPermission.isGranted}');
+      if (Platform.isIOS) {
+        bool scanPermission = false;
+        [Permission.bluetooth].request().then((status) {
+          if (status[Permission.bluetooth] == PermissionStatus.granted) {
+            scanPermission = true;
+          } else {
+            scanPermission = false;
+          }
+          if (!scanPermission) {
+            throw Exception('Permission not granted');
+          }
+        });
+      } else {
+        final scanPermission = await Permission.bluetoothScan.request();
+        log('Scan permission : ${scanPermission.isGranted}');
 
-      final bluetoothPermission = await Permission.bluetoothConnect.request();
-      log('Connect permission : ${bluetoothPermission.isGranted}');
+        final bluetoothPermission = await Permission.bluetoothConnect.request();
+        log('Connect permission : ${bluetoothPermission.isGranted}');
 
-      if (!scanPermission.isGranted || !bluetoothPermission.isGranted) {
-        throw Exception('Permission not granted');
+        if (!scanPermission.isGranted || !bluetoothPermission.isGranted) {
+          throw Exception('Permission not granted');
+        }
       }
 
       final List<BluetoothInfo> devices =

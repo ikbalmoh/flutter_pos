@@ -32,7 +32,14 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Bluetooth access to connect 58mm or 80mm thermal printers</string>
+	<string></string>
+	<!-- Permission options for the `bluetooth` -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Bluetooth access to connect 58mm or 80mm thermal printers</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>Bluetooth access to connect 58mm or 80mm thermal printers</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
