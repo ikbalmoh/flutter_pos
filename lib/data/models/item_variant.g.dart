@@ -8,6 +8,7 @@ part of 'item_variant.dart';
 
 ItemVariant _$ItemVariantFromJson(Map<String, dynamic> json) => ItemVariant(
       id: (json['id'] as num).toInt(),
+      idItem: json['id_item'] as String,
       idVariant: (json['id_variant'] as num).toInt(),
       itemPrice: (json['item_price'] as num).toDouble(),
       skuNumber: json['sku_number'] as String?,
@@ -27,6 +28,7 @@ Map<String, dynamic> _$ItemVariantToJson(ItemVariant instance) =>
       'id': instance.id,
       'id_variant': instance.idVariant,
       'stock_item': instance.stockItem,
+      'id_item': instance.idItem,
       'variant_name': instance.variantName,
       'item_price': instance.itemPrice,
       'sku_number': instance.skuNumber,
