@@ -10,6 +10,7 @@ import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
+import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
@@ -100,6 +101,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               controller: textEditingController,
               onChanged: onSearchItems,
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      showCupertinoModalPopup(
+                          context: context,
+                          builder: (context) {
+                            return const BarcodeScanner();
+                          });
+                    },
+                    icon: const Icon(Icons.document_scanner_outlined))
+              ],
             )
           : AppBar(
               title: Text(outlet.value is OutletSelected

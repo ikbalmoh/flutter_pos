@@ -82,7 +82,7 @@
     },
     {
       "id": "3:4358767868100185192",
-      "lastPropertyId": "11:8407400109989957200",
+      "lastPropertyId": "12:7606691970783331986",
       "name": "ItemVariant",
       "properties": [
         {
@@ -127,6 +127,11 @@
           "id": "8:1360342434210505337",
           "name": "promotions",
           "type": 30
+        },
+        {
+          "id": "12:7606691970783331986",
+          "name": "idItem",
+          "type": 9
         }
       ],
       "relations": []

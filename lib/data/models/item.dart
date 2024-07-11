@@ -88,6 +88,7 @@ class Item {
           .query(ItemVariant_.idVariant.equals(variant['id_variant']))
           .build()
           .findFirst();
+      variant['id_item'] = json['id_item'];
       variant['id'] = existVariant?.id ?? 0;
       return variant;
     }).toList();
@@ -134,4 +135,14 @@ class PackageItemRelToManyConverter
   @override
   List<Map<String, dynamic>>? toJson(ToMany<ItemPackage> rel) =>
       rel.map((ItemPackage obj) => obj.toJson()).toList();
+}
+
+class ScanItemResult {
+  final Item? item;
+  final ItemVariant? variant;
+
+  const ScanItemResult({
+    this.item,
+    this.variant,
+  });
 }

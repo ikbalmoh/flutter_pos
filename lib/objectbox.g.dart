@@ -102,7 +102,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(3, 4358767868100185192),
       name: 'ItemVariant',
-      lastPropertyId: const obx_int.IdUid(11, 8407400109989957200),
+      lastPropertyId: const obx_int.IdUid(12, 7606691970783331986),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -145,6 +145,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(8, 1360342434210505337),
             name: 'promotions',
             type: 30,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 7606691970783331986),
+            name: 'idItem',
+            type: 9,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -776,7 +781,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               : fbb.writeList(object.promotions!
                   .map(fbb.writeString)
                   .toList(growable: false));
-          fbb.startTable(12);
+          final idItemOffset = fbb.writeString(object.idItem);
+          fbb.startTable(13);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.idVariant);
           fbb.addOffset(2, variantNameOffset);
@@ -785,6 +791,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(5, skuNumberOffset);
           fbb.addOffset(6, barcodeNumberOffset);
           fbb.addOffset(7, promotionsOffset);
+          fbb.addOffset(11, idItemOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -793,6 +800,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
           final idParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final idItemParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 26, '');
           final idVariantParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           final itemPriceParam =
@@ -813,6 +822,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGetNullable(buffer, rootOffset, 18);
           final object = ItemVariant(
               id: idParam,
+              idItem: idItemParam,
               idVariant: idVariantParam,
               itemPrice: itemPriceParam,
               skuNumber: skuNumberParam,
@@ -1431,6 +1441,10 @@ class ItemVariant_ {
   /// see [ItemVariant.promotions]
   static final promotions =
       obx.QueryStringVectorProperty<ItemVariant>(_entities[2].properties[7]);
+
+  /// see [ItemVariant.idItem]
+  static final idItem =
+      obx.QueryStringProperty<ItemVariant>(_entities[2].properties[8]);
 }
 
 /// [AssignGroup] entity fields to define ObjectBox queries.

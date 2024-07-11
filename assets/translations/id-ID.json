@@ -167,5 +167,11 @@
   "downloaded": "Unduh Selesai",
   "stored_at": "Disimpan di {}",
   "list_view": "Tampilan Daftar",
-  "grid_view": "Tampilan Grid"
+  "grid_view": "Tampilan Grid",
+  "scan_item_barcode": "Pindai Barcode Barang",
+  "searching": "Mencari",
+  "item": "Barang",
+  "x_not_found": "{} Tidak Ditemukan",
+  "x_added": "{} Ditambahkan",
+  "scan_another_item": "Pindai Barang Lain"
 }

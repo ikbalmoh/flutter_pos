@@ -56,6 +56,24 @@ class ObjectBox {
     categoryBox.putMany(categories);
   }
 
+  ScanItemResult getItemByBarcode(String barcode) {
+    Item? item =
+        itemBox.query(Item_.barcode.equals(barcode)).build().findFirst();
+    ItemVariant? variant;
+    if (item != null && item.variants.isNotEmpty) {
+      item = null;
+    } else if (item == null) {
+      variant = itemVariantBox
+          .query(ItemVariant_.barcodeNumber.equals(barcode))
+          .build()
+          .findFirst();
+      if (variant != null) {
+        item = getItem(variant.idItem);
+      }
+    }
+    return ScanItemResult(item: item, variant: variant);
+  }
+
   Item? getItem(String idItem) =>
       itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 

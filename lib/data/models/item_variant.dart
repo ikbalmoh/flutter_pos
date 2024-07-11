@@ -16,6 +16,7 @@ class ItemVariant {
   @JsonKey(fromJson: Converters.dynamicToDouble)
   final double stockItem;
   
+  final String idItem;
   final String variantName;
   final double itemPrice;
   final String? skuNumber;
@@ -26,6 +27,7 @@ class ItemVariant {
 
   ItemVariant({
     required this.id,
+    required this.idItem,
     required this.idVariant,
     required this.itemPrice,
     this.skuNumber,

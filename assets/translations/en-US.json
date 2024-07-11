@@ -166,5 +166,11 @@
   "downloaded": "Downloaded",
   "stored_at": "File storad at {}",
   "list_view": "List View",
-  "grid_view": "Tampilan Grid View"
+  "grid_view": "Tampilan Grid View",
+  "scan_item_barcode": "Scan Item's Barcode",
+  "searching": "Searching",
+  "item": "Item",
+  "x_not_found": "{} Not Found",
+  "x_added": "{} Added",
+  "scan_another_item": "Scan Another Item"
 }

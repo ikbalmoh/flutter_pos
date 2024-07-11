@@ -6,6 +6,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function(String) onChanged;
   final TextEditingController controller;
   final String? placeholder;
+  final List<Widget>? actions;
 
   @override
   final Size preferredSize;
@@ -16,6 +17,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onChanged,
     required this.controller,
     this.placeholder,
+    this.actions,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   @override
@@ -43,18 +45,21 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             onPressed: onBack,
           ),
-          suffixIcon: controller.text.isNotEmpty ? IconButton(
-            color: Colors.grey.shade400,
-            onPressed: () {
-              controller.text = '';
-              onChanged('');
-            },
-            icon: const Icon(
-              Icons.close,
-            ),
-          ) : const SizedBox(),
+          suffixIcon: controller.text.isNotEmpty
+              ? IconButton(
+                  color: Colors.grey.shade400,
+                  onPressed: () {
+                    controller.text = '';
+                    onChanged('');
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                  ),
+                )
+              : const SizedBox(),
         ),
       ),
+      actions: actions,
     );
   }
 }
