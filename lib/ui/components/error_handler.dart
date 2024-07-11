@@ -3,10 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ErrorHandler extends StatelessWidget {
-  const ErrorHandler(
-      {super.key, required this.error, this.stackTrace, this.onRetry});
+  const ErrorHandler({super.key, this.error, this.stackTrace, this.onRetry});
 
-  final String error;
+  final String? error;
   final String? stackTrace;
   final Function()? onRetry;
 
@@ -28,7 +27,7 @@ class ErrorHandler extends StatelessWidget {
             height: 20,
           ),
           Text(
-            error.toString(),
+            error ?? 'something_wrong'.tr(),
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme

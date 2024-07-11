@@ -34,6 +34,6 @@ class ItemPackage {
 
   @override
   String toString() {
-    return '{id_item: $idItem, item_name: $itemName}';
+    return toJson().toString();
   }
 }

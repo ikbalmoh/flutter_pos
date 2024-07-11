@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/converters/generic.dart';
@@ -14,41 +15,42 @@ class Cart with _$Cart {
   const Cart._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory Cart(
-      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
-      required int transactionDate,
-      required String transactionNo,
-      required String idOutlet,
-      String? outletName,
-      String? idTransaction,
-      required String shiftId,
-      required double subtotal,
-      @JsonKey(fromJson: Converters.dynamicToBool) required bool discIsPercent,
-      required double discOverall,
-      required double discOverallTotal,
-      required double discPromotionsTotal,
-      required double total,
-      @JsonKey(fromJson: Converters.dynamicToBool) required bool ppnIsInclude,
-      required double ppn,
-      String? taxName,
-      @JsonKey(fromJson: Converters.dynamicToDouble) required double ppnTotal,
-      required double grandTotal,
-      required double totalPayment,
-      required double change,
-      String? idCustomer,
-      String? customerName,
-      String? notes,
-      String? description,
-      String? personInCharge,
-      DateTime? holdAt,
-      required String createdBy,
-      String? createdName,
-      required List<ItemCart> items,
-      required List<CartPayment> payments,
-      @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
-      DateTime? deletedAt,
-      String? deletedBy,
-      String? deleteReason}) = _Cart;
+  const factory Cart({
+    @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+    required int transactionDate,
+    required String transactionNo,
+    required String idOutlet,
+    String? outletName,
+    String? idTransaction,
+    required String shiftId,
+    required double subtotal,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool discIsPercent,
+    required double discOverall,
+    required double discOverallTotal,
+    required double discPromotionsTotal,
+    required double total,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool ppnIsInclude,
+    required double ppn,
+    String? taxName,
+    @JsonKey(fromJson: Converters.dynamicToDouble) required double ppnTotal,
+    required double grandTotal,
+    required double totalPayment,
+    required double change,
+    String? idCustomer,
+    String? customerName,
+    String? notes,
+    String? description,
+    String? personInCharge,
+    DateTime? holdAt,
+    required String createdBy,
+    String? createdName,
+    required List<ItemCart> items,
+    required List<CartPayment> payments,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
+    DateTime? deletedAt,
+    String? deletedBy,
+    String? deleteReason,
+  }) = _Cart;
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
 
@@ -58,6 +60,17 @@ class Cart with _$Cart {
         DateTimeFormater.stringToTimestamp(data['transaction_date']);
     for (var item in data['items']) {
       item['identifier'] = item['id_item'];
+      item['details'] = item['details'] != null
+          ? List<Map<String, dynamic>>.from(item['details']).map((detail) {
+              return {
+                "item_id": detail["item_id"] ?? "",
+                "name": detail["name"] ?? detail["item_name"] ?? "",
+                "variant_id": detail["variant_id"],
+                "quantity": detail["quantity"] ?? detail["quantity_item"] ?? 0,
+                "item_price": detail["item_price"] ?? 0,
+              };
+            }).toList()
+          : [];
     }
     return Cart.fromJson(data);
   }

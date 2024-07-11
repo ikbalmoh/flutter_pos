@@ -11,10 +11,12 @@ import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/network/transaction.dart';
+import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'dart:developer';
 
 import 'package:selleri/utils/printer.dart';
@@ -103,6 +105,19 @@ class CartNotifer extends _$CartNotifer {
     double itemPrice = item.itemPrice;
 
     if (item.isPackage) {
+      bool isAvailable = true;
+      for (var pkg in item.packageItems) {
+        Item? itemPackage = objectBox.getItem(pkg.idItem);
+        log('package: ${itemPackage?.itemName} => ${itemPackage?.stockItem}');
+        if (itemPackage == null || itemPackage.stockItem < 1) {
+          isAvailable = false;
+          AppAlert.toast('x_stock_empty'.tr(args: [pkg.itemName]));
+          break;
+        }
+      }
+      if (!isAvailable) {
+        return;
+      }
       identifier += (DateTime.now().millisecondsSinceEpoch).toString();
     } else if (variant != null) {
       identifier += '-v${variant.idVariant.toString()}';

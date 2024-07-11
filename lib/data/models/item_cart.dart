@@ -15,25 +15,26 @@ class ItemCart with _$ItemCart {
   const ItemCart._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory ItemCart(
-      {String? identifier,
-      required String idItem,
-      required String itemName,
-      @JsonKey(fromJson: Converters.dynamicToBool) required bool isPackage,
-      @JsonKey(fromJson: Converters.dynamicToBool) required bool isManualPrice,
-      required double price,
-      @JsonKey(fromJson: Converters.dynamicToBool) required bool manualDiscount,
-      required int quantity,
-      required double discount,
-      @JsonKey(fromJson: Converters.dynamicToBool)
-      required bool discountIsPercent,
-      required double discountTotal,
-      DateTime? addedAt,
-      required double total,
-      String? note,
-      @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
-      String? variantName,
-      required List<ItemCartDetail> details}) = _ItemCart;
+  const factory ItemCart({
+    String? identifier,
+    required String idItem,
+    required String itemName,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool isPackage,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool isManualPrice,
+    required double price,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool manualDiscount,
+    required int quantity,
+    required double discount,
+    @JsonKey(fromJson: Converters.dynamicToBool)
+    required bool discountIsPercent,
+    required double discountTotal,
+    DateTime? addedAt,
+    required double total,
+    String? note,
+    @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
+    String? variantName,
+    required List<ItemCartDetail> details,
+  }) = _ItemCart;
 
   factory ItemCart.fromJson(Map<String, dynamic> json) =>
       _$ItemCartFromJson(json);

@@ -173,5 +173,7 @@
   "item": "Barang",
   "x_not_found": "{} Tidak Ditemukan",
   "x_added": "{} Ditambahkan",
-  "scan_another_item": "Pindai Barang Lain"
+  "scan_another_item": "Pindai Barang Lain",
+  "x_stock_empty": "stok {} kosong",
+  "something_wrong": "Terjadi Kesalahan"
 }

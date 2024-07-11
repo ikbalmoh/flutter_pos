@@ -25,6 +25,16 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
     context.pop();
   }
 
+  bool isAvailable() {
+    if (selected != null) {
+      if (widget.item.stockControl) {
+        return selected!.stockItem > 0;
+      }
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -103,7 +113,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
           ),
           ElevatedButton(
             onPressed:
-                selected != null ? () => onAddToCart(context, selected!) : null,
+                isAvailable() ? () => onAddToCart(context, selected!) : null,
             style: ElevatedButton.styleFrom(
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25)),
