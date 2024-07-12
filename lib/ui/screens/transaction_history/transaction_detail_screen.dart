@@ -24,9 +24,9 @@ class TransactionDetailScreen extends ConsumerStatefulWidget {
 
 class _TransactionDetailScreenState
     extends ConsumerState<TransactionDetailScreen> {
-  void onPrintReceipt() {
+  void onPrintReceipt() async {
     try {
-      ref.read(transactionsNotifierProvider.notifier).printReceipt(widget.cart);
+      await ref.read(transactionsNotifierProvider.notifier).printReceipt(widget.cart);
     } catch (e) {
       log('PRINT FAILED: $e');
       AppAlert.snackbar(context, e.toString());
@@ -127,13 +127,10 @@ class _TransactionDetailScreenState
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 15),
-                    child: Stack(
-                      children: [
-                        OrderSummary(
-                          radius: const Radius.circular(5),
-                          cart: transaction,
-                        ),
-                      ],
+                    child: OrderSummary(
+                      radius: const Radius.circular(5),
+                      cart: transaction,
+                      isDone: true,
                     ),
                   ),
                 ),

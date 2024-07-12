@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/converters/generic.dart';

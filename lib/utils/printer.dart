@@ -91,8 +91,7 @@ class Printer {
         if (item.isPackage && item.details.isNotEmpty) {
           for (var i = 0; i < item.details.length; i++) {
             final detail = item.details[i];
-            bytes += generator
-                .text(' - ${detail.quantity} x ${detail.name}');
+            bytes += generator.text(' - ${detail.quantity} x ${detail.name}');
           }
         }
         bytes += generator.row([
@@ -206,13 +205,23 @@ class Printer {
             linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
       }
 
+      if (cart.holdAt != null) {
+        bytes += generator.text('holded_transactions'.tr(),
+            linesAfter: 1,
+            styles: const PosStyles(
+              align: PosAlign.center,
+              bold: true,
+            ));
+      }
+
       if (isCopy) {
         bytes += generator.text('receipt_copy'.tr(),
-            styles: const PosStyles(align: PosAlign.center));
+            styles: const PosStyles(
+              align: PosAlign.center,
+            ));
         bytes += generator.text(
             DateTimeFormater.dateToString(DateTime.now(),
                 format: 'dd/MM/y HH:mm'),
-            linesAfter: 1,
             styles: const PosStyles(align: PosAlign.center));
       }
 

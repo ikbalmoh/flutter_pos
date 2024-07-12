@@ -65,7 +65,7 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     try {
       final printer = ref.read(printerNotifierProvider).value;
       if (printer == null) {
-        throw Exception('printer_not_connected'.tr());
+        throw 'printer_not_connected'.tr();
       }
       final AttributeReceipts? attributeReceipts =
           (ref.read(outletNotifierProvider).value as OutletSelected)

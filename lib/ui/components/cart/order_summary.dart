@@ -108,11 +108,12 @@ class OrderItem extends StatelessWidget {
 class OrderSummary extends StatelessWidget {
   final Cart cart;
   final Radius? radius;
-  const OrderSummary({required this.cart, this.radius, super.key});
+  final bool? isDone;
+
+  const OrderSummary({required this.cart, this.isDone, this.radius, super.key});
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -124,14 +125,6 @@ class OrderSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Text('order_summary'.tr(), style: textTheme.bodyLarge),
-          ),
-          Divider(
-            height: 1,
-            color: Colors.blueGrey.shade50,
-          ),
           ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 7.5),
             itemBuilder: (context, idx) {
@@ -166,21 +159,28 @@ class OrderSummary extends StatelessWidget {
             label: 'Grand Total',
             value: cart.grandTotal,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Divider(
-              height: 15,
-              color: Colors.blueGrey.shade50,
-            ),
-          ),
-          TwoColumn(
-            label: 'payment_amount'.tr(),
-            value: cart.totalPayment,
-          ),
-          TwoColumn(
-            label: 'change'.tr(),
-            value: cart.change,
-          ),
+          isDone == true
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Divider(
+                        height: 15,
+                        color: Colors.blueGrey.shade50,
+                      ),
+                    ),
+                    TwoColumn(
+                      label: 'payment_amount'.tr(),
+                      value: cart.totalPayment,
+                    ),
+                    TwoColumn(
+                      label: 'change'.tr(),
+                      value: cart.change,
+                    ),
+                  ],
+                )
+              : Container(),
           const SizedBox(height: 10),
         ],
       ),

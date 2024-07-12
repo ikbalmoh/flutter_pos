@@ -58,7 +58,18 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     const SizedBox(
                       height: 7,
                     ),
-                    OrderSummary(cart: ref.watch(cartNotiferProvider)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                      child: Text(
+                        'order_summary'.tr(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: OrderSummary(cart: ref.watch(cartNotiferProvider)),
+                    ),
                     const SizedBox(
                       height: 7,
                     ),

@@ -174,5 +174,6 @@
   "x_added": "{} Added",
   "scan_another_item": "Scan Another Item",
   "x_stock_empty": "{} is out of stock",
-  "something_wrong": "Something Wrong"
+  "something_wrong": "Something Wrong",
+  "open_transaction": "Open Transaction"
 }

@@ -25,8 +25,8 @@ class BottomActions extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 15,
-          vertical: 15,
-        ).copyWith(bottom: 25),
+          vertical: 10,
+        ).copyWith(bottom: 15),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

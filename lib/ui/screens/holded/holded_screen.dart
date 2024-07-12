@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +14,7 @@ import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
+import 'package:selleri/ui/screens/holded/holded_preview.dart';
 
 import 'holded_item.dart';
 
@@ -80,23 +82,11 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
   }
 
   void onOpenHoldedCart(CartHolded cartHolded) {
-    final currentCart = ref.read(cartNotiferProvider);
-    if (currentCart.items.isNotEmpty || currentCart.holdAt != null) {
-      showModalBottomSheet(
+    showCupertinoModalPopup(
         context: context,
-        backgroundColor: Colors.white,
-        isDismissible: false,
-        enableDrag: false,
-        isScrollControlled: true,
         builder: (context) {
-          return HoldForm(
-            onHolded: () => openHoldedTransaction(cartHolded),
-          );
-        },
-      );
-    } else {
-      openHoldedTransaction(cartHolded);
-    }
+          return HoldedPreview(cartHolded: cartHolded);
+        });
   }
 
   @override
@@ -117,12 +107,12 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
             )
           : AppBar(
               title: Text('holded_transactions'.tr()),
-              backgroundColor: Colors.white,
               iconTheme: const IconThemeData(color: Colors.black87),
               titleTextStyle: const TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18),
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
               centerTitle: false,
               actionsIconTheme: const IconThemeData(color: Colors.black87),
               actions: [

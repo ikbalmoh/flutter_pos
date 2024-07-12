@@ -87,7 +87,7 @@
   "hold_current_transaction": "Tunda Transaksi Saat Ini",
   "total_transaction": "Total Transaksi {}",
   "holding_transaction": "Menunda Transaksi",
-  "transaction_holded": "Transaksi ditunda",
+  "transaction_holded": "Transaksi telah ditunda",
   "holded_transactions": "Transaksi Ditunda",
   "cashier": "Kasir",
   "customer": "Pelanggan",
@@ -175,5 +175,6 @@
   "x_added": "{} Ditambahkan",
   "scan_another_item": "Pindai Barang Lain",
   "x_stock_empty": "stok {} kosong",
-  "something_wrong": "Terjadi Kesalahan"
+  "something_wrong": "Terjadi Kesalahan",
+  "open_transaction": "Buka Transaksi"
 }

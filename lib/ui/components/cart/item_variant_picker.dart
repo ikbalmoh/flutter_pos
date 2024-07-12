@@ -37,7 +37,8 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
       padding: EdgeInsets.only(
         top: 10,
         left: 15,
