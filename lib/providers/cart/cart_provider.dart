@@ -363,8 +363,10 @@ class CartNotifer extends _$CartNotifer {
   }
 
   void openHoldedCart(CartHolded holded) {
-    Cart cart = holded.dataHold
-        .copyWith(idTransaction: holded.transactionId, shiftId: state.shiftId);
+    Cart cart = holded.dataHold.copyWith(
+      idTransaction: holded.transactionId,
+      shiftId: ref.read(shiftNotifierProvider).value?.id ?? holded.shiftId,
+    );
     log('OPEN HOLDED CART\n$holded\n$cart');
     if (cart.holdAt == null) {
       cart = cart.copyWith(holdAt: DateTime.now());
