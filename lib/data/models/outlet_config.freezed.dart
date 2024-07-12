@@ -52,7 +52,7 @@ mixin _$OutletConfig {
   List<Akun>? get akunBiaya => throw _privateConstructorUsedError;
   List<Akun>? get akunPendapatan => throw _privateConstructorUsedError;
   List<Akun>? get akunSetoran => throw _privateConstructorUsedError;
-  List<ListUser>? get listUser => throw _privateConstructorUsedError;
+  List<PersonInCharge>? get listUser => throw _privateConstructorUsedError;
   int? get saldoAkunKas => throw _privateConstructorUsedError;
   CustomMandatory? get customMandatory => throw _privateConstructorUsedError;
 
@@ -100,7 +100,7 @@ abstract class $OutletConfigCopyWith<$Res> {
       List<Akun>? akunBiaya,
       List<Akun>? akunPendapatan,
       List<Akun>? akunSetoran,
-      List<ListUser>? listUser,
+      List<PersonInCharge>? listUser,
       int? saldoAkunKas,
       CustomMandatory? customMandatory});
 
@@ -286,7 +286,7 @@ class _$OutletConfigCopyWithImpl<$Res, $Val extends OutletConfig>
       listUser: freezed == listUser
           ? _value.listUser
           : listUser // ignore: cast_nullable_to_non_nullable
-              as List<ListUser>?,
+              as List<PersonInCharge>?,
       saldoAkunKas: freezed == saldoAkunKas
           ? _value.saldoAkunKas
           : saldoAkunKas // ignore: cast_nullable_to_non_nullable
@@ -387,7 +387,7 @@ abstract class _$$OutletConfigImplCopyWith<$Res>
       List<Akun>? akunBiaya,
       List<Akun>? akunPendapatan,
       List<Akun>? akunSetoran,
-      List<ListUser>? listUser,
+      List<PersonInCharge>? listUser,
       int? saldoAkunKas,
       CustomMandatory? customMandatory});
 
@@ -575,7 +575,7 @@ class __$$OutletConfigImplCopyWithImpl<$Res>
       listUser: freezed == listUser
           ? _value._listUser
           : listUser // ignore: cast_nullable_to_non_nullable
-              as List<ListUser>?,
+              as List<PersonInCharge>?,
       saldoAkunKas: freezed == saldoAkunKas
           ? _value.saldoAkunKas
           : saldoAkunKas // ignore: cast_nullable_to_non_nullable
@@ -624,7 +624,7 @@ class _$OutletConfigImpl extends _OutletConfig {
       final List<Akun>? akunBiaya,
       final List<Akun>? akunPendapatan,
       final List<Akun>? akunSetoran,
-      final List<ListUser>? listUser,
+      final List<PersonInCharge>? listUser,
       this.saldoAkunKas,
       this.customMandatory})
       : _pinSettings = pinSettings,
@@ -776,9 +776,9 @@ class _$OutletConfigImpl extends _OutletConfig {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<ListUser>? _listUser;
+  final List<PersonInCharge>? _listUser;
   @override
-  List<ListUser>? get listUser {
+  List<PersonInCharge>? get listUser {
     final value = _listUser;
     if (value == null) return null;
     if (_listUser is EqualUnmodifiableListView) return _listUser;
@@ -954,7 +954,7 @@ abstract class _OutletConfig extends OutletConfig {
       final List<Akun>? akunBiaya,
       final List<Akun>? akunPendapatan,
       final List<Akun>? akunSetoran,
-      final List<ListUser>? listUser,
+      final List<PersonInCharge>? listUser,
       final int? saldoAkunKas,
       final CustomMandatory? customMandatory}) = _$OutletConfigImpl;
   const _OutletConfig._() : super._();
@@ -1025,7 +1025,7 @@ abstract class _OutletConfig extends OutletConfig {
   @override
   List<Akun>? get akunSetoran;
   @override
-  List<ListUser>? get listUser;
+  List<PersonInCharge>? get listUser;
   @override
   int? get saldoAkunKas;
   @override
@@ -1564,12 +1564,12 @@ abstract class _CustomMandatory implements CustomMandatory {
       throw _privateConstructorUsedError;
 }
 
-ListUser _$ListUserFromJson(Map<String, dynamic> json) {
-  return _ListUser.fromJson(json);
+PersonInCharge _$PersonInChargeFromJson(Map<String, dynamic> json) {
+  return _PersonInCharge.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ListUser {
+mixin _$PersonInCharge {
   String get id => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -1578,14 +1578,15 @@ mixin _$ListUser {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ListUserCopyWith<ListUser> get copyWith =>
+  $PersonInChargeCopyWith<PersonInCharge> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ListUserCopyWith<$Res> {
-  factory $ListUserCopyWith(ListUser value, $Res Function(ListUser) then) =
-      _$ListUserCopyWithImpl<$Res, ListUser>;
+abstract class $PersonInChargeCopyWith<$Res> {
+  factory $PersonInChargeCopyWith(
+          PersonInCharge value, $Res Function(PersonInCharge) then) =
+      _$PersonInChargeCopyWithImpl<$Res, PersonInCharge>;
   @useResult
   $Res call(
       {String id,
@@ -1596,9 +1597,9 @@ abstract class $ListUserCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ListUserCopyWithImpl<$Res, $Val extends ListUser>
-    implements $ListUserCopyWith<$Res> {
-  _$ListUserCopyWithImpl(this._value, this._then);
+class _$PersonInChargeCopyWithImpl<$Res, $Val extends PersonInCharge>
+    implements $PersonInChargeCopyWith<$Res> {
+  _$PersonInChargeCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -1640,11 +1641,11 @@ class _$ListUserCopyWithImpl<$Res, $Val extends ListUser>
 }
 
 /// @nodoc
-abstract class _$$ListUserImplCopyWith<$Res>
-    implements $ListUserCopyWith<$Res> {
-  factory _$$ListUserImplCopyWith(
-          _$ListUserImpl value, $Res Function(_$ListUserImpl) then) =
-      __$$ListUserImplCopyWithImpl<$Res>;
+abstract class _$$PersonInChargeImplCopyWith<$Res>
+    implements $PersonInChargeCopyWith<$Res> {
+  factory _$$PersonInChargeImplCopyWith(_$PersonInChargeImpl value,
+          $Res Function(_$PersonInChargeImpl) then) =
+      __$$PersonInChargeImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -1656,11 +1657,11 @@ abstract class _$$ListUserImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ListUserImplCopyWithImpl<$Res>
-    extends _$ListUserCopyWithImpl<$Res, _$ListUserImpl>
-    implements _$$ListUserImplCopyWith<$Res> {
-  __$$ListUserImplCopyWithImpl(
-      _$ListUserImpl _value, $Res Function(_$ListUserImpl) _then)
+class __$$PersonInChargeImplCopyWithImpl<$Res>
+    extends _$PersonInChargeCopyWithImpl<$Res, _$PersonInChargeImpl>
+    implements _$$PersonInChargeImplCopyWith<$Res> {
+  __$$PersonInChargeImplCopyWithImpl(
+      _$PersonInChargeImpl _value, $Res Function(_$PersonInChargeImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1672,7 +1673,7 @@ class __$$ListUserImplCopyWithImpl<$Res>
     Object? phone = freezed,
     Object? rolesName = freezed,
   }) {
-    return _then(_$ListUserImpl(
+    return _then(_$PersonInChargeImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -1700,8 +1701,8 @@ class __$$ListUserImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class _$ListUserImpl implements _ListUser {
-  const _$ListUserImpl(
+class _$PersonInChargeImpl implements _PersonInCharge {
+  const _$PersonInChargeImpl(
       {required this.id,
       required this.username,
       required this.name,
@@ -1709,8 +1710,8 @@ class _$ListUserImpl implements _ListUser {
       final List<String>? rolesName})
       : _rolesName = rolesName;
 
-  factory _$ListUserImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ListUserImplFromJson(json);
+  factory _$PersonInChargeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PersonInChargeImplFromJson(json);
 
   @override
   final String id;
@@ -1734,7 +1735,7 @@ class _$ListUserImpl implements _ListUser {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ListUserImpl &&
+            other is _$PersonInChargeImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.username, username) ||
                 other.username == username) &&
@@ -1752,27 +1753,28 @@ class _$ListUserImpl implements _ListUser {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$ListUserImplCopyWith<_$ListUserImpl> get copyWith =>
-      __$$ListUserImplCopyWithImpl<_$ListUserImpl>(this, _$identity);
+  _$$PersonInChargeImplCopyWith<_$PersonInChargeImpl> get copyWith =>
+      __$$PersonInChargeImplCopyWithImpl<_$PersonInChargeImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ListUserImplToJson(
+    return _$$PersonInChargeImplToJson(
       this,
     );
   }
 }
 
-abstract class _ListUser implements ListUser {
-  const factory _ListUser(
+abstract class _PersonInCharge implements PersonInCharge {
+  const factory _PersonInCharge(
       {required final String id,
       required final String username,
       required final String name,
       final String? phone,
-      final List<String>? rolesName}) = _$ListUserImpl;
+      final List<String>? rolesName}) = _$PersonInChargeImpl;
 
-  factory _ListUser.fromJson(Map<String, dynamic> json) =
-      _$ListUserImpl.fromJson;
+  factory _PersonInCharge.fromJson(Map<String, dynamic> json) =
+      _$PersonInChargeImpl.fromJson;
 
   @override
   String get id;
@@ -1786,7 +1788,7 @@ abstract class _ListUser implements ListUser {
   List<String>? get rolesName;
   @override
   @JsonKey(ignore: true)
-  _$$ListUserImplCopyWith<_$ListUserImpl> get copyWith =>
+  _$$PersonInChargeImplCopyWith<_$PersonInChargeImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

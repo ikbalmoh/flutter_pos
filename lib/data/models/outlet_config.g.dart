@@ -78,7 +78,7 @@ _$OutletConfigImpl _$$OutletConfigImplFromJson(Map<String, dynamic> json) =>
           ?.map((e) => Akun.fromJson(e as Map<String, dynamic>))
           .toList(),
       listUser: (json['list_user'] as List<dynamic>?)
-          ?.map((e) => ListUser.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => PersonInCharge.fromJson(e as Map<String, dynamic>))
           .toList(),
       saldoAkunKas: (json['saldo_akun_kas'] as num?)?.toInt(),
       customMandatory: json['custom_mandatory'] == null
@@ -174,8 +174,8 @@ Map<String, dynamic> _$$CustomMandatoryImplToJson(
       'customers': instance.customers,
     };
 
-_$ListUserImpl _$$ListUserImplFromJson(Map<String, dynamic> json) =>
-    _$ListUserImpl(
+_$PersonInChargeImpl _$$PersonInChargeImplFromJson(Map<String, dynamic> json) =>
+    _$PersonInChargeImpl(
       id: json['id'] as String,
       username: json['username'] as String,
       name: json['name'] as String,
@@ -185,7 +185,8 @@ _$ListUserImpl _$$ListUserImplFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$ListUserImplToJson(_$ListUserImpl instance) =>
+Map<String, dynamic> _$$PersonInChargeImplToJson(
+        _$PersonInChargeImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'username': instance.username,

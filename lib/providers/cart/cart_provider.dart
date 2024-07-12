@@ -134,6 +134,19 @@ class Cart extends _$Cart {
     }
   }
 
+  List<ItemPackage> getEmptyItemPackages(List<ItemPackage> packageItems) {
+    List<ItemPackage> emptyItems = [];
+    for (var pkg in packageItems) {
+      Item? itemPackage = objectBox.getItem(pkg.idItem);
+      log('package: ${itemPackage?.itemName} => ${itemPackage?.stockItem}');
+      if (itemPackage == null || itemPackage.stockItem < 1) {
+        emptyItems.add(pkg);
+      }
+    }
+
+    return emptyItems;
+  }
+
   void addToCart(Item item, {ItemVariant? variant}) async {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
       await initCart();

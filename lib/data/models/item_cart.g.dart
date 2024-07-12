@@ -29,6 +29,8 @@ _$ItemCartImpl _$$ItemCartImplFromJson(Map<String, dynamic> json) =>
       details: (json['details'] as List<dynamic>)
           .map((e) => ItemCartDetail.fromJson(e as Map<String, dynamic>))
           .toList(),
+      picDetailId: json['pic_detail_id'] as String?,
+      picName: json['pic_name'] as String?,
     );
 
 Map<String, dynamic> _$$ItemCartImplToJson(_$ItemCartImpl instance) =>
@@ -50,4 +52,6 @@ Map<String, dynamic> _$$ItemCartImplToJson(_$ItemCartImpl instance) =>
       'id_variant': instance.idVariant,
       'variant_name': instance.variantName,
       'details': instance.details.map((e) => e.toJson()).toList(),
+      'pic_detail_id': instance.picDetailId,
+      'pic_name': instance.picName,
     };
