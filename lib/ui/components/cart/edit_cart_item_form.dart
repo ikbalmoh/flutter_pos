@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
 import 'package:selleri/ui/components/generic/qty_editor.dart';
+import 'package:selleri/ui/components/pic_picker.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +16,8 @@ class EditCartItemForm extends ConsumerStatefulWidget {
   final ItemCart item;
   final Function onDelete;
 
-  const EditCartItemForm({super.key, required this.item, required this.onDelete});
+  const EditCartItemForm(
+      {super.key, required this.item, required this.onDelete});
 
   @override
   ConsumerState<EditCartItemForm> createState() => _EditCartItemFormState();
@@ -30,6 +33,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
   late double discount;
   late int qty;
   late bool discountIsPercent;
+  String? picDetailId;
+  String? picName;
 
   @override
   void initState() {
@@ -42,6 +47,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
       discount = widget.item.discount;
       qty = widget.item.quantity;
       discountIsPercent = widget.item.discountIsPercent;
+      picDetailId = widget.item.picDetailId;
+      picName = widget.item.picName;
     });
     super.initState();
   }
@@ -90,10 +97,32 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
       discountTotal: discountTotal(),
       total: total(),
       note: noteController.text,
+      picDetailId: picDetailId,
+      picName: picName,
     );
     // Update Item
     ref.read(cartNotiferProvider.notifier).updateItem(item);
     context.pop();
+  }
+
+  void onSelectPic() async {
+    PersonInCharge? pic = await showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        context: context,
+        enableDrag: true,
+        builder: (context) {
+          return PicPicker(
+            selected: widget.item.picDetailId,
+          );
+        });
+
+    if (pic != null) {
+      setState(() {
+        picDetailId = pic.id;
+        picName = pic.name;
+      });
+    }
   }
 
   @override
@@ -120,7 +149,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
         children: [
           Container(
             padding:
-                const EdgeInsets.only(top: 8, left: 5, right: 5, bottom: 15),
+                const EdgeInsets.only(top: 8, left: 5, right: 5, bottom: 12),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -129,9 +158,58 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                 ),
               ),
             ),
-            child: Text(
-              itemName,
-              style: Theme.of(context).textTheme.bodyLarge,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    itemName,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                picDetailId != null
+                    ? Chip(
+                        label: Text(picName ?? 'pic'.tr()),
+                        deleteIcon: const Icon(
+                          Icons.close,
+                          size: 16,
+                        ),
+                        avatar: const Icon(
+                          CupertinoIcons.person_circle_fill,
+                          color: Colors.teal,
+                          size: 22,
+                        ),
+                        deleteIconColor: Colors.red,
+                        onDeleted: () => setState(() {
+                          picDetailId = null;
+                          picName = null;
+                        }),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(
+                            color: Colors.teal,
+                          ),
+                        ),
+                      )
+                    : ActionChip(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        label: Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: Text('pic'.tr()),
+                        ),
+                        avatar: Icon(
+                          CupertinoIcons.person_circle,
+                          color: Colors.grey.shade600,
+                          size: 22,
+                        ),
+                        onPressed: onSelectPic,
+                      )
+              ],
             ),
           ),
           TextFormField(

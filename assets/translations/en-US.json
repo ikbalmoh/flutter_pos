@@ -175,5 +175,7 @@
   "scan_another_item": "Scan Another Item",
   "x_stock_empty": "{} is out of stock",
   "something_wrong": "Something Wrong",
-  "open_transaction": "Open Transaction"
+  "open_transaction": "Open Transaction",
+  "pic": "Person In Charge",
+  "select_x": "Select {}"
 }

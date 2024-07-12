@@ -42,6 +42,8 @@ mixin _$ItemCart {
   num? get idVariant => throw _privateConstructorUsedError;
   String? get variantName => throw _privateConstructorUsedError;
   List<ItemCartDetail> get details => throw _privateConstructorUsedError;
+  String? get picDetailId => throw _privateConstructorUsedError;
+  String? get picName => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -71,7 +73,9 @@ abstract class $ItemCartCopyWith<$Res> {
       String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
       String? variantName,
-      List<ItemCartDetail> details});
+      List<ItemCartDetail> details,
+      String? picDetailId,
+      String? picName});
 }
 
 /// @nodoc
@@ -104,6 +108,8 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
     Object? idVariant = freezed,
     Object? variantName = freezed,
     Object? details = null,
+    Object? picDetailId = freezed,
+    Object? picName = freezed,
   }) {
     return _then(_value.copyWith(
       identifier: freezed == identifier
@@ -174,6 +180,14 @@ class _$ItemCartCopyWithImpl<$Res, $Val extends ItemCart>
           ? _value.details
           : details // ignore: cast_nullable_to_non_nullable
               as List<ItemCartDetail>,
+      picDetailId: freezed == picDetailId
+          ? _value.picDetailId
+          : picDetailId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      picName: freezed == picName
+          ? _value.picName
+          : picName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -203,7 +217,9 @@ abstract class _$$ItemCartImplCopyWith<$Res>
       String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
       String? variantName,
-      List<ItemCartDetail> details});
+      List<ItemCartDetail> details,
+      String? picDetailId,
+      String? picName});
 }
 
 /// @nodoc
@@ -234,6 +250,8 @@ class __$$ItemCartImplCopyWithImpl<$Res>
     Object? idVariant = freezed,
     Object? variantName = freezed,
     Object? details = null,
+    Object? picDetailId = freezed,
+    Object? picName = freezed,
   }) {
     return _then(_$ItemCartImpl(
       identifier: freezed == identifier
@@ -304,6 +322,14 @@ class __$$ItemCartImplCopyWithImpl<$Res>
           ? _value._details
           : details // ignore: cast_nullable_to_non_nullable
               as List<ItemCartDetail>,
+      picDetailId: freezed == picDetailId
+          ? _value.picDetailId
+          : picDetailId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      picName: freezed == picName
+          ? _value.picName
+          : picName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -330,7 +356,9 @@ class _$ItemCartImpl extends _ItemCart {
       this.note,
       @JsonKey(fromJson: Converters.dynamicToNum) this.idVariant,
       this.variantName,
-      required final List<ItemCartDetail> details})
+      required final List<ItemCartDetail> details,
+      this.picDetailId,
+      this.picName})
       : _details = details,
         super._();
 
@@ -383,6 +411,11 @@ class _$ItemCartImpl extends _ItemCart {
   }
 
   @override
+  final String? picDetailId;
+  @override
+  final String? picName;
+
+  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
@@ -414,30 +447,36 @@ class _$ItemCartImpl extends _ItemCart {
                 other.idVariant == idVariant) &&
             (identical(other.variantName, variantName) ||
                 other.variantName == variantName) &&
-            const DeepCollectionEquality().equals(other._details, _details));
+            const DeepCollectionEquality().equals(other._details, _details) &&
+            (identical(other.picDetailId, picDetailId) ||
+                other.picDetailId == picDetailId) &&
+            (identical(other.picName, picName) || other.picName == picName));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      identifier,
-      idItem,
-      itemName,
-      isPackage,
-      isManualPrice,
-      price,
-      manualDiscount,
-      quantity,
-      discount,
-      discountIsPercent,
-      discountTotal,
-      addedAt,
-      total,
-      note,
-      idVariant,
-      variantName,
-      const DeepCollectionEquality().hash(_details));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        identifier,
+        idItem,
+        itemName,
+        isPackage,
+        isManualPrice,
+        price,
+        manualDiscount,
+        quantity,
+        discount,
+        discountIsPercent,
+        discountTotal,
+        addedAt,
+        total,
+        note,
+        idVariant,
+        variantName,
+        const DeepCollectionEquality().hash(_details),
+        picDetailId,
+        picName
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -475,7 +514,9 @@ abstract class _ItemCart extends ItemCart {
       final String? note,
       @JsonKey(fromJson: Converters.dynamicToNum) final num? idVariant,
       final String? variantName,
-      required final List<ItemCartDetail> details}) = _$ItemCartImpl;
+      required final List<ItemCartDetail> details,
+      final String? picDetailId,
+      final String? picName}) = _$ItemCartImpl;
   const _ItemCart._() : super._();
 
   factory _ItemCart.fromJson(Map<String, dynamic> json) =
@@ -520,6 +561,10 @@ abstract class _ItemCart extends ItemCart {
   String? get variantName;
   @override
   List<ItemCartDetail> get details;
+  @override
+  String? get picDetailId;
+  @override
+  String? get picName;
   @override
   @JsonKey(ignore: true)
   _$$ItemCartImplCopyWith<_$ItemCartImpl> get copyWith =>

@@ -12,7 +12,6 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/cart/holded_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
-import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/holded/holded_preview.dart';
 

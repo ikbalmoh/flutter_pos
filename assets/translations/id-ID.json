@@ -174,7 +174,9 @@
   "x_not_found": "{} Tidak Ditemukan",
   "x_added": "{} Ditambahkan",
   "scan_another_item": "Pindai Barang Lain",
-  "x_stock_empty": "stok {} kosong",
+  "x_stock_empty": "Stok {} kosong",
   "something_wrong": "Terjadi Kesalahan",
-  "open_transaction": "Buka Transaksi"
+  "open_transaction": "Buka Transaksi",
+  "pic": "Penanggung Jawab",
+  "select_x": "Pilih {}"
 }

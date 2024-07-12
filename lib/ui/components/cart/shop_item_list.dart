@@ -90,6 +90,7 @@ class ShopItemList extends StatelessWidget {
                       StockBadge(
                         stockItem: item.stockItem,
                         stockControl: item.stockControl,
+                        packageItems: item.packageItems,
                       ),
                     ],
                   ),

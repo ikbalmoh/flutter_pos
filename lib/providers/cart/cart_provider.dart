@@ -8,6 +8,7 @@ import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
+import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/network/transaction.dart';
@@ -96,6 +97,19 @@ class CartNotifer extends _$CartNotifer {
     }
   }
 
+  List<ItemPackage> getEmptyItemPackages(List<ItemPackage> packageItems) {
+    List<ItemPackage> emptyItems = [];
+    for (var pkg in packageItems) {
+      Item? itemPackage = objectBox.getItem(pkg.idItem);
+      log('package: ${itemPackage?.itemName} => ${itemPackage?.stockItem}');
+      if (itemPackage == null || itemPackage.stockItem < 1) {
+        emptyItems.add(pkg);
+      }
+    }
+
+    return emptyItems;
+  }
+
   void addToCart(Item item, {ItemVariant? variant}) async {
     if (state.idOutlet == '') {
       await initCart();
@@ -105,17 +119,9 @@ class CartNotifer extends _$CartNotifer {
     double itemPrice = item.itemPrice;
 
     if (item.isPackage) {
-      bool isAvailable = true;
-      for (var pkg in item.packageItems) {
-        Item? itemPackage = objectBox.getItem(pkg.idItem);
-        log('package: ${itemPackage?.itemName} => ${itemPackage?.stockItem}');
-        if (itemPackage == null || itemPackage.stockItem < 1) {
-          isAvailable = false;
-          AppAlert.toast('x_stock_empty'.tr(args: [pkg.itemName]));
-          break;
-        }
-      }
-      if (!isAvailable) {
+      final emptyItems = getEmptyItemPackages(item.packageItems);
+      if (emptyItems.isNotEmpty) {
+        AppAlert.toast('x_stock_empty'.tr(args: [emptyItems.first.itemName]));
         return;
       }
       identifier += (DateTime.now().millisecondsSinceEpoch).toString();

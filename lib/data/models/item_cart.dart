@@ -34,6 +34,8 @@ class ItemCart with _$ItemCart {
     @JsonKey(fromJson: Converters.dynamicToNum) num? idVariant,
     String? variantName,
     required List<ItemCartDetail> details,
+    String? picDetailId,
+    String? picName,
   }) = _ItemCart;
 
   factory ItemCart.fromJson(Map<String, dynamic> json) =>
@@ -56,6 +58,7 @@ class ItemCart with _$ItemCart {
         "total": total,
         "note": note,
         "item_name": itemName,
+        "pic_detail_id": picDetailId,
         "details": isPackage && details.isNotEmpty
             ? details.map((itemPackage) => itemPackage.toJson()).toList()
             : [],

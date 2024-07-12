@@ -29,6 +29,7 @@ class _TransactionDetailScreenState
       await ref.read(transactionsNotifierProvider.notifier).printReceipt(widget.cart);
     } catch (e) {
       log('PRINT FAILED: $e');
+      // ignore: use_build_context_synchronously
       AppAlert.snackbar(context, e.toString());
     }
   }

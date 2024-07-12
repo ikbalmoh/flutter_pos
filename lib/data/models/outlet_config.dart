@@ -44,7 +44,7 @@ class OutletConfig with _$OutletConfig {
     List<Akun>? akunBiaya,
     List<Akun>? akunPendapatan,
     List<Akun>? akunSetoran,
-    List<ListUser>? listUser,
+    List<PersonInCharge>? listUser,
     int? saldoAkunKas,
     CustomMandatory? customMandatory,
   }) = _OutletConfig;
@@ -110,18 +110,18 @@ class CustomMandatory with _$CustomMandatory {
 }
 
 @freezed
-class ListUser with _$ListUser {
+class PersonInCharge with _$PersonInCharge {
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory ListUser({
+  const factory PersonInCharge({
     required String id,
     required String username,
     required String name,
     String? phone,
     List<String>? rolesName,
-  }) = _ListUser;
+  }) = _PersonInCharge;
 
-  factory ListUser.fromJson(Map<String, dynamic> json) =>
-      _$ListUserFromJson(json);
+  factory PersonInCharge.fromJson(Map<String, dynamic> json) =>
+      _$PersonInChargeFromJson(json);
 
   @override
   String toString() {
