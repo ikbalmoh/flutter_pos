@@ -431,13 +431,23 @@ class Printer {
             linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
       }
 
+      if (cart.holdAt != null) {
+        bytes += generator.text('holded_transactions'.tr(),
+            linesAfter: 1,
+            styles: const PosStyles(
+              align: PosAlign.center,
+              bold: true,
+            ));
+      }
+
       if (isCopy) {
         bytes += generator.text('receipt_copy'.tr(),
-            styles: const PosStyles(align: PosAlign.center));
+            styles: const PosStyles(
+              align: PosAlign.center,
+            ));
         bytes += generator.text(
             DateTimeFormater.dateToString(DateTime.now(),
                 format: 'dd/MM/y HH:mm'),
-            linesAfter: 1,
             styles: const PosStyles(align: PosAlign.center));
       }
 
