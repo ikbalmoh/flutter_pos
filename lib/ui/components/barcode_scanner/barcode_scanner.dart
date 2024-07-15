@@ -60,14 +60,19 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
         fit: StackFit.expand,
         children: [
           Center(
-            child: MobileScanner(
-              fit: BoxFit.contain,
-              controller: controller,
-              scanWindow: scanWindow,
-              errorBuilder: (context, error, child) {
-                return ScannerErrorWidget(error: error);
-              },
-              onDetect: onDetect,
+            child: OrientationBuilder(
+              builder: (context, orientation) => RotatedBox(
+                quarterTurns: orientation == Orientation.portrait ? 4 : 3,
+                child: MobileScanner(
+                  fit: BoxFit.contain,
+                  controller: controller,
+                  scanWindow: scanWindow,
+                  errorBuilder: (context, error, child) {
+                    return ScannerErrorWidget(error: error);
+                  },
+                  onDetect: onDetect,
+                ),
+              ),
             ),
           ),
           ValueListenableBuilder(
