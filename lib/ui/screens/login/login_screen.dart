@@ -80,187 +80,190 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: SizedBox(
-                  width: 300,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/icon.png',
-                          height: 50,
-                          width: 200,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(height: 40),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: "Username",
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 15,
-                            ),
-                            alignLabelWithHint: false,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.grey.shade400,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.teal.shade400,
-                              ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.red.shade400,
-                              ),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.teal.shade400,
-                              ),
-                            ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: SizedBox(
+                    width: 300,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/icon.png',
+                            height: 50,
+                            width: 200,
+                            fit: BoxFit.contain,
                           ),
-                          controller: _usernameController,
-                          scrollPadding: EdgeInsets.only(
-                            bottom:
-                                MediaQuery.of(context).viewInsets.bottom + 10,
+                          const SizedBox(height: 40),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: "Username",
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 15,
+                              ),
+                              alignLabelWithHint: false,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.grey.shade400,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.teal.shade400,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.red.shade400,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.teal.shade400,
+                                ),
+                              ),
+                            ),
+                            controller: _usernameController,
+                            scrollPadding: EdgeInsets.only(
+                              bottom:
+                                  MediaQuery.of(context).viewInsets.bottom + 10,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'enter_username'.tr();
+                              }
+                              return null;
+                            },
+                            onEditingComplete: () => _passwordNode.requestFocus(),
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.emailAddress,
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'enter_username'.tr();
-                            }
-                            return null;
-                          },
-                          onEditingComplete: () => _passwordNode.requestFocus(),
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        const SizedBox(height: 15),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: "Password",
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 15,
-                            ),
-                            alignLabelWithHint: false,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
+                          const SizedBox(height: 15),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: "Password",
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 15,
                               ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.grey.shade400,
+                              alignLabelWithHint: false,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.grey.shade400,
+                                ),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.teal.shade400,
+                                ),
                               ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.teal.shade400,
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.red.shade400,
+                                ),
                               ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.red.shade400,
-                              ),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                width: 1,
-                                color: Colors.teal.shade400,
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.teal.shade400,
+                                ),
                               ),
                             ),
+                            controller: _passwordController,
+                            obscureText: hidePassword,
+                            scrollPadding: EdgeInsets.only(
+                              bottom:
+                                  MediaQuery.of(context).viewInsets.bottom + 10,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'enter_password'.tr();
+                              }
+                              return null;
+                            },
+                            focusNode: _passwordNode,
+                            onEditingComplete: _submitLogin,
+                            textInputAction: TextInputAction.go,
                           ),
-                          controller: _passwordController,
-                          obscureText: hidePassword,
-                          scrollPadding: EdgeInsets.only(
-                            bottom:
-                                MediaQuery.of(context).viewInsets.bottom + 10,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'enter_password';
-                            }
-                            return null;
-                          },
-                          focusNode: _passwordNode,
-                          onEditingComplete: _submitLogin,
-                          textInputAction: TextInputAction.go,
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton.icon(
-                          onPressed: state.value is Authenticating
-                              ? null
-                              : () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _submitLogin();
-                                  }
-                                },
-                          label: Text('login'.tr()),
-                          icon: state.value is Authenticating
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Icon(Icons.login),
-                        )
-                      ],
+                          const SizedBox(height: 20),
+                          ElevatedButton.icon(
+                            onPressed: state.value is Authenticating
+                                ? null
+                                : () {
+                                    if (_formKey.currentState!.validate()) {
+                                      _submitLogin();
+                                    }
+                                  },
+                            label: Text('login'.tr()),
+                            icon: state.value is Authenticating
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Icon(Icons.login),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+                Text(
+                  'v$buildNumber-$patch',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey,
+                      ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const UpdatePatcher()
+              ],
             ),
-            Text(
-              'v$buildNumber-$patch',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
-                  ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const UpdatePatcher()
-          ],
+          ),
         ),
       ),
     );
