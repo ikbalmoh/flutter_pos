@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/outlet.dart';
@@ -18,6 +19,8 @@ class SelectOutletScreen extends ConsumerStatefulWidget {
 }
 
 class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
+  bool _isLoading = true;
+
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
@@ -37,22 +40,45 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
         });
   }
 
-  ListView buildOutletLists(BuildContext context, List<Outlet> outlets) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(0),
-      shrinkWrap: true,
-      itemCount: outlets.length,
-      itemBuilder: (context, index) {
-        Outlet outlet = outlets[index];
-        return OutletItem(outlet: outlet, onSelect: onSelectOutlet);
-      },
+  Widget buildOutletLists(BuildContext context, List<Outlet> outlets) {
+    final height = MediaQuery.sizeOf(context).height * 0.38;
+    return SizedBox(
+      height:  height,
+      child: CupertinoScrollbar(
+        child: ShaderMask(
+          shaderCallback: (Rect rect) {
+            return const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.white
+              ],
+              stops: [
+                0.9,
+                1.0
+              ],
+            ).createShader(rect);
+          },
+          blendMode: BlendMode.dstOut,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(0),
+            shrinkWrap: true,
+            itemCount: outlets.length,
+            itemBuilder: (context, index) {
+              Outlet outlet = outlets[index];
+              return OutletItem(outlet: outlet, onSelect: onSelectOutlet);
+            },
+          ),
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-
+    final height = MediaQuery.of(context).size.height * 0.48;
     return Scaffold(
       backgroundColor: Colors.teal.shade400,
       body: Center(
@@ -64,10 +90,11 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
             Container(
               margin: const EdgeInsets.only(top: 50),
               width: 300,
+              height: _isLoading ? null : height,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(7.5),
                 color: Colors.white,
-                border: Border.all(width: 0.5, color: Colors.black12),
+                // border: Border.all(width: 0.5, color: Colors.black12),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.teal.shade600,
@@ -83,26 +110,28 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 17.5, vertical: 15),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey.shade300,
-                          width: 0.5,
-                        ),
-                      ),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   border: Border(
+                    //     bottom: BorderSide(
+                    //       color: Colors.grey.shade300,
+                    //       width: 0.5,
+                    //     ),
+                    //   ),
+                    // ),
                     child: Text("select_outlet".tr(),
                         style: textTheme.bodyLarge
                             ?.copyWith(fontWeight: FontWeight.w500)),
                   ),
                   ref.watch(outletListNotifierProvider).when(
-                        data: (data) => buildOutletLists(context, data),
+                        data: (data) {
+                          setState(() => _isLoading = false);
+                          return buildOutletLists(context, data);
+                        },
                         error: (error, stack) => ErrorHandler(
                           error: error.toString(),
                           stackTrace: stack.toString(),
