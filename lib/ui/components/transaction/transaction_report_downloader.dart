@@ -3,21 +3,23 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/config/api_url.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:selleri/utils/file_download.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TransactionReportDownloader extends StatefulWidget {
+class TransactionReportDownloader extends ConsumerStatefulWidget {
   const TransactionReportDownloader({super.key});
 
   @override
-  State<TransactionReportDownloader> createState() =>
+  ConsumerState<TransactionReportDownloader> createState() =>
       _TransactionReportDownloaderState();
 }
 
 class _TransactionReportDownloaderState
-    extends State<TransactionReportDownloader> {
+    extends ConsumerState<TransactionReportDownloader> {
   bool downloading = false;
   double progress = 0;
 
@@ -50,7 +52,12 @@ class _TransactionReportDownloaderState
       Map<String, dynamic> params = {
         "from": fromDate,
         "to": toDate,
-        "type": "export"
+        "type": "export",
+        "id_outlet": ref.read(outletNotifierProvider).value is OutletSelected
+            ? (ref.read(outletNotifierProvider).value as OutletSelected)
+                .outlet
+                .idOutlet
+            : ''
       };
       String path = await downloader.download(
         ApiUrl.reportSales,

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/utils/formater.dart';
 
 class CustomerDetail extends StatelessWidget {
   final Customer customer;
@@ -18,28 +19,29 @@ class CustomerDetail extends StatelessWidget {
           shape: Border(
             bottom: BorderSide(
               width: 1,
-              color: Colors.blueGrey.shade200,
+              color: Colors.blueGrey.shade50,
             ),
           ),
         );
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      margin: const EdgeInsets.all(0),
-      child: SafeArea(
-          child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+
+    bool isExpired = customer.expiredDate != null
+        ? customer.expiredDate!.isBefore(DateTime.now())
+        : false;
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.9,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.only(
-                top: 10, left: 12.5, right: 12.5, bottom: 12.5),
+                top: 10, left: 12.5, right: 12.5, bottom: 10),
             decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              color: Colors.white,
               border: Border(
                 bottom: BorderSide(
                   width: 0.5,
@@ -47,13 +49,23 @@ class CustomerDetail extends StatelessWidget {
                 ),
               ),
             ),
-            child: Text(
-              'customer_detail'.tr(),
-              style: Theme.of(context).textTheme.bodyLarge,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'customer_detail'.tr(),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.close),
+                )
+              ],
             ),
           ),
           Expanded(
             child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               shrinkWrap: true,
               children: [
                 listTile('customer_code'.tr(), customer.code.trim()),
@@ -63,29 +75,38 @@ class CustomerDetail extends StatelessWidget {
                 listTile('phone'.tr(), customer.phoneNumber),
                 listTile('address'.tr(), customer.address),
                 listTile('Barcode', customer.barcode),
+                listTile(
+                    'active_date'.tr(),
+                    customer.expiredDate != null
+                        ? DateTimeFormater.dateToString(customer.expiredDate!,
+                            format: 'dd MMM y')
+                        : '-'),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                  onPressed: () => context.pop(),
-                  child: Text('close'.tr()),
+          isExpired
+              ? Container()
+              : Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: () => onSelect(customer),
+                        child: Text('select'.tr()),
+                      ),
+                    ],
+                  ),
                 ),
-                TextButton(
-                  onPressed: () => onSelect(customer),
-                  child: Text('select'.tr()),
-                )
-              ],
-            ),
-          )
         ],
-      )),
+      ),
     );
   }
 }

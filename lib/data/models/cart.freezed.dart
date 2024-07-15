@@ -20,7 +20,9 @@ Cart _$CartFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Cart {
-  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+  @JsonKey(
+      fromJson: DateTimeFormater.stringToTimestamp,
+      toJson: DateTimeFormater.unixServer)
   int get transactionDate => throw _privateConstructorUsedError;
   String get transactionNo => throw _privateConstructorUsedError;
   String get idOutlet => throw _privateConstructorUsedError;
@@ -70,7 +72,9 @@ abstract class $CartCopyWith<$Res> {
       _$CartCopyWithImpl<$Res, Cart>;
   @useResult
   $Res call(
-      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      {@JsonKey(
+          fromJson: DateTimeFormater.stringToTimestamp,
+          toJson: DateTimeFormater.unixServer)
       int transactionDate,
       String transactionNo,
       String idOutlet,
@@ -298,7 +302,9 @@ abstract class _$$CartImplCopyWith<$Res> implements $CartCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      {@JsonKey(
+          fromJson: DateTimeFormater.stringToTimestamp,
+          toJson: DateTimeFormater.unixServer)
       int transactionDate,
       String transactionNo,
       String idOutlet,
@@ -520,7 +526,9 @@ class __$$CartImplCopyWithImpl<$Res>
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _$CartImpl extends _Cart {
   const _$CartImpl(
-      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      {@JsonKey(
+          fromJson: DateTimeFormater.stringToTimestamp,
+          toJson: DateTimeFormater.unixServer)
       required this.transactionDate,
       required this.transactionNo,
       required this.idOutlet,
@@ -562,7 +570,9 @@ class _$CartImpl extends _Cart {
       _$$CartImplFromJson(json);
 
   @override
-  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+  @JsonKey(
+      fromJson: DateTimeFormater.stringToTimestamp,
+      toJson: DateTimeFormater.unixServer)
   final int transactionDate;
   @override
   final String transactionNo;
@@ -768,7 +778,9 @@ class _$CartImpl extends _Cart {
 
 abstract class _Cart extends Cart {
   const factory _Cart(
-      {@JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+      {@JsonKey(
+          fromJson: DateTimeFormater.stringToTimestamp,
+          toJson: DateTimeFormater.unixServer)
       required final int transactionDate,
       required final String transactionNo,
       required final String idOutlet,
@@ -810,7 +822,9 @@ abstract class _Cart extends Cart {
   factory _Cart.fromJson(Map<String, dynamic> json) = _$CartImpl.fromJson;
 
   @override
-  @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+  @JsonKey(
+      fromJson: DateTimeFormater.stringToTimestamp,
+      toJson: DateTimeFormater.unixServer)
   int get transactionDate;
   @override
   String get transactionNo;

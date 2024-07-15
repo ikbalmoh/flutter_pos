@@ -111,11 +111,12 @@ class ItemPackagesQtyInfo extends ConsumerWidget {
                   width: 5,
                 ),
                 StockBadge(
-                    stockItem:
-                        ref.read(itemsStreamProvider().notifier).getItemStock(
-                              itemPackage.idItem,
-                            ),
-                    stockControl: true)
+                  stockItem:
+                      ref.read(itemsStreamProvider().notifier).getItemStock(
+                            itemPackage.idItem,
+                          ),
+                  stockControl: true,
+                )
               ],
             ),
           );

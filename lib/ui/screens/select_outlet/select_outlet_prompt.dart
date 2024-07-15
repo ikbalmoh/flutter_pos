@@ -76,7 +76,9 @@ class SelectOutletPrompt extends ConsumerWidget {
                       height: 20,
                     ),
                     Text(
-                      'preparing_outlet'.tr(),
+                      outletState is OutletLoading
+                          ? outletState.message
+                          : 'preparing_outlet'.tr(),
                       style:
                           textTheme.bodyMedium?.copyWith(color: Colors.black45),
                     ),

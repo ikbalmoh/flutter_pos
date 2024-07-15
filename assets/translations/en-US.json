@@ -177,5 +177,10 @@
   "something_wrong": "Something Wrong",
   "open_transaction": "Open Transaction",
   "pic": "Person In Charge",
-  "select_x": "Select {}"
+  "select_x": "Select {}",
+  "loading_x": "Memuat {}",
+  "categories": "Categories",
+  "loading_categories_items": "Loading {} items",
+  "expired": "Expired",
+  "active_date": "Aktif Until"
 }

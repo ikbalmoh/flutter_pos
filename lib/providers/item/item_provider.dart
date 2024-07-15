@@ -17,20 +17,32 @@ class ItemsStream extends _$ItemsStream {
     return objectBox.itemsStream(idCategory: idCategory, search: search);
   }
 
-  Future<void> loadItems({bool refresh = false}) async {
+  Future<void> loadItems(
+      {bool refresh = false,
+      Function(String progress)? progressCallback}) async {
     log('LOAD ITEMS: $refresh');
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
-    List<Category> categories =
-        await itemRepository.fetchCategoris();
+    if (progressCallback != null) {
+      progressCallback('loading_x'.tr(args: ['categories'.tr()]));
+    }
+    List<Category> categories = await itemRepository.fetchCategoris();
 
     if (refresh || objectBox.itemBox.isEmpty()) {
       for (var i = 0; i < categories.length; i++) {
         Category category = categories[i];
+        if (progressCallback != null) {
+          progressCallback(
+              'loading_categories_items'.tr(args: [category.categoryName]));
+        }
+
+        final DateTime startLoad = DateTime.now();
         List<Item> items =
             await itemRepository.fetchItems(idCategory: category.idCategory);
-
+        final DateTime startSave = DateTime.now();
         objectBox.putItems(items);
+        final DateTime endSate = DateTime.now();
+        log('${items.length} ITEMS LOADED\n => Category: ${category.categoryName}\n => Load : ${startSave.difference(startLoad).inMilliseconds}ms\n => Save : ${endSate.difference(startSave).inMilliseconds}ms');
       }
     } else {
       return syncItems();

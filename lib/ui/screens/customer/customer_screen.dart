@@ -94,8 +94,11 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
-        builder: (BuildContext context) =>
-            CustomerDetail(customer: customer, onSelect: onSelectCustomer),
+        isScrollControlled: true,
+        builder: (BuildContext context) => CustomerDetail(
+          customer: customer,
+          onSelect: onSelectCustomer,
+        ),
       );
     }
 
@@ -167,6 +170,9 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                           Customer customer = data.data![idx];
                           bool selected =
                               selectedCustomer == customer.idCustomer;
+                          bool isExpired = customer.expiredDate != null
+                              ? customer.expiredDate!.isBefore(DateTime.now())
+                              : false;
                           return ListTile(
                             title: Text(customer.customerName.trim()),
                             subtitle: Text(customer.code.trim()),
@@ -182,7 +188,24 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                                     Icons.check_circle,
                                     color: Colors.teal,
                                   )
-                                : null,
+                                : isExpired
+                                    ? Chip(
+                                        padding: const EdgeInsets.all(3),
+                                        label: Text('expired'.tr()),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          side: const BorderSide(
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        backgroundColor: Colors.red.shade50,
+                                        labelStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(color: Colors.red),
+                                      )
+                                    : null,
                           );
                         },
                         itemCount: data.data!.length + 1,

@@ -220,11 +220,11 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                 price = _priceFormater.getUnformattedValue().toDouble();
               });
             },
-            readOnly: widget.item.isManualPrice,
+            readOnly: !widget.item.isManualPrice,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              enabled: !widget.item.isManualPrice,
+              enabled: widget.item.isManualPrice,
               contentPadding:
                   const EdgeInsets.only(left: 0, bottom: 15, right: 0),
               floatingLabelBehavior: FloatingLabelBehavior.never,

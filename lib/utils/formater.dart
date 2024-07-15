@@ -64,4 +64,11 @@ class DateTimeFormater {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(value);
     return dateToString(dateTime, format: format);
   }
+
+  static int unixServer(dynamic value) {
+    if (value is num) {
+      return (value / 1000).floor();
+    }
+    return (DateTime.now().millisecondsSinceEpoch / 1000).floor();
+  }
 }

@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
+import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -30,12 +32,20 @@ class OutletNotifier extends _$OutletNotifier {
 
   Future<void> selectOutlet(Outlet outlet,
       {Function(OutletConfig)? onSelected}) async {
-    state = AsyncData(OutletLoading());
+    state = AsyncData(OutletLoading(message: 'preparing_outlet'.tr()));
     try {
       _outletRepository.saveOutlet(outlet);
       await _outletRepository.fetchOutletInfo(outlet.idOutlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
       log('CONFIG LOADED: $config');
+
+      await ref.read(itemsStreamProvider().notifier).loadItems(
+            refresh: true,
+            progressCallback: (status) {
+              state = AsyncData(OutletLoading(message: status));
+            },
+          );
+
       state = AsyncData(OutletSelected(outlet: outlet, config: config));
       if (onSelected != null) {
         onSelected(config);

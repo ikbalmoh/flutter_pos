@@ -178,5 +178,10 @@
   "something_wrong": "Terjadi Kesalahan",
   "open_transaction": "Buka Transaksi",
   "pic": "Penanggung Jawab",
-  "select_x": "Pilih {}"
+  "select_x": "Pilih {}",
+  "loading_x": "Memuat {}",
+  "categories": "Kategori",
+  "loading_categories_items": "Memuat barang {}",
+  "expired": "Kadaluarsa",
+  "active_date": "Aktif Sampai"
 }

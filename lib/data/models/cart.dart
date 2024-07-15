@@ -15,7 +15,10 @@ class Cart with _$Cart {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Cart({
-    @JsonKey(fromJson: DateTimeFormater.stringToTimestamp)
+    @JsonKey(
+      fromJson: DateTimeFormater.stringToTimestamp,
+      toJson: DateTimeFormater.unixServer,
+    )
     required int transactionDate,
     required String transactionNo,
     required String idOutlet,
@@ -88,8 +91,7 @@ class Cart with _$Cart {
         "id_transaction": deletedAt != null ? idTransaction : null,
         "id_outlet": idOutlet,
         "shift_id": shiftId,
-        "created_by": createdBy,
-        "transaction_date": (transactionDate / 1000).floor(),
+        "transaction_date": DateTimeFormater.unixServer(transactionDate),
         "transaction_no": transactionNo,
         "id_customer": idCustomer ?? '',
         "subtotal": subtotal,
@@ -123,6 +125,7 @@ class Cart with _$Cart {
             ? DateTimeFormater.dateToString(deletedAt!)
             : null,
         "deleted_by": deletedBy,
-        "delete_reason": deleteReason
+        "delete_reason": deleteReason,
+        "created_by": createdBy
       };
 }
