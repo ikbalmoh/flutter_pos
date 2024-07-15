@@ -13,22 +13,28 @@ class OutletItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () => onSelect(outlet),
-      dense: true,
-      contentPadding:
-          const EdgeInsets.symmetric(vertical: 0, horizontal: 17),
-      title: Text(
-        outlet.outletName,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.teal.shade700,
-              fontWeight: FontWeight.w600,
-            ),
-      ),
-      subtitle: Text(outlet.outletAddress),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: Colors.grey.shade300,
+    return Material(
+      color: Colors.white,
+      child: InkWell(
+        splashColor: Colors.teal.shade100,
+        onTap: () => onSelect(outlet),
+        child: ListTile(
+          dense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 17),
+          title: Text(
+            outlet.outletName,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.teal.shade700,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          subtitle: Text(outlet.outletAddress),
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: Colors.grey.shade300,
+          ),
+        ),
       ),
     );
   }
