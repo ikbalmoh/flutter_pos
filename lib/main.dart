@@ -122,7 +122,9 @@ Future<void> main() async {
         supportedLocales: const [Locale('en', 'US'), Locale('id', 'ID')],
         path: 'assets/translations',
         fallbackLocale: const Locale('id', 'ID'),
-        child: const App(),
+        child: GestureDetector(
+          onTap: ()=> FocusManager.instance.primaryFocus!.unfocus(),
+          child: const App()),
       ),
     ),
   );
