@@ -53,7 +53,7 @@ _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
 
 Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
     <String, dynamic>{
-      'transaction_date': instance.transactionDate,
+      'transaction_date': DateTimeFormater.unixServer(instance.transactionDate),
       'transaction_no': instance.transactionNo,
       'id_outlet': instance.idOutlet,
       'outlet_name': instance.outletName,
