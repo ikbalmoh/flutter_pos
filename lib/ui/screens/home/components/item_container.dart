@@ -109,9 +109,11 @@ class ItemContainer extends ConsumerWidget {
           : ref.watch(appSettingsNotifierProvider).itemLayoutGrid
               ? GridView.count(
                   crossAxisCount:
-                      ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET)
-                          ? 4
-                          : 2,
+                      ResponsiveBreakpoints.of(context).largerThan(TABLET)
+                          ? 5
+                          : ResponsiveBreakpoints.of(context).equals(TABLET)
+                              ? 4
+                              : 2,
                   childAspectRatio: 0.9,
                   padding: const EdgeInsets.all(7.5),
                   crossAxisSpacing: 7.5,

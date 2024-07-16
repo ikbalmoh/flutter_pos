@@ -37,35 +37,23 @@ class StockBadge extends ConsumerWidget {
                       ?.copyWith(color: Colors.red),
                 ),
               )
-            : stockItem <= 10
-                ? Container(
-                    decoration: BoxDecoration(
-                        color: Colors.amber.shade100.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(3)),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5,
-                    ),
-                    child: Text(
-                      'low_stock'.tr(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.amber.shade700),
-                    ),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                        color: Colors.blue.shade100.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(3)),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5,
-                    ),
-                    child: Text(
-                      '${'stock'.tr()} ${CurrencyFormat.currency(stockItem, symbol: false)}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.blue.shade700,
-                          ),
-                    ),
-                  );
+            : Container(
+                decoration: BoxDecoration(
+                    color: stockItem <= 10
+                        ? Colors.amber.shade100.withOpacity(0.5)
+                        : Colors.blue.shade100.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(3)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 5,
+                ),
+                child: Text(
+                  '${'stock'.tr()} ${CurrencyFormat.currency(stockItem, symbol: false)}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: stockItem <= 10
+                            ? Colors.amber.shade700
+                            : Colors.blue.shade700,
+                      ),
+                ),
+              );
   }
 }

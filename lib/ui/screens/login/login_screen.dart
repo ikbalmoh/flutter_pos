@@ -158,7 +158,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               }
                               return null;
                             },
-                            onEditingComplete: () => _passwordNode.requestFocus(),
+                            onEditingComplete: () =>
+                                _passwordNode.requestFocus(),
                             textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.emailAddress,
                           ),
@@ -249,6 +250,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                   ),
+                ),
+                const SizedBox(
+                  height: 20,
                 ),
                 Text(
                   'v$buildNumber-$patch',
