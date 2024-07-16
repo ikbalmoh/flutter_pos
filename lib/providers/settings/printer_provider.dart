@@ -95,21 +95,31 @@ class PrinterNotifier extends _$PrinterNotifier {
   }
 
   Future<void> printTest() async {
-    final bytes = await generateTestTicket();
-    await print(bytes);
+    try {
+      log('Test Print');
+      final bytes = await generateTestTicket();
+      log('Print Bytes: $bytes');
+      await print(bytes);
+    } catch (e, stackTrace) {
+      log('Print Test Failed: $e => $stackTrace');
+    }
   }
 
   Future<void> print(List<int> bytes, {bool isCopy = false}) async {
-    final isConnected = await PrintBluetoothThermal.connectionStatus;
-    if (!isConnected) {
-      state = const AsyncData(null);
-      throw Exception('printer_not_connected'.tr());
+    try {
+      final isConnected = await PrintBluetoothThermal.connectionStatus;
+      if (!isConnected) {
+        state = const AsyncData(null);
+        throw Exception('printer_not_connected'.tr());
+      }
+      log('START PRINTING...');
+      await PrintBluetoothThermal.writeString(
+          printText: PrintTextSize(size: 2, text: ''));
+      await PrintBluetoothThermal.writeBytes(bytes);
+      log('PRINTING COMPLETE');
+    } catch (e, stackTrace) {
+      log('PRINT FAILED: $e => $stackTrace');
     }
-    log('START PRINTING...');
-    await PrintBluetoothThermal.writeString(
-        printText: PrintTextSize(size: 2, text: ''));
-    await PrintBluetoothThermal.writeBytes(bytes);
-    log('PRINTING COMPLETE');
   }
 
   Future<List<int>> generateTestTicket() async {
