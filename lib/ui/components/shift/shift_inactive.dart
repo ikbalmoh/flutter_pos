@@ -12,6 +12,7 @@ class ShiftInactive extends ConsumerWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     final authState = ref.watch(authNotifierProvider).value;
     return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
       color: Colors.white,
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(15),

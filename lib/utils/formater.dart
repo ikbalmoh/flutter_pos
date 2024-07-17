@@ -3,18 +3,22 @@ import 'package:intl/intl.dart';
 import 'package:validators/validators.dart';
 
 class CurrencyFormat {
-  static String currency(dynamic number,
-      {int decimalDigit = 0, bool symbol = true}) {
+  static String currency(
+    dynamic number, {
+    int decimalDigit = 0,
+    bool symbol = true,
+    bool minus = false,
+  }) {
     NumberFormat currencyFormatter = NumberFormat.currency(
       locale: 'id',
       symbol: symbol ? 'Rp' : '',
       decimalDigits: decimalDigit,
     );
     if (number is num) {
-      if (number < 0) {
-        return '$number';
+      if (number <= 0) {
+        number = 0;
       }
-      return currencyFormatter.format(number);
+      return '${minus == true && number > 0 ? '-' : ''}${currencyFormatter.format(number)}';
     }
     return number;
   }

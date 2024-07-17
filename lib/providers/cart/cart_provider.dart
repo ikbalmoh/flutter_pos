@@ -71,8 +71,13 @@ class CartNotifer extends _$CartNotifer {
 
       final shift = ref.read(shiftNotifierProvider).value;
 
+      if (shift == null) {
+        log('Shift is not started');
+        return;
+      }
+
       String? transactionNo =
-          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
+          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
@@ -84,7 +89,7 @@ class CartNotifer extends _$CartNotifer {
         outletName: outletState.outlet.outletName,
         createdBy: authState.user.user.idUser,
         createdName: authState.user.user.name,
-        shiftId: shift!.id,
+        shiftId: shift.id,
         transactionNo: transactionNo,
         ppn: tax?.percentage ?? 0,
         ppnIsInclude: tax?.isInclude ?? true,
@@ -111,7 +116,7 @@ class CartNotifer extends _$CartNotifer {
   }
 
   void addToCart(Item item, {ItemVariant? variant}) async {
-    if (state.idOutlet == '') {
+    if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
       await initCart();
     }
     String identifier = item.idItem;
@@ -312,12 +317,17 @@ class CartNotifer extends _$CartNotifer {
     try {
       final api = TransactionApi();
 
-      final res = await api.storeTransaction(state);
+      final shift = ref.read(shiftNotifierProvider).value;
+      if (shift == null) {
+        throw 'shift_not_opened'.tr();
+      }
+
+      final res = await api.storeTransaction(state.copyWith(shiftId: shift.id));
 
       log('TRANSACTIONS: $res');
 
       if (res.isEmpty) {
-        throw Exception('transaction_error'.tr());
+        throw 'transaction_error'.tr();
       }
     } catch (e) {
       rethrow;

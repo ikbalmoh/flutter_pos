@@ -61,18 +61,20 @@ class Cart with _$Cart {
     data['transaction_date'] =
         DateTimeFormater.stringToTimestamp(data['transaction_date']);
     for (var item in data['items']) {
-      item['identifier'] = item['id_item'];
-      item['details'] = item['details'] != null
-          ? List<Map<String, dynamic>>.from(item['details']).map((detail) {
-              return {
-                "item_id": detail["item_id"] ?? "",
-                "name": detail["name"] ?? detail["item_name"] ?? "",
-                "variant_id": detail["variant_id"],
-                "quantity": detail["quantity"] ?? detail["quantity_item"] ?? 0,
-                "item_price": detail["item_price"] ?? 0,
-              };
-            }).toList()
+      List<Map<String, dynamic>> details = item['details'] != null
+          ? List<Map<String, dynamic>>.from(item['details'])
           : [];
+      item['identifier'] = item['id_item'];
+      item['is_package'] = details.isNotEmpty;
+      item['details'] = details.map((detail) {
+        return {
+          "item_id": detail["item_id"] ?? "",
+          "name": detail["name"] ?? detail["item_name"] ?? "",
+          "variant_id": detail["variant_id"],
+          "quantity": detail["quantity"] ?? detail["quantity_item"] ?? 0,
+          "item_price": detail["item_price"] ?? 0,
+        };
+      }).toList();
     }
     return Cart.fromJson(data);
   }

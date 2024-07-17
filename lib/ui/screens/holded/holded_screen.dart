@@ -123,66 +123,74 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                 )
               ],
             ),
-      body: ref.watch(holdedNofierProvider).when(
-            data: (data) => data.data!.isNotEmpty
-                ? ListView.builder(
-                    controller: _scrollController,
-                    itemBuilder: (context, idx) {
-                      if (idx + 1 > data.data!.length) {
-                        if (data.currentPage >= data.lastPage) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 10),
-                            child: Center(
-                              child: Text(
-                                'x_data_displayed'.tr(
-                                  args: [data.total.toString()],
+      body: RefreshIndicator(
+        onRefresh: () =>
+            ref.read(holdedNofierProvider.notifier).loadTransaction(
+                  page: 1,
+                  search: query,
+                ),
+        child: ref.watch(holdedNofierProvider).when(
+              data: (data) => data.data!.isNotEmpty
+                  ? ListView.builder(
+                      controller: _scrollController,
+                      itemBuilder: (context, idx) {
+                        if (idx + 1 > data.data!.length) {
+                          if (data.currentPage >= data.lastPage) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 10),
+                              child: Center(
+                                child: Text(
+                                  'x_data_displayed'.tr(
+                                    args: [data.total.toString()],
+                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: Colors.grey.shade600,
+                                      ),
                                 ),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.grey.shade600,
-                                    ),
                               ),
-                            ),
-                          );
+                            );
+                          }
+                          return const ItemListSkeleton();
                         }
-                        return const ItemListSkeleton();
-                      }
 
-                      final hold = data.data![idx];
-                      return HoldedItem(hold: hold, onSelect: onOpenHoldedCart);
-                    },
-                    itemCount: data.data!.length + 1,
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'no_data'.tr(args: ['']),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.grey),
-                        )
-                      ],
+                        final hold = data.data![idx];
+                        return HoldedItem(
+                            hold: hold, onSelect: onOpenHoldedCart);
+                      },
+                      itemCount: data.data!.length + 1,
+                    )
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'no_data'.tr(args: ['']),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: Colors.grey),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-            error: (e, stack) => Center(
-              child: ErrorHandler(
-                stackTrace: e.toString(),
+              error: (e, stack) => Center(
+                child: ErrorHandler(
+                  stackTrace: e.toString(),
+                ),
               ),
+              loading: () => ListView.builder(
+                itemBuilder: (context, _) => const ItemListSkeleton(),
+                itemCount: 10,
+              ),
+              skipError: true,
             ),
-            loading: () => ListView.builder(
-              itemBuilder: (context, _) => const ItemListSkeleton(),
-              itemCount: 10,
-            ),
-            skipError: true,
-          ),
+      ),
     );
   }
 }

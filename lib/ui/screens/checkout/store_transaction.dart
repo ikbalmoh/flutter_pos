@@ -46,7 +46,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
           .read(cartNotiferProvider.notifier)
           .printReceipt(printCounter: printCounter);
       setState(() {
-        printCounter++;
+        printCounter += 1;
       });
     } catch (e) {
       log('PRINT TRANSACTION FAILED: $e');

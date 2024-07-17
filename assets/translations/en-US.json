@@ -183,5 +183,6 @@
   "loading_categories_items": "Loading {} items",
   "expired": "Expired",
   "active_date": "Aktif Until",
-  "stock": "Stok"
+  "stock": "Stok",
+  "shift_not_opened": "Shift is not opened"
 }

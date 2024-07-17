@@ -189,7 +189,11 @@ class OrderSummary extends StatelessWidget {
 }
 
 class TwoColumn extends StatelessWidget {
-  const TwoColumn({super.key, required this.label, required this.value});
+  const TwoColumn({
+    super.key,
+    required this.label,
+    required this.value,
+  });
 
   final String label;
   final double value;

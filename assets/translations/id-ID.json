@@ -184,5 +184,6 @@
   "loading_categories_items": "Memuat barang {}",
   "expired": "Kadaluarsa",
   "active_date": "Aktif Sampai",
-  "stock": "Stok"
+  "stock": "Stok",
+  "shift_not_opened": "Shift Belum Dibuka"
 }

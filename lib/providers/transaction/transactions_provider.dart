@@ -61,7 +61,7 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     }
   }
 
-  Future<void> printReceipt(Cart cart) async {
+  Future<void> printReceipt(Cart cart, {bool isHold = false}) async {
     try {
       final printer = ref.read(printerNotifierProvider).value;
       if (printer == null) {
@@ -71,8 +71,13 @@ class TransactionsNotifier extends _$TransactionsNotifier {
           (ref.read(outletNotifierProvider).value as OutletSelected)
               .config
               .attributeReceipts;
-      final receipt = await Printer.buildReceiptBytes(cart,
-          attributes: attributeReceipts, size: printer.size, isCopy: true);
+      final receipt = await Printer.buildReceiptBytes(
+        cart,
+        attributes: attributeReceipts,
+        size: printer.size,
+        isCopy: true,
+        isHold: isHold,
+      );
       ref.read(printerNotifierProvider.notifier).print(receipt);
     } catch (error) {
       rethrow;

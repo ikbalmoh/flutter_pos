@@ -34,10 +34,13 @@ class Printer {
     return divider;
   }
 
-  static Future<List<int>> buildReceiptBytes(Cart cart,
-      {AttributeReceipts? attributes,
-      PaperSize? size = PaperSize.mm58,
-      bool isCopy = false}) async {
+  static Future<List<int>> buildReceiptBytes(
+    Cart cart, {
+    AttributeReceipts? attributes,
+    PaperSize? size = PaperSize.mm58,
+    bool isCopy = false,
+    bool isHold = false,
+  }) async {
     try {
       log('BUILD RECEIPT: $cart\n$attributes');
       final profile = await CapabilityProfile.load();
@@ -88,7 +91,7 @@ class Printer {
       // items
       for (ItemCart item in cart.items) {
         bytes += generator.text(item.itemName);
-        if (item.isPackage && item.details.isNotEmpty) {
+        if (item.details.isNotEmpty) {
           for (var i = 0; i < item.details.length; i++) {
             final detail = item.details[i];
             bytes += generator.text(' - ${detail.quantity} x ${detail.name}');
@@ -205,7 +208,7 @@ class Printer {
             linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
       }
 
-      if (cart.holdAt != null) {
+      if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),
             linesAfter: 1,
             styles: const PosStyles(

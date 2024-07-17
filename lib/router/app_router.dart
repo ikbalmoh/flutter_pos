@@ -31,7 +31,7 @@ GoRouter router(RouterRef ref) {
   ref
     ..onDispose(appState.dispose)
     ..listen(appStartNotifierProvider, (_, next) {
-      log('NEXT APP STATE: $next');
+      log('NEXT ROUTE STATE: $next');
       appState.value = next;
     });
 

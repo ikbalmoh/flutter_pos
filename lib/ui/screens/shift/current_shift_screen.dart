@@ -57,35 +57,35 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () => ref.read(shiftInfoNotifierProvider.notifier).reload(),
-        child: shift != null
-            ? SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 85),
-                child: ref.watch(shiftInfoNotifierProvider).when(
-                      data: (data) {
-                        return Column(
-                          children: [
-                            ActiveShiftInfo(
-                              shiftInfo: data!,
-                              onCloseShift: () => onCloseShift(data),
-                            ),
-                            ShiftSummaryCards(shiftInfo: data),
-                            ShiftCashflows(
-                              cashflows: data.cashFlows.data,
-                              onEdit: (cashflow) =>
-                                  onShowCashflowForm(cashflow: cashflow),
-                            )
-                          ],
-                        );
-                      },
-                      error: (error, stackTrace) => ErrorHandler(
-                        error: error.toString(),
-                        stackTrace: stackTrace.toString(),
-                      ),
-                      loading: () => const ShiftSkeleon(),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 85),
+          child: shift != null
+              ? ref.watch(shiftInfoNotifierProvider).when(
+                    data: (data) {
+                      return Column(
+                        children: [
+                          ActiveShiftInfo(
+                            shiftInfo: data!,
+                            onCloseShift: () => onCloseShift(data),
+                          ),
+                          ShiftSummaryCards(shiftInfo: data),
+                          ShiftCashflows(
+                            cashflows: data.cashFlows.data,
+                            onEdit: (cashflow) =>
+                                onShowCashflowForm(cashflow: cashflow),
+                          )
+                        ],
+                      );
+                    },
+                    error: (error, stackTrace) => ErrorHandler(
+                      error: error.toString(),
+                      stackTrace: stackTrace.toString(),
                     ),
-              )
-            : const ShiftInactive(),
+                    loading: () => const ShiftSkeleon(),
+                  )
+              : const ShiftInactive(),
+        ),
       ),
       floatingActionButton: shift != null
           ? ref.watch(shiftInfoNotifierProvider).value != null

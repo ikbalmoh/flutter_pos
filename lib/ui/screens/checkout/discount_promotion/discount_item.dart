@@ -62,7 +62,10 @@ class DiscountItem extends ConsumerWidget {
               ),
               Expanded(
                 child: Text(
-                  '-${CurrencyFormat.currency(ref.watch(cartNotiferProvider).discOverallTotal)}',
+                  CurrencyFormat.currency(
+                    ref.watch(cartNotiferProvider).discOverallTotal,
+                    minus: true,
+                  ),
                   textAlign: TextAlign.right,
                   style: textTheme.bodyMedium
                       ?.copyWith(fontWeight: FontWeight.w500),

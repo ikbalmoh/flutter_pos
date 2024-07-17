@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,7 +30,8 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver {
   String idCategory = '';
   String search = '';
   Timer? _debounce;
@@ -60,13 +62,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void initState() {
-    WidgetsFlutterBinding.ensureInitialized();
     loadShift();
-    loadItems();
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
-  Future<void> loadItems() async {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      refreshItems();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  Future<void> refreshItems() async {
     if (inSync) return;
     setState(() {
       inSync = true;
@@ -148,7 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
       body: RefreshIndicator(
-          onRefresh: loadItems,
+          onRefresh: refreshItems,
           child: Stack(
             children: [
               Column(

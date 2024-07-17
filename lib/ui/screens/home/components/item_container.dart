@@ -33,7 +33,7 @@ class ItemContainer extends ConsumerWidget {
   void onAddToCart(BuildContext context, WidgetRef ref,
       {required Item item, ItemVariant? variant}) {
     double stock = variant?.stockItem ?? item.stockItem;
-    if (stock <= 0 && allowEmptyStock == false) {
+    if (stock <= 0 && item.stockControl) {
       AppAlert.snackbar(context, 'out_of_stock'.tr());
       return;
     }
@@ -81,6 +81,7 @@ class ItemContainer extends ConsumerWidget {
           ? SingleChildScrollView(
               padding: const EdgeInsets.only(top: 200),
               controller: scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -108,6 +109,7 @@ class ItemContainer extends ConsumerWidget {
             )
           : ref.watch(appSettingsNotifierProvider).itemLayoutGrid
               ? GridView.count(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   crossAxisCount:
                       ResponsiveBreakpoints.of(context).largerThan(TABLET)
                           ? 5
@@ -142,6 +144,7 @@ class ItemContainer extends ConsumerWidget {
                   ),
                 )
               : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   controller: scrollController,
                   shrinkWrap: true,
                   itemCount: value.length,

@@ -28,6 +28,16 @@ class PickedImage extends StatelessWidget {
       ),
       child: Stack(
         children: [
+          const Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.grey,
+              ),
+            ),
+          ),
           ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: sourceType == SourceType.path

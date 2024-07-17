@@ -46,9 +46,10 @@ class HoldedPreview extends ConsumerWidget {
 
     void onPrintReceipt() async {
       try {
-        await ref
-            .read(transactionsNotifierProvider.notifier)
-            .printReceipt(cartHolded.dataHold);
+        await ref.read(transactionsNotifierProvider.notifier).printReceipt(
+              cartHolded.dataHold,
+              isHold: true,
+            );
       } catch (e) {
         // ignore: use_build_context_synchronously
         AppAlert.snackbar(context, e.toString());

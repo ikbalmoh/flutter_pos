@@ -8,11 +8,25 @@ import 'package:selleri/ui/screens/settings/printer/connect_printer.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/app_alert.dart';
 
-class PrinterSetting extends ConsumerWidget {
+class PrinterSetting extends ConsumerStatefulWidget {
   const PrinterSetting({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PrinterSetting> createState() => _PrinterSettingState();
+}
+
+class _PrinterSettingState extends ConsumerState<PrinterSetting> {
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    Future(() {
+      ref.read(printerListNotifierProvider.notifier).startScanDevices();
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     void onSelectPrinter(BluetoothInfo device) {
       showModalBottomSheet(
           context: context,
