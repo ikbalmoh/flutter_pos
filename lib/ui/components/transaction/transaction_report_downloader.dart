@@ -38,7 +38,7 @@ class _TransactionReportDownloaderState
   }
 
   void onDownload() async {
-    if (from == null || to == null) {
+    if (from == null) {
       return;
     }
     try {
@@ -47,7 +47,8 @@ class _TransactionReportDownloaderState
         progress = 0;
       });
       final fromDate = DateTimeFormater.dateToString(from!, format: 'y-MM-dd');
-      final toDate = DateTimeFormater.dateToString(to!, format: 'y-MM-dd');
+      final toDate =
+          DateTimeFormater.dateToString(to ?? from!, format: 'y-MM-dd');
       String fileName = 'sales-report($fromDate-$toDate).xlsx';
       Map<String, dynamic> params = {
         "from": fromDate,
@@ -141,9 +142,7 @@ class _TransactionReportDownloaderState
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: from != null && to != null && !downloading
-                  ? onDownload
-                  : null,
+              onPressed: from != null && !downloading ? onDownload : null,
               label: Text(downloading ? '$progress %' : 'download'.tr()),
               icon: downloading
                   ? const SizedBox(

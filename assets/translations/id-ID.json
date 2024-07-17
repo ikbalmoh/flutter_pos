@@ -183,5 +183,6 @@
   "categories": "Kategori",
   "loading_categories_items": "Memuat barang {}",
   "expired": "Kadaluarsa",
-  "active_date": "Aktif Sampai"
+  "active_date": "Aktif Sampai",
+  "stock": "Stok"
 }

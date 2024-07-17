@@ -182,5 +182,6 @@
   "categories": "Categories",
   "loading_categories_items": "Loading {} items",
   "expired": "Expired",
-  "active_date": "Aktif Until"
+  "active_date": "Aktif Until",
+  "stock": "Stok"
 }
