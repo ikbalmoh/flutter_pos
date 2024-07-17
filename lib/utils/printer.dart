@@ -431,7 +431,7 @@ class Printer {
             linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
       }
 
-      if (cart.holdAt != null) {
+      if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),
             linesAfter: 1,
             styles: const PosStyles(

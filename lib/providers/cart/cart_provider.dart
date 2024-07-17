@@ -108,8 +108,13 @@ class Cart extends _$Cart {
 
       final shift = ref.read(shiftNotifierProvider).value;
 
+      if (shift == null) {
+        log('Shift is not started');
+        return;
+      }
+
       String? transactionNo =
-          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${DateTime.now().millisecondsSinceEpoch}';
+          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
@@ -121,7 +126,7 @@ class Cart extends _$Cart {
         outletName: outletState.outlet.outletName,
         createdBy: authState.user.user.idUser,
         createdName: authState.user.user.name,
-        shiftId: shift!.id,
+        shiftId: shift.id,
         transactionNo: transactionNo,
         ppn: tax?.percentage ?? 0,
         ppnIsInclude: tax?.isInclude ?? true,

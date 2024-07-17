@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -118,11 +119,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     loadShift();
-    loadItems();
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
-  Future<void> loadItems() async {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      refreshItems();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  Future<void> refreshItems() async {
     if (inSync) return;
     setState(() {
       inSync = true;
