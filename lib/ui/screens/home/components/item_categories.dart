@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/category.dart';
+import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/item/category_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/utils/formater.dart';
 
 class ItemCategories extends ConsumerWidget {
   final String active;
@@ -32,17 +34,50 @@ class ItemCategories extends ConsumerWidget {
                   : value[idx - 1];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: TextButton(
-                  onPressed: () => onChange(category.idCategory),
-                  style: TextButton.styleFrom(
-                    foregroundColor: active == category.idCategory
-                        ? Colors.white
-                        : Colors.teal.shade400,
-                    backgroundColor: active == category.idCategory
-                        ? Colors.teal.shade400
-                        : Colors.teal.shade50.withOpacity(0.5),
+                child: ActionChip(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(category.categoryName),
+                  backgroundColor: active == category.idCategory
+                      ? Colors.teal.shade400
+                      : Colors.teal.shade50.withOpacity(0.5),
+                  labelStyle: TextStyle(
+                    color: active == category.idCategory
+                        ? Colors.white
+                        : Colors.teal,
+                  ),
+                  onPressed: () => onChange(category.idCategory),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(category.categoryName),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          CurrencyFormat.currency(
+                            objectBox.getTotalItem(
+                                idCategory: category.idCategory),
+                            symbol: false,
+                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.w500),
+                        ),
+                      )
+                    ],
+                  ),
+                  side: const BorderSide(color: Colors.transparent),
                 ),
               );
             },

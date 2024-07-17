@@ -47,6 +47,7 @@ class ObjectBox {
           itemQuery.and(Item_.itemName.contains(search, caseSensitive: false));
     }
     QueryBuilder<Item> builder = itemBox.query(itemQuery)
+      ..order(Item_.stockItem, flags: Order.descending)
       ..order(Item_.itemName);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
@@ -80,6 +81,13 @@ class ObjectBox {
   void putItems(List<Item> items) {
     itemBox.putMany(items);
     log('${items.length} ITEMS HAS BEEN STORED');
+  }
+
+  int getTotalItem({required String idCategory}) {
+    if (idCategory != '') {
+      return itemBox.query(Item_.idCategory.equals(idCategory)).build().count();
+    }
+    return itemBox.count();
   }
 
   void putPromotions(List<Promotion> promotions) {
