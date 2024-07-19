@@ -153,6 +153,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  void onFilterItems() async {
+    FilterStock? result = await showModalBottomSheet(
+        showDragHandle: true,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return FilterItemsSheet(selected: filterStock);
+        });
+
+    if (result != null && result != filterStock) {
+      setState(() {
+        filterStock = result;
+      });
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletProvider);
