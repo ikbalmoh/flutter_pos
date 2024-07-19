@@ -68,6 +68,14 @@ class HomeMenu extends ConsumerWidget {
                       'select_customer'.tr()),
                 ),
                 MenuItemButton(
+                  onPressed: () => context.push(Routes.holded),
+                  leadingIcon: Icon(
+                    CupertinoIcons.folder,
+                    color: Colors.blueGrey.shade500,
+                  ),
+                  child: Text('holded_transactions'.tr()),
+                ),
+                MenuItemButton(
                   onPressed: () =>
                       ref.read(cartNotiferProvider.notifier).initCart(),
                   leadingIcon: Icon(

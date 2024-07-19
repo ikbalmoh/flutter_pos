@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
-import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
+import 'package:selleri/ui/screens/home/components/filter_items_sheet.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
 import 'package:selleri/ui/screens/home/components/shift_overlay.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
@@ -35,6 +35,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   String search = '';
   Timer? _debounce;
   bool inSync = false;
+
+  FilterStock filterStock = FilterStock.all;
 
   bool searchVisible = false;
   TextEditingController textEditingController = TextEditingController();
@@ -97,6 +99,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  void onFilterItems() async {
+    FilterStock? result = await showModalBottomSheet(
+        showDragHandle: true,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return FilterItemsSheet(selected: filterStock);
+        });
+
+    if (result != null && result != filterStock) {
+      setState(() {
+        filterStock = result;
+      });
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletNotifierProvider);
@@ -150,11 +171,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           icon: const Icon(CupertinoIcons.search),
                         ),
                         IconButton(
-                          tooltip: 'holded_transactions'.tr(),
-                          onPressed: () {
-                            context.push(Routes.holded);
-                          },
-                          icon: const Icon(CupertinoIcons.folder),
+                          tooltip: 'filter_items'.tr(),
+                          onPressed: onFilterItems,
+                          icon: Badge(
+                            smallSize: 8,
+                            backgroundColor: filterStock != FilterStock.all
+                                ? Colors.teal
+                                : Colors.transparent,
+                            child: const Icon(Icons.filter_list_rounded),
+                          ),
                         ),
                       ],
                 const HomeMenu()
@@ -199,6 +224,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       scrollController: scrollController,
                       idCategory: idCategory,
                       search: search,
+                      filterStock: filterStock,
                       allowEmptyStock: outlet.value is OutletSelected
                           ? (outlet.value as OutletSelected).config.stockMinus
                           : false,

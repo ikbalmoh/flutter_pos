@@ -20,12 +20,14 @@ class ItemContainer extends ConsumerWidget {
 
   final String idCategory;
   final String search;
+  final FilterStock filterStock;
   final bool? allowEmptyStock;
 
   const ItemContainer({
     this.scrollController,
     required this.idCategory,
     required this.search,
+    required this.filterStock,
     this.allowEmptyStock,
     super.key,
   });
@@ -73,8 +75,11 @@ class ItemContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items =
-        ref.watch(itemsStreamProvider(idCategory: idCategory, search: search));
+    final items = ref.watch(itemsStreamProvider(
+      idCategory: idCategory,
+      search: search,
+      filterStock: filterStock,
+    ));
 
     return switch (items) {
       AsyncData(:final value) => value.isEmpty

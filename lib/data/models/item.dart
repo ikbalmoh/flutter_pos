@@ -146,3 +146,5 @@ class ScanItemResult {
     this.variant,
   });
 }
+
+enum FilterStock { all, available, empty }

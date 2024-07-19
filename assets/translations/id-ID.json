@@ -185,5 +185,8 @@
   "expired": "Kadaluarsa",
   "active_date": "Aktif Sampai",
   "stock": "Stok",
-  "shift_not_opened": "Shift Belum Dibuka"
+  "shift_not_opened": "Shift Belum Dibuka",
+  "filter_items": "Filter Barang",
+  "on_stock": "Stok Tersedia",
+  "apply": "Terapkan"
 }

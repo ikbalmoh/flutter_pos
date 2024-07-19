@@ -13,13 +13,22 @@ part 'item_provider.g.dart';
 @Riverpod(keepAlive: true)
 class ItemsStream extends _$ItemsStream {
   @override
-  Stream<List<Item>> build({String idCategory = '', String search = ''}) {
-    return objectBox.itemsStream(idCategory: idCategory, search: search);
+  Stream<List<Item>> build({
+    String idCategory = '',
+    String search = '',
+    FilterStock filterStock = FilterStock.all,
+  }) {
+    return objectBox.itemsStream(
+      idCategory: idCategory,
+      search: search,
+      filterStock: filterStock,
+    );
   }
 
-  Future<void> loadItems(
-      {bool refresh = false,
-      Function(String progress)? progressCallback}) async {
+  Future<void> loadItems({
+    bool refresh = false,
+    Function(String progress)? progressCallback,
+  }) async {
     log('LOAD ITEMS: $refresh');
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 

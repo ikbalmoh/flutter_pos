@@ -37,7 +37,11 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
-  Stream<List<Item>> itemsStream({String idCategory = '', String search = ''}) {
+  Stream<List<Item>> itemsStream({
+    String idCategory = '',
+    String search = '',
+    FilterStock filterStock = FilterStock.all,
+  }) {
     Condition<Item> itemQuery = Item_.isActive.equals(true);
     if (idCategory != '') {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
@@ -45,6 +49,11 @@ class ObjectBox {
     if (search != '') {
       itemQuery =
           itemQuery.and(Item_.itemName.contains(search, caseSensitive: false));
+    }
+    if (filterStock == FilterStock.available) {
+      itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
+    } else if (filterStock == FilterStock.empty) {
+      itemQuery = itemQuery.and(Item_.stockItem.lessOrEqual(0));
     }
     QueryBuilder<Item> builder = itemBox.query(itemQuery)
       ..order(Item_.stockItem, flags: Order.descending)
