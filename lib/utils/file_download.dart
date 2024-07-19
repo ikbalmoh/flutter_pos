@@ -16,6 +16,8 @@ class FileDownload {
     try {
       String savePath = await _getFilePath(fileName);
 
+      log('Download: url => $urlPath\n fileName => $savePath');
+
       await fetch().download(urlPath, savePath, queryParameters: params,
           onReceiveProgress: (receive, total) {
         log('downloading: $receive/$total');

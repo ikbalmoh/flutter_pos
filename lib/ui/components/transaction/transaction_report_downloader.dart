@@ -54,7 +54,7 @@ class _TransactionReportDownloaderState
         "from": fromDate,
         "to": toDate,
         "type": "export",
-        "id_outlet": ref.read(outletNotifierProvider).value is OutletSelected
+        "id_outlet[]": ref.read(outletNotifierProvider).value is OutletSelected
             ? (ref.read(outletNotifierProvider).value as OutletSelected)
                 .outlet
                 .idOutlet
@@ -77,9 +77,10 @@ class _TransactionReportDownloaderState
       AppAlert.toast('stored_at'.tr(args: [path]));
       // ignore: use_build_context_synchronously
       context.pop();
-    } catch (e) {
+    } on Exception catch (e) {
       setState(() {
         downloading = false;
+        progress = 0;
       });
       AppAlert.toast(e.toString(), backgroundColor: Colors.red);
     }
