@@ -139,12 +139,12 @@ class OutletRepository implements OutletRepositoryProtocol {
     try {
       var configJson = await api.configs(idOutlet, only: only);
 
+      log('NEW CONFIG: $configJson');
+
       if (current != null) {
         log('CURRENT CONFIG: $current');
-        configJson = configJson..addAll(current.toJson());
+        configJson = current.toJson()..addAll(configJson);
       }
-
-      log('NEW CONFIG: $configJson');
 
       final OutletConfig config = OutletConfig.fromJson(configJson);
 

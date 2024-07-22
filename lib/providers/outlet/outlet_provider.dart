@@ -85,7 +85,7 @@ class Outlet extends _$Outlet {
     }
   }
 
-  Future<void> refreshConfig(List<String> only) async {
+  Future<void> refreshConfig({List<String>? only = const []}) async {
     try {
       log('SYNC CONFIG: $only');
       if (state.value is OutletSelected) {
@@ -100,7 +100,6 @@ class Outlet extends _$Outlet {
           only: only,
           current: outletState.config,
         );
-        log('NEW CONFIG: $config');
         state = AsyncData(OutletSelected(
           outlet: outletState.outlet,
           config: config,
