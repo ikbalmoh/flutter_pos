@@ -37,7 +37,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   String idCategory = '';
   String search = '';
   Timer? _debounce;
-  bool inSync = false;
 
   FilterStock filterStock = FilterStock.all;
 
