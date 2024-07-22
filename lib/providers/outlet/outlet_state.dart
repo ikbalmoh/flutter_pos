@@ -29,8 +29,10 @@ class OutletLoading extends OutletState {
 class OutletSelected extends OutletState {
   final Outlet outlet;
   final OutletConfig config;
+  final bool? isSyncing;
 
-  const OutletSelected({required this.outlet, required this.config});
+  const OutletSelected(
+      {required this.outlet, required this.config, this.isSyncing});
 
   @override
   List<Object> get props => [outlet, config];

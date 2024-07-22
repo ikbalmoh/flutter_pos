@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 import 'dart:io';
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/data/models/shift_cashflow_image.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/ui/components/generic/button_selection.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
@@ -38,18 +41,29 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   List<XFile> images = [];
   List<ShiftCashflowImage> prevImages = [];
   List<int> removeImages = [];
+  Akun? account;
 
   bool isLoading = false;
 
   @override
   void initState() {
     if (widget.cashflow != null) {
+      final config =
+          (ref.read(outletNotifierProvider).value as OutletSelected).config;
+      List<Akun> accounts = List<Akun>.from(config.akunBiaya ?? []);
+      accounts.addAll(config.akunPendapatan ?? []);
+      accounts.addAll(config.akunSetoran ?? []);
+      Akun? findAccount = widget.cashflow?.idAkun != null
+          ? accounts
+              .firstWhereOrNull((ac) => ac.idAkun == widget.cashflow!.idAkun)
+          : null;
       setState(() {
         status = widget.cashflow!.status;
         amount = widget.cashflow!.amount;
         transDate = widget.cashflow!.transDate;
         descriptions = widget.cashflow!.descriptions ?? '';
         prevImages = widget.cashflow!.images;
+        account = findAccount;
       });
     }
     super.initState();
@@ -58,6 +72,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   void onChangeCashflowType(int type) {
     setState(() {
       status = type;
+      account = null;
     });
   }
 
@@ -141,6 +156,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
         "descriptions": descriptions,
         "images": images,
         "remove_images": removeImages,
+        "id_akun": account?.idAkun,
       };
       if (isDelete == true) {
         mapData['deleted_at'] = DateTime.now().millisecondsSinceEpoch / 1000;
@@ -175,6 +191,15 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
         .textTheme
         .bodyMedium
         ?.copyWith(color: Colors.blueGrey.shade600);
+
+    final outletConfig =
+        (ref.read(outletNotifierProvider).value as OutletSelected).config;
+
+    List<Akun> accountList = switch (status) {
+      1 => outletConfig.akunBiaya ?? [],
+      2 => outletConfig.akunPendapatan ?? [],
+      int() => outletConfig.akunSetoran ?? [],
+    };
 
     return PopScope(
       canPop: !isLoading,
@@ -280,6 +305,44 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                           label: Text(DateTimeFormater.dateToString(transDate,
                               format: 'd MMM y')),
                         ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                      bottom: BorderSide(
+                        width: 1,
+                        color: Colors.blueGrey.shade100,
+                      ),
+                    )),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'account'.tr(),
+                          style: labelStyle,
+                        ),
+                        DropdownButton<Akun>(
+                          dropdownColor: Colors.white,
+                          value: account,
+                          hint: Text('select_x'.tr(args: ['account'.tr()])),
+                          onChanged: (value) {
+                            setState(() {
+                              account = value;
+                            });
+                          },
+                          items: accountList
+                              .map<DropdownMenuItem<Akun>>((Akun akun) {
+                            return DropdownMenuItem<Akun>(
+                              value: akun,
+                              child: Text(akun.namaAkun),
+                            );
+                          }).toList(),
+                          underline: const SizedBox(),
+                        )
                       ],
                     ),
                   ),
@@ -430,6 +493,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                             onPressed: isLoading ||
                                     amount == 0 ||
                                     descriptions == '' ||
+                                    account == null ||
                                     (images.isEmpty && prevImages.isEmpty)
                                 ? null
                                 : submitCashflow,

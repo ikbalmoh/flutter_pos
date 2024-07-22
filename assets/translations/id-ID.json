@@ -188,5 +188,7 @@
   "shift_not_opened": "Shift Belum Dibuka",
   "filter_items": "Filter Barang",
   "on_stock": "Stok Tersedia",
-  "apply": "Terapkan"
+  "apply": "Terapkan",
+  "cash_balance": "Saldo Kas",
+  "account": "Akun"
 }

@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/repository/shift_repository.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,6 +29,9 @@ class ShiftInfoNotifier extends _$ShiftInfoNotifier {
         final info =
             await ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
         state = AsyncData(info);
+        ref
+            .read(outletNotifierProvider.notifier)
+            .refreshConfig(['saldo_akun_kas']);
       } else {
         state = AsyncData(state.value);
       }

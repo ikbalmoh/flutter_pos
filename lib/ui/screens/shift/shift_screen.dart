@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
+import 'package:selleri/ui/components/shift/cash_balance.dart';
 import 'package:selleri/ui/screens/shift/current_shift_screen.dart';
 import 'package:selleri/ui/screens/shift/shift_history_screen.dart';
 
@@ -29,6 +30,10 @@ class _ShiftScreenState extends ConsumerState<ShiftScreen> {
                 },
                 icon: const Icon(Icons.menu));
           }),
+          actions: const [
+            CashBalance(),
+            SizedBox(width: 15,),
+          ],
           bottom: TabBar(tabs: [
             Tab(
               child: Row(

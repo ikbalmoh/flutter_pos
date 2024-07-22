@@ -187,5 +187,7 @@
   "shift_not_opened": "Shift is not opened",
   "filter_items": "Filter Items",
   "on_stock": "On Stock",
-  "apply": "Apply"
+  "apply": "Apply",
+  "cash_balance": "Cash Balance",
+  "account": "Account"
 }

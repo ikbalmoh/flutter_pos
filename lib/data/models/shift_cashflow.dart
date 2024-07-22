@@ -15,6 +15,7 @@ class ShiftCashflow with _$ShiftCashflow {
     required String outletId,
     required int status,
     required double amount,
+    required int idAkun,
     required List<ShiftCashflowImage> images,
     String? descriptions,
   }) = _ShiftCashflow;
