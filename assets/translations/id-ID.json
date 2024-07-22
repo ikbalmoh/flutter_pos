@@ -190,5 +190,6 @@
   "on_stock": "Stok Tersedia",
   "apply": "Terapkan",
   "cash_balance": "Saldo Kas",
-  "account": "Akun"
+  "account": "Akun",
+  "transaction": "Transaksi"
 }

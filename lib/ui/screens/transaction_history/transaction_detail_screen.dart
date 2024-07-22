@@ -14,8 +14,9 @@ import 'package:selleri/utils/formater.dart';
 
 class TransactionDetailScreen extends ConsumerStatefulWidget {
   final Cart cart;
+  final bool? asWidget;
 
-  const TransactionDetailScreen({required this.cart, super.key});
+  const TransactionDetailScreen({required this.cart, this.asWidget, super.key});
 
   @override
   ConsumerState<TransactionDetailScreen> createState() =>
@@ -69,6 +70,7 @@ class _TransactionDetailScreenState
           fontWeight: FontWeight.w600,
           fontSize: 18,
         ),
+        automaticallyImplyLeading: widget.asWidget != true,
         title: Text(widget.cart.transactionNo),
         actions: [
           transaction?.deletedAt == null &&

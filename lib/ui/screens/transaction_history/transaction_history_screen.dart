@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
@@ -32,6 +33,8 @@ class _TransactionHistoryScreenState
   bool currentShift = false;
   bool searchVisible = false;
   Timer? _debounce;
+
+  Cart? viewTransaction;
 
   @override
   void initState() {
@@ -92,6 +95,7 @@ class _TransactionHistoryScreenState
   Widget shiftFilter() {
     return ref.watch(shiftNotifierProvider).value != null
         ? Container(
+            height: 57,
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(
@@ -125,6 +129,7 @@ class _TransactionHistoryScreenState
                       onChanged: (value) {
                         setState(() {
                           currentShift = value;
+                          viewTransaction = null;
                         });
                         onSearchItems(_searchController.text);
                       },
@@ -139,6 +144,8 @@ class _TransactionHistoryScreenState
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: searchVisible
@@ -178,125 +185,173 @@ class _TransactionHistoryScreenState
               ],
             ),
       drawer: const AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () =>
-            ref.read(transactionsNotifierProvider.notifier).loadTransactions(
-                  page: 1,
-                  search: _searchController.text,
-                  currentShift: currentShift,
-                ),
-        child: Column(
-          children: [
-            shiftFilter(),
-            Expanded(
-              child: ref.watch(transactionsNotifierProvider).when(
-                    data: (data) => data.data!.isNotEmpty
-                        ? ListView.builder(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            controller: _scrollController,
-                            itemBuilder: (context, idx) {
-                              if (idx + 1 > data.data!.length) {
-                                if (data.currentPage >= data.lastPage) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 10),
-                                    child: Center(
-                                      child: Text(
-                                        'x_data_displayed'.tr(
-                                          args: [data.total.toString()],
+      body: Row(
+        children: [
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () => ref
+                  .read(transactionsNotifierProvider.notifier)
+                  .loadTransactions(
+                    page: 1,
+                    search: _searchController.text,
+                    currentShift: currentShift,
+                  ),
+              child: Column(
+                children: [
+                  shiftFilter(),
+                  Expanded(
+                    child: ref.watch(transactionsNotifierProvider).when(
+                          data: (data) => data.data!.isNotEmpty
+                              ? ListView.builder(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  controller: _scrollController,
+                                  itemBuilder: (context, idx) {
+                                    if (idx + 1 > data.data!.length) {
+                                      if (data.currentPage >= data.lastPage) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 10),
+                                          child: Center(
+                                            child: Text(
+                                              'x_data_displayed'.tr(
+                                                args: [data.total.toString()],
+                                              ),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.copyWith(
+                                                    color: Colors.grey.shade600,
+                                                  ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return const ItemListSkeleton();
+                                    }
+                                    Cart cart = data.data![idx];
+                                    return ListTile(
+                                      tileColor:
+                                          viewTransaction?.idTransaction ==
+                                                  cart.idTransaction
+                                              ? Colors.grey.shade100
+                                              : Colors.white,
+                                      title: Text(cart.transactionNo),
+                                      trailing: Text(
+                                        CurrencyFormat.currency(
+                                          cart.grandTotal,
+                                          symbol: true,
                                         ),
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodySmall
-                                            ?.copyWith(
-                                              color: Colors.grey.shade600,
+                                            .bodyLarge,
+                                      ),
+                                      leading: cart.deletedAt != null
+                                          ? const Icon(
+                                              CupertinoIcons.xmark_circle_fill,
+                                              color: Colors.red,
+                                            )
+                                          : const Icon(
+                                              CupertinoIcons
+                                                  .checkmark_alt_circle_fill,
+                                              color: Colors.green,
                                             ),
+                                      shape: Border(
+                                        bottom: BorderSide(
+                                          width: 0.5,
+                                          color: Colors.blueGrey.shade50,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }
-                                return const ItemListSkeleton();
-                              }
-                              Cart cart = data.data![idx];
-                              return ListTile(
-                                tileColor: Colors.white,
-                                title: Text(cart.transactionNo),
-                                trailing: Text(
-                                  CurrencyFormat.currency(
-                                    cart.grandTotal,
-                                    symbol: true,
-                                  ),
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                leading: cart.deletedAt != null
-                                    ? const Icon(
-                                        CupertinoIcons.xmark_circle_fill,
-                                        color: Colors.red,
-                                      )
-                                    : const Icon(
-                                        CupertinoIcons
-                                            .checkmark_alt_circle_fill,
-                                        color: Colors.green,
+                                      titleTextStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                      subtitleTextStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                              color: Colors.grey.shade600),
+                                      subtitle: Text(
+                                        DateTimeFormater.msToString(
+                                            cart.transactionDate,
+                                            format: 'd MMM y HH:mm'),
                                       ),
-                                shape: Border(
-                                  bottom: BorderSide(
-                                    width: 0.5,
-                                    color: Colors.blueGrey.shade50,
-                                  ),
-                                ),
-                                titleTextStyle:
-                                    Theme.of(context).textTheme.bodyMedium,
-                                subtitleTextStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(color: Colors.grey.shade600),
-                                subtitle: Text(
-                                  DateTimeFormater.msToString(
-                                      cart.transactionDate,
-                                      format: 'd MMM y HH:mm'),
-                                ),
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        TransactionDetailScreen(cart: cart),
-                                  ),
-                                ),
-                              );
-                            },
-                            itemCount: data.data!.length + 1,
-                          )
-                        : Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'no_data'
-                                      .tr(args: ['transaction_history'.tr()]),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(color: Colors.grey),
+                                      onTap: () {
+                                        setState(() {
+                                          viewTransaction = cart;
+                                        });
+                                        if (!isTablet) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TransactionDetailScreen(
+                                                      cart: cart),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
+                                  itemCount: data.data!.length + 1,
                                 )
-                              ],
-                            ),
+                              : Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'no_data'.tr(
+                                            args: ['transaction_history'.tr()]),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(color: Colors.grey),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                          error: (e, stack) => ErrorHandler(
+                            error: e.toString(),
+                            stackTrace: stack.toString(),
                           ),
-                    error: (e, stack) => ErrorHandler(
-                      error: e.toString(),
-                      stackTrace: stack.toString(),
-                    ),
-                    loading: () => ListView.builder(
-                      itemCount: 10,
-                      itemBuilder: (context, index) => const ItemListSkeleton(),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                    ),
+                          loading: () => ListView.builder(
+                            itemCount: 10,
+                            itemBuilder: (context, index) =>
+                                const ItemListSkeleton(),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                        ),
                   ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+          isTablet
+              ? Container(
+                  width: MediaQuery.of(context).size.width - 400,
+                  color: Colors.blueGrey.shade50,
+                  child: viewTransaction != null
+                      ? TransactionDetailScreen(
+                          asWidget: true, cart: viewTransaction!)
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'select_x'.tr(args: ['transaction'.tr()]),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(color: Colors.blueGrey.shade300),
+                              textAlign: TextAlign.center,
+                            )
+                          ],
+                        ),
+                )
+              : Container()
+        ],
       ),
     );
   }

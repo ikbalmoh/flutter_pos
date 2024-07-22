@@ -189,5 +189,6 @@
   "on_stock": "On Stock",
   "apply": "Apply",
   "cash_balance": "Cash Balance",
-  "account": "Account"
+  "account": "Account",
+  "transaction": "Transaction"
 }
