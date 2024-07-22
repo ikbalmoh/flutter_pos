@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide SearchBar;
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
@@ -11,6 +12,7 @@ import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/update_patcher.dart';
+import 'package:selleri/ui/screens/cart/cart_screen.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/filter_items_sheet.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
@@ -123,6 +125,57 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final outlet = ref.watch(outletNotifierProvider);
     final cart = ref.watch(cartNotiferProvider);
 
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
+    var itemContainer = Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        ref.watch(cartNotiferProvider).holdAt == null
+            ? Container()
+            : Container(
+                width: MediaQuery.of(context).size.width,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade800,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(0)),
+                ),
+                child: Text(
+                  ref.watch(cartNotiferProvider).transactionNo,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          height: searchVisible ? 0 : 56,
+          child: ItemCategories(
+            active: idCategory,
+            onChange: onChangeCategory,
+          ),
+        ),
+        Expanded(
+          child: ItemContainer(
+            scrollController: scrollController,
+            idCategory: idCategory,
+            search: search,
+            filterStock: filterStock,
+            allowEmptyStock: outlet.value is OutletSelected
+                ? (outlet.value as OutletSelected).config.stockMinus
+                : false,
+          ),
+        ),
+        cart.items.isNotEmpty && !isTablet
+            ? BottomActions(
+                cart: cart,
+              )
+            : Container(),
+      ],
+    );
+
     return Scaffold(
       appBar: searchVisible
           ? SearchAppBar(
@@ -185,74 +238,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const HomeMenu()
               ],
             ),
-      body: RefreshIndicator(
-          onRefresh: refreshItems,
-          child: Stack(
+      body: Stack(
+        children: [
+          Row(
             children: [
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  ref.watch(cartNotiferProvider).holdAt == null
-                      ? Container()
-                      : Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.shade800,
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(0)),
-                          ),
-                          child: Text(
-                            ref.watch(cartNotiferProvider).transactionNo,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                    height: searchVisible ? 0 : 56,
-                    child: ItemCategories(
-                      active: idCategory,
-                      onChange: onChangeCategory,
-                    ),
-                  ),
-                  Expanded(
-                    child: ItemContainer(
-                      scrollController: scrollController,
-                      idCategory: idCategory,
-                      search: search,
-                      filterStock: filterStock,
-                      allowEmptyStock: outlet.value is OutletSelected
-                          ? (outlet.value as OutletSelected).config.stockMinus
-                          : false,
-                    ),
-                  ),
-                  cart.items.isNotEmpty
-                      ? BottomActions(
-                          cart: cart,
-                        )
-                      : Container(),
-                ],
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: refreshItems,
+                  child: itemContainer,
+                ),
               ),
-              const ShiftOverlay(),
-              const UpdatePatcher(),
-              ref.watch(authNotifierProvider).when(
-                    data: (_) => Container(),
-                    error: (_, stackTrace) => Container(),
-                    loading: () => Positioned.fill(
-                      child: Container(
-                        color: Colors.black.withOpacity(0.3),
-                        child: const Center(
-                          child: LoadingIndicator(color: Colors.teal),
-                        ),
-                      ),
-                    ),
-                  )
+              isTablet
+                  ? Container(
+                      width: 350,
+                      color: Colors.white,
+                      padding: const EdgeInsets.all(10),
+                      child: Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: const CartScreen(asWidget: true),
+                          )),
+                    )
+                  : Container()
             ],
-          )),
+          ),
+          const ShiftOverlay(),
+          const UpdatePatcher(),
+          ref.watch(authNotifierProvider).when(
+                data: (_) => Container(),
+                error: (_, stackTrace) => Container(),
+                loading: () => Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.3),
+                    child: const Center(
+                      child: LoadingIndicator(color: Colors.teal),
+                    ),
+                  ),
+                ),
+              )
+        ],
+      ),
       drawer: const AppDrawer(),
     );
   }

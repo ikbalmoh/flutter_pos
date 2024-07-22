@@ -15,7 +15,9 @@ import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CartScreen extends ConsumerWidget {
-  const CartScreen({super.key});
+  const CartScreen({super.key, this.asWidget});
+
+  final bool? asWidget;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,7 +67,15 @@ class CartScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
-        title: Text('cart'.tr()),
+        automaticallyImplyLeading: asWidget != true,
+        title: Text(
+          'cart'.tr(),
+          style:
+              TextStyle(color: asWidget == true ? Colors.black87 : Colors.teal),
+        ),
+        leading:
+            asWidget == true ? const Icon(CupertinoIcons.shopping_cart) : null,
+        foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
       ),
       body: cart.items.isNotEmpty
           ? Column(
@@ -91,7 +101,14 @@ class CartScreen extends ConsumerWidget {
               ],
             )
           : Center(
-              child: Text('cart_empty'.tr()),
+              child: Text(
+                'cart_empty'.tr(),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Colors.blueGrey.shade500),
+                textAlign: TextAlign.center,
+              ),
             ),
     );
   }

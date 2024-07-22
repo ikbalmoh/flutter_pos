@@ -117,10 +117,8 @@ class ItemContainer extends ConsumerWidget {
                   physics: const AlwaysScrollableScrollPhysics(),
                   crossAxisCount:
                       ResponsiveBreakpoints.of(context).largerThan(TABLET)
-                          ? 5
-                          : ResponsiveBreakpoints.of(context).equals(TABLET)
-                              ? 4
-                              : 2,
+                          ? 4
+                          : 2,
                   childAspectRatio: 0.9,
                   padding: const EdgeInsets.all(7.5),
                   crossAxisSpacing: 7.5,
