@@ -31,7 +31,7 @@ class ShiftInfoNotifier extends _$ShiftInfoNotifier {
         state = AsyncData(info);
         ref
             .read(outletNotifierProvider.notifier)
-            .refreshConfig(['saldo_akun_kas']);
+            .refreshConfig(only: ['saldo_akun_kas']);
       } else {
         state = AsyncData(state.value);
       }

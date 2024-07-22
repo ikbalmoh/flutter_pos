@@ -30,7 +30,7 @@ class _CashBalanceState extends ConsumerState<CashBalance> {
                 ? null
                 : () => ref
                     .read(outletNotifierProvider.notifier)
-                    .refreshConfig(['saldo_akun_kas']),
+                    .refreshConfig(only: ['saldo_akun_kas']),
             label: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

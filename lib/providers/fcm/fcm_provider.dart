@@ -49,7 +49,7 @@ class FcmNotifier extends _$FcmNotifier {
       if (sources.contains('config')) {
         final only = configOnly ?? [];
         log('CONFIG ONLY: $configOnly');
-        await ref.read(outletNotifierProvider.notifier).refreshConfig(only);
+        await ref.read(outletNotifierProvider.notifier).refreshConfig(only: only);
       }
     });
   }
