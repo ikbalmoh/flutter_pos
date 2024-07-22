@@ -11,9 +11,10 @@ import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class HoldedPreview extends ConsumerWidget {
-  const HoldedPreview({required this.cartHolded, super.key});
+  const HoldedPreview({required this.cartHolded, this.asWidget, super.key});
 
   final CartHolded cartHolded;
+  final bool? asWidget;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,12 +59,16 @@ class HoldedPreview extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        title: Text(cartHolded.transactionNo),
-        iconTheme: const IconThemeData(color: Colors.black87),
-        titleTextStyle: const TextStyle(
-            color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 18),
-      ),
+      appBar: asWidget != true
+          ? AppBar(
+              title: Text(cartHolded.transactionNo),
+              iconTheme: const IconThemeData(color: Colors.black87),
+              titleTextStyle: const TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18),
+            )
+          : null,
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -78,16 +83,18 @@ class HoldedPreview extends ConsumerWidget {
             ),
           ),
           Card(
-            elevation: 0,
+            elevation: 5,
             color: Colors.white,
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-            margin: const EdgeInsets.all(0),
+            margin: asWidget == true
+                ? const EdgeInsets.symmetric(horizontal: 15)
+                : const EdgeInsets.all(0),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 10,
-                vertical: 15,
-              ).copyWith(bottom: 15),
+                vertical: 20,
+              ),
               child: Row(
                 children: [
                   IconButton(

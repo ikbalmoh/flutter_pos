@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/cart/holded_provider.dart';
@@ -31,6 +32,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
   bool searchVisible = false;
   String query = '';
   Timer? _debounce;
+  CartHolded? viewTransaction;
 
   @override
   void initState() {
@@ -81,15 +83,36 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
   }
 
   void onOpenHoldedCart(CartHolded cartHolded) {
-    showCupertinoModalPopup(
-        context: context,
-        builder: (context) {
-          return HoldedPreview(cartHolded: cartHolded);
-        });
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+    setState(() {
+      viewTransaction = cartHolded;
+    });
+    if (!isTablet) {
+      showCupertinoModalPopup(
+          context: context,
+          builder: (context) {
+            return HoldedPreview(cartHolded: cartHolded);
+          });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
+    var emptyPlaceholder = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'select_x'.tr(args: ['transaction'.tr()]),
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall
+              ?.copyWith(color: Colors.blueGrey.shade300),
+          textAlign: TextAlign.center,
+        )
+      ],
+    );
     return Scaffold(
       appBar: searchVisible
           ? SearchAppBar(
@@ -123,73 +146,89 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                 )
               ],
             ),
-      body: RefreshIndicator(
-        onRefresh: () =>
-            ref.read(holdedNofierProvider.notifier).loadTransaction(
-                  page: 1,
-                  search: query,
-                ),
-        child: ref.watch(holdedNofierProvider).when(
-              data: (data) => data.data!.isNotEmpty
-                  ? ListView.builder(
-                      controller: _scrollController,
-                      itemBuilder: (context, idx) {
-                        if (idx + 1 > data.data!.length) {
-                          if (data.currentPage >= data.lastPage) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              child: Center(
-                                child: Text(
-                                  'x_data_displayed'.tr(
-                                    args: [data.total.toString()],
-                                  ),
+      body: Row(
+        children: [
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () =>
+                  ref.read(holdedNofierProvider.notifier).loadTransaction(
+                        page: 1,
+                        search: query,
+                      ),
+              child: ref.watch(holdedNofierProvider).when(
+                    data: (data) => data.data!.isNotEmpty
+                        ? ListView.builder(
+                            controller: _scrollController,
+                            itemBuilder: (context, idx) {
+                              if (idx + 1 > data.data!.length) {
+                                if (data.currentPage >= data.lastPage) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 10),
+                                    child: Center(
+                                      child: Text(
+                                        'x_data_displayed'.tr(
+                                          args: [data.total.toString()],
+                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const ItemListSkeleton();
+                              }
+
+                              final hold = data.data![idx];
+                              return HoldedItem(
+                                color: viewTransaction?.transactionId == hold.transactionId ? Colors.grey.shade100 : Colors.white,
+                                  hold: hold, onSelect: onOpenHoldedCart);
+                            },
+                            itemCount: data.data!.length + 1,
+                          )
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'no_data'.tr(args: ['']),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall
-                                      ?.copyWith(
-                                        color: Colors.grey.shade600,
-                                      ),
-                                ),
-                              ),
-                            );
-                          }
-                          return const ItemListSkeleton();
-                        }
-
-                        final hold = data.data![idx];
-                        return HoldedItem(
-                            hold: hold, onSelect: onOpenHoldedCart);
-                      },
-                      itemCount: data.data!.length + 1,
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'no_data'.tr(args: ['']),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.grey),
-                          )
-                        ],
+                                      ?.copyWith(color: Colors.grey),
+                                )
+                              ],
+                            ),
+                          ),
+                    error: (e, stack) => Center(
+                      child: ErrorHandler(
+                        stackTrace: e.toString(),
                       ),
                     ),
-              error: (e, stack) => Center(
-                child: ErrorHandler(
-                  stackTrace: e.toString(),
-                ),
-              ),
-              loading: () => ListView.builder(
-                itemBuilder: (context, _) => const ItemListSkeleton(),
-                itemCount: 10,
-              ),
-              skipError: true,
+                    loading: () => ListView.builder(
+                      itemBuilder: (context, _) => const ItemListSkeleton(),
+                      itemCount: 10,
+                    ),
+                    skipError: true,
+                  ),
             ),
+          ),
+          isTablet
+              ? Container(
+                  color: Colors.grey.shade50,
+                  width: MediaQuery.of(context).size.width - 400,
+                  child: viewTransaction != null
+                      ? HoldedPreview(cartHolded: viewTransaction!, asWidget: true,)
+                      : emptyPlaceholder,
+                )
+              : Container(),
+        ],
       ),
     );
   }

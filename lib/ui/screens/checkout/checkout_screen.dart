@@ -127,7 +127,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                             horizontal: 12),
                                         child: OrderSummary(
                                           cart: ref.watch(cartNotiferProvider),
-                                          radius: Radius.circular(10),
+                                          radius: const Radius.circular(10),
                                         ),
                                       ),
                                       const SizedBox(
@@ -149,6 +149,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     margin: EdgeInsets.all(isTablet ? 20 : 0),
                     color: Colors.white,
                     elevation: 5,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(25),
+                      ),
+                    ),
                     child: SafeArea(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

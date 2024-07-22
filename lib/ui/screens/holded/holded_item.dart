@@ -6,8 +6,13 @@ import 'package:selleri/utils/formater.dart';
 class HoldedItem extends StatelessWidget {
   final CartHolded hold;
   final Function(CartHolded) onSelect;
+  final Color color;
 
-  const HoldedItem({required this.hold, required this.onSelect, super.key});
+  const HoldedItem(
+      {required this.hold,
+      required this.onSelect,
+      super.key,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +71,7 @@ class HoldedItem extends StatelessWidget {
         DateTimeFormater.dateToString(hold.createdAt, format: 'dd/MM HH:mm'),
         style: textTheme.bodySmall,
       ),
+      tileColor: color,
     );
   }
 }
