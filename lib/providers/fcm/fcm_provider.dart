@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,6 +12,7 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 part 'fcm_provider.g.dart';
 
@@ -49,7 +51,9 @@ class FcmNotifier extends _$FcmNotifier {
       if (sources.contains('config')) {
         final only = configOnly ?? [];
         log('CONFIG ONLY: $configOnly');
-        await ref.read(outletNotifierProvider.notifier).refreshConfig(only: only);
+        await ref
+            .read(outletNotifierProvider.notifier)
+            .refreshConfig(only: only);
       }
     });
   }

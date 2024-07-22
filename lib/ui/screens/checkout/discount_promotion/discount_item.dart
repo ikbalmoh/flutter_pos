@@ -67,8 +67,8 @@ class DiscountItem extends ConsumerWidget {
                     minus: true,
                   ),
                   textAlign: TextAlign.right,
-                  style: textTheme.bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w500),
+                  style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600, color: Colors.red.shade600),
                 ),
               ),
               const SizedBox(

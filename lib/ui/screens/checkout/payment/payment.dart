@@ -80,7 +80,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
     return Card(
       margin: const EdgeInsets.all(10),
       color: Colors.white,
-      elevation: 0,
+      elevation: 1,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
@@ -93,13 +93,8 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
             height: 1,
             color: Colors.blueGrey.shade50,
           ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border: Border(
-                bottom: BorderSide(width: 1, color: Colors.blueGrey.shade100),
-              ),
-            ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(25),
             child: ExpansionPanelList(
               elevation: 0,
               dividerColor: Colors.grey.shade200,

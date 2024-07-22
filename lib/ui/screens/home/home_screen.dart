@@ -36,7 +36,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   String idCategory = '';
   String search = '';
   Timer? _debounce;
-  bool inSync = false;
 
   FilterStock filterStock = FilterStock.all;
 
@@ -84,14 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Future<void> refreshItems() async {
-    if (inSync) return;
-    setState(() {
-      inSync = true;
-    });
-    await ref.read(itemsStreamProvider().notifier).loadItems();
-    setState(() {
-      inSync = false;
-    });
+    return ref.read(itemsStreamProvider().notifier).syncItems();
   }
 
   Future<void> loadShift() async {

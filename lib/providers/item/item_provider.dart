@@ -54,7 +54,7 @@ class ItemsStream extends _$ItemsStream {
         log('${items.length} ITEMS LOADED\n => Category: ${category.categoryName}\n => Load : ${startSave.difference(startLoad).inMilliseconds}ms\n => Save : ${endSate.difference(startSave).inMilliseconds}ms');
       }
     } else {
-      return syncItems();
+      await syncItems();
     }
   }
 
@@ -82,6 +82,14 @@ class ItemsStream extends _$ItemsStream {
 
     objectBox.putItems(items);
     log('SYNCED ITEMS: $items');
+    if (items.isNotEmpty) {
+      List<String> messages = [items[0].itemName];
+      if (items.length > 1) {
+        messages.add('and_x_others'.tr(args: [(items.length - 1).toString()]));
+      }
+      messages.add('synced'.tr().toLowerCase());
+      AppAlert.toast(messages.join(' '));
+    }
   }
 
   double getItemStock(String idItem) {

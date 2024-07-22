@@ -12,7 +12,7 @@ class DiscountPromotion extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.all(10),
       color: Colors.white,
-      elevation: 0,
+      elevation: 1,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -24,13 +24,8 @@ class DiscountPromotion extends StatelessWidget {
             height: 1,
             color: Colors.blueGrey.shade50,
           ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border: Border(
-                bottom: BorderSide(width: 1, color: Colors.blueGrey.shade100),
-              ),
-            ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
             child: const Column(
               children: [
                 DiscountItem(),
