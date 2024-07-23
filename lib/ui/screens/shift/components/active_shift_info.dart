@@ -8,11 +8,12 @@ import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class ActiveShiftInfo extends ConsumerWidget {
-  const ActiveShiftInfo(
-      {required this.shiftInfo,
-      this.onCloseShift,
-      this.showPrintButton,
-      super.key});
+  const ActiveShiftInfo({
+    required this.shiftInfo,
+    this.onCloseShift,
+    this.showPrintButton,
+    super.key,
+  });
 
   final ShiftInfo shiftInfo;
   final Function()? onCloseShift;
@@ -25,21 +26,23 @@ class ActiveShiftInfo extends ConsumerWidget {
 
     void onPrint() async {
       try {
-        await ref.read(shiftNotifierProvider.notifier).printShift(shiftInfo, throwError: true);
+        await ref
+            .read(shiftNotifierProvider.notifier)
+            .printShift(shiftInfo, throwError: true);
       } catch (e) {
         AppAlert.toast(e.toString());
       }
     }
 
     return Container(
-      color: active ? Colors.lightGreen.shade100 : Colors.grey.shade200,
+      color: active ? Colors.lightGreen.shade300 : Colors.grey.shade200,
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: SizedBox(
         width: double.infinity,
         child: Card(
           color: Colors.white,
-          margin: const EdgeInsets.all(10),
+          margin: const EdgeInsets.all(0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           elevation: 3,
           child: Padding(
@@ -237,4 +240,3 @@ class ActiveShiftInfo extends ConsumerWidget {
     );
   }
 }
-

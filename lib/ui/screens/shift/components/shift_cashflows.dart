@@ -23,7 +23,7 @@ class ShiftCashflows extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
             'cashflow'.tr(),
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey.shade600),
           ),
         ),
         const SizedBox(height: 5),

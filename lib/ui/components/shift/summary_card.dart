@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -6,6 +7,7 @@ class SummaryCard extends StatelessWidget {
   final String value;
   final Icon icon;
   final Function()? onTap;
+  final bool? withArrow;
 
   const SummaryCard({
     super.key,
@@ -13,6 +15,7 @@ class SummaryCard extends StatelessWidget {
     required this.label,
     required this.value,
     required this.icon,
+    this.withArrow,
     this.onTap,
   });
 
@@ -57,7 +60,18 @@ class SummaryCard extends StatelessWidget {
                           ?.copyWith(color: Colors.black54),
                     ),
                   ],
-                )
+                ),
+                Expanded(child: Container()),
+                withArrow == true
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Icon(
+                          CupertinoIcons.chevron_right,
+                          size: 20,
+                          color: Colors.grey.shade400,
+                        ),
+                      )
+                    : Container()
               ],
             )),
       ),

@@ -9,9 +9,11 @@ import 'package:selleri/utils/formater.dart';
 import 'package:selleri/data/models/shift_summary.dart';
 
 class ShiftSummaryCards extends StatelessWidget {
-  const ShiftSummaryCards({required this.shiftInfo, super.key});
+  const ShiftSummaryCards({required this.shiftInfo, this.isColumn, super.key});
 
   final ShiftInfo shiftInfo;
+  final bool? isColumn;
+
   @override
   Widget build(BuildContext context) {
     void onShowRecap(ShiftSummary summary) {
@@ -41,57 +43,82 @@ class ShiftSummaryCards extends StatelessWidget {
           });
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            'summary'.tr(),
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-        const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            children: [
-              SummaryCard(
-                icon: const Icon(
-                  Icons.bar_chart_rounded,
-                  color: Colors.purple,
-                ),
-                color: Colors.purple.shade50,
-                label: 'total_transaction'.tr(args: ['']),
-                value: CurrencyFormat.currency(shiftInfo.summary.cashSales),
-                onTap: () => onShowRecap(shiftInfo.summary),
+    if (isColumn == true) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SummaryCard(
+              icon: const Icon(
+                Icons.bar_chart_rounded,
+                color: Colors.purple,
               ),
-              const SizedBox(width: 10),
-              SummaryCard(
-                icon: const Icon(
-                  Icons.shopping_cart_rounded,
-                  color: Colors.green,
-                ),
-                color: Colors.green.shade50,
-                label: 'item_sold'.tr(),
-                value: CurrencyFormat.currency(
-                    shiftInfo.soldItems.isNotEmpty
-                        ? shiftInfo.soldItems
-                            .map((sold) => sold.sold)
-                            .reduce((a, b) => a + b)
-                        : 0,
-                    symbol: false),
-                onTap: () => onShowSoldItems(shiftInfo.soldItems),
+              color: Colors.purple.shade50,
+              label: 'total_transaction'.tr(args: ['']),
+              value: CurrencyFormat.currency(shiftInfo.summary.cashSales),
+              onTap: () => onShowRecap(shiftInfo.summary),
+              withArrow: true,
+            ),
+            const SizedBox(height: 15),
+            SummaryCard(
+              icon: const Icon(
+                Icons.shopping_cart_rounded,
+                color: Colors.green,
               ),
-              const SizedBox(width: 10),
-            ],
-          ),
+              color: Colors.green.shade50,
+              label: 'item_sold'.tr(),
+              value: CurrencyFormat.currency(
+                  shiftInfo.soldItems.isNotEmpty
+                      ? shiftInfo.soldItems
+                          .map((sold) => sold.sold)
+                          .reduce((a, b) => a + b)
+                      : 0,
+                  symbol: false),
+              onTap: () => onShowSoldItems(shiftInfo.soldItems),
+              withArrow: true,
+            ),
+          ],
         ),
-      ],
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Row(
+        children: [
+          SummaryCard(
+            icon: const Icon(
+              Icons.bar_chart_rounded,
+              color: Colors.purple,
+            ),
+            color: Colors.purple.shade50,
+            label: 'total_transaction'.tr(args: ['']),
+            value: CurrencyFormat.currency(shiftInfo.summary.cashSales),
+            onTap: () => onShowRecap(shiftInfo.summary),
+          ),
+          const SizedBox(width: 10),
+          SummaryCard(
+            icon: const Icon(
+              Icons.shopping_cart_rounded,
+              color: Colors.green,
+            ),
+            color: Colors.green.shade50,
+            label: 'item_sold'.tr(),
+            value: CurrencyFormat.currency(
+                shiftInfo.soldItems.isNotEmpty
+                    ? shiftInfo.soldItems
+                        .map((sold) => sold.sold)
+                        .reduce((a, b) => a + b)
+                    : 0,
+                symbol: false),
+            onTap: () => onShowSoldItems(shiftInfo.soldItems),
+          ),
+          const SizedBox(width: 10),
+        ],
+      ),
     );
   }
 }

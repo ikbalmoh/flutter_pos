@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/data/models/shift_info.dart';
@@ -54,7 +56,10 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     super.build(context);
     final Shift? shift = ref.watch(shiftNotifierProvider).value;
 
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: () => ref.read(shiftInfoNotifierProvider.notifier).reload(),
         child: SingleChildScrollView(
@@ -63,18 +68,56 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
           child: shift != null
               ? ref.watch(shiftInfoNotifierProvider).when(
                     data: (data) {
-                      return Column(
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ActiveShiftInfo(
-                            shiftInfo: data!,
-                            onCloseShift: () => onCloseShift(data),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: ActiveShiftInfo(
+                                      shiftInfo: data!,
+                                      onCloseShift: () => onCloseShift(data),
+                                    ),
+                                  ),
+                                ),
+                                ShiftSummaryCards(
+                                  shiftInfo: data,
+                                  isColumn: isTablet,
+                                ),
+                                isTablet
+                                    ? Container()
+                                    : ShiftCashflows(
+                                        cashflows: data.cashFlows.data,
+                                        onEdit: (cashflow) =>
+                                            onShowCashflowForm(
+                                          cashflow: cashflow,
+                                        ),
+                                      ),
+                              ],
+                            ),
                           ),
-                          ShiftSummaryCards(shiftInfo: data),
-                          ShiftCashflows(
-                            cashflows: data.cashFlows.data,
-                            onEdit: (cashflow) =>
-                                onShowCashflowForm(cashflow: cashflow),
-                          )
+                          isTablet
+                              ? SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height - 80,
+                                  width:
+                                      MediaQuery.of(context).size.width - 400,
+                                  child: SingleChildScrollView(
+                                    child: ShiftCashflows(
+                                      cashflows: data.cashFlows.data,
+                                      onEdit: (cashflow) => onShowCashflowForm(
+                                        cashflow: cashflow,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container()
                         ],
                       );
                     },
@@ -98,6 +141,59 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                 )
               : null
           : null,
+    );
+  }
+
+  Card summaryMenu(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      margin: const EdgeInsets.all(15),
+      elevation: 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 15,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              'summary'.tr(),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Colors.black87),
+            ),
+          ),
+          ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(
+              vertical: 17.5,
+              horizontal: 15,
+            ),
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              ListTile(
+                onTap: () {},
+                tileColor: Colors.blue.shade700,
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                leading: const Icon(
+                  CupertinoIcons.arrow_right_arrow_left_circle_fill,
+                  size: 28,
+                ),
+                title: Text('cashflow'.tr()),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                trailing: const Icon(
+                  CupertinoIcons.chevron_right,
+                  size: 16,
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 
