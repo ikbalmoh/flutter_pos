@@ -95,6 +95,8 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
     return Scaffold(
       backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
       body: RefreshIndicator(
@@ -296,6 +298,59 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                   ),
                 ))
             .toList(),
+      ),
+    );
+  }
+
+  Card summaryMenu(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      margin: const EdgeInsets.all(15),
+      elevation: 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 15,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              'summary'.tr(),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Colors.black87),
+            ),
+          ),
+          ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(
+              vertical: 17.5,
+              horizontal: 15,
+            ),
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              ListTile(
+                onTap: () {},
+                tileColor: Colors.blue.shade700,
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                leading: const Icon(
+                  CupertinoIcons.arrow_right_arrow_left_circle_fill,
+                  size: 28,
+                ),
+                title: Text('cashflow'.tr()),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                trailing: const Icon(
+                  CupertinoIcons.chevron_right,
+                  size: 16,
+                ),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }
