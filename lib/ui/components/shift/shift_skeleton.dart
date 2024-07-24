@@ -8,16 +8,16 @@ class ActiveShiftInfoSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.lightGreen.shade100,
+      color: Colors.white,
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Card(
-          color: Colors.white,
+          color: Colors.grey.shade50,
           margin: const EdgeInsets.all(10),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          elevation: 3,
+          elevation: 0,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -98,18 +98,32 @@ class ShiftCashflowsSkeleton extends StatelessWidget {
 }
 
 class ShiftSkeleon extends StatelessWidget {
-  const ShiftSkeleon({super.key});
+  const ShiftSkeleon({this.isTablet, super.key});
+
+  final bool? isTablet;
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: Column(
+    return SingleChildScrollView(
+      child: Row(
         children: [
-          ActiveShiftInfoSkeleton(),
-          SizedBox(height: 20),
-          ShiftSummaryCardSkeleton(),
-          SizedBox(height: 20),
-          ShiftCashflowsSkeleton()
+          Expanded(
+            child: Column(
+              children: [
+                const ActiveShiftInfoSkeleton(),
+                const SizedBox(height: 20),
+                const ShiftSummaryCardSkeleton(),
+                const SizedBox(height: 20),
+                isTablet == true ? Container() : const ShiftCashflowsSkeleton()
+              ],
+            ),
+          ),
+          isTablet == true
+              ? SizedBox(
+                  width: MediaQuery.of(context).size.width - 400,
+                  child: const ShiftCashflowsSkeleton(),
+                )
+              : Container()
         ],
       ),
     );

@@ -61,7 +61,6 @@ class SummaryCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Expanded(child: Container()),
                 withArrow == true
                     ? Padding(
                         padding: const EdgeInsets.only(left: 10),

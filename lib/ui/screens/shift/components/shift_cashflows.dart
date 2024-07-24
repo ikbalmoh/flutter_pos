@@ -6,10 +6,12 @@ import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/ui/components/shift/cashflow_item.dart';
 
 class ShiftCashflows extends ConsumerWidget {
-  const ShiftCashflows({required this.cashflows, this.onEdit, super.key});
+  const ShiftCashflows(
+      {required this.cashflows, this.onEdit, this.withoutLabel, super.key});
 
   final List<ShiftCashflow> cashflows;
   final Function(ShiftCashflow)? onEdit;
+  final bool? withoutLabel;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,15 +20,18 @@ class ShiftCashflows extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            'cashflow'.tr(),
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey.shade600),
-          ),
-        ),
-        const SizedBox(height: 5),
+        withoutLabel == true
+            ? Container()
+            : Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+                child: Text(
+                  'cashflow'.tr(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: Colors.grey.shade600),
+                ),
+              ),
         cashflows.isNotEmpty
             ? ListView.builder(
                 shrinkWrap: true,

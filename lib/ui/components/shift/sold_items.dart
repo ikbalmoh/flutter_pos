@@ -41,67 +41,96 @@ class SoldItems extends StatelessWidget {
               ),
               Expanded(
                 child: items.isNotEmpty
-                    ? ListView.separated(
-                        controller: scrollController,
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: items.length,
-                        itemBuilder: (context, idx) {
-                          SoldItem item = items[idx];
-                          return ListTile(
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 0),
-                            title: Text(item.name),
-                            titleTextStyle: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(fontWeight: FontWeight.w400),
-                            minTileHeight: 0,
-                            trailing: Text(
-                              CurrencyFormat.currency(
-                                item.sold,
-                                symbol: false,
-                              ),
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return Divider(
-                            height: 0,
-                            thickness: 0.5,
-                            color: Colors.blueGrey.shade100,
-                          );
-                        },
+                    ? SoldItemsList(
+                        items: items,
+                        scrollController: scrollController,
                       )
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            const Icon(
-                              Icons.shopping_bag_outlined,
-                              size: 40,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'there_is_no'.tr(args: ['item_sold'.tr().toLowerCase()]),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(color: Colors.grey),
-                              textAlign: TextAlign.center,
-                            )
-                          ],
-                        ),
-                      ),
+                    : const EmptySoldItemsPlaceholder(),
               )
             ],
           ),
+        );
+      },
+    );
+  }
+}
+
+class EmptySoldItemsPlaceholder extends StatelessWidget {
+  const EmptySoldItemsPlaceholder({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const Icon(
+            Icons.shopping_bag_outlined,
+            size: 40,
+            color: Colors.grey,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            'there_is_no'.tr(args: ['item_sold'.tr().toLowerCase()]),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(color: Colors.grey),
+            textAlign: TextAlign.center,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SoldItemsList extends StatelessWidget {
+  const SoldItemsList({
+    super.key,
+    required this.items,
+    this.scrollController,
+  });
+
+  final List<SoldItem> items;
+  final ScrollController? scrollController;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      controller: scrollController,
+      shrinkWrap: true,
+      physics: const ScrollPhysics(),
+      itemCount: items.length,
+      itemBuilder: (context, idx) {
+        SoldItem item = items[idx];
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+          title: Text(item.name),
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(fontWeight: FontWeight.w400),
+          minTileHeight: 0,
+          trailing: Text(
+            CurrencyFormat.currency(
+              item.sold,
+              symbol: false,
+            ),
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        );
+      },
+      separatorBuilder: (context, index) {
+        return Divider(
+          height: 0,
+          thickness: 0.5,
+          color: Colors.blueGrey.shade100,
         );
       },
     );

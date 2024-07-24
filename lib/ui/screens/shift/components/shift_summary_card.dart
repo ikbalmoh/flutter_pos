@@ -43,47 +43,6 @@ class ShiftSummaryCards extends StatelessWidget {
           });
     }
 
-    if (isColumn == true) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SummaryCard(
-              icon: const Icon(
-                Icons.bar_chart_rounded,
-                color: Colors.purple,
-              ),
-              color: Colors.purple.shade50,
-              label: 'total_transaction'.tr(args: ['']),
-              value: CurrencyFormat.currency(shiftInfo.summary.cashSales),
-              onTap: () => onShowRecap(shiftInfo.summary),
-              withArrow: true,
-            ),
-            const SizedBox(height: 15),
-            SummaryCard(
-              icon: const Icon(
-                Icons.shopping_cart_rounded,
-                color: Colors.green,
-              ),
-              color: Colors.green.shade50,
-              label: 'item_sold'.tr(),
-              value: CurrencyFormat.currency(
-                  shiftInfo.soldItems.isNotEmpty
-                      ? shiftInfo.soldItems
-                          .map((sold) => sold.sold)
-                          .reduce((a, b) => a + b)
-                      : 0,
-                  symbol: false),
-              onTap: () => onShowSoldItems(shiftInfo.soldItems),
-              withArrow: true,
-            ),
-          ],
-        ),
-      );
-    }
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 15),

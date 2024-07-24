@@ -11,11 +11,23 @@ import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/shift/cashflow_form.dart';
 import 'package:selleri/ui/components/shift/close_shift_form.dart';
+import 'package:selleri/ui/components/shift/sales_summary.dart';
 import 'package:selleri/ui/components/shift/shift_skeleton.dart';
+import 'package:selleri/ui/components/shift/sold_items.dart';
 import 'package:selleri/ui/screens/shift/components/active_shift_info.dart';
 import 'package:selleri/ui/screens/shift/components/shift_cashflows.dart';
 import 'package:selleri/ui/components/shift/shift_inactive.dart';
+import 'package:selleri/utils/transaction.dart';
 import 'components/shift_summary_card.dart';
+import 'components/active_shift_info_horizontal.dart';
+
+class SummaryMenu {
+  final String title;
+  final String keyMenu;
+  final IconData icon;
+
+  SummaryMenu({required this.title, required this.keyMenu, required this.icon});
+}
 
 class CurrentShiftScreen extends ConsumerStatefulWidget {
   const CurrentShiftScreen({super.key});
@@ -27,6 +39,8 @@ class CurrentShiftScreen extends ConsumerStatefulWidget {
 
 class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     with AutomaticKeepAliveClientMixin {
+  String viewSummary = 'cashflow';
+
   void onShowCashflowForm({ShiftCashflow? cashflow}) {
     showModalBottomSheet(
         context: context,
@@ -59,7 +73,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
       body: RefreshIndicator(
         onRefresh: () => ref.read(shiftInfoNotifierProvider.notifier).reload(),
         child: SingleChildScrollView(
@@ -68,56 +82,112 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
           child: shift != null
               ? ref.watch(shiftInfoNotifierProvider).when(
                     data: (data) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(15),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: ActiveShiftInfo(
-                                      shiftInfo: data!,
-                                      onCloseShift: () => onCloseShift(data),
-                                    ),
+                      if (isTablet) {
+                        return Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            children: [
+                              ActiveShiftInfoHorizontal(
+                                shiftInfo: data!,
+                                onCloseShift: () => onCloseShift(data),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: summaryMenu(context),
                                   ),
-                                ),
-                                ShiftSummaryCards(
-                                  shiftInfo: data,
-                                  isColumn: isTablet,
-                                ),
-                                isTablet
-                                    ? Container()
-                                    : ShiftCashflows(
-                                        cashflows: data.cashFlows.data,
-                                        onEdit: (cashflow) =>
-                                            onShowCashflowForm(
-                                          cashflow: cashflow,
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width - 350,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.6,
+                                    child: Card(
+                                      color: Colors.white,
+                                      elevation: 0,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: SingleChildScrollView(
+                                          child: viewSummary == 'cashflow'
+                                              ? Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 10,
+                                                  ),
+                                                  child: ShiftCashflows(
+                                                    withoutLabel: true,
+                                                    cashflows:
+                                                        data.cashFlows.data,
+                                                    onEdit: (cashflow) =>
+                                                        onShowCashflowForm(
+                                                      cashflow: cashflow,
+                                                    ),
+                                                  ),
+                                                )
+                                              : viewSummary == 'summary'
+                                                  ? SalesSummaryList(
+                                                      summary: data.summary,
+                                                    )
+                                                  : Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10,
+                                                      ),
+                                                      child: data
+                                                              .soldItems.isEmpty
+                                                          ? const Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 150),
+                                                              child:
+                                                                  EmptySoldItemsPlaceholder(),
+                                                            )
+                                                          : SoldItemsList(
+                                                              items: data
+                                                                  .soldItems,
+                                                            ),
+                                                    ),
                                         ),
                                       ),
-                              ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: ActiveShiftInfo(
+                                shiftInfo: data!,
+                                onCloseShift: () => onCloseShift(data),
+                              ),
                             ),
                           ),
-                          isTablet
-                              ? SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height - 80,
-                                  width:
-                                      MediaQuery.of(context).size.width - 400,
-                                  child: SingleChildScrollView(
-                                    child: ShiftCashflows(
-                                      cashflows: data.cashFlows.data,
-                                      onEdit: (cashflow) => onShowCashflowForm(
-                                        cashflow: cashflow,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container()
+                          ShiftSummaryCards(
+                            shiftInfo: data,
+                          ),
+                          const SizedBox(height: 15),
+                          ShiftCashflows(
+                            cashflows: data.cashFlows.data,
+                            onEdit: (cashflow) => onShowCashflowForm(
+                              cashflow: cashflow,
+                            ),
+                          ),
                         ],
                       );
                     },
@@ -125,12 +195,12 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                       error: error.toString(),
                       stackTrace: stackTrace.toString(),
                     ),
-                    loading: () => const ShiftSkeleon(),
+                    loading: () => ShiftSkeleon(isTablet: isTablet),
                   )
               : const ShiftInactive(),
         ),
       ),
-      floatingActionButton: shift != null
+      floatingActionButton: viewSummary == 'cashflow' && shift != null
           ? ref.watch(shiftInfoNotifierProvider).value != null
               ? FloatingActionButton.extended(
                   onPressed: onShowCashflowForm,
@@ -145,54 +215,61 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
   }
 
   Card summaryMenu(BuildContext context) {
+    final List<SummaryMenu> menus = [
+      SummaryMenu(
+        title: 'cashflow'.tr(),
+        keyMenu: 'cashflow',
+        icon: CupertinoIcons.arrow_right_arrow_left_circle_fill,
+      ),
+      SummaryMenu(
+        title: 'summary'.tr(),
+        keyMenu: 'summary',
+        icon: CupertinoIcons.creditcard_fill,
+      ),
+      SummaryMenu(
+        title: 'item_sold'.tr(),
+        keyMenu: 'item_sold',
+        icon: CupertinoIcons.bag_fill,
+      ),
+    ];
+
     return Card(
       color: Colors.white,
-      margin: const EdgeInsets.all(15),
       elevation: 0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              'summary'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(color: Colors.black87),
-            ),
-          ),
-          ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(
-              vertical: 17.5,
-              horizontal: 15,
-            ),
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              ListTile(
-                onTap: () {},
-                tileColor: Colors.blue.shade700,
-                textColor: Colors.white,
-                iconColor: Colors.white,
-                leading: const Icon(
-                  CupertinoIcons.arrow_right_arrow_left_circle_fill,
-                  size: 28,
-                ),
-                title: Text('cashflow'.tr()),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                trailing: const Icon(
-                  CupertinoIcons.chevron_right,
-                  size: 16,
-                ),
-              )
-            ],
-          ),
-        ],
+      child: ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(
+          vertical: 17.5,
+          horizontal: 15,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        children: menus
+            .map((menu) => ListTile(
+                  onTap: () => setState(() {
+                    viewSummary = menu.keyMenu;
+                  }),
+                  tileColor: viewSummary == menu.keyMenu
+                      ? Colors.blue.shade700
+                      : Colors.white,
+                  textColor: viewSummary == menu.keyMenu
+                      ? Colors.white
+                      : Colors.grey.shade700,
+                  iconColor: viewSummary == menu.keyMenu
+                      ? Colors.white
+                      : Colors.grey.shade700,
+                  leading: Icon(
+                    menu.icon,
+                    size: 20,
+                  ),
+                  title: Text(menu.title),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  trailing: const Icon(
+                    CupertinoIcons.chevron_right,
+                    size: 16,
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
