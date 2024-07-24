@@ -104,14 +104,26 @@ class ShiftSkeleon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: Column(
+    return SingleChildScrollView(
+      child: Row(
         children: [
-          ActiveShiftInfoSkeleton(),
-          SizedBox(height: 20),
-          ShiftSummaryCardSkeleton(),
-          SizedBox(height: 20),
-          ShiftCashflowsSkeleton()
+          Expanded(
+            child: Column(
+              children: [
+                const ActiveShiftInfoSkeleton(),
+                const SizedBox(height: 20),
+                const ShiftSummaryCardSkeleton(),
+                const SizedBox(height: 20),
+                isTablet == true ? Container() : const ShiftCashflowsSkeleton()
+              ],
+            ),
+          ),
+          isTablet == true
+              ? SizedBox(
+                  width: MediaQuery.of(context).size.width - 400,
+                  child: const ShiftCashflowsSkeleton(),
+                )
+              : Container()
         ],
       ),
     );

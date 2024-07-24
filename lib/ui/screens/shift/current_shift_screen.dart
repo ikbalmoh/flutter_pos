@@ -303,54 +303,61 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
   }
 
   Card summaryMenu(BuildContext context) {
+    final List<SummaryMenu> menus = [
+      SummaryMenu(
+        title: 'cashflow'.tr(),
+        keyMenu: 'cashflow',
+        icon: CupertinoIcons.arrow_right_arrow_left_circle_fill,
+      ),
+      SummaryMenu(
+        title: 'summary'.tr(),
+        keyMenu: 'summary',
+        icon: CupertinoIcons.creditcard_fill,
+      ),
+      SummaryMenu(
+        title: 'item_sold'.tr(),
+        keyMenu: 'item_sold',
+        icon: CupertinoIcons.bag_fill,
+      ),
+    ];
+
     return Card(
       color: Colors.white,
-      margin: const EdgeInsets.all(15),
       elevation: 0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              'summary'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(color: Colors.black87),
-            ),
-          ),
-          ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(
-              vertical: 17.5,
-              horizontal: 15,
-            ),
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              ListTile(
-                onTap: () {},
-                tileColor: Colors.blue.shade700,
-                textColor: Colors.white,
-                iconColor: Colors.white,
-                leading: const Icon(
-                  CupertinoIcons.arrow_right_arrow_left_circle_fill,
-                  size: 28,
-                ),
-                title: Text('cashflow'.tr()),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                trailing: const Icon(
-                  CupertinoIcons.chevron_right,
-                  size: 16,
-                ),
-              )
-            ],
-          ),
-        ],
+      child: ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(
+          vertical: 17.5,
+          horizontal: 15,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        children: menus
+            .map((menu) => ListTile(
+                  onTap: () => setState(() {
+                    viewSummary = menu.keyMenu;
+                  }),
+                  tileColor: viewSummary == menu.keyMenu
+                      ? Colors.blue.shade700
+                      : Colors.white,
+                  textColor: viewSummary == menu.keyMenu
+                      ? Colors.white
+                      : Colors.grey.shade700,
+                  iconColor: viewSummary == menu.keyMenu
+                      ? Colors.white
+                      : Colors.grey.shade700,
+                  leading: Icon(
+                    menu.icon,
+                    size: 20,
+                  ),
+                  title: Text(menu.title),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  trailing: const Icon(
+                    CupertinoIcons.chevron_right,
+                    size: 16,
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
