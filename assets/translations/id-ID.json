@@ -191,5 +191,6 @@
   "apply": "Terapkan",
   "cash_balance": "Saldo Kas",
   "account": "Akun",
-  "transaction": "Transaksi"
+  "transaction": "Transaksi",
+  "print": "Cetak"
 }

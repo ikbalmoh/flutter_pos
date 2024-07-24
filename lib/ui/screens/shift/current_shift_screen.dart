@@ -17,7 +17,6 @@ import 'package:selleri/ui/components/shift/sold_items.dart';
 import 'package:selleri/ui/screens/shift/components/active_shift_info.dart';
 import 'package:selleri/ui/screens/shift/components/shift_cashflows.dart';
 import 'package:selleri/ui/components/shift/shift_inactive.dart';
-import 'package:selleri/utils/transaction.dart';
 import 'components/shift_summary_card.dart';
 import 'components/active_shift_info_horizontal.dart';
 

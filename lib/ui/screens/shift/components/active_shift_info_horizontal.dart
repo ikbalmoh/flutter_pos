@@ -3,37 +3,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/shift_info.dart';
-import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class ActiveShiftInfoHorizontal extends ConsumerWidget {
   const ActiveShiftInfoHorizontal({
     required this.shiftInfo,
     this.onCloseShift,
-    this.showPrintButton,
     super.key,
   });
 
   final ShiftInfo shiftInfo;
   final Function()? onCloseShift;
-  final bool? showPrintButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    bool active = shiftInfo.closeShift == null;
-
-    void onPrint() async {
-      try {
-        await ref
-            .read(shiftNotifierProvider.notifier)
-            .printShift(shiftInfo, throwError: true);
-      } catch (e) {
-        AppAlert.toast(e.toString());
-      }
-    }
-
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.all(0),
@@ -121,13 +105,6 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    showPrintButton == true
-                        ? IconButton(
-                            onPressed: onPrint,
-                            icon: const Icon(CupertinoIcons.printer),
-                            tooltip: 'print'.tr(),
-                          )
-                        : Container()
                   ],
                 ),
               ],
@@ -178,9 +155,8 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
                                 DateTimeFormater.dateToString(
                                     shiftInfo.closeShift ?? DateTime.now(),
                                     format: 'dd/MM/y'),
-                                style: textTheme.bodySmall?.copyWith(
-                                    color:
-                                        active ? Colors.white : Colors.black87),
+                                style: textTheme.bodySmall
+                                    ?.copyWith(color: Colors.green),
                               ),
                               Text(
                                 DateTimeFormater.dateToString(
@@ -188,8 +164,7 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
                                     format: 'HH:mm'),
                                 style: textTheme.headlineMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    color:
-                                        active ? Colors.white : Colors.black87),
+                                    color: Colors.green),
                               )
                             ],
                           ),

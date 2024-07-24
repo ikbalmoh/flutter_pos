@@ -37,13 +37,13 @@ class ActiveShiftInfo extends ConsumerWidget {
     return Container(
       color: active ? Colors.lightGreen.shade300 : Colors.grey.shade200,
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      padding: const EdgeInsets.all(2),
       child: SizedBox(
         width: double.infinity,
         child: Card(
           color: Colors.white,
           margin: const EdgeInsets.all(0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           elevation: 3,
           child: Padding(
             padding: const EdgeInsets.all(20),
