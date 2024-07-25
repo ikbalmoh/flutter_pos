@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/ui/components/hold/hold_button.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
 import 'package:selleri/ui/components/cart/order_summary.dart';
 import 'package:selleri/ui/screens/checkout/payment/payment.dart';
@@ -196,24 +197,34 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                             const SizedBox(
                               height: 15,
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30)),
+                            Row(
+                              children: [
+                                const HoldButton(),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  flex: 2,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(30)),
+                                      ),
+                                      backgroundColor:
+                                          cart.totalPayment >= cart.grandTotal
+                                              ? Colors.teal
+                                              : Colors.red,
+                                    ),
+                                    onPressed: cart.payments.isNotEmpty &&
+                                            (cart.totalPayment >=
+                                                    cart.grandTotal ||
+                                                isPartialEnabled)
+                                        ? onStoreTransaction
+                                        : null,
+                                    child: Text(
+                                        '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
+                                  ),
                                 ),
-                                backgroundColor:
-                                    cart.totalPayment >= cart.grandTotal
-                                        ? Colors.teal
-                                        : Colors.red,
-                              ),
-                              onPressed: cart.payments.isNotEmpty &&
-                                      (cart.totalPayment >= cart.grandTotal ||
-                                          isPartialEnabled)
-                                  ? onStoreTransaction
-                                  : null,
-                              child: Text(
-                                  '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
+                              ],
                             )
                           ],
                         ),
