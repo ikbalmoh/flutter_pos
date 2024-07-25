@@ -151,36 +151,37 @@ class OrderSummary extends StatelessWidget {
             label: 'discount'.tr(),
             value: cart.discOverallTotal,
           ),
-          TwoColumn(
-            label: cart.taxName ?? 'tax'.tr(),
-            value: cart.ppnTotal,
-          ),
+          cart.ppnTotal > 0
+              ? TwoColumn(
+                  label: cart.taxName ?? 'tax'.tr(),
+                  value: cart.ppnTotal,
+                )
+              : Container(),
           TwoColumn(
             label: 'Grand Total',
             value: cart.grandTotal,
           ),
-          isDone == true
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Divider(
-                        height: 15,
-                        color: Colors.blueGrey.shade50,
-                      ),
-                    ),
-                    TwoColumn(
-                      label: 'payment_amount'.tr(),
-                      value: cart.totalPayment,
-                    ),
-                    TwoColumn(
-                      label: 'change'.tr(),
-                      value: cart.change,
-                    ),
-                  ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+            child: Divider(
+              height: 1,
+              color: Colors.blueGrey.shade50,
+            ),
+          ),
+          TwoColumn(
+            label: 'payment_amount'.tr(),
+            value: cart.totalPayment,
+          ),
+          cart.totalPayment < cart.grandTotal
+              ? TwoColumn(
+                  label: 'insufficient_payment'.tr(),
+                  value: cart.grandTotal - cart.totalPayment,
                 )
               : Container(),
+          TwoColumn(
+            label: 'change'.tr(),
+            value: cart.change,
+          ),
           const SizedBox(height: 10),
         ],
       ),
