@@ -84,7 +84,7 @@ class SalesSummaryList extends StatelessWidget {
         return ListTile(
           tileColor: item.isTotal != null
               ? Colors.blueGrey.shade50.withOpacity(0.6)
-              : Colors.white,
+              : Colors.transparent,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
           title: Text(item.label),

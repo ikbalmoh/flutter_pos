@@ -136,20 +136,18 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
     if (widget.item.variantName != '') {
       itemName += ' - ${widget.item.variantName}';
     }
-    return Padding(
-      padding: EdgeInsets.only(
-        top: 10,
-        left: 15,
-        right: 15,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 15,
-      ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      height: (MediaQuery.of(context).size.height * 0.7) +
+          MediaQuery.of(context).viewInsets.bottom +
+          15,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             padding:
-                const EdgeInsets.only(top: 8, left: 5, right: 5, bottom: 12),
+                const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 12),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -212,98 +210,108 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
               ],
             ),
           ),
-          TextFormField(
-            inputFormatters: <TextInputFormatter>[_priceFormater],
-            initialValue: _priceFormater.formatDouble(widget.item.price),
-            onChanged: (value) {
-              setState(() {
-                price = _priceFormater.getUnformattedValue().toDouble();
-              });
-            },
-            readOnly: !widget.item.isManualPrice,
-            textAlign: TextAlign.right,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              enabled: widget.item.isManualPrice,
-              contentPadding:
-                  const EdgeInsets.only(left: 0, bottom: 15, right: 0),
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              label: Text(
-                'price'.tr(),
-                style: labelStyle,
-              ),
-              prefix: Text(
-                'price'.tr(),
-                style: labelStyle,
-              ),
-              alignLabelWithHint: true,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-              width: 0.5,
-              color: Colors.blueGrey.shade100,
-            ))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'quantity'.tr(),
-                  style: labelStyle,
-                ),
-                QtyEditor(
-                    qty: qty,
-                    onChange: (value) {
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextFormField(
+                    inputFormatters: <TextInputFormatter>[_priceFormater],
+                    initialValue:
+                        _priceFormater.formatDouble(widget.item.price),
+                    onChanged: (value) {
                       setState(() {
-                        qty = value;
+                        price = _priceFormater.getUnformattedValue().toDouble();
                       });
-                    }),
-              ],
-            ),
-          ),
-          TextFormField(
-            inputFormatters: [_discountFormater],
-            initialValue: _discountFormater.formatDouble(widget.item.discount),
-            onChanged: onChangeDiscountValue,
-            readOnly: !widget.item.manualDiscount,
-            textAlign: TextAlign.right,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              enabled: widget.item.manualDiscount,
-              contentPadding:
-                  const EdgeInsets.only(left: 0, bottom: 15, right: 0),
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              label: Text(
-                'discount'.tr(),
-                style: labelStyle,
+                    },
+                    readOnly: !widget.item.isManualPrice,
+                    textAlign: TextAlign.right,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      enabled: widget.item.isManualPrice,
+                      contentPadding:
+                          const EdgeInsets.only(left: 0, bottom: 15, right: 0),
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      label: Text(
+                        'price'.tr(),
+                        style: labelStyle,
+                      ),
+                      prefix: Text(
+                        'price'.tr(),
+                        style: labelStyle,
+                      ),
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                      width: 0.5,
+                      color: Colors.blueGrey.shade100,
+                    ))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'quantity'.tr(),
+                          style: labelStyle,
+                        ),
+                        QtyEditor(
+                            qty: qty,
+                            onChange: (value) {
+                              setState(() {
+                                qty = value;
+                              });
+                            }),
+                      ],
+                    ),
+                  ),
+                  TextFormField(
+                    inputFormatters: [_discountFormater],
+                    initialValue:
+                        _discountFormater.formatDouble(widget.item.discount),
+                    onChanged: onChangeDiscountValue,
+                    readOnly: !widget.item.manualDiscount,
+                    textAlign: TextAlign.right,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      enabled: widget.item.manualDiscount,
+                      contentPadding:
+                          const EdgeInsets.only(left: 0, bottom: 15, right: 0),
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      label: Text(
+                        'discount'.tr(),
+                        style: labelStyle,
+                      ),
+                      prefix: Text(
+                        'discount'.tr(),
+                        style: labelStyle,
+                      ),
+                      alignLabelWithHint: true,
+                      suffix: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: DiscountTypeToggle(
+                          isPercent: discountIsPercent,
+                          onChange: onChangeDiscountType,
+                        ),
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: noteController,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.only(
+                          left: 0, top: 10, right: 0, bottom: 10),
+                      label: Text(
+                        'note'.tr(),
+                        style: labelStyle,
+                      ),
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                ],
               ),
-              prefix: Text(
-                'discount'.tr(),
-                style: labelStyle,
-              ),
-              alignLabelWithHint: true,
-              suffix: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: DiscountTypeToggle(
-                  isPercent: discountIsPercent,
-                  onChange: onChangeDiscountType,
-                ),
-              ),
-            ),
-          ),
-          TextFormField(
-            controller: noteController,
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.only(left: 0, top: 10, right: 0, bottom: 10),
-              label: Text(
-                'note'.tr(),
-                style: labelStyle,
-              ),
-              alignLabelWithHint: true,
             ),
           ),
           const SizedBox(

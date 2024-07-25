@@ -146,7 +146,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     ),
                   ),
                   Card(
-                    margin: EdgeInsets.all(isTablet ? 20 : 0).copyWith(bottom: 0),
+                    margin: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 0),
                     color: Colors.white,
                     elevation: 5,
                     shape: const RoundedRectangleBorder(

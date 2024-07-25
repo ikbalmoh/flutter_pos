@@ -41,13 +41,18 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
   String viewSummary = 'cashflow';
 
   void onShowCashflowForm({ShiftCashflow? cashflow}) {
+    double sheetHeight = MediaQuery.of(context).size.height * 0.8;
+
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.white,
         isScrollControlled: true,
-        enableDrag: false,
+        backgroundColor: Colors.white,
+        enableDrag: true,
         builder: (context) {
-          return CashflowForm(cashflow: cashflow);
+          return CashflowForm(
+            cashflow: cashflow,
+            height: sheetHeight,
+          );
         });
   }
 
@@ -111,9 +116,10 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                                     child: Card(
                                       color: Colors.white,
                                       elevation: 0,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(25),
-                                        child: SingleChildScrollView(
+                                      child: SingleChildScrollView(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(25),
                                           child: viewSummary == 'cashflow'
                                               ? Padding(
                                                   padding: const EdgeInsets

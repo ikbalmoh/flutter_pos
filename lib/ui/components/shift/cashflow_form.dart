@@ -23,9 +23,10 @@ import 'package:selleri/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CashflowForm extends ConsumerStatefulWidget {
-  const CashflowForm({this.cashflow, super.key});
+  const CashflowForm({this.cashflow, this.height, super.key});
 
   final ShiftCashflow? cashflow;
+  final double? height;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CashflowFormState();
@@ -205,12 +206,11 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
       canPop: !isLoading,
       child: isLoading
           ? const LoadingPlaceholder()
-          : SingleChildScrollView(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 15,
-              ),
+          : SizedBox(
+              height: (widget.height ?? MediaQuery.of(context).size.height) +
+                  MediaQuery.of(context).viewInsets.bottom + 15,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
@@ -243,229 +243,249 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                       ],
                     ),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 15),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        ButtonSelection(
-                          color: Colors.red,
-                          label: 'expense'.tr(),
-                          onSelect: () => onChangeCashflowType(1),
-                          selected: status == 1,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ButtonSelection(
-                          color: Colors.green,
-                          label: 'income'.tr(),
-                          onSelect: () => onChangeCashflowType(2),
-                          selected: status == 2,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ButtonSelection(
-                          color: Colors.blue,
-                          label: 'deposit'.tr(),
-                          onSelect: () => onChangeCashflowType(3),
-                          selected: status == 3,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 15),
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Colors.blueGrey.shade100,
-                      ),
-                    )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'date'.tr(),
-                          style: labelStyle,
-                        ),
-                        TextButton.icon(
-                          style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue.shade600),
-                          icon: const Icon(
-                            Icons.calendar_month,
-                            size: 18,
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 15),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                ButtonSelection(
+                                  color: Colors.red,
+                                  label: 'expense'.tr(),
+                                  onSelect: () => onChangeCashflowType(1),
+                                  selected: status == 1,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                ButtonSelection(
+                                  color: Colors.green,
+                                  label: 'income'.tr(),
+                                  onSelect: () => onChangeCashflowType(2),
+                                  selected: status == 2,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                ButtonSelection(
+                                  color: Colors.blue,
+                                  label: 'deposit'.tr(),
+                                  onSelect: () => onChangeCashflowType(3),
+                                  selected: status == 3,
+                                ),
+                              ],
+                            ),
                           ),
-                          onPressed: pickCashflowDate,
-                          label: Text(DateTimeFormater.dateToString(transDate,
-                              format: 'd MMM y')),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 15),
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Colors.blueGrey.shade100,
-                      ),
-                    )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'account'.tr(),
-                          style: labelStyle,
-                        ),
-                        DropdownButton<Akun>(
-                          dropdownColor: Colors.white,
-                          value: account,
-                          hint: Text('select_x'.tr(args: ['account'.tr()])),
-                          onChanged: (value) {
-                            setState(() {
-                              account = value;
-                            });
-                          },
-                          items: accountList
-                              .map<DropdownMenuItem<Akun>>((Akun akun) {
-                            return DropdownMenuItem<Akun>(
-                              value: akun,
-                              child: Text(akun.namaAkun),
-                            );
-                          }).toList(),
-                          underline: const SizedBox(),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: TextFormField(
-                      inputFormatters: <TextInputFormatter>[_amountFormater],
-                      initialValue: _amountFormater.formatDouble(amount),
-                      onChanged: (value) {
-                        setState(() {
-                          amount =
-                              _amountFormater.getUnformattedValue().toDouble();
-                        });
-                      },
-                      textAlign: TextAlign.right,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.only(
-                            left: 0, bottom: 15, right: 0),
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        label: Text(
-                          'amount'.tr(),
-                          style: labelStyle,
-                        ),
-                        prefix: Text(
-                          'amount'.tr(),
-                          style: labelStyle,
-                        ),
-                        alignLabelWithHint: true,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: TextFormField(
-                      initialValue: descriptions,
-                      onChanged: (value) => setState(() {
-                        descriptions = value;
-                      }),
-                      decoration: InputDecoration(
-                        label: Text(
-                          'description'.tr(),
-                          style: labelStyle,
-                        ),
-                        hintText: 'add'.tr(args: ['description'.tr()]),
-                        alignLabelWithHint: true,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'attachments'.tr(),
-                          style: labelStyle,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Wrap(
-                          children: [
-                            ...List.generate(prevImages.length, (index) {
-                              return PickedImage(
-                                source: prevImages[index].uri,
-                                sourceType: SourceType.uri,
-                                onDelete: () =>
-                                    onRemovePrevImage(prevImages[index].id),
-                              );
-                            }),
-                            ...List.generate(images.length, (index) {
-                              XFile image = images[index];
-                              return PickedImage(
-                                source: image.path,
-                                sourceType: SourceType.path,
-                                onDelete: () => onDeleteImage(index),
-                              );
-                            })
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.blueGrey.shade600,
-                                backgroundColor: Colors.blueGrey.shade50,
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            decoration: BoxDecoration(
+                                border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Colors.blueGrey.shade100,
                               ),
-                              icon: const Icon(
-                                CupertinoIcons.camera_fill,
-                                size: 18,
-                              ),
-                              onPressed: () =>
-                                  pickImage(source: ImageSource.camera),
-                              label: Text('photo'.tr()),
+                            )),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'date'.tr(),
+                                  style: labelStyle,
+                                ),
+                                TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: Colors.blue.shade600),
+                                  icon: const Icon(
+                                    Icons.calendar_month,
+                                    size: 18,
+                                  ),
+                                  onPressed: pickCashflowDate,
+                                  label: Text(DateTimeFormater.dateToString(
+                                      transDate,
+                                      format: 'd MMM y')),
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.blueGrey.shade600,
-                                backgroundColor: Colors.blueGrey.shade50,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            decoration: BoxDecoration(
+                                border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Colors.blueGrey.shade100,
                               ),
-                              icon: const Icon(
-                                CupertinoIcons.photo_fill_on_rectangle_fill,
-                                size: 18,
-                              ),
-                              onPressed: pickImage,
-                              label: Text('image'.tr()),
+                            )),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'account'.tr(),
+                                  style: labelStyle,
+                                ),
+                                DropdownButton<Akun>(
+                                  dropdownColor: Colors.white,
+                                  value: account,
+                                  hint: Text(
+                                      'select_x'.tr(args: ['account'.tr()])),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      account = value;
+                                    });
+                                  },
+                                  items: accountList
+                                      .map<DropdownMenuItem<Akun>>((Akun akun) {
+                                    return DropdownMenuItem<Akun>(
+                                      value: akun,
+                                      child: Text(akun.namaAkun),
+                                    );
+                                  }).toList(),
+                                  underline: const SizedBox(),
+                                )
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: TextFormField(
+                              inputFormatters: <TextInputFormatter>[
+                                _amountFormater
+                              ],
+                              initialValue:
+                                  _amountFormater.formatDouble(amount),
+                              onChanged: (value) {
+                                setState(() {
+                                  amount = _amountFormater
+                                      .getUnformattedValue()
+                                      .toDouble();
+                                });
+                              },
+                              textAlign: TextAlign.right,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 0, bottom: 15, right: 0),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                label: Text(
+                                  'amount'.tr(),
+                                  style: labelStyle,
+                                ),
+                                prefix: Text(
+                                  'amount'.tr(),
+                                  style: labelStyle,
+                                ),
+                                alignLabelWithHint: true,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: TextFormField(
+                              initialValue: descriptions,
+                              onChanged: (value) => setState(() {
+                                descriptions = value;
+                              }),
+                              decoration: InputDecoration(
+                                label: Text(
+                                  'description'.tr(),
+                                  style: labelStyle,
+                                ),
+                                hintText: 'add'.tr(args: ['description'.tr()]),
+                                alignLabelWithHint: true,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'attachments'.tr(),
+                                  style: labelStyle,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Wrap(
+                                  children: [
+                                    ...List.generate(prevImages.length,
+                                        (index) {
+                                      return PickedImage(
+                                        source: prevImages[index].uri,
+                                        sourceType: SourceType.uri,
+                                        onDelete: () => onRemovePrevImage(
+                                            prevImages[index].id),
+                                      );
+                                    }),
+                                    ...List.generate(images.length, (index) {
+                                      XFile image = images[index];
+                                      return PickedImage(
+                                        source: image.path,
+                                        sourceType: SourceType.path,
+                                        onDelete: () => onDeleteImage(index),
+                                      );
+                                    })
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor:
+                                            Colors.blueGrey.shade600,
+                                        backgroundColor:
+                                            Colors.blueGrey.shade50,
+                                      ),
+                                      icon: const Icon(
+                                        CupertinoIcons.camera_fill,
+                                        size: 18,
+                                      ),
+                                      onPressed: () =>
+                                          pickImage(source: ImageSource.camera),
+                                      label: Text('photo'.tr()),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor:
+                                            Colors.blueGrey.shade600,
+                                        backgroundColor:
+                                            Colors.blueGrey.shade50,
+                                      ),
+                                      icon: const Icon(
+                                        CupertinoIcons
+                                            .photo_fill_on_rectangle_fill,
+                                        size: 18,
+                                      ),
+                                      onPressed: pickImage,
+                                      label: Text('image'.tr()),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 15).copyWith(bottom: 20),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.end,

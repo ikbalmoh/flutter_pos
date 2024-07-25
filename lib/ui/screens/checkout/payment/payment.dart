@@ -94,7 +94,10 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
             color: Colors.blueGrey.shade50,
           ),
           ClipRRect(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(12.5),
+              bottomRight: Radius.circular(12.5),
+            ),
             child: ExpansionPanelList(
               elevation: 0,
               dividerColor: Colors.grey.shade200,

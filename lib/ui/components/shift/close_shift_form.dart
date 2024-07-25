@@ -23,9 +23,10 @@ import 'package:selleri/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CloseShiftForm extends ConsumerStatefulWidget {
-  const CloseShiftForm({required this.shift, super.key});
+  const CloseShiftForm({required this.shift, this.height, super.key});
 
   final ShiftInfo shift;
+  final double? height;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CloseShiftFormState();
@@ -153,10 +154,11 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
       canPop: !isLoading,
       child: isLoading
           ? const LoadingPlaceholder()
-          : SingleChildScrollView(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 15,
-              ),
+          : Container(
+              margin: const EdgeInsets.only(top: 20),
+              height:
+                  (widget.height ?? MediaQuery.of(context).size.height * 0.6) +
+                      MediaQuery.of(context).viewInsets.bottom,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -190,159 +192,181 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                       ],
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 15),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    decoration: BoxDecoration(
-                        border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Colors.blueGrey.shade100,
-                      ),
-                    )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'expected_cash'.tr(),
-                          style: labelStyle,
-                        ),
-                        Text(
-                          CurrencyFormat.currency(
-                            widget.shift.summary.expectedCashEnd,
-                            symbol: false,
-                          ),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(color: Colors.teal),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: TextFormField(
-                      inputFormatters: <TextInputFormatter>[_amountFormater],
-                      initialValue: _amountFormater.formatDouble(amount),
-                      onChanged: (value) {
-                        setState(() {
-                          amount =
-                              _amountFormater.getUnformattedValue().toDouble();
-                        });
-                      },
-                      textAlign: TextAlign.right,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.only(
-                            left: 0, bottom: 15, right: 0),
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        label: Text(
-                          'available_cash'.tr(),
-                          style: labelStyle,
-                        ),
-                        prefix: Text(
-                          'available_cash'.tr(),
-                          style: labelStyle,
-                        ),
-                        alignLabelWithHint: true,
-                      ),
-                    ),
-                  ),
-                  diffAmount() != 0
-                      ? Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, right: 15, left: 15),
-                          child: Text(
-                            '${'different'.tr()} ${CurrencyFormat.currency(diffAmount())}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.red),
-                            textAlign: TextAlign.end,
-                          ),
-                        )
-                      : Container(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 15,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${'attachments'.tr()} ${isAttachmentRequired ? '*' : ''}",
-                          style: labelStyle,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Wrap(
-                          children: List.generate(images.length, (index) {
-                            XFile image = images[index];
-                            return PickedImage(
-                              source: image.path,
-                              sourceType: SourceType.path,
-                              onDelete: () => onDeleteImage(index),
-                            );
-                          }),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.blueGrey.shade600,
-                                backgroundColor: Colors.blueGrey.shade50,
-                              ),
-                              icon: const Icon(
-                                CupertinoIcons.camera_fill,
-                                size: 18,
-                              ),
-                              onPressed: () =>
-                                  pickImage(source: ImageSource.camera),
-                              label: Text('photo'.tr()),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.blueGrey.shade600,
-                                backgroundColor: Colors.blueGrey.shade50,
-                              ),
-                              icon: const Icon(
-                                CupertinoIcons.photo_fill_on_rectangle_fill,
-                                size: 18,
-                              ),
-                              onPressed: pickImage,
-                              label: Text('image'.tr()),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  isAutoShift
-                      ? Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Container(
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
                             decoration: BoxDecoration(
-                              color: Colors.amber.shade200,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 7.5),
-                            child: Text(
-                              'autoshift_note'.tr(),
-                              style: Theme.of(context).textTheme.bodySmall,
+                                border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Colors.blueGrey.shade100,
+                              ),
+                            )),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'expected_cash'.tr(),
+                                  style: labelStyle,
+                                ),
+                                Text(
+                                  CurrencyFormat.currency(
+                                    widget.shift.summary.expectedCashEnd,
+                                    symbol: false,
+                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(color: Colors.teal),
+                                )
+                              ],
                             ),
                           ),
-                        )
-                      : const SizedBox(height: 15),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: TextFormField(
+                              inputFormatters: <TextInputFormatter>[
+                                _amountFormater
+                              ],
+                              initialValue:
+                                  _amountFormater.formatDouble(amount),
+                              onChanged: (value) {
+                                setState(() {
+                                  amount = _amountFormater
+                                      .getUnformattedValue()
+                                      .toDouble();
+                                });
+                              },
+                              textAlign: TextAlign.right,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 0, bottom: 15, right: 0),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                label: Text(
+                                  'available_cash'.tr(),
+                                  style: labelStyle,
+                                ),
+                                prefix: Text(
+                                  'available_cash'.tr(),
+                                  style: labelStyle,
+                                ),
+                                alignLabelWithHint: true,
+                              ),
+                            ),
+                          ),
+                          diffAmount() != 0
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 5, right: 15, left: 15),
+                                  child: Text(
+                                    '${'different'.tr()} ${CurrencyFormat.currency(diffAmount())}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(color: Colors.red),
+                                    textAlign: TextAlign.end,
+                                  ),
+                                )
+                              : Container(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 15,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${'attachments'.tr()} ${isAttachmentRequired ? '*' : ''}",
+                                  style: labelStyle,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Wrap(
+                                  children:
+                                      List.generate(images.length, (index) {
+                                    XFile image = images[index];
+                                    return PickedImage(
+                                      source: image.path,
+                                      sourceType: SourceType.path,
+                                      onDelete: () => onDeleteImage(index),
+                                    );
+                                  }),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor:
+                                            Colors.blueGrey.shade600,
+                                        backgroundColor:
+                                            Colors.blueGrey.shade50,
+                                      ),
+                                      icon: const Icon(
+                                        CupertinoIcons.camera_fill,
+                                        size: 18,
+                                      ),
+                                      onPressed: () =>
+                                          pickImage(source: ImageSource.camera),
+                                      label: Text('photo'.tr()),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor:
+                                            Colors.blueGrey.shade600,
+                                        backgroundColor:
+                                            Colors.blueGrey.shade50,
+                                      ),
+                                      icon: const Icon(
+                                        CupertinoIcons
+                                            .photo_fill_on_rectangle_fill,
+                                        size: 18,
+                                      ),
+                                      onPressed: pickImage,
+                                      label: Text('image'.tr()),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          isAutoShift
+                              ? Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber.shade200,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 7.5),
+                                    child: Text(
+                                      'autoshift_note'.tr(),
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(height: 15),
+                        ],
+                      ),
+                    ),
+                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 20)
+                        .copyWith(bottom: 15),
                     child: Row(
                       children: [
                         Switch(
