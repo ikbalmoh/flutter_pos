@@ -34,6 +34,10 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         autofocus: true,
         decoration: InputDecoration(
           hintText: placeholder ?? 'search'.tr(),
+          hintStyle: const TextStyle(
+            fontSize: 16,
+            color: Colors.black45,
+          ),
           border: InputBorder.none,
           focusedBorder: InputBorder.none,
           disabledBorder: InputBorder.none,

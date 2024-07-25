@@ -192,5 +192,6 @@
   "account": "Account",
   "transaction": "Transaction",
   "print": "Print",
-  "transaction_detail": "Transaction Detail"
+  "transaction_detail": "Transaction Detail",
+  "insufficient_payment": "Insufficient Payment"
 }

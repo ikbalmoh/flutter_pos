@@ -197,6 +197,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ? (outlet.value as OutletSelected).outlet.outletName
                   : ''),
               automaticallyImplyLeading: false,
+              elevation: 1,
               leading: Builder(builder: (context) {
                 return IconButton(
                     onPressed: () {
@@ -243,8 +244,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               isTablet
                   ? Container(
                       width: 350,
-                      color: Colors.white,
                       padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        border: Border(
+                          left: BorderSide(
+                            width: 1,
+                            color: Colors.grey.shade200,
+                          ),
+                        ),
+                      ),
                       child: Card(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),

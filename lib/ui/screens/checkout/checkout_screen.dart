@@ -47,6 +47,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
           title: Text('payment'.tr(args: [''])),
+          elevation: 1,
         ),
         body: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +56,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             isTablet
                 ? Container(
                     height: MediaQuery.of(context).size.height,
-                    color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        right: BorderSide(
+                          width: 1,
+                          color: Colors.grey.shade200,
+                        ),
+                      ),
+                    ),
                     width: 350,
                     child: SingleChildScrollView(
                       child: Card(

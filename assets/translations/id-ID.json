@@ -193,5 +193,6 @@
   "account": "Akun",
   "transaction": "Transaksi",
   "print": "Cetak",
-  "transaction_detail": "Detail Transaksi"
+  "transaction_detail": "Detail Transaksi",
+  "insufficient_payment": "Kekurangan Bayar"
 }
