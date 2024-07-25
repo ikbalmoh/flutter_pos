@@ -191,5 +191,6 @@
   "cash_balance": "Cash Balance",
   "account": "Account",
   "transaction": "Transaction",
-  "print": "Print"
+  "print": "Print",
+  "transaction_detail": "Transaction Detail"
 }

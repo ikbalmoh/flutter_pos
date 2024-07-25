@@ -14,23 +14,38 @@ ThemeData appTheme(BuildContext context) {
     ),
     useMaterial3: true,
     appBarTheme: AppBarTheme(
-      elevation: 0,
-      surfaceTintColor: Colors.teal,
-      scrolledUnderElevation: 0,
-      foregroundColor: Colors.teal,
-      backgroundColor: Colors.white,
-      titleTextStyle: const TextStyle(
-          color: Colors.teal, fontWeight: FontWeight.w600, fontSize: 18),
-      actionsIconTheme: IconThemeData(
-        color: Colors.blueGrey.shade500,
-      ),
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark,
-      ),
-      centerTitle: false,
-    ),
+        surfaceTintColor: Colors.white,
+        scrolledUnderElevation: 0,
+        foregroundColor: Colors.teal,
+        backgroundColor: Colors.white,
+        titleTextStyle: const TextStyle(
+            color: Colors.teal, fontWeight: FontWeight.w600, fontSize: 18),
+        actionsIconTheme: IconThemeData(
+          color: Colors.blueGrey.shade500,
+        ),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.dark,
+        ),
+        centerTitle: false,
+        shadowColor: Colors.blueGrey.shade50.withOpacity(0.5)),
+    searchBarTheme: SearchBarThemeData(
+        elevation: WidgetStateProperty.resolveWith<double>(
+      (Set<WidgetState> states) {
+        if (states.contains(WidgetState.focused)) {
+          return 3;
+        }
+        return 0;
+      },
+    ), backgroundColor: WidgetStateProperty.resolveWith<Color>(
+      (Set<WidgetState> states) {
+        return Colors.grey.shade200;
+      },
+    ), padding: WidgetStateProperty.resolveWith<EdgeInsetsGeometry?>(
+            (Set<WidgetState> states) {
+      return const EdgeInsets.symmetric(vertical: 0, horizontal: 20);
+    })),
     textTheme: const TextTheme(
       headlineSmall: TextStyle(
         fontSize: 20,

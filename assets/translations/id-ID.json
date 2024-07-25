@@ -192,5 +192,6 @@
   "cash_balance": "Saldo Kas",
   "account": "Akun",
   "transaction": "Transaksi",
-  "print": "Cetak"
+  "print": "Cetak",
+  "transaction_detail": "Detail Transaksi"
 }

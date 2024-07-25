@@ -71,7 +71,19 @@ class _TransactionDetailScreenState
           fontSize: 18,
         ),
         automaticallyImplyLeading: widget.asWidget != true,
-        title: Text(widget.cart.transactionNo),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('transaction_detail'.tr()),
+            Text(
+              widget.cart.transactionNo,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(color: Colors.black54),
+            ),
+          ],
+        ),
         actions: [
           transaction?.deletedAt == null &&
                   transaction?.shiftId == currentShift?.id

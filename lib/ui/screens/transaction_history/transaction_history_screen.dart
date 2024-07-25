@@ -57,6 +57,9 @@ class _TransactionHistoryScreenState
   void onSearchItems(String query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        viewTransaction = null;
+      });
       ref
           .read(transactionsNotifierProvider.notifier)
           .loadTransactions(page: 1, search: query, currentShift: currentShift);
@@ -92,51 +95,66 @@ class _TransactionHistoryScreenState
         });
   }
 
-  Widget shiftFilter() {
+  Widget transactionFilter(bool isTablet) {
+    var shiftFilter = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'current_shift'.tr(),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: Colors.black87),
+        ),
+        SizedBox(
+          height: 35,
+          width: 45,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: Switch(
+              value: currentShift,
+              onChanged: (value) {
+                setState(() {
+                  currentShift = value;
+                });
+                onSearchItems(_searchController.text);
+              },
+            ),
+          ),
+        )
+      ],
+    );
     return ref.watch(shiftNotifierProvider).value != null
-        ? Container(
-            height: 57,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade50,
-                ),
+        ? Card(
+            margin: const EdgeInsets.all(0),
+            elevation: 1,
+            color: Colors.white,
+            shadowColor: Colors.blueGrey.shade50.withOpacity(0.5),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 7.5,
+                horizontal: 15,
               ),
-            ),
-            padding: const EdgeInsets.symmetric(
-              vertical: 0,
-              horizontal: 15,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'current_shift'.tr(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.black87),
-                ),
-                SizedBox(
-                  height: 35,
-                  width: 45,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: Switch(
-                      value: currentShift,
-                      onChanged: (value) {
-                        setState(() {
-                          currentShift = value;
-                          viewTransaction = null;
-                        });
-                        onSearchItems(_searchController.text);
-                      },
-                    ),
-                  ),
-                )
-              ],
+              child: isTablet
+                  ? Column(
+                      children: [
+                        shiftFilter,
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        SearchBar(
+                          leading: const Icon(CupertinoIcons.search),
+                          hintText: 'search'.tr(),
+                          controller: _searchController,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    )
+                  : shiftFilter,
             ),
           )
         : Container();
@@ -162,6 +180,7 @@ class _TransactionHistoryScreenState
           : AppBar(
               automaticallyImplyLeading: false,
               title: Text('transaction_history'.tr()),
+              elevation: 1,
               leading: Builder(builder: (context) {
                 return IconButton(
                     onPressed: () {
@@ -170,13 +189,15 @@ class _TransactionHistoryScreenState
                     icon: const Icon(Icons.menu));
               }),
               actions: [
-                IconButton(
-                  tooltip: 'search'.tr(),
-                  onPressed: () => setState(() {
-                    searchVisible = true;
-                  }),
-                  icon: const Icon(CupertinoIcons.search),
-                ),
+                isTablet
+                    ? Container()
+                    : IconButton(
+                        tooltip: 'search'.tr(),
+                        onPressed: () => setState(() {
+                          searchVisible = true;
+                        }),
+                        icon: const Icon(CupertinoIcons.search),
+                      ),
                 IconButton(
                   tooltip: 'download'.tr(),
                   onPressed: showSalesReportDownloader,
@@ -198,7 +219,7 @@ class _TransactionHistoryScreenState
                   ),
               child: Column(
                 children: [
-                  shiftFilter(),
+                  transactionFilter(isTablet),
                   Expanded(
                     child: ref.watch(transactionsNotifierProvider).when(
                           data: (data) => data.data!.isNotEmpty
@@ -331,11 +352,26 @@ class _TransactionHistoryScreenState
           ),
           isTablet
               ? Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                        color: Colors.grey.shade200,
+                        width: 1,
+                      ),
+                    ),
+                    color: Colors.grey.shade100,
+                  ),
                   width: MediaQuery.of(context).size.width - 400,
-                  color: Colors.blueGrey.shade50,
                   child: viewTransaction != null
-                      ? TransactionDetailScreen(
-                          asWidget: true, cart: viewTransaction!)
+                      ? Card(
+                          margin: const EdgeInsets.all(15),
+                          color: Colors.grey.shade100,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: TransactionDetailScreen(
+                                asWidget: true, cart: viewTransaction!),
+                          ),
+                        )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
