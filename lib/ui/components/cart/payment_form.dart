@@ -1,23 +1,23 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/payment_method.dart';
-import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/utils/formater.dart';
 
-class PaymentForm extends ConsumerStatefulWidget {
+class PaymentForm extends StatefulWidget {
   final PaymentMethod method;
   final CartPayment? cartPayment;
-  const PaymentForm({super.key, required this.method, this.cartPayment});
+  final double? insufficient;
+  const PaymentForm(
+      {super.key, required this.method, this.cartPayment, this.insufficient});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _PaymentFormState();
+  State<PaymentForm> createState() => _PaymentFormState();
 }
 
-class _PaymentFormState extends ConsumerState<PaymentForm> {
+class _PaymentFormState extends State<PaymentForm> {
   TextEditingController refController = TextEditingController();
 
   final _formatter = CurrencyFormat.currencyInput();
@@ -29,9 +29,8 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
     if (widget.cartPayment != null) {
       refController.text = widget.cartPayment!.reference ?? '';
     }
-    double inititalValue = widget.cartPayment?.paymentValue ??
-        ref.read(cartNotiferProvider).grandTotal -
-            ref.read(cartNotiferProvider).totalPayment;
+    double inititalValue =
+        widget.cartPayment?.paymentValue ?? widget.insufficient ?? 0;
     setState(() {
       amount = inititalValue < 0 ? 0 : inititalValue;
     });

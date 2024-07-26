@@ -44,6 +44,101 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
+    Widget actions = Card(
+      margin: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 0),
+      color: Colors.white,
+      elevation: 5,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25),
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17.5),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 7.5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Total',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      CurrencyFormat.currency(cart.grandTotal),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700, color: Colors.teal),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Row(
+                children: [
+                  const HoldButton(),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                        ),
+                        backgroundColor: cart.totalPayment >= cart.grandTotal
+                            ? Colors.teal
+                            : Colors.red,
+                      ),
+                      onPressed: (cart.totalPayment >= cart.grandTotal ||
+                              isPartialEnabled)
+                          ? onStoreTransaction
+                          : null,
+                      child: Text(
+                          '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Widget cartPreview = Card(
+      margin: const EdgeInsets.all(10),
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Colors.blueGrey.shade100, width: 1),
+      ),
+      elevation: 0,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.5, horizontal: 15),
+            child: Text(
+              'order_summary'.tr(),
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
+          Divider(
+            height: 1,
+            color: Colors.blueGrey.shade50,
+          ),
+          OrderSummary(
+            cart: ref.watch(cartNotiferProvider),
+            radius: const Radius.circular(10),
+          ),
+        ],
+      ),
+    );
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
@@ -68,38 +163,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     ),
                     width: 350,
                     child: SingleChildScrollView(
-                      child: Card(
-                        margin: const EdgeInsets.all(15).copyWith(top: 20),
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(
-                              color: Colors.blueGrey.shade100, width: 1),
-                        ),
-                        elevation: 0,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 12.5, horizontal: 15),
-                              child: Text(
-                                'order_summary'.tr(),
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                            Divider(
-                              height: 1,
-                              color: Colors.blueGrey.shade50,
-                            ),
-                            OrderSummary(
-                              cart: ref.watch(cartNotiferProvider),
-                              radius: const Radius.circular(10),
-                            ),
-                          ],
-                        ),
-                      ),
+                      padding: const EdgeInsets.all(5),
+                      child: cartPreview,
                     ),
                   )
                 : Container(),
@@ -107,131 +172,48 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 7.5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            !isTablet
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 15),
-                                        child: Text(
-                                          'order_summary'.tr(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12),
-                                        child: OrderSummary(
-                                          cart: ref.watch(cartNotiferProvider),
-                                          radius: const Radius.circular(10),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
-                                  )
-                                : const SizedBox(
-                                    height: 7.5,
-                                  ),
-                            const DiscountPromotion(),
-                            const PaymentDetails()
-                          ],
+                children: isTablet
+                    ? [
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    ),
-                  ),
-                  Card(
-                    margin: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 0),
-                    color: Colors.white,
-                    elevation: 5,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(25),
-                      ),
-                    ),
-                    child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 17.5),
-                        child: Column(
-                          children: [
-                            Padding(
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: DiscountPromotion(),
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 10)
+                                .copyWith(bottom: 15),
+                            child: const PaymentDetails(),
+                          ),
+                        ),
+                        actions
+                      ]
+                    : [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 7.5),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                  const EdgeInsets.symmetric(horizontal: 7.5)
+                                      .copyWith(bottom: 15),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Total',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: cartPreview,
                                   ),
-                                  Text(
-                                    CurrencyFormat.currency(cart.grandTotal),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.teal),
-                                  ),
+                                  const DiscountPromotion(),
+                                  const PaymentDetails()
                                 ],
                               ),
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Row(
-                              children: [
-                                const HoldButton(),
-                                const SizedBox(width: 15),
-                                Expanded(
-                                  flex: 2,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(30)),
-                                      ),
-                                      backgroundColor:
-                                          cart.totalPayment >= cart.grandTotal
-                                              ? Colors.teal
-                                              : Colors.red,
-                                    ),
-                                    onPressed: cart.payments.isNotEmpty &&
-                                            (cart.totalPayment >=
-                                                    cart.grandTotal ||
-                                                isPartialEnabled)
-                                        ? onStoreTransaction
-                                        : null,
-                                    child: Text(
-                                        '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  )
-                ],
+                        actions
+                      ],
               ),
             ),
           ],

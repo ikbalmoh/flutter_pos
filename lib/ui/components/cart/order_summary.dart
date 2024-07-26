@@ -150,7 +150,7 @@ class OrderSummary extends StatelessWidget {
           ),
           TwoColumn(
             label:
-                '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${cart.discOverall}%)' : ''}',
+                '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
             value: cart.discOverallTotal,
           ),
           cart.ppnTotal > 0
