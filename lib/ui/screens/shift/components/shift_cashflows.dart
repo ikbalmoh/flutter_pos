@@ -38,9 +38,12 @@ class ShiftCashflows extends ConsumerWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, idx) {
                   ShiftCashflow cashflow = cashflows[idx];
+                  final editable = onEdit != null && cashflow.approval == 'new';
+
                   return CashflowItem(
                     cashflow: cashflow,
-                    onTap: onEdit == null ? null : () => onEdit!(cashflow),
+                    onTap: !editable ? null : () => onEdit!(cashflow),
+                    editable: editable,
                   );
                 },
                 itemCount: cashflows.length,

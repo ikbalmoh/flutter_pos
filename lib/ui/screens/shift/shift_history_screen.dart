@@ -77,7 +77,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
-    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(TABLET);
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,

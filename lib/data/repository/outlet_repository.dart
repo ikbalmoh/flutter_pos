@@ -77,7 +77,6 @@ class OutletRepository implements OutletRepositoryProtocol {
   @override
   Future<void> saveOutletConfig(OutletConfig config) async {
     final configString = json.encode(config.toJson());
-    log('SAVE CONFIG: $configString');
     const storage = FlutterSecureStorage();
     await storage.write(
         key: StoreKey.outletConfig.toString(), value: configString);
@@ -100,16 +99,11 @@ class OutletRepository implements OutletRepositoryProtocol {
     try {
       var configJson = await api.configs(idOutlet, only: only);
 
-      log('NEW CONFIG: $configJson');
-
       if (current != null) {
-        log('CURRENT CONFIG: $current');
         configJson = current.toJson()..addAll(configJson);
       }
 
       final OutletConfig config = OutletConfig.fromJson(configJson);
-
-      log('CONFIG CLASS:\n$configJson\n$config');
 
       saveOutletConfig(config);
 

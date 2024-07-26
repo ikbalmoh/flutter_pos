@@ -193,5 +193,7 @@
   "transaction": "Transaction",
   "print": "Print",
   "transaction_detail": "Transaction Detail",
-  "insufficient_payment": "Insufficient Payment"
+  "insufficient_payment": "Insufficient Payment",
+  "approved": "Approved",
+  "rejected": "Rejected"
 }
