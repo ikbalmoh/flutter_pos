@@ -38,16 +38,23 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
     super.initState();
   }
 
+  void onDelete() {
+    final payment = CartPayment(
+      paymentMethodId: widget.method.id,
+      paymentName: widget.method.name,
+      paymentValue: 0,
+    );
+    context.pop(payment);
+  }
+
   void onSubmit() {
-    ref.read(cartNotiferProvider.notifier).addPayment(
-          CartPayment(
-            paymentMethodId: widget.method.id,
-            paymentName: widget.method.name,
-            paymentValue: amount,
-            reference: refController.text,
-          ),
-        );
-    context.pop();
+    final payment = CartPayment(
+      paymentMethodId: widget.method.id,
+      paymentName: widget.method.name,
+      paymentValue: amount,
+      reference: refController.text,
+    );
+    context.pop(payment);
   }
 
   @override
@@ -69,7 +76,7 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 8, bottom: 15),
+            padding: const EdgeInsets.only(bottom: 5),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -78,9 +85,18 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
                 ),
               ),
             ),
-            child: Text(
-              'payment'.tr(args: [widget.method.name]),
-              style: Theme.of(context).textTheme.bodyLarge,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'payment'.tr(args: [widget.method.name]),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(CupertinoIcons.xmark),
+                )
+              ],
             ),
           ),
           TextFormField(
@@ -123,16 +139,21 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              TextButton(
-                onPressed: () => context.pop(),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey,
-                ),
-                child: Text('cancel'.tr()),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+              widget.cartPayment != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 15),
+                      child: IconButton(
+                        onPressed: onDelete,
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                        ),
+                        icon: const Icon(
+                          CupertinoIcons.trash,
+                          color: Colors.red,
+                        ),
+                      ),
+                    )
+                  : Container(),
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
@@ -142,7 +163,7 @@ class _PaymentFormState extends ConsumerState<PaymentForm> {
                       ),
                     ),
                   ),
-                  onPressed: amount <= 0 ? null : onSubmit,
+                  onPressed: amount < 0 ? null : onSubmit,
                   icon: const Icon(CupertinoIcons.checkmark_alt),
                   label: Text(
                     CurrencyFormat.currency(amount),

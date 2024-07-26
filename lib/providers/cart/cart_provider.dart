@@ -299,7 +299,10 @@ class CartNotifer extends _$CartNotifer {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
     int paymentIdx = payments
         .indexWhere((cp) => cp.paymentMethodId == payment.paymentMethodId);
-    if (paymentIdx >= 0) {
+
+    if (payment.paymentValue <= 0) {
+      payments.removeWhere((p) => p.paymentMethodId == payment.paymentMethodId);
+    } else if (paymentIdx >= 0) {
       // Update payment
       payments[paymentIdx] = payment;
     } else {
@@ -309,6 +312,18 @@ class CartNotifer extends _$CartNotifer {
     double totalPayment = payments
         .map((payment) => payment.paymentValue)
         .reduce((payment, total) => payment + total);
+    state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    calculateCart();
+  }
+
+  void removePayment(String paymentMethodId) {
+    List<CartPayment> payments = List<CartPayment>.from(state.payments);
+    payments.removeWhere((p) => p.paymentMethodId == paymentMethodId);
+    double totalPayment = payments.isNotEmpty
+        ? payments
+            .map((payment) => payment.paymentValue)
+            .reduce((payment, total) => payment + total)
+        : 0;
     state = state.copyWith(payments: payments, totalPayment: totalPayment);
     calculateCart();
   }

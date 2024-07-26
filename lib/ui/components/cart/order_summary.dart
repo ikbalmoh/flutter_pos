@@ -19,7 +19,7 @@ class OrderItem extends StatelessWidget {
 
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 7.5, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,6 +114,7 @@ class OrderSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -148,7 +149,8 @@ class OrderSummary extends StatelessWidget {
             value: cart.subtotal,
           ),
           TwoColumn(
-            label: 'discount'.tr(),
+            label:
+                '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${cart.discOverall}%)' : ''}',
             value: cart.discOverallTotal,
           ),
           cart.ppnTotal > 0
@@ -160,6 +162,8 @@ class OrderSummary extends StatelessWidget {
           TwoColumn(
             label: 'Grand Total',
             value: cart.grandTotal,
+            valueStyle: textTheme.bodyLarge
+                ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
@@ -171,11 +175,15 @@ class OrderSummary extends StatelessWidget {
           TwoColumn(
             label: 'payment_amount'.tr(),
             value: cart.totalPayment,
+            valueStyle:
+                textTheme.bodyLarge?.copyWith(color: Colors.green.shade700),
           ),
           cart.totalPayment < cart.grandTotal
               ? TwoColumn(
                   label: 'insufficient_payment'.tr(),
                   value: cart.grandTotal - cart.totalPayment,
+                  valueStyle:
+                      textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
                 )
               : Container(),
           TwoColumn(
@@ -194,10 +202,14 @@ class TwoColumn extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
+    this.labelStyle,
+    this.valueStyle,
   });
 
   final String label;
   final double value;
+  final TextStyle? labelStyle;
+  final TextStyle? valueStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -210,11 +222,13 @@ class TwoColumn extends StatelessWidget {
         children: [
           Text(
             label,
-            style: textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
+            style: labelStyle ??
+                textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
           ),
           Text(
             CurrencyFormat.currency(value, symbol: false),
-            style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+            style: valueStyle ??
+                textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
           ),
         ],
       ),

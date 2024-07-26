@@ -37,7 +37,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
 
   int status = 1;
   DateTime transDate = DateTime.now();
-  double amount = 0;
+  double? amount;
   String descriptions = '';
   List<XFile> images = [];
   List<ShiftCashflowImage> prevImages = [];
@@ -208,7 +208,8 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
           ? const LoadingPlaceholder()
           : SizedBox(
               height: (widget.height ?? MediaQuery.of(context).size.height) +
-                  MediaQuery.of(context).viewInsets.bottom + 15,
+                  MediaQuery.of(context).viewInsets.bottom +
+                  15,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -360,8 +361,9 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                               inputFormatters: <TextInputFormatter>[
                                 _amountFormater
                               ],
-                              initialValue:
-                                  _amountFormater.formatDouble(amount),
+                              initialValue: amount != null
+                                  ? _amountFormater.formatDouble(amount!)
+                                  : '',
                               onChanged: (value) {
                                 setState(() {
                                   amount = _amountFormater
@@ -485,7 +487,8 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15).copyWith(bottom: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 15)
+                        .copyWith(bottom: 20),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.end,

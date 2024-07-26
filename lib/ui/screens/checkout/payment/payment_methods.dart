@@ -23,10 +23,11 @@ class PaymentMethods extends ConsumerWidget {
 
     final List<PaymentMethod> payments =
         (ref.read(outletNotifierProvider).value as OutletSelected)
-            .config
-            .paymentMethods
-            ?.where((p) => p.type == type)
-            .toList() ?? [];
+                .config
+                .paymentMethods
+                ?.where((p) => p.type == type)
+                .toList() ??
+            [];
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -36,9 +37,11 @@ class PaymentMethods extends ConsumerWidget {
         PaymentMethod method = payments[idx];
         CartPayment? cartPayment =
             ref.watch(cartNotiferProvider).payments.firstWhereOrNull(
-                  (payment) => payment.paymentMethodId == method.id,
+                  (payment) =>
+                      payment.paymentMethodId == method.id &&
+                      payment.paymentValue > 0,
                 );
-        bool inuse = cartPayment != null;
+        bool inUse = cartPayment != null;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Material(
@@ -46,7 +49,7 @@ class PaymentMethods extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               side: BorderSide(
                 width: 1,
-                color: inuse ? Colors.teal : Colors.grey.shade200,
+                color: inUse ? Colors.teal : Colors.grey.shade200,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(7.5),
@@ -75,7 +78,7 @@ class PaymentMethods extends ConsumerWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        inuse
+                        inUse
                             ? Text(
                                 CurrencyFormat.currency(
                                   cartPayment.paymentValue,
@@ -90,7 +93,7 @@ class PaymentMethods extends ConsumerWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    inuse
+                    inUse
                         ? const Icon(
                             Icons.check_circle,
                             size: 17,

@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/payment_method.dart';
 import 'package:selleri/data/models/payment_type.dart';
@@ -58,12 +61,12 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
 
   @override
   Widget build(BuildContext context) {
-    void onSelectMethod(PaymentMethod method) {
+    void onSelectMethod(PaymentMethod method) async {
       CartPayment? cartPayment = ref
           .read(cartNotiferProvider)
           .payments
           .firstWhereOrNull((payment) => payment.paymentMethodId == method.id);
-      showModalBottomSheet(
+      CartPayment? payment = await showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
         isScrollControlled: true,
@@ -74,6 +77,17 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
           );
         },
       );
+      log('Payment $payment');
+      if (payment == null) {
+        return;
+      }
+      if (payment.paymentValue > 0) {
+        ref.read(cartNotiferProvider.notifier).addPayment(payment);
+      } else {
+        ref
+            .read(cartNotiferProvider.notifier)
+            .removePayment(payment.paymentMethodId);
+      }
     }
 
     TextTheme textTheme = Theme.of(context).textTheme;
