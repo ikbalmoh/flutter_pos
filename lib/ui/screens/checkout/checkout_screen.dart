@@ -19,6 +19,11 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 }
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void onStoreTransaction() async {
     showModalBottomSheet(
       isDismissible: false,

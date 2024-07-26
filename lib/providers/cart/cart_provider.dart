@@ -254,6 +254,7 @@ class CartNotifer extends _$CartNotifer {
       grandTotal: grandTotal,
       discOverallTotal: discOverallTotal,
       change: change,
+      transactionDate: DateTime.now().millisecondsSinceEpoch,
     );
   }
 
