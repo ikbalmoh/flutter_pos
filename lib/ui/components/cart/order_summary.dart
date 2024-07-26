@@ -123,9 +123,40 @@ class OrderSummary extends StatelessWidget {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'No: ${cart.transactionNo}',
+                  textAlign: TextAlign.left,
+                ),
+                Text(
+                  '${'cashier'.tr()}: ${cart.createdName}',
+                  textAlign: TextAlign.left,
+                ),
+                Text(
+                  '${'date'.tr()}: ${DateTimeFormater.msToString(cart.transactionDate, format: 'd/MM/y HH:mm')}',
+                  textAlign: TextAlign.left,
+                ),
+                Text(
+                  '${'customer'.tr()}: ${cart.customerName ?? '-'}',
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Divider(
+              height: 1,
+              color: Colors.blueGrey.shade50,
+            ),
+          ),
           ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 7.5),
             itemBuilder: (context, idx) {
