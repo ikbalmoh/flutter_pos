@@ -65,34 +65,33 @@ class _ShiftHistoryDetailScreenState
               title: Text('shift_detail'.tr()),
             ),
       backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 85),
-        child: ref.watch(detailShiftInfoNotifierProvider(widget.shiftId)).when(
-              data: (data) {
-                if (isTablet) {
-                  return Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Column(
-                      children: [
-                        ActiveShiftInfoHorizontal(
-                          shiftInfo: data!,
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 300,
-                              child: summaryMenu(context),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
+      body: ref.watch(detailShiftInfoNotifierProvider(widget.shiftId)).when(
+            data: (data) {
+              if (isTablet) {
+                return Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    children: [
+                      ActiveShiftInfoHorizontal(
+                        shiftInfo: data!,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 300,
+                            child: summaryMenu(context),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.55,
                               child: Card(
                                 color: Colors.white,
                                 elevation: 0,
@@ -134,14 +133,18 @@ class _ShiftHistoryDetailScreenState
                                   ),
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return Column(
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(bottom: 50),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
@@ -160,15 +163,15 @@ class _ShiftHistoryDetailScreenState
                     ),
                     ShiftCashflows(cashflows: data.cashFlows.data)
                   ],
-                );
-              },
-              error: (error, stackTrace) => ErrorHandler(
-                error: error.toString(),
-                stackTrace: stackTrace.toString(),
-              ),
-              loading: () => const ShiftSkeleon(),
+                ),
+              );
+            },
+            error: (error, stackTrace) => ErrorHandler(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
             ),
-      ),
+            loading: () => const ShiftSkeleon(),
+          ),
       floatingActionButton: isTablet
           ? FloatingActionButton.extended(
               icon: const Icon(CupertinoIcons.printer),

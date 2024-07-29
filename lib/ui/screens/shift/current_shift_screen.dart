@@ -80,97 +80,96 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
       backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
       body: RefreshIndicator(
         onRefresh: () => ref.read(shiftInfoNotifierProvider.notifier).reload(),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 85),
-          child: shift != null
-              ? ref.watch(shiftInfoNotifierProvider).when(
-                    data: (data) {
-                      if (isTablet) {
-                        return Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(
-                            children: [
-                              ActiveShiftInfoHorizontal(
-                                shiftInfo: data!,
-                                onCloseShift: () => onCloseShift(data),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: summaryMenu(context),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width - 350,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.6,
-                                    child: Card(
-                                      color: Colors.white,
-                                      elevation: 0,
-                                      child: SingleChildScrollView(
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(25),
-                                          child: viewSummary == 'cashflow'
-                                              ? Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 10,
+        child: shift != null
+            ? ref.watch(shiftInfoNotifierProvider).when(
+                  data: (data) {
+                    if (isTablet) {
+                      return Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Column(
+                          children: [
+                            ActiveShiftInfoHorizontal(
+                              shiftInfo: data!,
+                              onCloseShift: () => onCloseShift(data),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: summaryMenu(context),
+                                ),
+                                const SizedBox(
+                                  width: 15,
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width - 350,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.55,
+                                  child: Card(
+                                    color: Colors.white,
+                                    elevation: 0,
+                                    child: SingleChildScrollView(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: viewSummary == 'cashflow'
+                                            ? Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                ),
+                                                child: ShiftCashflows(
+                                                  withoutLabel: true,
+                                                  cashflows:
+                                                      data.cashFlows.data,
+                                                  onEdit: (cashflow) =>
+                                                      onShowCashflowForm(
+                                                    cashflow: cashflow,
                                                   ),
-                                                  child: ShiftCashflows(
-                                                    withoutLabel: true,
-                                                    cashflows:
-                                                        data.cashFlows.data,
-                                                    onEdit: (cashflow) =>
-                                                        onShowCashflowForm(
-                                                      cashflow: cashflow,
+                                                ),
+                                              )
+                                            : viewSummary == 'summary'
+                                                ? SalesSummaryList(
+                                                    summary: data.summary,
+                                                  )
+                                                : Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 15,
+                                                      vertical: 10,
                                                     ),
+                                                    child: data
+                                                            .soldItems.isEmpty
+                                                        ? const Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 150),
+                                                            child:
+                                                                EmptySoldItemsPlaceholder(),
+                                                          )
+                                                        : SoldItemsList(
+                                                            items:
+                                                                data.soldItems,
+                                                          ),
                                                   ),
-                                                )
-                                              : viewSummary == 'summary'
-                                                  ? SalesSummaryList(
-                                                      summary: data.summary,
-                                                    )
-                                                  : Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        horizontal: 15,
-                                                        vertical: 10,
-                                                      ),
-                                                      child: data
-                                                              .soldItems.isEmpty
-                                                          ? const Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      top: 150),
-                                                              child:
-                                                                  EmptySoldItemsPlaceholder(),
-                                                            )
-                                                          : SoldItemsList(
-                                                              items: data
-                                                                  .soldItems,
-                                                            ),
-                                                    ),
-                                        ),
                                       ),
                                     ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      return Column(
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 100),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
@@ -194,16 +193,16 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                             ),
                           ),
                         ],
-                      );
-                    },
-                    error: (error, stackTrace) => ErrorHandler(
-                      error: error.toString(),
-                      stackTrace: stackTrace.toString(),
-                    ),
-                    loading: () => ShiftSkeleon(isTablet: isTablet),
-                  )
-              : const ShiftInactive(),
-        ),
+                      ),
+                    );
+                  },
+                  error: (error, stackTrace) => ErrorHandler(
+                    error: error.toString(),
+                    stackTrace: stackTrace.toString(),
+                  ),
+                  loading: () => ShiftSkeleon(isTablet: isTablet),
+                )
+            : const ShiftInactive(),
       ),
       floatingActionButton: viewSummary == 'cashflow' && shift != null
           ? ref.watch(shiftInfoNotifierProvider).value != null

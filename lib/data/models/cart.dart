@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart_payment.dart';
@@ -136,20 +134,24 @@ class Cart with _$Cart {
       "vouchers": [],
       "refunds": [],
       "promotions": [],
-      "deleted_at":
-          deletedAt != null ? DateTimeFormater.dateToString(deletedAt!) : null,
-      "deleted_by": deletedBy,
-      "delete_reason": deleteReason,
       "created_by": createdBy,
       "images": dataImages,
     };
+    if (deletedAt != null) {
+      jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);
+      jsonData['deleted_by'] = deletedBy;
+      jsonData['delete_reason'] = deleteReason;
+    }
     return jsonData;
   }
 
   Future<FormData> toTransactionFormData() async {
     final transactionJson = await toTransactionPayload();
-    return FormData.fromMap({
-      "transactions": [transactionJson]
-    }, ListFormat.multiCompatible, true);
+    return FormData.fromMap(
+      {
+        "transactions": [transactionJson]
+      },
+      ListFormat.multiCompatible,
+    );
   }
 }
