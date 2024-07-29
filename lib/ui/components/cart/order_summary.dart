@@ -109,8 +109,14 @@ class OrderSummary extends StatelessWidget {
   final Cart cart;
   final Radius? radius;
   final bool? isDone;
+  final MainAxisSize? mainAxisSize;
 
-  const OrderSummary({required this.cart, this.isDone, this.radius, super.key});
+  const OrderSummary(
+      {required this.cart,
+      this.isDone,
+      this.radius,
+      this.mainAxisSize,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +130,7 @@ class OrderSummary extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: mainAxisSize ?? MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -157,16 +163,29 @@ class OrderSummary extends StatelessWidget {
               color: Colors.blueGrey.shade50,
             ),
           ),
-          ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 7.5),
-            itemBuilder: (context, idx) {
-              ItemCart item = cart.items[idx];
-              return OrderItem(item: item);
-            },
-            itemCount: cart.items.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-          ),
+          mainAxisSize == MainAxisSize.max
+              ? Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 7.5),
+                    itemBuilder: (context, idx) {
+                      ItemCart item = cart.items[idx];
+                      return OrderItem(item: item);
+                    },
+                    itemCount: cart.items.length,
+                    shrinkWrap: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 7.5),
+                  itemBuilder: (context, idx) {
+                    ItemCart item = cart.items[idx];
+                    return OrderItem(item: item);
+                  },
+                  itemCount: cart.items.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Divider(

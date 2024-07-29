@@ -261,10 +261,19 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             height: 1,
             color: Colors.blueGrey.shade50,
           ),
-          OrderSummary(
-            cart: ref.watch(cartNotiferProvider),
-            radius: const Radius.circular(10),
-          ),
+          isTablet
+              ? Expanded(
+                  child: OrderSummary(
+                    cart: ref.watch(cartNotiferProvider),
+                    radius: const Radius.circular(10),
+                    mainAxisSize: MainAxisSize.max,
+                  ),
+                )
+              : OrderSummary(
+                  cart: ref.watch(cartNotiferProvider),
+                  radius: const Radius.circular(10),
+                  mainAxisSize: MainAxisSize.min,
+                ),
         ],
       ),
     );
