@@ -195,5 +195,7 @@
   "transaction_detail": "Transaction Detail",
   "insufficient_payment": "Insufficient Payment",
   "approved": "Approved",
-  "rejected": "Rejected"
+  "rejected": "Rejected",
+  "finish_transaction": "Finish Transaction",
+  "finish": "Finish"
 }

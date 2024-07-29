@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart.dart';
@@ -52,6 +55,7 @@ class Cart with _$Cart {
     DateTime? deletedAt,
     String? deletedBy,
     String? deleteReason,
+    @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
   }) = _Cart;
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
@@ -89,45 +93,63 @@ class Cart with _$Cart {
     return Cart.fromJson(json);
   }
 
-  Map<String, dynamic> toTransactionPayload() => <String, dynamic>{
-        "id_transaction": deletedAt != null ? idTransaction : null,
-        "id_outlet": idOutlet,
-        "shift_id": shiftId,
-        "transaction_date": DateTimeFormater.unixServer(transactionDate),
-        "transaction_no": transactionNo,
-        "id_customer": idCustomer ?? '',
-        "subtotal": subtotal,
-        "disc_is_percent": discIsPercent ? 1 : 0,
-        "disc_overall": discOverall,
-        "disc_overall_total": discOverallTotal,
-        "disc_promotions_total": 0,
-        "total": total,
-        "ppn_is_include": ppnIsInclude == true ? 1 : 0,
-        "ppn": ppn,
-        "ppn_total": ppnTotal,
-        "grand_total": grandTotal,
-        "rounding_value": 0,
-        "notes": notes ?? '',
-        "total_payment": totalPayment,
-        "change": change,
-        "items": List<Map<String, dynamic>>.from(
-          items.map(
-            (item) => item.toTransactionPayload(),
-          ),
+  Future<Map<String, dynamic>> toTransactionPayload() async {
+    List<MultipartFile> dataImages = [];
+    if (images != null && images!.isNotEmpty) {
+      for (var i = 0; i < images!.length; i++) {
+        final img = await MultipartFile.fromFile(images![i].path,
+            filename: images![i].name);
+        dataImages.add(img);
+      }
+    }
+    final jsonData = <String, dynamic>{
+      "id_transaction": deletedAt != null ? idTransaction : null,
+      "id_outlet": idOutlet,
+      "shift_id": shiftId,
+      "transaction_date": DateTimeFormater.unixServer(transactionDate),
+      "transaction_no": transactionNo,
+      "id_customer": idCustomer ?? '',
+      "subtotal": subtotal,
+      "disc_is_percent": discIsPercent ? 1 : 0,
+      "disc_overall": discOverall,
+      "disc_overall_total": discOverallTotal,
+      "disc_promotions_total": 0,
+      "total": total,
+      "ppn_is_include": ppnIsInclude == true ? 1 : 0,
+      "ppn": ppn,
+      "ppn_total": ppnTotal,
+      "grand_total": grandTotal,
+      "rounding_value": 0,
+      "notes": notes ?? '',
+      "total_payment": totalPayment,
+      "change": change,
+      "items": List<Map<String, dynamic>>.from(
+        items.map(
+          (item) => item.toTransactionPayload(),
         ),
-        "payments": List<Map<String, dynamic>>.from(
-          payments.map(
-            (payment) => payment.toJson(),
-          ),
+      ),
+      "payments": List<Map<String, dynamic>>.from(
+        payments.map(
+          (payment) => payment.toJson(),
         ),
-        "vouchers": [],
-        "refunds": [],
-        "promotions": [],
-        "deleted_at": deletedAt != null
-            ? DateTimeFormater.dateToString(deletedAt!)
-            : null,
-        "deleted_by": deletedBy,
-        "delete_reason": deleteReason,
-        "created_by": createdBy
-      };
+      ),
+      "vouchers": [],
+      "refunds": [],
+      "promotions": [],
+      "deleted_at":
+          deletedAt != null ? DateTimeFormater.dateToString(deletedAt!) : null,
+      "deleted_by": deletedBy,
+      "delete_reason": deleteReason,
+      "created_by": createdBy,
+      "images": dataImages,
+    };
+    return jsonData;
+  }
+
+  Future<FormData> toTransactionFormData() async {
+    final transactionJson = await toTransactionPayload();
+    return FormData.fromMap({
+      "transactions": [transactionJson]
+    }, ListFormat.multiCompatible, true);
+  }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/cart_holded.dart';
@@ -10,9 +12,16 @@ class TransactionApi {
 
   Future<List<dynamic>> storeTransaction(Cart cart) async {
     try {
-      final json = cart.toTransactionPayload();
-      final List<Map<String, dynamic>> data = [json];
-      final res = await api.post(ApiUrl.transaction, data: data);
+      final FormData formData = await cart.toTransactionFormData();
+      log('TRANSACTION FIELDS: ${formData.fields}');
+      log('TRANSACTION FILES: ${formData.files}');
+      final res = await api.post(
+        ApiUrl.transaction,
+        data: formData,
+        options: Options(
+          contentType: Headers.multipartFormDataContentType,
+        ),
+      );
 
       return res.data['data'];
     } on DioException catch (e) {

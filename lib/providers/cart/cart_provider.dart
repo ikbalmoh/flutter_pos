@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart_holded.dart';
@@ -289,6 +290,10 @@ class CartNotifer extends _$CartNotifer {
     calculateCart();
   }
 
+  void addNote({String? notes, List<XFile>? images}) {
+    state = state.copyWith(notes: notes, images: images);
+  }
+
   void addPayment(CartPayment payment) {
     final auth = ref.read(authNotifierProvider).value as Authenticated;
 
@@ -338,7 +343,9 @@ class CartNotifer extends _$CartNotifer {
         throw 'shift_not_opened'.tr();
       }
 
-      final res = await api.storeTransaction(state.copyWith(shiftId: shift.id));
+      final res = await api.storeTransaction(state.copyWith(
+        shiftId: shift.id,
+      ));
 
       log('TRANSACTIONS: $res');
 

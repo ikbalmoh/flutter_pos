@@ -196,5 +196,7 @@
   "transaction_detail": "Detail Transaksi",
   "insufficient_payment": "Kekurangan Bayar",
   "approved": "Disetujui",
-  "rejected": "Ditolak"
+  "rejected": "Ditolak",
+  "finish_transaction": "Selesaikan Transaksi",
+  "finish": "Selesai"
 }

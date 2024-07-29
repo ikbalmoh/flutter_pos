@@ -55,7 +55,6 @@ class _CancelTransactionFormState extends ConsumerState<CancelTransactionForm> {
           ? const LoadingPlaceholder()
           : Padding(
               padding: EdgeInsets.only(
-                top: 10,
                 left: 15,
                 right: 15,
                 bottom: MediaQuery.of(context).viewInsets.bottom + 15,
@@ -138,7 +137,7 @@ class _CancelTransactionFormState extends ConsumerState<CancelTransactionForm> {
                       ),
                     ),
                     onPressed:
-                        deleteReason.length > 5 && checked ? onSubmit : null,
+                        deleteReason.isNotEmpty && checked ? onSubmit : null,
                     child: Text('submit'.tr()),
                   ),
                   const SizedBox(
