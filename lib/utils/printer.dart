@@ -368,7 +368,8 @@ class Printer {
       ]);
       bytes += generator.row([
         PosColumn(
-          text: 'discount'.tr(),
+          text:
+              '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
           width: 8,
           styles: const PosStyles(align: PosAlign.left),
         ),
