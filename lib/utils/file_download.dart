@@ -8,6 +8,12 @@ import 'dart:io';
 import 'package:open_file/open_file.dart';
 
 class FileDownload {
+  Future<String> get localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
   Future<String> download(String urlPath,
       {required String fileName,
       Map<String, dynamic>? params,

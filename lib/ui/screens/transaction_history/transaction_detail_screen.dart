@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +11,11 @@ import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/cart/cancel_transaction_form.dart';
 import 'package:selleri/ui/components/cart/order_summary.dart';
 import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/file_download.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class TransactionDetailScreen extends ConsumerStatefulWidget {
   final Cart cart;
@@ -25,6 +30,29 @@ class TransactionDetailScreen extends ConsumerStatefulWidget {
 
 class _TransactionDetailScreenState
     extends ConsumerState<TransactionDetailScreen> {
+  ScreenshotController screenshotController = ScreenshotController();
+
+  void onShareReceipt(BuildContext context) async {
+    final box = context.findRenderObject() as RenderBox?;
+    final path = await FileDownload().localPath;
+    screenshotController.capture().then((imageBytes) async {
+      pw.Document pdf = pw.Document();
+      pdf.addPage(pw.Page(build: (context) {
+        return pw.Center(child: pw.Image(pw.MemoryImage(imageBytes!)));
+      }));
+      final file = File('$path/${widget.cart.transactionNo}.pdf');
+      final pdfFile = await file.writeAsBytes(await pdf.save());
+      final shareResult = await Share.shareXFiles([
+        XFile.fromData(pdfFile.readAsBytesSync(), mimeType: 'application/pdf')
+      ],
+          subject: 'Receipt ${widget.cart.transactionNo}',
+          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+      if (shareResult.status == ShareResultStatus.success) {
+        AppAlert.toast('receipt_shared'.tr());
+      }
+    });
+  }
+
   void onPrintReceipt() async {
     try {
       await ref.read(transactionsNotifierProvider.notifier).printReceipt(
@@ -144,21 +172,59 @@ class _TransactionDetailScreenState
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 15),
-                    child: OrderSummary(
-                      radius: const Radius.circular(5),
-                      cart: transaction,
-                      isDone: true,
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: OrderSummary(
+                        radius: const Radius.circular(5),
+                        cart: transaction,
+                        isDone: true,
+                      ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  child: ElevatedButton(
-                    onPressed: onPrintReceipt,
-                    child: Text('print_receipt'.tr()),
-                  ),
-                )
+                widget.cart.deletedAt == null
+                    ? Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 15),
+                        child: Row(
+                          children: [
+                            Builder(builder: (context) {
+                              return IconButton(
+                                  onPressed: () => onShareReceipt(context),
+                                  icon: const Icon(Icons.share));
+                            }),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton.icon(
+                                onPressed: onPrintReceipt,
+                                icon: const Icon(CupertinoIcons.printer),
+                                label: Text('print'.tr()),
+                              ),
+                            ),
+                            widget.cart.totalPayment < widget.cart.grandTotal
+                                ? Expanded(
+                                    flex: 2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 15),
+                                      child: ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                        ),
+                                        onPressed: onPrintReceipt,
+                                        icon: const Icon(
+                                            CupertinoIcons.creditcard_fill),
+                                        label: Text('finish_x'
+                                            .tr(args: ['payments'.tr()])),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      )
+                    : Container()
               ],
             ),
     );

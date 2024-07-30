@@ -100,7 +100,7 @@ class _ConfirmStoreTransactionState
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'finish_transaction'.tr(),
+                  'finish_x'.tr(args: ['transaction'.tr()]),
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 IconButton(

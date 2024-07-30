@@ -196,6 +196,7 @@
   "insufficient_payment": "Insufficient Payment",
   "approved": "Approved",
   "rejected": "Rejected",
-  "finish_transaction": "Finish Transaction",
-  "finish": "Finish"
+  "finish": "Finish",
+  "finish_x": "Finish {}",
+  "receipt_shared": "Receipt has been shared"
 }

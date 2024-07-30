@@ -197,6 +197,7 @@
   "insufficient_payment": "Kekurangan Bayar",
   "approved": "Disetujui",
   "rejected": "Ditolak",
-  "finish_transaction": "Selesaikan Transaksi",
-  "finish": "Selesai"
+  "finish": "Selesai",
+  "finish_x": "Selesaikan {}",
+  "receipt_shared": "Struk telah dibagikan"
 }
