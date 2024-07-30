@@ -34,10 +34,19 @@ class _TransactionDetailScreenState
   final GlobalKey summaryContainerKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
 
+  bool sharing = false;
+
   void onShareReceipt(BuildContext context) async {
+    setState(() {
+      sharing = true;
+    });
     final shareButtonBox = context.findRenderObject() as RenderBox?;
     final summaryContainerBox =
         summaryContainerKey.currentContext!.findRenderObject() as RenderBox?;
+
+    final Size contentSize = summaryContainerBox!.size;
+
+    log('Content Size: $contentSize');
 
     final String title = 'Receipt ${widget.cart.transactionNo}';
     final path = await FileDownload().localPath;
@@ -45,8 +54,7 @@ class _TransactionDetailScreenState
       pw.Document pdf = pw.Document(title: title);
       pdf.addPage(
         pw.Page(
-          pageFormat: PdfPageFormat(
-              summaryContainerBox!.size.width, summaryContainerBox.size.height),
+          pageFormat: PdfPageFormat(contentSize.width, contentSize.height),
           build: (context) {
             return pw.Center(child: pw.Image(pw.MemoryImage(imageBytes!)));
           },
@@ -63,6 +71,9 @@ class _TransactionDetailScreenState
       if (shareResult.status == ShareResultStatus.success) {
         AppAlert.toast('receipt_shared'.tr());
       }
+      setState(() {
+        sharing = false;
+      });
     });
   }
 
@@ -205,8 +216,18 @@ class _TransactionDetailScreenState
                           children: [
                             Builder(builder: (context) {
                               return IconButton(
-                                  onPressed: () => onShareReceipt(context),
-                                  icon: const Icon(Icons.share));
+                                onPressed: () => onShareReceipt(context),
+                                icon: sharing
+                                    ? const SizedBox(
+                                        width: 25,
+                                        height: 25,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.black54,
+                                        ),
+                                      )
+                                    : const Icon(Icons.share),
+                              );
                             }),
                             const SizedBox(width: 15),
                             Expanded(
