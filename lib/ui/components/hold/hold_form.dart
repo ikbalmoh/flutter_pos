@@ -10,6 +10,7 @@ import 'package:selleri/utils/formater.dart';
 
 class HoldForm extends ConsumerStatefulWidget {
   final Function()? onHolded;
+
   const HoldForm({this.onHolded, super.key});
 
   @override

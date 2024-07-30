@@ -9,6 +9,7 @@ import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class HomeMenu extends ConsumerWidget {
@@ -16,6 +17,28 @@ class HomeMenu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void onNewTransaction() {
+      if (ref.read(cartNotiferProvider).items.isNotEmpty) {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.white,
+          isDismissible: false,
+          enableDrag: false,
+          isScrollControlled: true,
+          builder: (context) {
+            return HoldForm(
+              onHolded: () {
+                context.pop();
+                ref.read(cartNotiferProvider.notifier).initCart();
+              },
+            );
+          },
+        );
+      } else {
+        ref.read(cartNotiferProvider.notifier).initCart();
+      }
+    }
+
     void onSignOut() {
       AppAlert.confirm(
         context,
@@ -76,8 +99,7 @@ class HomeMenu extends ConsumerWidget {
                   child: Text('holded_transactions'.tr()),
                 ),
                 MenuItemButton(
-                  onPressed: () =>
-                      ref.read(cartNotiferProvider.notifier).initCart(),
+                  onPressed: onNewTransaction,
                   leadingIcon: Icon(
                     CupertinoIcons.doc,
                     color: Colors.blueGrey.shade500,
