@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -81,196 +82,220 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
-      body: ref.watch(shiftListNotifierProvider).when(
-            data: (data) => RefreshIndicator(
-              onRefresh: () => ref
-                  .read(shiftListNotifierProvider.notifier)
-                  .loadShifts(page: 1),
-              child: data.data!.isNotEmpty
-                  ? Row(
-                      children: [
-                        Expanded(
-                          child: Card(
-                            elevation: 0,
-                            margin: const EdgeInsets.all(0),
-                            color: Colors.white,
-                            child: ListView.builder(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              controller: _scrollController,
-                              itemBuilder: (context, idx) {
-                                if (idx + 1 > data.data!.length) {
-                                  if (data.currentPage >= data.lastPage) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 10),
-                                      child: Center(
-                                        child: Text(
-                                          'x_data_displayed'.tr(
-                                            args: [data.total.toString()],
+      body: Row(
+        children: [
+          Expanded(
+            child: Card(
+              elevation: 0,
+              margin: const EdgeInsets.all(0),
+              color: Colors.white,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: SearchBar(
+                      leading: const Icon(CupertinoIcons.search),
+                      hintText: 'search'.tr(),
+                      controller: _searchController,
+                    ),
+                  ),
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: () => ref
+                          .read(shiftListNotifierProvider.notifier)
+                          .loadShifts(page: 1),
+                      child: ref.watch(shiftListNotifierProvider).when(
+                            data: (data) => data.data!.isNotEmpty
+                                ? ListView.builder(
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    controller: _scrollController,
+                                    itemBuilder: (context, idx) {
+                                      if (idx + 1 > data.data!.length) {
+                                        if (data.currentPage >= data.lastPage) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 15, horizontal: 10),
+                                            child: Center(
+                                              child: Text(
+                                                'x_data_displayed'.tr(
+                                                  args: [data.total.toString()],
+                                                ),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color:
+                                                          Colors.grey.shade600,
+                                                    ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        return const Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 15, horizontal: 10),
+                                            child: SizedBox(
+                                              width: 30,
+                                              height: 30,
+                                              child: LoadingIndicator(
+                                                  color: Colors.teal),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      Shift shift = data.data![idx];
+                                      return ListTile(
+                                        tileColor: viewShift?.id == shift.id
+                                            ? Colors.grey.shade100
+                                            : Colors.white,
+                                        title:
+                                            Text(shift.codeShift ?? shift.id),
+                                        trailing: Text(
+                                          CurrencyFormat.currency(
+                                            shift.closeAmount,
+                                            symbol: true,
                                           ),
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                color: Colors.grey.shade600,
-                                              ),
+                                              .bodyLarge,
                                         ),
-                                      ),
-                                    );
-                                  }
-                                  return const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 10),
-                                      child: SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: LoadingIndicator(
-                                            color: Colors.teal),
-                                      ),
-                                    ),
-                                  );
-                                }
-                                Shift shift = data.data![idx];
-                                return ListTile(
-                                  tileColor: viewShift?.id == shift.id
-                                      ? Colors.grey.shade100
-                                      : Colors.white,
-                                  title: Text(shift.codeShift ?? shift.id),
-                                  trailing: Text(
-                                    CurrencyFormat.currency(
-                                      shift.closeAmount,
-                                      symbol: true,
-                                    ),
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  shape: Border(
-                                    bottom: BorderSide(
-                                      width: 0.5,
-                                      color: Colors.blueGrey.shade50,
-                                    ),
-                                  ),
-                                  titleTextStyle:
-                                      Theme.of(context).textTheme.bodyMedium,
-                                  subtitleTextStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(color: Colors.grey.shade600),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.play_arrow,
-                                            size: 12,
-                                            color: Colors.green,
+                                        shape: Border(
+                                          bottom: BorderSide(
+                                            width: 0.5,
+                                            color: Colors.blueGrey.shade50,
                                           ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(DateTimeFormater.dateToString(
-                                              shift.startShift,
-                                              format: 'dd/MM/y HH:mm')),
-                                        ],
-                                      ),
-                                      shift.closeShift != null
-                                          ? Row(
+                                        ),
+                                        titleTextStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                        subtitleTextStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                                color: Colors.grey.shade600),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
                                               children: [
                                                 const Icon(
-                                                  Icons.stop,
+                                                  Icons.play_arrow,
                                                   size: 12,
-                                                  color: Colors.red,
+                                                  color: Colors.green,
                                                 ),
                                                 const SizedBox(
                                                   width: 5,
                                                 ),
                                                 Text(DateTimeFormater
                                                     .dateToString(
-                                                        shift.closeShift!,
+                                                        shift.startShift,
                                                         format:
                                                             'dd/MM/y HH:mm')),
                                               ],
-                                            )
-                                          : Container(),
+                                            ),
+                                            shift.closeShift != null
+                                                ? Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.stop,
+                                                        size: 12,
+                                                        color: Colors.red,
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(DateTimeFormater
+                                                          .dateToString(
+                                                              shift.closeShift!,
+                                                              format:
+                                                                  'dd/MM/y HH:mm')),
+                                                    ],
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            viewShift = shift;
+                                          });
+                                          if (!isTablet) {
+                                            context.pushNamed(
+                                                Routes.shiftDetail,
+                                                pathParameters: {
+                                                  "id": shift.id
+                                                });
+                                          }
+                                        },
+                                      );
+                                    },
+                                    itemCount: data.data!.length + 1,
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'no_data'.tr(args: ['shift'.tr()]),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(color: Colors.grey),
+                                      )
                                     ],
                                   ),
-                                  onTap: () {
-                                    setState(() {
-                                      viewShift = shift;
-                                    });
-                                    if (!isTablet) {
-                                      context.pushNamed(Routes.shiftDetail,
-                                          pathParameters: {"id": shift.id});
-                                    }
-                                  },
-                                );
-                              },
-                              itemCount: data.data!.length + 1,
+                            error: (e, stack) => ErrorHandler(
+                              error: e.toString(),
+                              stackTrace: stack.toString(),
+                            ),
+                            loading: () => ListView.builder(
+                              itemCount: 10,
+                              itemBuilder: (context, index) =>
+                                  const ItemListSkeleton(
+                                leading: false,
+                              ),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
                             ),
                           ),
-                        ),
-                        isTablet
-                            ? SizedBox(
-                                width: MediaQuery.of(context).size.width - 325,
-                                child: viewShift != null
-                                    ? ShiftHistoryDetailScreen(
-                                        shiftId: viewShift!.id,
-                                        asWidget: true,
-                                      )
-                                    : Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'select_x'.tr(args: ['shift'.tr()]),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall
-                                                ?.copyWith(
-                                                    color: Colors
-                                                        .blueGrey.shade300),
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      ),
-                              )
-                            : Container()
-                      ],
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'no_data'.tr(args: ['customer'.tr()]),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.grey),
-                          )
-                        ],
-                      ),
                     ),
-            ),
-            error: (e, stack) => ErrorHandler(
-              error: e.toString(),
-              stackTrace: stack.toString(),
-            ),
-            loading: () => ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) => const ItemListSkeleton(
-                leading: false,
+                  )
+                ],
               ),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
             ),
-            skipError: true,
           ),
+          isTablet
+              ? SizedBox(
+                  width: MediaQuery.of(context).size.width - 325,
+                  child: viewShift != null
+                      ? ClipRRect(
+                        child: ShiftHistoryDetailScreen(
+                            shiftId: viewShift!.id,
+                            asWidget: true,
+                          ),
+                      )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'select_x'.tr(args: ['shift'.tr()]),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(color: Colors.blueGrey.shade300),
+                              textAlign: TextAlign.center,
+                            )
+                          ],
+                        ),
+                )
+              : Container()
+        ],
+      ),
     );
   }
 
