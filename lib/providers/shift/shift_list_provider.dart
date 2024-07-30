@@ -22,7 +22,8 @@ class ShiftListNotifier extends _$ShiftListNotifier {
     }
   }
 
-  Future<void> loadShifts({int page = 1, String search = ''}) async {
+  Future<void> loadShifts(
+      {int page = 1, String search = '', DateTime? from, DateTime? to}) async {
     if (page == 1) {
       state = const AsyncLoading();
     } else {
@@ -32,7 +33,12 @@ class ShiftListNotifier extends _$ShiftListNotifier {
     try {
       final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
       var shifts = await api.shifts(
-          page: page, q: search, idOutlet: outlet.outlet.idOutlet);
+        page: page,
+        q: search,
+        idOutlet: outlet.outlet.idOutlet,
+        from: from,
+        to: to,
+      );
       List<Shift> data = List.from(state.value?.data as Iterable<Shift>);
       if (page > 1) {
         data = data..addAll(shifts.data as Iterable<Shift>);

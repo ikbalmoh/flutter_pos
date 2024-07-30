@@ -118,12 +118,22 @@ class ShiftApi {
   }
 
   Future<Pagination<Shift>> shifts(
-      {required String idOutlet, int? page, String? q}) async {
+      {required String idOutlet,
+      int? page,
+      String? q,
+      DateTime? from,
+      DateTime? to}) async {
     try {
       final Map<String, dynamic> params = {
         'id_outlet': idOutlet,
         'q': q,
-        'page': page
+        'page': page,
+        'from': from != null
+            ? DateTimeFormater.dateToString(from, format: 'y-MM-dd')
+            : null,
+        'to': to != null
+            ? DateTimeFormater.dateToString(to, format: 'y-MM-dd')
+            : null,
       };
       final res = await api.get(ApiUrl.shifts, queryParameters: params);
       final data = res.data['data'];

@@ -11,6 +11,7 @@ import 'package:selleri/data/models/shift.dart';
 import 'package:selleri/providers/shift/shift_list_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/error_handler.dart';
+import 'package:selleri/ui/components/generic/date_picker.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/screens/shift/shift_history_detail.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
@@ -27,6 +28,9 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
     with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+
+  DateTime? from;
+  DateTime? to;
 
   bool searchVisible = false;
   Timer? _debounce;
@@ -51,7 +55,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref
           .read(shiftListNotifierProvider.notifier)
-          .loadShifts(page: 1, search: query);
+          .loadShifts(page: 1, search: query, from: from, to: to);
     });
   }
 
@@ -70,7 +74,30 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
       ref.read(shiftListNotifierProvider.notifier).loadShifts(
             page: pagination.currentPage + 1,
             search: _searchController.text,
+            from: from,
+            to: to,
           );
+    }
+  }
+
+  void onShowDatePicker() async {
+    final List<DateTime?> range = await showModalBottomSheet(
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return DatePicker(
+            initialForm: from,
+            initialTo: to,
+          );
+        });
+    log('selected date: $range');
+    if (range.isNotEmpty) {
+      setState(() {
+        from = range[0];
+        to = range[1];
+      });
+      onSearchItems(_searchController.text);
     }
   }
 
@@ -94,10 +121,28 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(15),
-                    child: SearchBar(
-                      leading: const Icon(CupertinoIcons.search),
-                      hintText: 'search'.tr(),
-                      controller: _searchController,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SearchBar(
+                            leading: const Icon(CupertinoIcons.search),
+                            hintText: 'search'.tr(),
+                            controller: _searchController,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
+                          onPressed: onShowDatePicker,
+                          icon: Badge(
+                            backgroundColor:
+                                from != null ? Colors.red : Colors.transparent,
+                            smallSize: 10,
+                            child: const Icon(CupertinoIcons.calendar),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   Expanded(
@@ -274,11 +319,11 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                   width: MediaQuery.of(context).size.width - 325,
                   child: viewShift != null
                       ? ClipRRect(
-                        child: ShiftHistoryDetailScreen(
+                          child: ShiftHistoryDetailScreen(
                             shiftId: viewShift!.id,
                             asWidget: true,
                           ),
-                      )
+                        )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
