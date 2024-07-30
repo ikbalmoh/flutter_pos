@@ -20,6 +20,8 @@ abstract class ShiftRepositoryProtocol {
 
   Future<void> clear();
 
+  Future<void> changeOpenAmount(String shiftId, double amount);
+
   Future<Shift?> startShift(Shift outlet);
 
   Future<void> saveShift(Shift outlet);
@@ -33,6 +35,16 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   final Ref _ref;
 
   final api = ShiftApi();
+
+  @override
+  Future<void> changeOpenAmount(String shiftId, double amount) async {
+    try {
+      await api.changeOpenAmount(shiftId, amount);
+    } catch (e, stackTrack) {
+      log('CHANGE OPEN AMOUNT ERROR: $e => $stackTrack');
+      rethrow;
+    }
+  }
 
   @override
   Future<void> close(String id, Map<String, dynamic> payload) async {

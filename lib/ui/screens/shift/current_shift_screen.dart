@@ -11,12 +11,15 @@ import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/shift/cashflow_form.dart';
 import 'package:selleri/ui/components/shift/close_shift_form.dart';
+import 'package:selleri/ui/components/shift/edit_open_amount.dart';
 import 'package:selleri/ui/components/shift/sales_summary.dart';
 import 'package:selleri/ui/components/shift/shift_skeleton.dart';
 import 'package:selleri/ui/components/shift/sold_items.dart';
 import 'package:selleri/ui/screens/shift/components/active_shift_info.dart';
 import 'package:selleri/ui/screens/shift/components/shift_cashflows.dart';
 import 'package:selleri/ui/components/shift/shift_inactive.dart';
+import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/formater.dart';
 import 'components/shift_summary_card.dart';
 import 'components/active_shift_info_horizontal.dart';
 
@@ -69,6 +72,22 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         });
   }
 
+  void onEditOpenAmount(ShiftInfo shiftInfo) async {
+    final newAmount = await showDialog(
+        context: context,
+        builder: (context) {
+          return EditOpenAmount(
+            openAmount: shiftInfo.summary.startingCash,
+          );
+        });
+
+    if (newAmount != shiftInfo.summary.startingCash) {
+      ref.read(shiftNotifierProvider.notifier).updateOpenAmount(newAmount);
+      AppAlert.toast('open_amount_updated_x'
+          .tr(args: [CurrencyFormat.currency(newAmount)]));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -91,6 +110,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                             ActiveShiftInfoHorizontal(
                               shiftInfo: data!,
                               onCloseShift: () => onCloseShift(data),
+                              onEditOpenAmount: () => onEditOpenAmount(data),
                             ),
                             const SizedBox(
                               height: 15,
@@ -179,6 +199,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                               child: ActiveShiftInfo(
                                 shiftInfo: data!,
                                 onCloseShift: () => onCloseShift(data),
+                                onEditOpenAmount: () => onEditOpenAmount(data),
                               ),
                             ),
                           ),
@@ -204,17 +225,18 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                 )
             : const ShiftInactive(),
       ),
-      floatingActionButton: viewSummary == 'cashflow' && shift != null
-          ? ref.watch(shiftInfoNotifierProvider).value != null
-              ? FloatingActionButton.extended(
-                  onPressed: onShowCashflowForm,
-                  label: Text(
-                    'cashflow'.tr(),
-                  ),
-                  icon: const Icon(Icons.add),
-                )
-              : null
-          : null,
+      floatingActionButton:
+          shift == null || ref.watch(shiftInfoNotifierProvider).value == null
+              ? null
+              : viewSummary == 'cashflow'
+                  ? FloatingActionButton.extended(
+                      onPressed: onShowCashflowForm,
+                      label: Text(
+                        'cashflow'.tr(),
+                      ),
+                      icon: const Icon(Icons.add),
+                    )
+                  : null,
     );
   }
 

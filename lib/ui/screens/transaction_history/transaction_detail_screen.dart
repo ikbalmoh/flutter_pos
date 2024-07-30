@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pdf/pdf.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
@@ -30,23 +31,35 @@ class TransactionDetailScreen extends ConsumerStatefulWidget {
 
 class _TransactionDetailScreenState
     extends ConsumerState<TransactionDetailScreen> {
+  final GlobalKey summaryContainerKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
 
   void onShareReceipt(BuildContext context) async {
-    final box = context.findRenderObject() as RenderBox?;
+    final shareButtonBox = context.findRenderObject() as RenderBox?;
+    final summaryContainerBox =
+        summaryContainerKey.currentContext!.findRenderObject() as RenderBox?;
+
+    final String title = 'Receipt ${widget.cart.transactionNo}';
     final path = await FileDownload().localPath;
     screenshotController.capture().then((imageBytes) async {
-      pw.Document pdf = pw.Document();
-      pdf.addPage(pw.Page(build: (context) {
-        return pw.Center(child: pw.Image(pw.MemoryImage(imageBytes!)));
-      }));
+      pw.Document pdf = pw.Document(title: title);
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat(
+              summaryContainerBox!.size.width, summaryContainerBox.size.height),
+          build: (context) {
+            return pw.Center(child: pw.Image(pw.MemoryImage(imageBytes!)));
+          },
+        ),
+      );
       final file = File('$path/${widget.cart.transactionNo}.pdf');
       final pdfFile = await file.writeAsBytes(await pdf.save());
       final shareResult = await Share.shareXFiles([
         XFile.fromData(pdfFile.readAsBytesSync(), mimeType: 'application/pdf')
       ],
-          subject: 'Receipt ${widget.cart.transactionNo}',
-          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+          subject: title,
+          sharePositionOrigin:
+              shareButtonBox!.localToGlobal(Offset.zero) & shareButtonBox.size);
       if (shareResult.status == ShareResultStatus.success) {
         AppAlert.toast('receipt_shared'.tr());
       }
@@ -175,6 +188,7 @@ class _TransactionDetailScreenState
                     child: Screenshot(
                       controller: screenshotController,
                       child: OrderSummary(
+                        key: summaryContainerKey,
                         radius: const Radius.circular(5),
                         cart: transaction,
                         isDone: true,

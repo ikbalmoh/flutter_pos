@@ -155,4 +155,13 @@ class ShiftNotifier extends _$ShiftNotifier {
     await _shiftRepository.clear();
     state = const AsyncValue.loading();
   }
+
+  void updateOpenAmount(double amount) async {
+    try {
+      await _shiftRepository.changeOpenAmount(state.value!.id, amount);
+      state = AsyncData(state.value?.copyWith(openAmount: amount));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -199,5 +199,7 @@
   "rejected": "Ditolak",
   "finish": "Selesai",
   "finish_x": "Selesaikan {}",
-  "receipt_shared": "Struk telah dibagikan"
+  "receipt_shared": "Struk telah dibagikan",
+  "edit_open_amount": "Ubah Saldo Awal",
+  "open_amount_updated_x": "Saldo awal telah diubah ke {}"
 }

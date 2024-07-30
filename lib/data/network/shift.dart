@@ -31,6 +31,14 @@ class ShiftApi {
     return null;
   }
 
+  Future<double> changeOpenAmount(String shiftId, double amount) async {
+    Map<String, dynamic> data = {
+      "open_amount": amount,
+    };
+    await api.put('${ApiUrl.shifts}/$shiftId/change-open-amount', data: data);
+    return amount;
+  }
+
   Future<void> currentShift() async {
     String? deviceId = await storage.read(key: StoreKey.device.toString());
     api.get('/info/urrent-shift/$deviceId');
