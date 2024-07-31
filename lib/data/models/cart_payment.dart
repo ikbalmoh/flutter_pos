@@ -9,6 +9,7 @@ class CartPayment with _$CartPayment {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory CartPayment({
     @JsonKey(fromJson: DateTimeFormater.stringToTimestamp) int? payDate,
+    String? id,
     required String paymentMethodId,
     required String paymentName,
     required double paymentValue,
