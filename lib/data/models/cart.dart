@@ -56,6 +56,30 @@ class Cart with _$Cart {
     @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
   }) = _Cart;
 
+  factory Cart.initial() => Cart(
+        transactionNo: '',
+        transactionDate: DateTime.now().millisecondsSinceEpoch,
+        items: [],
+        subtotal: 0,
+        total: 0,
+        grandTotal: 0,
+        discIsPercent: true,
+        discOverall: 0,
+        discOverallTotal: 0,
+        discPromotionsTotal: 0,
+        payments: [],
+        totalPayment: 0,
+        ppnIsInclude: true,
+        ppn: 0,
+        ppnTotal: 0,
+        change: 0,
+        idOutlet: '', // define on initCart
+        outletName: '', // define on initCart
+        shiftId: '', // define on initCart
+        createdBy: '', // define on initCart
+        isApp: true,
+      );
+
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
 
   factory Cart.fromDataHold(String dataString) {
@@ -101,7 +125,7 @@ class Cart with _$Cart {
       }
     }
     final jsonData = <String, dynamic>{
-      "id_transaction": deletedAt != null ? idTransaction : null,
+      "id_transaction": idTransaction,
       "id_outlet": idOutlet,
       "shift_id": shiftId,
       "transaction_date": DateTimeFormater.unixServer(transactionDate),
@@ -153,5 +177,19 @@ class Cart with _$Cart {
       },
       ListFormat.multiCompatible,
     );
+  }
+
+  List<CartPayment> prevPayments() =>
+      payments.where((p) => p.createdAt != null).toList();
+
+  double totalCurrentPayment() {
+    List<CartPayment> currentPayment =
+        payments.where((p) => p.createdAt == null).toList();
+    double? total = currentPayment.isNotEmpty
+        ? currentPayment
+            .map((payment) => payment.paymentValue)
+            .reduce((payment, total) => payment + total)
+        : 0;
+    return total;
   }
 }

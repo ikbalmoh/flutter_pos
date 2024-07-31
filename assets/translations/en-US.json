@@ -194,11 +194,13 @@
   "print": "Print",
   "transaction_detail": "Transaction Detail",
   "insufficient_payment": "Insufficient Payment",
+  "insufficient_payment_warning": "The total payment is less than the total transaction",
   "approved": "Approved",
   "rejected": "Rejected",
   "finish": "Finish",
   "finish_x": "Finish {}",
   "receipt_shared": "Receipt has been shared",
   "edit_open_amount": "Edit Open Amount",
-  "open_amount_updated_x": "Open amount has been updated to {}"
+  "open_amount_updated_x": "Open amount has been updated to {}",
+  "prev_payments": "Previous Payments"
 }

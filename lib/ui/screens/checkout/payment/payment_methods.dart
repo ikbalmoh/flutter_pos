@@ -1,8 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/cart_payment.dart';
-import 'package:selleri/providers/cart/cart_provider.dart';
-import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/data/models/payment_method.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/utils/formater.dart';
@@ -10,58 +8,59 @@ import 'package:selleri/utils/formater.dart';
 class PaymentMethods extends ConsumerWidget {
   const PaymentMethods({
     super.key,
-    required this.onSelectMethod,
-    required this.type,
+    this.onSelectMethod,
+    required this.paymentMethods,
+    required this.cartPayments,
+    this.isPrevios,
   });
 
-  final Function(PaymentMethod) onSelectMethod;
-  final int type;
+  final bool? isPrevios;
+  final List<CartPayment> cartPayments;
+  final List<PaymentMethod> paymentMethods;
+  final Function(PaymentMethod)? onSelectMethod;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
-
-    final List<PaymentMethod> payments =
-        (ref.read(outletNotifierProvider).value as OutletSelected)
-                .config
-                .paymentMethods
-                ?.where((p) => p.type == type)
-                .toList() ??
-            [];
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, idx) {
-        PaymentMethod method = payments[idx];
-        CartPayment? cartPayment =
-            ref.watch(cartNotiferProvider).payments.firstWhereOrNull(
-                  (payment) =>
-                      payment.paymentMethodId == method.id &&
-                      payment.paymentValue > 0,
-                );
+        PaymentMethod method = paymentMethods[idx];
+        CartPayment? cartPayment = cartPayments.firstWhereOrNull(
+          (payment) =>
+              (isPrevios == true
+                  ? payment.createdAt != null
+                  : payment.createdAt == null) &&
+              payment.paymentMethodId == method.id &&
+              payment.paymentValue > 0,
+        );
         bool inUse = cartPayment != null;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Material(
-            color: Colors.white,
+            color: isPrevios == true ? Colors.grey.shade50 : Colors.white,
             shape: RoundedRectangleBorder(
               side: BorderSide(
                 width: 1,
-                color: inUse ? Colors.teal : Colors.grey.shade200,
+                color: inUse && isPrevios != true
+                    ? Colors.teal
+                    : Colors.grey.shade200,
               ),
               borderRadius: const BorderRadius.all(
                 Radius.circular(7.5),
               ),
             ),
             child: InkWell(
-              splashColor: Colors.blueGrey.shade50,
-              highlightColor: Colors.blueGrey.shade100,
+              splashColor: Colors.grey.shade50,
+              highlightColor: Colors.grey.shade100,
               borderRadius: const BorderRadius.all(
                 Radius.circular(7.5),
               ),
-              onTap: () => onSelectMethod(method),
+              onTap:
+                  onSelectMethod == null ? null : () => onSelectMethod!(method),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -111,7 +110,7 @@ class PaymentMethods extends ConsumerWidget {
           ),
         );
       },
-      itemCount: payments.length,
+      itemCount: paymentMethods.length,
     );
   }
 }

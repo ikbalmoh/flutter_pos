@@ -5,19 +5,28 @@ import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/payment_method.dart';
 import 'package:selleri/data/models/payment_type.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/cart/payment_form.dart';
 import 'payment_methods.dart';
 
-class PaymentDetails extends ConsumerStatefulWidget {
-  const PaymentDetails({super.key});
+class PaymentDetails extends StatefulWidget {
+  const PaymentDetails({
+    required this.cart,
+    required this.onAddPayment,
+    required this.onRemovePayment,
+    required this.paymentMethods,
+    super.key,
+  });
+
+  final Cart cart;
+  final List<PaymentMethod> paymentMethods;
+  final Function(CartPayment payment) onAddPayment;
+  final Function(String paymentMethodId) onRemovePayment;
 
   @override
-  ConsumerState<PaymentDetails> createState() => _PaymentDetailsState();
+  State<PaymentDetails> createState() => _PaymentDetailsState();
 }
 
-class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
+class _PaymentDetailsState extends State<PaymentDetails> {
   List<PaymentType> paymentTypes = [
     PaymentType(
       id: 1,
@@ -60,9 +69,10 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
   @override
   Widget build(BuildContext context) {
     void onSelectMethod(PaymentMethod method) async {
-      Cart cart = ref.read(cartNotiferProvider);
-      CartPayment? cartPayment = cart.payments
-          .firstWhereOrNull((payment) => payment.paymentMethodId == method.id);
+      CartPayment? cartPayment = widget.cart.payments.firstWhereOrNull(
+          (payment) =>
+              payment.paymentMethodId == method.id &&
+              payment.createdAt == null);
       CartPayment? payment = await showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
@@ -71,7 +81,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
           return PaymentForm(
             method: method,
             cartPayment: cartPayment,
-            insufficient: (cart.grandTotal - cart.totalPayment),
+            insufficient: (widget.cart.grandTotal - widget.cart.totalPayment),
           );
         },
       );
@@ -79,11 +89,9 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
         return;
       }
       if (payment.paymentValue > 0) {
-        ref.read(cartNotiferProvider.notifier).addPayment(payment);
+        widget.onAddPayment(payment);
       } else {
-        ref
-            .read(cartNotiferProvider.notifier)
-            .removePayment(payment.paymentMethodId);
+        widget.onRemovePayment(payment.paymentMethodId);
       }
     }
 
@@ -104,6 +112,32 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
             height: 1,
             color: Colors.blueGrey.shade50,
           ),
+          widget.cart.prevPayments().isNotEmpty
+              ? Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.history),
+                      title: Text(
+                        'prev_payments'.tr(),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade900,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    PaymentMethods(
+                      paymentMethods: widget.paymentMethods
+                          .where((p) => widget.cart
+                              .prevPayments()
+                              .map((pc) => pc.paymentMethodId)
+                              .contains(p.id))
+                          .toList(),
+                      cartPayments: widget.cart.payments,
+                      isPrevios: true,
+                    )
+                  ],
+                )
+              : Container(),
           ClipRRect(
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(12.5),
@@ -143,7 +177,10 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
                   },
                   body: PaymentMethods(
                     onSelectMethod: onSelectMethod,
-                    type: type.id,
+                    paymentMethods: widget.paymentMethods
+                        .where((p) => p.type == type.id)
+                        .toList(),
+                    cartPayments: widget.cart.payments,
                   ),
                   isExpanded: type.isExpanded!,
                 );

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
@@ -12,18 +13,15 @@ import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
-  const CheckoutScreen({super.key});
+  const CheckoutScreen({this.isPartialPayment, super.key});
+
+  final bool? isPartialPayment;
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   void onConfirmStoreTransaction() async {
     showModalBottomSheet(
       isDismissible: true,
@@ -37,7 +35,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cart = ref.watch(cartNotiferProvider);
+    final Cart cart = ref.watch(cartNotiferProvider);
 
     OutletState? outletState = ref.watch(outletNotifierProvider).value;
     bool isPartialEnabled = outletState is OutletSelected
@@ -46,6 +44,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
+    var buttonPay = ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        backgroundColor:
+            cart.totalPayment >= cart.grandTotal ? Colors.teal : Colors.red,
+      ),
+      onPressed: (cart.totalPayment >= cart.grandTotal || isPartialEnabled)
+          ? onConfirmStoreTransaction
+          : null,
+      child: Text(
+          '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalCurrentPayment())}'),
+    );
     Widget actions = Card(
       margin: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 0),
       color: Colors.white,
@@ -80,31 +92,18 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               const SizedBox(
                 height: 15,
               ),
-              Row(
-                children: [
-                  const HoldButton(),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
+              widget.isPartialPayment == true
+                  ? buttonPay
+                  : Row(
+                      children: [
+                        const HoldButton(),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          flex: 2,
+                          child: buttonPay,
                         ),
-                        backgroundColor: cart.totalPayment >= cart.grandTotal
-                            ? Colors.teal
-                            : Colors.red,
-                      ),
-                      onPressed: (cart.totalPayment >= cart.grandTotal ||
-                              isPartialEnabled)
-                          ? onConfirmStoreTransaction
-                          : null,
-                      child: Text(
-                          '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
-                    ),
-                  ),
-                ],
-              )
+                      ],
+                    )
             ],
           ),
         ),
@@ -137,23 +136,40 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           isTablet
               ? Expanded(
                   child: OrderSummary(
-                    cart: ref.watch(cartNotiferProvider),
+                    cart: cart,
                     radius: const Radius.circular(10),
                     mainAxisSize: MainAxisSize.max,
                   ),
                 )
               : OrderSummary(
-                  cart: ref.watch(cartNotiferProvider),
+                  cart: cart,
                   radius: const Radius.circular(10),
                   mainAxisSize: MainAxisSize.min,
                 ),
         ],
       ),
     );
+
+    Widget paymentDetails = PaymentDetails(
+      cart: cart,
+      onAddPayment: (payment) =>
+          ref.read(cartNotiferProvider.notifier).addPayment(payment),
+      onRemovePayment: (String paymentMethodId) =>
+          ref.read(cartNotiferProvider.notifier).removePayment(paymentMethodId),
+      paymentMethods: (ref.read(outletNotifierProvider).value as OutletSelected)
+              .config
+              .paymentMethods ??
+          [],
+    );
+
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
-          title: Text('payment'.tr(args: [''])),
+          title: Text(widget.isPartialPayment == true
+              ? 'finish_x'.tr(args: [
+                  'payment'.tr(args: [''])
+                ])
+              : 'payment'.tr(args: [''])),
           elevation: 1,
         ),
         body: Row(
@@ -196,7 +212,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           child: SingleChildScrollView(
                             padding: const EdgeInsets.symmetric(horizontal: 10)
                                 .copyWith(bottom: 15),
-                            child: const PaymentDetails(),
+                            child: paymentDetails,
                           ),
                         ),
                         actions
@@ -217,7 +233,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                     child: cartPreview,
                                   ),
                                   const DiscountPromotion(),
-                                  const PaymentDetails()
+                                  paymentDetails
                                 ],
                               ),
                             ),

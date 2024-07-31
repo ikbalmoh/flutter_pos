@@ -195,11 +195,13 @@
   "print": "Cetak",
   "transaction_detail": "Detail Transaksi",
   "insufficient_payment": "Kekurangan Bayar",
+  "insufficient_payment_warning": "Total pembayaran kurang dari total transaksi",
   "approved": "Disetujui",
   "rejected": "Ditolak",
   "finish": "Selesai",
   "finish_x": "Selesaikan {}",
   "receipt_shared": "Struk telah dibagikan",
   "edit_open_amount": "Ubah Saldo Awal",
-  "open_amount_updated_x": "Saldo awal telah diubah ke {}"
+  "open_amount_updated_x": "Saldo awal telah diubah ke {}",
+  "prev_payments": "Pembayaran Sebelumnya"
 }

@@ -117,6 +117,28 @@ class _ConfirmStoreTransactionState
               child: SingleChildScrollView(
             child: Column(
               children: [
+                cart.totalPayment < cart.grandTotal
+                    ? Container(
+                        margin: const EdgeInsets.only(bottom: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.amber.shade300,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(CupertinoIcons.info),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            Text('insufficient_payment_warning'.tr())
+                          ],
+                        ),
+                      )
+                    : Container(),
                 Row(
                   children: [
                     Expanded(

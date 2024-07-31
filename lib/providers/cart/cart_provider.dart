@@ -29,33 +29,7 @@ part 'cart_provider.g.dart';
 class CartNotifer extends _$CartNotifer {
   @override
   Cart build() {
-    return emptyCart();
-  }
-
-  Cart emptyCart() {
-    return Cart(
-      transactionNo: '',
-      transactionDate: DateTime.now().millisecondsSinceEpoch,
-      items: [],
-      subtotal: 0,
-      total: 0,
-      grandTotal: 0,
-      discIsPercent: true,
-      discOverall: 0,
-      discOverallTotal: 0,
-      discPromotionsTotal: 0,
-      payments: [],
-      totalPayment: 0,
-      ppnIsInclude: true,
-      ppn: 0,
-      ppnTotal: 0,
-      change: 0,
-      idOutlet: '', // define on initCart
-      outletName: '', // define on initCart
-      shiftId: '', // define on initCart
-      createdBy: '', // define on initCart
-      isApp: true,
-    );
+    return Cart.initial();
   }
 
   Future<void> initCart() async {
@@ -83,7 +57,7 @@ class CartNotifer extends _$CartNotifer {
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
 
-      Cart cart = emptyCart();
+      Cart cart = Cart.initial();
 
       state = cart.copyWith(
         idOutlet: outletState.outlet.idOutlet,
@@ -303,8 +277,8 @@ class CartNotifer extends _$CartNotifer {
     );
 
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
-    int paymentIdx = payments
-        .indexWhere((cp) => cp.paymentMethodId == payment.paymentMethodId);
+    int paymentIdx = payments.indexWhere((cp) =>
+        cp.createdAt == null && cp.paymentMethodId == payment.paymentMethodId);
 
     if (payment.paymentValue <= 0) {
       payments.removeWhere((p) => p.paymentMethodId == payment.paymentMethodId);
@@ -324,7 +298,7 @@ class CartNotifer extends _$CartNotifer {
 
   void removePayment(String paymentMethodId) {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
-    payments.removeWhere((p) => p.paymentMethodId == paymentMethodId);
+    payments.removeWhere((p) => p.paymentMethodId == paymentMethodId && p.createdAt == null);
     double totalPayment = payments.isNotEmpty
         ? payments
             .map((payment) => payment.paymentValue)
@@ -400,10 +374,13 @@ class CartNotifer extends _$CartNotifer {
       idTransaction: holded.transactionId,
       shiftId: ref.read(shiftNotifierProvider).value?.id ?? holded.shiftId,
     );
-    log('OPEN HOLDED CART\n$holded\n$cart');
     if (cart.holdAt == null) {
       cart = cart.copyWith(holdAt: DateTime.now());
     }
+    state = cart;
+  }
+
+  void reopen(Cart cart) {
     state = cart;
   }
 }

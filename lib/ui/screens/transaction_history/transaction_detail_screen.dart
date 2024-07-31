@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/pdf.dart';
 import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/cart/cancel_transaction_form.dart';
 import 'package:selleri/ui/components/cart/order_summary.dart';
+import 'package:selleri/ui/screens/checkout/checkout_screen.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/file_download.dart';
 import 'package:selleri/utils/formater.dart';
@@ -60,8 +62,11 @@ class _TransactionDetailScreenState
           },
         ),
       );
-      final file = File('$path/${widget.cart.transactionNo}.pdf');
+      final file = File('$path/receipt-${widget.cart.transactionNo}.pdf');
       final pdfFile = await file.writeAsBytes(await pdf.save());
+      setState(() {
+        sharing = false;
+      });
       final shareResult = await Share.shareXFiles([
         XFile.fromData(pdfFile.readAsBytesSync(), mimeType: 'application/pdf')
       ],
@@ -71,9 +76,6 @@ class _TransactionDetailScreenState
       if (shareResult.status == ShareResultStatus.success) {
         AppAlert.toast('receipt_shared'.tr());
       }
-      setState(() {
-        sharing = false;
-      });
     });
   }
 
@@ -101,6 +103,22 @@ class _TransactionDetailScreenState
             cart: widget.cart,
           );
         });
+  }
+
+  void onContinuePayment() async {
+    log('Continue Payment: ${widget.cart}');
+    ref.read(cartNotiferProvider.notifier).reopen(widget.cart);
+    await Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => const CheckoutScreen(
+          isPartialPayment: true,
+        ),
+      ),
+    );
+    Future.delayed(const Duration(microseconds: 200), () {
+      ref.read(cartNotiferProvider.notifier).initCart();
+    });
   }
 
   @override
@@ -247,7 +265,7 @@ class _TransactionDetailScreenState
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.blue,
                                         ),
-                                        onPressed: onPrintReceipt,
+                                        onPressed: onContinuePayment,
                                         icon: const Icon(
                                             CupertinoIcons.creditcard_fill),
                                         label: Text('finish_x'
