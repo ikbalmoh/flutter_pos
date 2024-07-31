@@ -173,6 +173,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           [],
     );
 
+    var buttonPay = ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        backgroundColor:
+            cart.totalPayment >= cart.grandTotal ? Colors.teal : Colors.red,
+      ),
+      onPressed: (cart.totalPayment >= cart.grandTotal || isPartialEnabled)
+          ? onConfirmStoreTransaction
+          : null,
+      child: Text(
+          '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalCurrentPayment())}'),
+    );
     Widget actions = Card(
       margin: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 0),
       color: Colors.white,
@@ -207,31 +221,18 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               const SizedBox(
                 height: 15,
               ),
-              Row(
-                children: [
-                  const HoldButton(),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
+              widget.isPartialPayment == true
+                  ? buttonPay
+                  : Row(
+                      children: [
+                        const HoldButton(),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          flex: 2,
+                          child: buttonPay,
                         ),
-                        backgroundColor: cart.totalPayment >= cart.grandTotal
-                            ? Colors.teal
-                            : Colors.red,
-                      ),
-                      onPressed: (cart.totalPayment >= cart.grandTotal ||
-                              isPartialEnabled)
-                          ? onConfirmStoreTransaction
-                          : null,
-                      child: Text(
-                          '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalPayment)}'),
-                    ),
-                  ),
-                ],
-              )
+                      ],
+                    )
             ],
           ),
         ),
@@ -264,19 +265,32 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           isTablet
               ? Expanded(
                   child: OrderSummary(
-                    cart: ref.watch(cartNotiferProvider),
+                    cart: cart,
                     radius: const Radius.circular(10),
                     mainAxisSize: MainAxisSize.max,
                   ),
                 )
               : OrderSummary(
-                  cart: ref.watch(cartNotiferProvider),
+                  cart: cart,
                   radius: const Radius.circular(10),
                   mainAxisSize: MainAxisSize.min,
                 ),
         ],
       ),
     );
+
+    Widget paymentDetails = PaymentDetails(
+      cart: cart,
+      onAddPayment: (payment) =>
+          ref.read(cartNotiferProvider.notifier).addPayment(payment),
+      onRemovePayment: (String paymentMethodId) =>
+          ref.read(cartNotiferProvider.notifier).removePayment(paymentMethodId),
+      paymentMethods: (ref.read(outletNotifierProvider).value as OutletSelected)
+              .config
+              .paymentMethods ??
+          [],
+    );
+
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(

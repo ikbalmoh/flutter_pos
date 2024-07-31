@@ -25,7 +25,7 @@ class TransactionApi {
 
       return res.data['data'];
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.response?.data['message'] ?? e.message;
     } catch (e) {
       rethrow;
     }

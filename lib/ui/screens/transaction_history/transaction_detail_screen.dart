@@ -77,9 +77,6 @@ class _TransactionDetailScreenState
       if (shareResult.status == ShareResultStatus.success) {
         AppAlert.toast('receipt_shared'.tr());
       }
-      setState(() {
-        sharing = false;
-      });
     });
   }
 

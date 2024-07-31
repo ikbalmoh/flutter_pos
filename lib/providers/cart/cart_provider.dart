@@ -119,7 +119,7 @@ class Cart extends _$Cart {
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
 
-      Cart cart = emptyCart();
+      Cart cart = Cart.initial();
 
       state = cart.copyWith(
         idOutlet: outletState.outlet.idOutlet,
