@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options_staging.dart';
+/// import 'firebase_options_stage.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -64,6 +64,6 @@ class DefaultFirebaseOptions {
     projectId: 'selleri-dev',
     storageBucket: 'selleri-dev.appspot.com',
     androidClientId: '957311922583-i8l8po7sbpval4skd5jfdsd5s43440a6.apps.googleusercontent.com',
-    iosBundleId: 'com.dgti.selleripos.staging',
+    iosBundleId: 'com.dgti.selleripos.stage',
   );
 }

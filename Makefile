@@ -36,7 +36,7 @@ prompt:
 				s | stage) \
 					flavor=staging \
 					;; \
-				p | production) \
+				p | prod) \
 					flavor=production \
 					;; \
 				*) \
@@ -76,7 +76,7 @@ prompt:
 				s | stage) \
 					flavor=staging \
 					;; \
-				p | production) \
+				p | prod) \
 					flavor=production \
 					;; \
 				*) \
@@ -118,7 +118,7 @@ prompt:
 			esac; \
 		fi; \
 		\
-		make test-cmd PLATFORM=$$target_platform FLAVOR=$$flavor ADD_ARG="$$add_arg" BUILD_PATH=$$build_path APP_ID=$$app_id RELEASE_NOTES="$$release_notes"; \
+		make release PLATFORM=$$target_platform FLAVOR=$$flavor ADD_ARG="$$add_arg" BUILD_PATH=$$build_path APP_ID=$$app_id RELEASE_NOTES="$$release_notes"; \
 	else \
 		echo "Invalid operation. Please choose 'patch' or 'release'."; \
 		exit 1; \
@@ -128,10 +128,10 @@ runner:
 	dart run build_runner build -d
 
 shorebird:
-	yes | shorebird release $(PLATFORM) --flavor $(FLAVOR) --flutter-version=$(FLUTTER_VERSION) $(ADD_ARG); \	
+	yes | shorebird release $(PLATFORM) --flavor $(FLAVOR) --flutter-version=$(FLUTTER_VERSION) $(ADD_ARG)
 
 distribute:
-	firebase appdistribution:distribute $(BUILD_PATH) --app $(APP_ID) --release-notes '$(RELEASE_NOTES)' --groups $(GROUP_TESTER)
+	firebase appdistribution:distribute "$(BUILD_PATH)" --app $(APP_ID) --release-notes '$(RELEASE_NOTES)' --groups $(GROUP_TESTER)
 
 release:
 	@make runner
@@ -139,4 +139,4 @@ release:
 	@make distribute
 
 patch: 
-	yes | shorebird patch --platforms=android,ios  --flavor $(FLAVOR) --release-version $(BUILD_VERSION) --target "lib/main_$(FLAVOR).dart"
+	yes | shorebird patch --platforms=android,ios  --flavor $(FLAVOR) --release-version $(BUILD_VERSION)"
