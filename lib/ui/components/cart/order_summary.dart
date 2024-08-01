@@ -20,85 +20,85 @@ class OrderItem extends StatelessWidget {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    itemName,
-                    style: textTheme.bodyMedium,
-                  ),
-                  item.details.isNotEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.only(left: 7),
-                          child: Column(
+          Text(
+            itemName,
+            style: textTheme.bodyMedium,
+          ),
+          item.details.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 7),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: item.details
+                        .map(
+                          (itemPackage) => Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: item.details
-                                .map(
-                                  (itemPackage) => Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '- ${itemPackage.quantity} x',
-                                        style: textTheme.bodySmall
-                                            ?.copyWith(color: Colors.black54),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          itemPackage.name,
-                                          style: textTheme.bodySmall
-                                              ?.copyWith(color: Colors.black54),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                                .toList(),
+                            children: [
+                              Text(
+                                '- ${itemPackage.quantity} x',
+                                style: textTheme.bodySmall
+                                    ?.copyWith(color: Colors.black54),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  itemPackage.name,
+                                  style: textTheme.bodySmall
+                                      ?.copyWith(color: Colors.black54),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  ),
+                )
+              : Container(),
+          item.note != ''
+              ? Text(
+                  item.note ?? '',
+                  style: textTheme.bodySmall,
+                )
+              : Container(),
+          const SizedBox(height: 3),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  ' ${item.quantity} x ${CurrencyFormat.currency(item.price)}',
+                  style: textTheme.bodySmall
+                      ?.copyWith(fontSize: 14, color: Colors.grey.shade700),
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Column(
+                children: [
+                  (item.price * item.quantity) != item.total
+                      ? Text(
+                          CurrencyFormat.currency(item.price * item.quantity,
+                              symbol: false),
+                          style: const TextStyle(
+                            decoration: TextDecoration.lineThrough,
                           ),
                         )
                       : Container(),
                   Text(
-                    ' ${item.quantity} x ${CurrencyFormat.currency(item.price)}',
-                    style: textTheme.bodySmall
-                        ?.copyWith(fontSize: 14, color: Colors.grey.shade700),
+                    CurrencyFormat.currency(item.total, symbol: false),
+                    textAlign: TextAlign.right,
                   ),
-                  item.note != ''
-                      ? Text(
-                          item.note ?? '',
-                          style: textTheme.bodySmall,
-                        )
-                      : Container(),
-                ]),
-          ),
-          const SizedBox(
-            width: 12,
-          ),
-          Column(
-            children: [
-              (item.price * item.quantity) != item.total
-                  ? Text(
-                      CurrencyFormat.currency(item.price * item.quantity,
-                          symbol: false),
-                      style: const TextStyle(
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    )
-                  : Container(),
-              Text(
-                CurrencyFormat.currency(item.total, symbol: false),
-                textAlign: TextAlign.right,
-              ),
+                ],
+              )
             ],
-          )
+          ),
         ],
       ),
     );
@@ -121,6 +121,53 @@ class OrderSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    Widget summaryContent = Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'No: ${cart.transactionNo}',
+                textAlign: TextAlign.left,
+              ),
+              Text(
+                '${'cashier'.tr()}: ${cart.createdName}',
+                textAlign: TextAlign.left,
+              ),
+              Text(
+                '${'date'.tr()}: ${DateTimeFormater.msToString(cart.transactionDate, format: 'd/MM/y HH:mm')}',
+                textAlign: TextAlign.left,
+              ),
+              Text(
+                '${'customer'.tr()}: ${cart.customerName ?? '-'}',
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Divider(
+            height: 1,
+            color: Colors.blueGrey.shade50,
+          ),
+        ),
+        ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 7.5),
+          itemBuilder: (context, idx) {
+            ItemCart item = cart.items[idx];
+            return OrderItem(item: item);
+          },
+          itemCount: cart.items.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+        ),
+      ],
+    );
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -132,60 +179,13 @@ class OrderSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: mainAxisSize ?? MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'No: ${cart.transactionNo}',
-                  textAlign: TextAlign.left,
-                ),
-                Text(
-                  '${'cashier'.tr()}: ${cart.createdName}',
-                  textAlign: TextAlign.left,
-                ),
-                Text(
-                  '${'date'.tr()}: ${DateTimeFormater.msToString(cart.transactionDate, format: 'd/MM/y HH:mm')}',
-                  textAlign: TextAlign.left,
-                ),
-                Text(
-                  '${'customer'.tr()}: ${cart.customerName ?? '-'}',
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Divider(
-              height: 1,
-              color: Colors.blueGrey.shade50,
-            ),
-          ),
           mainAxisSize == MainAxisSize.max
               ? Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 7.5),
-                    itemBuilder: (context, idx) {
-                      ItemCart item = cart.items[idx];
-                      return OrderItem(item: item);
-                    },
-                    itemCount: cart.items.length,
-                    shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
+                  child: SingleChildScrollView(
+                    child: summaryContent,
                   ),
                 )
-              : ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 7.5),
-                  itemBuilder: (context, idx) {
-                    ItemCart item = cart.items[idx];
-                    return OrderItem(item: item);
-                  },
-                  itemCount: cart.items.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                ),
+              : summaryContent,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Divider(
@@ -212,6 +212,8 @@ class OrderSummary extends StatelessWidget {
           TwoColumn(
             label: 'Grand Total',
             value: cart.grandTotal,
+            labelStyle: textTheme.bodyLarge
+                ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
             valueStyle: textTheme.bodyLarge
                 ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
           ),
@@ -225,6 +227,8 @@ class OrderSummary extends StatelessWidget {
           TwoColumn(
             label: 'payment_amount'.tr(),
             value: cart.totalPayment,
+            labelStyle: textTheme.bodyLarge
+                ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
             valueStyle:
                 textTheme.bodyLarge?.copyWith(color: Colors.green.shade700),
           ),
@@ -232,6 +236,8 @@ class OrderSummary extends StatelessWidget {
               ? TwoColumn(
                   label: 'insufficient_payment'.tr(),
                   value: cart.grandTotal - cart.totalPayment,
+                  labelStyle: textTheme.bodyLarge?.copyWith(
+                      color: Colors.black87, fontWeight: FontWeight.w700),
                   valueStyle:
                       textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
                 )
