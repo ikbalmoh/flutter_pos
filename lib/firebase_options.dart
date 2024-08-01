@@ -66,7 +66,7 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://selleri-486e6.firebaseio.com',
     storageBucket: 'selleri-486e6.appspot.com',
     androidClientId: '107680786292-md9uile1r6mdrp4496ft1jqh9vlbssql.apps.googleusercontent.com',
-    iosBundleId: 'com.dgti.selleripos',
+    iosBundleId: 'com.dgti.selleri',
   );
 
 }

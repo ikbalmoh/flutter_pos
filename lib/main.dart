@@ -14,7 +14,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'dart:developer';
 import 'firebase_options.dart' as firebase_option;
 import 'firebase_options_dev.dart' as firebase_option_dev;
-import 'firebase_options_staging.dart' as firebase_option_staging;
+import 'firebase_options_stage.dart' as firebase_option_stage;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -39,7 +39,7 @@ Future initServices() async {
     return true;
   };
 
-  String env = appFlavor == 'release' ? ".env" : ".env.staging";
+  String env = appFlavor == 'release' ? ".env" : ".env.stage";
 
   await dotenv.load(fileName: env);
 
@@ -76,9 +76,9 @@ Future initServices() async {
   storage.write(key: StoreKey.deviceName.toString(), value: deviceName);
 
   var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
-  if (appFlavor == 'staging') {
+  if (appFlavor == 'stage') {
     firebaseOptions =
-        firebase_option_staging.DefaultFirebaseOptions.currentPlatform;
+        firebase_option_stage.DefaultFirebaseOptions.currentPlatform;
   } else if (appFlavor == 'dev') {
     firebaseOptions =
         firebase_option_dev.DefaultFirebaseOptions.currentPlatform;

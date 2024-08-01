@@ -4,6 +4,8 @@
 
 - Flutter 3.22.2
 - Shorebird
+- Makefile
+- Firebase Tools
 
 ### Generate Provider or Model
 
@@ -12,15 +14,14 @@
 ### Build APK Staging
 
 ```
-shorebird release android --flavor staging  --flutter-version=3.22.2 --artifact apk
+make op=release platform=ios flavor=dev release_notes="describe about new feature or fixing issue in which part feature"
 ```
 
 ### Release Patch
 
 ```
-shorebird patch android --flavor [flavorName]
+make op=patch flavor=dev
 ```
-
 
 ## Available Flavor
 
