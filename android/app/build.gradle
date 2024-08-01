@@ -32,7 +32,7 @@ if (flutterVersionName == null) {
    }
 
 android {
-    namespace "com.dgti.selleripos"
+    namespace "com.dgti.selleri"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
@@ -101,15 +101,13 @@ android {
     productFlavors {
         dev {
             dimension "mode"
-            resValue "string", "app_name", "Selleri DEV"
-            applicationIdSuffix ".debug"
-            manifestPlaceholders = [applicationLabel: "[DEV] Selleri"]
+            resValue "string", "app_name", "Selleri Dev"
+            applicationIdSuffix ".dev"
         }
         staging {
             dimension "mode"
             resValue "string", "app_name", "Selleri Staging"
-            applicationIdSuffix ".staging"
-            manifestPlaceholders = [applicationLabel: "[Staging] Selleri"]
+            applicationIdSuffix ".stage"
         }
     }
 }
