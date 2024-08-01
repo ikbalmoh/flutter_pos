@@ -188,7 +188,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         ),
                       ),
                     ),
-                    width: 350,
+                    width: ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP) ? 400 : MediaQuery.of(context).size.width * 0.5,
                     child: Padding(
                       padding: const EdgeInsets.all(5),
                       child: cartPreview,
