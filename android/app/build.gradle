@@ -69,11 +69,13 @@ android {
             dimension "mode"
             resValue "string", "app_name", "Selleri Dev"
             applicationIdSuffix ".dev"
+            manifestPlaceholders = [applicationLabel: "Selleri Dev"]
         }
         staging {
             dimension "mode"
             resValue "string", "app_name", "Selleri Staging"
             applicationIdSuffix ".stage"
+            manifestPlaceholders = [applicationLabel: "Selleri Staging"]
         }
     }
 }
