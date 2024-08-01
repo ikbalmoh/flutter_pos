@@ -76,3 +76,9 @@ class DateTimeFormater {
     return (DateTime.now().millisecondsSinceEpoch / 1000).floor();
   }
 }
+
+class GeneralFormater {
+  static String stripHtmlIfNeeded(String text) {
+    return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '\n');
+  }
+}

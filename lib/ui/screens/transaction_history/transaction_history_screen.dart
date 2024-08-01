@@ -361,7 +361,7 @@ class _TransactionHistoryScreenState
                     ),
                     color: Colors.grey.shade100,
                   ),
-                  width: MediaQuery.of(context).size.width - 400,
+                  width: ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP) ? MediaQuery.of(context).size.width - 400 : MediaQuery.of(context).size.width * 0.5,
                   child: viewTransaction != null
                       ? Card(
                           margin: const EdgeInsets.all(15),

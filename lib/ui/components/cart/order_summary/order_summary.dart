@@ -3,120 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/utils/formater.dart';
-
-class OrderItem extends StatelessWidget {
-  final ItemCart item;
-  const OrderItem({super.key, required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-
-    String itemName = item.itemName;
-    if (item.variantName != '' && item.variantName != null) {
-      itemName += ' - ${item.variantName}';
-    }
-
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            itemName,
-            style: textTheme.bodyMedium,
-          ),
-          item.details.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 7),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: item.details
-                        .map(
-                          (itemPackage) => Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '- ${itemPackage.quantity} x',
-                                style: textTheme.bodySmall
-                                    ?.copyWith(color: Colors.black54),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  itemPackage.name,
-                                  style: textTheme.bodySmall
-                                      ?.copyWith(color: Colors.black54),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                        .toList(),
-                  ),
-                )
-              : Container(),
-          item.note != ''
-              ? Text(
-                  item.note ?? '',
-                  style: textTheme.bodySmall,
-                )
-              : Container(),
-          const SizedBox(height: 3),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  ' ${item.quantity} x ${CurrencyFormat.currency(item.price)}',
-                  style: textTheme.bodySmall
-                      ?.copyWith(fontSize: 14, color: Colors.grey.shade700),
-                ),
-              ),
-              const SizedBox(
-                width: 12,
-              ),
-              Column(
-                children: [
-                  (item.price * item.quantity) != item.total
-                      ? Text(
-                          CurrencyFormat.currency(item.price * item.quantity,
-                              symbol: false),
-                          style: const TextStyle(
-                            decoration: TextDecoration.lineThrough,
-                          ),
-                        )
-                      : Container(),
-                  Text(
-                    CurrencyFormat.currency(item.total, symbol: false),
-                    textAlign: TextAlign.right,
-                  ),
-                ],
-              )
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+import 'order_item.dart';
+import 'receipt_attributes.dart';
 
 class OrderSummary extends StatelessWidget {
   final Cart cart;
   final Radius? radius;
-  final bool? isDone;
   final MainAxisSize? mainAxisSize;
+  final bool? withAttribute;
 
-  const OrderSummary(
-      {required this.cart,
-      this.isDone,
-      this.radius,
-      this.mainAxisSize,
-      super.key});
+  const OrderSummary({
+    required this.cart,
+    this.radius,
+    this.mainAxisSize,
+    this.withAttribute,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +27,14 @@ class OrderSummary extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
+        withAttribute == true
+            ? const Padding(
+                padding: EdgeInsets.only(top: 20, bottom: 10),
+                child: ReceiptHeader(),
+              )
+            : Container(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -149,12 +57,9 @@ class OrderSummary extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Divider(
-            height: 1,
-            color: Colors.blueGrey.shade50,
-          ),
+        Divider(
+          height: 1,
+          color: Colors.blueGrey.shade50,
         ),
         ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 7.5),
@@ -168,6 +73,7 @@ class OrderSummary extends StatelessWidget {
         ),
       ],
     );
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -175,6 +81,7 @@ class OrderSummary extends StatelessWidget {
           radius ?? const Radius.circular(0),
         ),
       ),
+      padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: mainAxisSize ?? MainAxisSize.min,
@@ -186,12 +93,9 @@ class OrderSummary extends StatelessWidget {
                   ),
                 )
               : summaryContent,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Divider(
-              height: 1,
-              color: Colors.blueGrey.shade50,
-            ),
+          Divider(
+            height: 1,
+            color: Colors.blueGrey.shade50,
           ),
           const SizedBox(height: 7),
           TwoColumn(
@@ -247,6 +151,12 @@ class OrderSummary extends StatelessWidget {
             value: cart.change,
           ),
           const SizedBox(height: 10),
+          withAttribute == true
+              ? const Padding(
+                  padding: EdgeInsets.only(top: 20, bottom: 10),
+                  child: ReceiptFooter(),
+                )
+              : Container(),
         ],
       ),
     );
@@ -272,7 +182,7 @@ class TwoColumn extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 2.5),
+      padding: const EdgeInsets.symmetric(vertical: 2.5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

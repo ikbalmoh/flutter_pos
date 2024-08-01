@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
-import 'package:selleri/ui/components/cart/order_summary.dart';
+import 'package:selleri/ui/components/cart/order_summary/order_summary.dart';
 import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/utils/app_alert.dart';
 

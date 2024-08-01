@@ -14,10 +14,6 @@ import 'package:selleri/utils/formater.dart';
 import 'package:selleri/utils/transaction.dart';
 
 class Printer {
-  static String stripHtmlIfNeeded(String text) {
-    return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '\n');
-  }
-
   static String divider({PaperSize size = PaperSize.mm58}) {
     String divider = '================================================';
     if (size == PaperSize.mm58) {
@@ -62,8 +58,8 @@ class Printer {
             log('${attributes.imageBase64}');
           }
         }
-        headers = Printer.stripHtmlIfNeeded(attributes.headers ?? '');
-        footers = Printer.stripHtmlIfNeeded(attributes.footers ?? '');
+        headers = GeneralFormater.stripHtmlIfNeeded(attributes.headers ?? '');
+        footers = GeneralFormater.stripHtmlIfNeeded(attributes.footers ?? '');
       }
 
       if (img != null) {
@@ -256,7 +252,7 @@ class Printer {
             const Base64Decoder().convert(attributes.imageBase64!);
         img = decodeImage(imgBytes);
       }
-      headers = Printer.stripHtmlIfNeeded(attributes.headers ?? '');
+      headers = GeneralFormater.stripHtmlIfNeeded(attributes.headers ?? '');
     }
 
     if (img != null) {

@@ -6,12 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/pdf.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/cart/cancel_transaction_form.dart';
-import 'package:selleri/ui/components/cart/order_summary.dart';
+import 'package:selleri/ui/components/cart/order_summary/order_summary.dart';
 import 'package:selleri/ui/screens/checkout/checkout_screen.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/file_download.dart';
@@ -48,8 +49,6 @@ class _TransactionDetailScreenState
 
     final Size contentSize = summaryContainerBox!.size;
 
-    log('Content Size: $contentSize');
-
     final String title = 'Receipt ${widget.cart.transactionNo}';
     final path = await FileDownload().localPath;
     screenshotController.capture().then((imageBytes) async {
@@ -62,14 +61,14 @@ class _TransactionDetailScreenState
           },
         ),
       );
-      final file = File('$path/receipt-${widget.cart.transactionNo}.pdf');
-      final pdfFile = await file.writeAsBytes(await pdf.save());
+      final fileName = 'receipt-${widget.cart.transactionNo}.pdf';
+      final filePath = '$path/$fileName';
+      await File(filePath).writeAsBytes(await pdf.save());
+      final xFile = XFile(filePath);
       setState(() {
         sharing = false;
       });
-      final shareResult = await Share.shareXFiles([
-        XFile.fromData(pdfFile.readAsBytesSync(), mimeType: 'application/pdf')
-      ],
+      final shareResult = await Share.shareXFiles([xFile],
           subject: title,
           sharePositionOrigin:
               shareButtonBox!.localToGlobal(Offset.zero) & shareButtonBox.size);
@@ -79,7 +78,7 @@ class _TransactionDetailScreenState
     });
   }
 
-  void onPrintReceipt() async {
+  void onPrintReceipt(BuildContext context) async {
     try {
       await ref.read(transactionsNotifierProvider.notifier).printReceipt(
             widget.cart,
@@ -91,7 +90,7 @@ class _TransactionDetailScreenState
     }
   }
 
-  void onCancelTransaction() async {
+  void onCancelTransaction(BuildContext context) async {
     await showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -105,8 +104,9 @@ class _TransactionDetailScreenState
         });
   }
 
-  void onContinuePayment() async {
+  void onContinuePayment(BuildContext context) async {
     log('Continue Payment: ${widget.cart}');
+    Cart prevCart = ref.read(cartNotiferProvider);
     ref.read(cartNotiferProvider.notifier).reopen(widget.cart);
     await Navigator.push(
       context,
@@ -117,7 +117,7 @@ class _TransactionDetailScreenState
       ),
     );
     Future.delayed(const Duration(microseconds: 200), () {
-      ref.read(cartNotiferProvider.notifier).initCart();
+      ref.read(cartNotiferProvider.notifier).reopen(prevCart);
     });
   }
 
@@ -129,6 +129,8 @@ class _TransactionDetailScreenState
         .value
         ?.data!
         .firstWhere((cart) => cart.transactionNo == widget.cart.transactionNo);
+
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(TABLET);
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
@@ -165,7 +167,7 @@ class _TransactionDetailScreenState
                   })),
                   menuChildren: [
                     MenuItemButton(
-                      onPressed: onCancelTransaction,
+                      onPressed: () => onCancelTransaction(context),
                       leadingIcon: const Icon(
                         CupertinoIcons.xmark_circle_fill,
                         color: Colors.red,
@@ -214,13 +216,16 @@ class _TransactionDetailScreenState
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 15),
-                    child: Screenshot(
-                      controller: screenshotController,
-                      child: OrderSummary(
-                        key: summaryContainerKey,
-                        radius: const Radius.circular(5),
-                        cart: transaction,
-                        isDone: true,
+                    child: SizedBox(
+                      width: isTablet ? 400 : double.infinity,
+                      child: Screenshot(
+                        controller: screenshotController,
+                        child: OrderSummary(
+                          key: summaryContainerKey,
+                          radius: const Radius.circular(5),
+                          cart: transaction,
+                          withAttribute: true,
+                        ),
                       ),
                     ),
                   ),
@@ -247,15 +252,23 @@ class _TransactionDetailScreenState
                                     : const Icon(Icons.share),
                               );
                             }),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              flex: 1,
-                              child: ElevatedButton.icon(
-                                onPressed: onPrintReceipt,
-                                icon: const Icon(CupertinoIcons.printer),
-                                label: Text('print'.tr()),
-                              ),
-                            ),
+                            isTablet ? const SizedBox(width: 15) : Container(),
+                            !isTablet &&
+                                    widget.cart.totalPayment <
+                                        widget.cart.grandTotal
+                                ? IconButton(
+                                    onPressed: () => onPrintReceipt(context),
+                                    icon: const Icon(CupertinoIcons.printer),
+                                    tooltip: 'print'.tr(),
+                                  )
+                                : Expanded(
+                                    flex: 1,
+                                    child: ElevatedButton.icon(
+                                      onPressed: () => onPrintReceipt(context),
+                                      icon: const Icon(CupertinoIcons.printer),
+                                      label: Text('print'.tr()),
+                                    ),
+                                  ),
                             widget.cart.totalPayment < widget.cart.grandTotal
                                 ? Expanded(
                                     flex: 2,
@@ -265,11 +278,11 @@ class _TransactionDetailScreenState
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.blue,
                                         ),
-                                        onPressed: onContinuePayment,
+                                        onPressed: () =>
+                                            onContinuePayment(context),
                                         icon: const Icon(
                                             CupertinoIcons.creditcard_fill),
-                                        label: Text('finish_x'
-                                            .tr(args: ['payments'.tr()])),
+                                        label: Text('pay'.tr()),
                                       ),
                                     ),
                                   )
