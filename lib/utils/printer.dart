@@ -488,7 +488,7 @@ class Printer {
             const Base64Decoder().convert(attributes.imageBase64!);
         img = decodeImage(imgBytes);
       }
-      headers = Printer.stripHtmlIfNeeded(attributes.headers ?? '');
+      headers = GeneralFormater.stripHtmlIfNeeded(attributes.headers ?? '');
     }
 
     if (img != null) {
