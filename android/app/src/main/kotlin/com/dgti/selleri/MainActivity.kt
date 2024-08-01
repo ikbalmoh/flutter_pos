@@ -1,4 +1,4 @@
-package com.dgti.selleripos
+package com.dgti.selleri
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U',
-    appId: '1:957311922583:android:beaea6232a392c9c2794d2',
+    appId: '1:957311922583:android:d61a59e4b45bfdd62794d2',
     messagingSenderId: '957311922583',
     projectId: 'selleri-dev',
     storageBucket: 'selleri-dev.appspot.com',
@@ -59,11 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDELX5rGF1RQfCkrBMSjw4MU42qSds2Mbw',
-    appId: '1:957311922583:ios:4e02442229fe35d42794d2',
+    appId: '1:957311922583:ios:487efa18122c20842794d2',
     messagingSenderId: '957311922583',
     projectId: 'selleri-dev',
     storageBucket: 'selleri-dev.appspot.com',
     androidClientId: '957311922583-i8l8po7sbpval4skd5jfdsd5s43440a6.apps.googleusercontent.com',
-    iosBundleId: 'com.dgti.selleripos.stage',
+    iosBundleId: 'com.dgti.selleri.stage',
   );
+
 }

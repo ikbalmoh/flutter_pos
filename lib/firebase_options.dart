@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAF3ioqyBnzSCjVwwPPtlECgsOFMCh05kg',
-    appId: '1:107680786292:android:861a01a1b53c7aa13cee21',
+    appId: '1:107680786292:android:0c1ead6246023db5',
     messagingSenderId: '107680786292',
     projectId: 'selleri-486e6',
     databaseURL: 'https://selleri-486e6.firebaseio.com',
@@ -60,7 +60,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCwdSF-h8TkFuNsigTAGFYffxactoLkY7U',
-    appId: '1:107680786292:ios:3c654a26a84ca4af3cee21',
+    appId: '1:107680786292:ios:25e36a95642325833cee21',
     messagingSenderId: '107680786292',
     projectId: 'selleri-486e6',
     databaseURL: 'https://selleri-486e6.firebaseio.com',

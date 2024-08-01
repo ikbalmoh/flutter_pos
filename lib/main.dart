@@ -24,6 +24,8 @@ final deviceInfoPlugin = DeviceInfoPlugin();
 Future initServices() async {
   log('INITIALIZING APP $appFlavor ...');
 
+  final bool isDev = ['dev', 'staging'].contains(appFlavor);
+
   await EasyLocalization.ensureInitialized();
 
   await initObjectBox();
@@ -39,7 +41,7 @@ Future initServices() async {
     return true;
   };
 
-  String env = appFlavor == 'release' ? ".env" : ".env.stage";
+  String env = isDev ? ".env.stage" : ".env";
 
   await dotenv.load(fileName: env);
 
@@ -76,7 +78,7 @@ Future initServices() async {
   storage.write(key: StoreKey.deviceName.toString(), value: deviceName);
 
   var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
-  if (appFlavor == 'stage') {
+  if (appFlavor == 'staging') {
     firebaseOptions =
         firebase_option_stage.DefaultFirebaseOptions.currentPlatform;
   } else if (appFlavor == 'dev') {
@@ -123,8 +125,8 @@ Future<void> main() async {
         path: 'assets/translations',
         fallbackLocale: const Locale('id', 'ID'),
         child: GestureDetector(
-          onTap: ()=> FocusManager.instance.primaryFocus!.unfocus(),
-          child: const App()),
+            onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+            child: const App()),
       ),
     ),
   );
