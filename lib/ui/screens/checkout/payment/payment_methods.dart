@@ -11,10 +11,10 @@ class PaymentMethods extends ConsumerWidget {
     this.onSelectMethod,
     required this.paymentMethods,
     required this.cartPayments,
-    this.isPrevios,
+    this.isPrevious,
   });
 
-  final bool? isPrevios;
+  final bool? isPrevious;
   final List<CartPayment> cartPayments;
   final List<PaymentMethod> paymentMethods;
   final Function(PaymentMethod)? onSelectMethod;
@@ -31,7 +31,7 @@ class PaymentMethods extends ConsumerWidget {
         PaymentMethod method = paymentMethods[idx];
         CartPayment? cartPayment = cartPayments.firstWhereOrNull(
           (payment) =>
-              (isPrevios == true
+              (isPrevious == true
                   ? payment.createdAt != null
                   : payment.createdAt == null) &&
               payment.paymentMethodId == method.id &&
@@ -41,11 +41,11 @@ class PaymentMethods extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Material(
-            color: isPrevios == true ? Colors.grey.shade50 : Colors.white,
+            color: isPrevious == true ? Colors.grey.shade50 : Colors.white,
             shape: RoundedRectangleBorder(
               side: BorderSide(
                 width: 1,
-                color: inUse && isPrevios != true
+                color: inUse && isPrevious != true
                     ? Colors.teal
                     : Colors.grey.shade200,
               ),

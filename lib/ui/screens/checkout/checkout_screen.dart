@@ -188,7 +188,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         ),
                       ),
                     ),
-                    width: ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP) ? 400 : MediaQuery.of(context).size.width * 0.5,
+                    width: ResponsiveBreakpoints.of(context)
+                            .largerOrEqualTo(DESKTOP)
+                        ? 400
+                        : MediaQuery.of(context).size.width * 0.5,
                     child: Padding(
                       padding: const EdgeInsets.all(5),
                       child: cartPreview,
@@ -199,48 +202,31 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.max,
-                children: isTablet
-                    ? [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: DiscountPromotion(),
-                        ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(horizontal: 10)
-                                .copyWith(bottom: 15),
-                            child: paymentDetails,
-                          ),
-                        ),
-                        actions
-                      ]
-                    : [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 7.5)
-                                      .copyWith(bottom: 15),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 7.5)
+                            .copyWith(bottom: 15),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            isTablet
+                                ? Container()
+                                : Padding(
                                     padding: const EdgeInsets.only(top: 10),
                                     child: cartPreview,
                                   ),
-                                  const DiscountPromotion(),
-                                  paymentDetails
-                                ],
-                              ),
-                            ),
-                          ),
+                            const DiscountPromotion(),
+                            paymentDetails
+                          ],
                         ),
-                        actions
-                      ],
+                      ),
+                    ),
+                  ),
+                  actions
+                ],
               ),
             ),
           ],

@@ -133,7 +133,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                               .contains(p.id))
                           .toList(),
                       cartPayments: widget.cart.payments,
-                      isPrevios: true,
+                      isPrevious: true,
                     )
                   ],
                 )
