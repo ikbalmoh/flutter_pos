@@ -46,7 +46,7 @@ class CartScreen extends ConsumerWidget {
     }
 
     void onCheckout() {
-      final outletState = ref.read(outletNotifierProvider).value;
+      final outletState = ref.read(outletProvider).value;
       bool isCustomerRequired = outletState is OutletSelected
           ? (outletState.config.customerTransMandatory ?? false)
           : false;

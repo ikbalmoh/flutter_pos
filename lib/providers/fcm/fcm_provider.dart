@@ -46,6 +46,9 @@ class Fcm extends _$Fcm {
       if (sources.contains('items') || sources.contains('promotions')) {
         await ref.read(itemsStreamProvider().notifier).syncItems();
       }
+      if (sources.contains('promotions')) {
+        // TODO: sync promotions
+      }
       if (sources.contains('config')) {
         final only = configOnly ?? [];
         log('CONFIG ONLY: $configOnly');

@@ -101,12 +101,12 @@ class Cart extends _$Cart {
       }
 
       final outletState =
-          ref.read(outletNotifierProvider).value as OutletSelected;
+          ref.read(outletProvider).value as OutletSelected;
 
       final authState =
           await ref.read(authNotifierProvider.future) as Authenticated;
 
-      final shift = ref.read(shiftNotifierProvider).value;
+      final shift = ref.read(shiftProvider).value;
 
       if (shift == null) {
         log('Shift is not started');
@@ -119,7 +119,7 @@ class Cart extends _$Cart {
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
 
-      Cart cart = Cart.initial();
+      model.Cart cart = model.Cart.initial();
 
       state = cart.copyWith(
         idOutlet: outletState.outlet.idOutlet,

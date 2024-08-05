@@ -282,10 +282,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     Widget paymentDetails = PaymentDetails(
       cart: cart,
       onAddPayment: (payment) =>
-          ref.read(cartNotiferProvider.notifier).addPayment(payment),
+          ref.read(cartProvider.notifier).addPayment(payment),
       onRemovePayment: (String paymentMethodId) =>
-          ref.read(cartNotiferProvider.notifier).removePayment(paymentMethodId),
-      paymentMethods: (ref.read(outletNotifierProvider).value as OutletSelected)
+          ref.read(cartProvider.notifier).removePayment(paymentMethodId),
+      paymentMethods: (ref.read(outletProvider).value as OutletSelected)
               .config
               .paymentMethods ??
           [],

@@ -53,7 +53,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
 
   void onUpdatePrinter() {
     context.pop();
-    ref.read(printerNotifierProvider.notifier).updatePrinter(
+    ref.read(printerProvider.notifier).updatePrinter(
           widget.device,
           size: size ?? PaperSize.mm58,
         );

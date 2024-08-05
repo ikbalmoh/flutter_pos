@@ -171,12 +171,12 @@ class Shift extends _$Shift {
         throw 'printer_not_connected'.tr();
       }
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletNotifierProvider).value as OutletSelected)
+          (ref.read(outletProvider).value as OutletSelected)
               .config
               .attributeReceipts;
-      final receipt = await Printer.buildShiftReportBytes(info,
+      final receipt = await util.Printer.buildShiftReportBytes(info,
           attributes: attributeReceipts, size: printer.size);
-      ref.read(printerNotifierProvider.notifier).print(receipt);
+      ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {
       if (throwError == true) {
         rethrow;
