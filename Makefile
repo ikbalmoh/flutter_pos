@@ -34,10 +34,10 @@ prompt:
 					flavor=dev \
 					;; \
 				s | stage) \
-					flavor=staging \
+					flavor=stage \
 					;; \
 				p | prod) \
-					flavor=production \
+					flavor=prod \
 					;; \
 				*) \
 					echo -n "Invalid flavor. Please choose dev(d) or stage(s) or prod(p)" \
@@ -74,10 +74,10 @@ prompt:
 					flavor=dev \
 					;; \
 				s | stage) \
-					flavor=staging \
+					flavor=stage \
 					;; \
 				p | prod) \
-					flavor=production \
+					flavor=prod \
 					;; \
 				*) \
 					echo -n "Invalid flavor. Please choose dev(d) or stage(s) or prod(p)" \
@@ -96,10 +96,10 @@ prompt:
 				dev) \
 					app_id=$(APP_ID_IOS_DEV) \
 					;; \
-				staging) \
+				stage) \
 					app_id=$(APP_ID_IOS_STAGE) \
 					;; \
-				production) \
+				prod) \
 					app_id=$(APP_ID_IOS_PROD) \
 					;; \
 			esac; \
@@ -109,10 +109,10 @@ prompt:
 				dev) \
 					app_id=$(APP_ID_ANDROID_DEV) \
 					;; \
-				staging) \
+				stage) \
 					app_id=$(APP_ID_ANDROID_STAGE) \
 					;; \
-				production) \
+				prod) \
 					app_id=$(APP_ID_ANDROID_PROD) \
 					;; \
 			esac; \
@@ -131,7 +131,7 @@ shorebird:
 	yes | shorebird release $(PLATFORM) --flavor $(FLAVOR) --flutter-version=$(FLUTTER_VERSION) $(ADD_ARG)
 
 distribute:
-	firebase appdistribution:distribute "$(BUILD_PATH)" --app $(APP_ID) --release-notes '$(RELEASE_NOTES)' --groups $(GROUP_TESTER)
+	firebase appdistribution:distribute "$(BUILD_PATH)" --app $(APP_ID) --release-notes "$(RELEASE_NOTES)" --groups $(GROUP_TESTER)
 
 release:
 	@make runner

@@ -8,8 +8,8 @@
 app_id: 597cd8a4-140e-43b3-b3c1-b9737ac674fa
 flavors:
   dev: 597cd8a4-140e-43b3-b3c1-b9737ac674fa
-  staging: 98d7a2a7-405d-4f5d-b594-1dd39599c4f7
-  release: a388cf85-ef08-4fdd-885d-3eb3f828de85
+  stage: 98d7a2a7-405d-4f5d-b594-1dd39599c4f7
+  prod: a388cf85-ef08-4fdd-885d-3eb3f828de85
 
 # auto_update controls if Shorebird should automatically update in the background on launch.
 # If auto_update: false, you will need to use package:shorebird_code_push to trigger updates.
