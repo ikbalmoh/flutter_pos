@@ -26,7 +26,7 @@ class App extends ConsumerWidget {
 
     final router = ref.watch(routerProvider);
 
-    ref.watch(fcmNotifierProvider);
+    ref.watch(fcmProvider);
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,

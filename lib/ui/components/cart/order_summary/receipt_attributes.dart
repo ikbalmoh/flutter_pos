@@ -10,7 +10,7 @@ class ReceiptHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final outletState = ref.watch(outletNotifierProvider).value;
+    final outletState = ref.watch(outletProvider).value;
     if (outletState is OutletSelected) {
       final outlet = outletState.outlet;
       final AttributeReceipts? attributeReceipts =
@@ -58,7 +58,7 @@ class ReceiptFooter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final outletState = ref.watch(outletNotifierProvider).value;
+    final outletState = ref.watch(outletProvider).value;
     if (outletState is OutletSelected) {
       final AttributeReceipts? attributeReceipts =
           outletState.config.attributeReceipts;

@@ -40,7 +40,7 @@ class _AddBarcodeItemState extends ConsumerState<AddBarcodeItem> {
   }
 
   void onAddToCart() {
-    ref.read(cartNotiferProvider.notifier).addToCart(
+    ref.read(cartProvider.notifier).addToCart(
           result.item!,
           variant: result.variant,
         );

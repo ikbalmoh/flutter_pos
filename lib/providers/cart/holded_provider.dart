@@ -9,12 +9,12 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 part 'holded_provider.g.dart';
 
 @riverpod
-class HoldedNofier extends _$HoldedNofier {
+class Holded extends _$Holded {
   @override
   FutureOr<Pagination<CartHolded>> build() async {
     try {
       final api = TransactionApi();
-      final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       final holded =
           await api.holdedTransactions(idOutlet: outlet.outlet.idOutlet);
       return holded;
@@ -32,7 +32,7 @@ class HoldedNofier extends _$HoldedNofier {
     }
     try {
       final api = TransactionApi();
-      final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       var holded = await api.holdedTransactions(
           idOutlet: outlet.outlet.idOutlet, page: page, q: search);
       List<CartHolded> data =

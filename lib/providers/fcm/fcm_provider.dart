@@ -19,13 +19,13 @@ String company = '';
 String outlet = '';
 
 @Riverpod(keepAlive: true)
-class FcmNotifier extends _$FcmNotifier {
+class Fcm extends _$Fcm {
   @override
   FutureOr<String?> build() async {
     FirebaseMessaging.onMessage.listen(handleFcmMessage);
 
     final auth = ref.watch(authNotifierProvider);
-    final outlet = ref.watch(outletNotifierProvider);
+    final outlet = ref.watch(outletProvider);
     if (auth.value is Authenticated && outlet.value is OutletSelected) {
       registerFcm(
         idCompany: (auth.value as Authenticated).user.user.company.idCompany,
@@ -46,12 +46,13 @@ class FcmNotifier extends _$FcmNotifier {
       if (sources.contains('items')) {
         await ref.read(itemsStreamProvider().notifier).syncItems();
       }
+      if (sources.contains('promotions')) {
+        // TODO: sync promotions
+      }
       if (sources.contains('config')) {
         final only = configOnly ?? [];
         log('CONFIG ONLY: $configOnly');
-        await ref
-            .read(outletNotifierProvider.notifier)
-            .refreshConfig(only: only);
+        await ref.read(outletProvider.notifier).refreshConfig(only: only);
       }
     });
   }
@@ -88,14 +89,10 @@ class FcmNotifier extends _$FcmNotifier {
           }
           break;
 
-        case 'transactions':
-          // sync transactions
-          break;
-
         case 'sync':
           final sources = List<String>.from(jsonData['sources'] ?? []);
           final config = List<String>.from(jsonData['config_only'] ?? []);
-          log('TRIGGER SYNC\n => soruce: $sources\n => config: $config');
+          log('TRIGGER SYNC\n => source: $sources\n => config: $config');
           manualSync(sources, config);
           break;
 
@@ -125,8 +122,7 @@ class FcmNotifier extends _$FcmNotifier {
             ref.read(authNotifierProvider).value is Authenticated;
         if (!authenticated) return;
 
-        final outletActive =
-            ref.read(outletNotifierProvider).value is OutletSelected;
+        final outletActive = ref.read(outletProvider).value is OutletSelected;
         if (!outletActive) return;
 
         if (token != null) {

@@ -7,15 +7,15 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'dart:developer';
-import 'package:selleri/data/models/printer.dart';
+import 'package:selleri/data/models/printer.dart' as model;
 import 'package:image/image.dart';
 
 part 'printer_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class PrinterNotifier extends _$PrinterNotifier {
+class Printer extends _$Printer {
   @override
-  FutureOr<Printer?> build() async {
+  FutureOr<model.Printer?> build() async {
     const storage = FlutterSecureStorage();
     bool isEnable = await PrintBluetoothThermal.bluetoothEnabled;
     if (!isEnable) {
@@ -25,7 +25,7 @@ class PrinterNotifier extends _$PrinterNotifier {
     final currentPrinter = await storage.read(key: 'printer');
     if (currentPrinter != null) {
       final printerJson = json.decode(currentPrinter);
-      Printer printer = Printer.fromJson(printerJson);
+      model.Printer printer = model.Printer.fromJson(printerJson);
       try {
         bool isConnected = await PrintBluetoothThermal.connect(
           macPrinterAddress: printer.macAddress,
@@ -61,7 +61,7 @@ class PrinterNotifier extends _$PrinterNotifier {
           'connect_printer_failed'.tr(args: [device.name]),
         );
       }
-      final printer = Printer(
+      final printer = model.Printer(
         macAddress: device.macAdress,
         name: device.name,
         size: size,
@@ -79,7 +79,7 @@ class PrinterNotifier extends _$PrinterNotifier {
   }
 
   void updatePrinter(BluetoothInfo device, {required PaperSize size}) {
-    final printer = Printer(
+    final printer = model.Printer(
       macAddress: device.macAdress,
       name: device.name,
       size: size,

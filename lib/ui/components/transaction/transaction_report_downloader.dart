@@ -54,8 +54,8 @@ class _TransactionReportDownloaderState
         "from": fromDate,
         "to": toDate,
         "type": "export",
-        "id_outlet[]": ref.read(outletNotifierProvider).value is OutletSelected
-            ? (ref.read(outletNotifierProvider).value as OutletSelected)
+        "id_outlet[]": ref.read(outletProvider).value is OutletSelected
+            ? (ref.read(outletProvider).value as OutletSelected)
                 .outlet
                 .idOutlet
             : ''

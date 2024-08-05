@@ -13,7 +13,7 @@ class AppStartNotifier extends _$AppStartNotifier {
   FutureOr<AppStartState> build() async {
     ref.onDispose(() {});
 
-    final outletState = ref.watch(outletNotifierProvider);
+    final outletState = ref.watch(outletProvider);
     final authState = ref.watch(authNotifierProvider);
 
     log('AUTHENTICATED? ${authState.value is Authenticated ? true : false}');

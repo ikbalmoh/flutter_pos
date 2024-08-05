@@ -12,7 +12,7 @@ class PicPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final outletState = ref.watch(outletNotifierProvider).value;
+    final outletState = ref.watch(outletProvider).value;
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       padding: EdgeInsets.only(

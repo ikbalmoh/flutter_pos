@@ -25,7 +25,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
 
   @override
   void initState() {
-    final cart = ref.read(cartNotiferProvider);
+    final cart = ref.read(cartProvider);
     setState(() {
       discount = cart.discOverall;
       discountIsPercent = cart.discIsPercent;
@@ -34,7 +34,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
   }
 
   void onChangeDiscountValue(String _) {
-    final cart = ref.read(cartNotiferProvider);
+    final cart = ref.read(cartProvider);
 
     double disc = _discountFormatter.getUnformattedValue().toDouble();
     if (discountIsPercent && disc > 100) {
@@ -67,7 +67,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
 
   void onSubmit() {
     context.pop();
-    ref.read(cartNotiferProvider.notifier).setDiscountTransaction(
+    ref.read(cartProvider.notifier).setDiscountTransaction(
           discount: discount,
           discIsPercent: discountIsPercent,
         );
@@ -110,7 +110,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
           TextFormField(
             inputFormatters: [_discountFormatter],
             initialValue: _discountFormatter
-                .formatDouble(ref.read(cartNotiferProvider).discOverall),
+                .formatDouble(ref.read(cartProvider).discOverall),
             onChanged: onChangeDiscountValue,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,

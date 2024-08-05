@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 part 'printer_list_provider.g.dart';
 
 @riverpod
-class PrinterListNotifier extends _$PrinterListNotifier {
+class PrinterList extends _$PrinterList {
   @override
   FutureOr<List<BluetoothInfo>> build() async {
     startScanDevices();

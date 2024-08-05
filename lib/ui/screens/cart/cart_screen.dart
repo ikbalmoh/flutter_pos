@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart.dart' as model;
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
@@ -21,7 +21,7 @@ class CartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cart = ref.watch(cartNotiferProvider);
+    final cart = ref.watch(cartProvider);
 
     void onDeleteItem(ItemCart item) {
       if (context.canPop()) {
@@ -32,9 +32,7 @@ class CartScreen extends ConsumerWidget {
           subtitle: 'are_you_sure'.tr(),
           confirmLabel: 'delete'.tr(),
           danger: true, onConfirm: () async {
-        await ref
-            .read(cartNotiferProvider.notifier)
-            .removeItem(item.identifier!);
+        await ref.read(cartProvider.notifier).removeItem(item.identifier!);
       });
     }
 
@@ -51,7 +49,7 @@ class CartScreen extends ConsumerWidget {
     }
 
     void onCheckout() {
-      final outletState = ref.read(outletNotifierProvider).value;
+      final outletState = ref.read(outletProvider).value;
       bool isCustomerRequired = outletState is OutletSelected
           ? (outletState.config.customerTransMandatory ?? false)
           : false;
@@ -121,7 +119,7 @@ class CartActions extends StatelessWidget {
     required this.onSubmit,
   });
 
-  final Cart cart;
+  final model.Cart cart;
   final Function() onSubmit;
 
   @override

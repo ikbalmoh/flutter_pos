@@ -1,7 +1,8 @@
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:selleri/data/models/outlet.dart';
+import 'package:flutter/foundation.dart';
+import 'package:selleri/data/models/outlet.dart' as model;
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
 import 'package:selleri/providers/item/item_provider.dart';
@@ -14,7 +15,7 @@ export 'outlet_state.dart';
 part 'outlet_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class OutletNotifier extends _$OutletNotifier {
+class Outlet extends _$Outlet {
   late final OutletRepository _outletRepository =
       ref.read(outletRepositoryProvider);
 
@@ -30,7 +31,7 @@ class OutletNotifier extends _$OutletNotifier {
     return OutletNotSelected();
   }
 
-  Future<void> selectOutlet(Outlet outlet,
+  Future<void> selectOutlet(model.Outlet outlet,
       {Function(OutletConfig)? onSelected}) async {
     state = AsyncData(OutletLoading(message: 'preparing_outlet'.tr()));
     try {
@@ -50,8 +51,11 @@ class OutletNotifier extends _$OutletNotifier {
       if (onSelected != null) {
         onSelected(config);
       }
-    } catch (e) {
-      state = AsyncData(OutletFailure(message: e.toString()));
+    } catch (e, stacktrace) {
+      if (kDebugMode) {
+        print("SELECT OUTLET ERROR: $e\n$stacktrace");
+      }
+      state = AsyncData(OutletFailure(message: "$e"));
     }
   }
 
@@ -84,6 +88,6 @@ class OutletNotifier extends _$OutletNotifier {
   Future<void> clearOutlet() async {
     await _outletRepository.remove();
     state = AsyncData(OutletNotSelected());
-    ref.read(shiftNotifierProvider.notifier).offShift();
+    ref.read(shiftProvider.notifier).offShift();
   }
 }

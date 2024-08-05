@@ -35,7 +35,7 @@ class HoldButton extends ConsumerWidget {
         ),
         onPressed: onHold,
         child: Text(
-          ref.watch(cartNotiferProvider).holdAt == null
+          ref.watch(cartProvider).holdAt == null
               ? 'hold'.tr().toUpperCase()
               : 'update'.tr().toUpperCase(),
           overflow: TextOverflow.ellipsis,

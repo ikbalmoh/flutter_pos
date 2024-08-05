@@ -27,7 +27,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
   @override
   void initState() {
     setState(() {
-      description = ref.read(cartNotiferProvider).description ?? '';
+      description = ref.read(cartProvider).description ?? '';
     });
     super.initState();
   }
@@ -43,7 +43,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
 
     try {
       await ref
-          .read(cartNotiferProvider.notifier)
+          .read(cartProvider.notifier)
           .holdCart(note: description, createNew: createNew);
 
       AppAlert.toast('transaction_holded'.tr());
@@ -86,7 +86,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  ref.read(cartNotiferProvider).holdAt == null
+                  ref.read(cartProvider).holdAt == null
                       ? '${'hold_current_transaction'.tr()}?'
                       : '${'update_current_transaction'.tr()}?',
                   style: textTheme.headlineSmall,
@@ -104,7 +104,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
             Text(
               'total_transaction'.tr(args: [
                 CurrencyFormat.currency(
-                    ref.read(cartNotiferProvider).grandTotal)
+                    ref.read(cartProvider).grandTotal)
               ]),
               style: textTheme.bodyLarge?.copyWith(
                 color: Colors.grey.shade700,
@@ -112,7 +112,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
             ),
             const SizedBox(height: 10),
             TextFormField(
-              initialValue: ref.read(cartNotiferProvider).description,
+              initialValue: ref.read(cartProvider).description,
               autofocus: true,
               onChanged: (value) {
                 setState(() {
@@ -174,7 +174,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                                     ? () => onHold(true)
                                     : null,
                                 child: Text(
-                                  ref.read(cartNotiferProvider).holdAt == null
+                                  ref.read(cartProvider).holdAt == null
                                       ? 'hold_new'.tr()
                                       : 'update_new'.tr(),
                                 ),
@@ -197,7 +197,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                               ? () => onHold(false)
                               : null,
                           child: Text(
-                              ref.read(cartNotiferProvider).holdAt == null
+                              ref.read(cartProvider).holdAt == null
                                   ? 'hold'.tr()
                                   : 'update'.tr()),
                         ),

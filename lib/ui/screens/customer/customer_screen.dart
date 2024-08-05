@@ -29,7 +29,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
 
   @override
   void initState() {
-    final name = ref.read(cartNotiferProvider).customerName;
+    final name = ref.read(cartProvider).customerName;
     if (name != null) {
       setState(() {
         searchVisible = true;
@@ -44,13 +44,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref
-          .read(customerListNotifierProvider.notifier)
+          .read(customerListProvider.notifier)
           .loadCustomers(page: 1, search: query);
     });
   }
 
   void loadMore() {
-    final pagination = ref.read(customerListNotifierProvider).asData?.value;
+    final pagination = ref.read(customerListProvider).asData?.value;
     if (pagination == null ||
         pagination.to == null ||
         (pagination.to != null && pagination.currentPage >= pagination.to!)) {
@@ -61,7 +61,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
       log('Load customers... ${pagination.currentPage}/${pagination.to}');
-      ref.read(customerListNotifierProvider.notifier).loadCustomers(
+      ref.read(customerListProvider.notifier).loadCustomers(
             page: pagination.currentPage + 1,
             search: _searchController.text,
           );
@@ -81,13 +81,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedCustomer = ref.watch(cartNotiferProvider).idCustomer;
+    final selectedCustomer = ref.watch(cartProvider).idCustomer;
 
     void onSelectCustomer(customer) {
       while (context.canPop() == true) {
         context.pop();
       }
-      ref.read(cartNotiferProvider.notifier).selectCustomer(customer);
+      ref.read(cartProvider.notifier).selectCustomer(customer);
     }
 
     void showCustomerSheet(Customer customer) {
@@ -137,9 +137,9 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
             ),
       body: RefreshIndicator(
           onRefresh: () => ref
-              .read(customerListNotifierProvider.notifier)
+              .read(customerListProvider.notifier)
               .loadCustomers(page: 1, search: _searchController.text),
-          child: ref.watch(customerListNotifierProvider).when(
+          child: ref.watch(customerListProvider).when(
                 data: (data) => data.data!.isNotEmpty
                     ? ListView.builder(
                         controller: _scrollController,

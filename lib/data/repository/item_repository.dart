@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -38,9 +40,19 @@ class ItemRepository implements ItemRepositoryProtocol {
         return [];
       }
       final data = await api.categories(outlet.idOutlet);
-      final categories = List<Category>.from(
-          data['data'].map((json) => Category.fromJson(json)));
-      objectBox.putCategories(categories);
+      final List<Category> categories = [];
+      for (var i = 0; i < List.from(data['data']).length; i++) {
+        var json = data['data'][i];
+        try {
+          final category = Category.fromJson(json);
+          categories.add(category);
+        } on Error catch (e, stackTrace) {
+          log('LOAD CATEGORY ERROR: $json\n=> $e\n=> $stackTrace');
+        }
+      }
+      if (categories.isNotEmpty) {
+        objectBox.putCategories(categories);
+      }
       return categories;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? e.message);
@@ -74,7 +86,17 @@ class ItemRepository implements ItemRepositoryProtocol {
       }
       final data = await api.items(outlet.idOutlet,
           idCategory: idCategory, lastUpdate: lastUpdate);
-      return List<Item>.from(data['data'].map((json) => Item.fromJson(json)));
+      List<Item> items = [];
+      for (var i = 0; i < List.from(data['data']).length; i++) {
+        var json = data['data'][i];
+        try {
+          final item = Item.fromJson(json);
+          items.add(item);
+        } on Error catch (e, stackTrace) {
+          log('LOAD ITEM ERROR: $json\n=> $e\n=> $stackTrace');
+        }
+      }
+      return items;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? e.message);
     } on PlatformException catch (e) {

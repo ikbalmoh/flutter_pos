@@ -15,20 +15,20 @@ class PrinterSettingScreen extends ConsumerWidget {
         title: Text('printer_setting'.tr()),
         actions: [
           IconButton(
-            onPressed: ref.watch(printerListNotifierProvider).isLoading
+            onPressed: ref.watch(printerListProvider).isLoading
                 ? null
                 : () => ref
-                    .read(printerListNotifierProvider.notifier)
+                    .read(printerListProvider.notifier)
                     .startScanDevices(),
             icon: const Icon(Icons.refresh),
           )
         ],
       ),
       body: const PrinterSetting(),
-      floatingActionButton: ref.watch(printerNotifierProvider).value != null
+      floatingActionButton: ref.watch(printerProvider).value != null
           ? FloatingActionButton.extended(
               onPressed: () =>
-                  ref.read(printerNotifierProvider.notifier).printTest(),
+                  ref.read(printerProvider.notifier).printTest(),
               label: Text('print_test'.tr()),
               icon: const Icon(Icons.print),
             )

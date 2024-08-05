@@ -10,7 +10,7 @@ class AppDrawerHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AuthState? authState = ref.watch(authNotifierProvider).value;
-    return ref.watch(outletNotifierProvider).when(
+    return ref.watch(outletProvider).when(
         data: (data) {
           return DrawerHeader(
             decoration: BoxDecoration(

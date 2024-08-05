@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:selleri/data/models/shift.dart';
+import 'package:selleri/data/models/shift.dart' as model;
 import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
@@ -82,7 +82,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         });
 
     if (newAmount != shiftInfo.summary.startingCash) {
-      ref.read(shiftNotifierProvider.notifier).updateOpenAmount(newAmount);
+      ref.read(shiftProvider.notifier).updateOpenAmount(newAmount);
       AppAlert.toast('open_amount_updated_x'
           .tr(args: [CurrencyFormat.currency(newAmount)]));
     }
@@ -91,7 +91,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final Shift? shift = ref.watch(shiftNotifierProvider).value;
+    final model.Shift? shift = ref.watch(shiftProvider).value;
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 

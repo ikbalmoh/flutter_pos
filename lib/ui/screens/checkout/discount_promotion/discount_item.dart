@@ -21,11 +21,11 @@ class DiscountItem extends ConsumerWidget {
           context: context,
           backgroundColor: Colors.white,
           builder: (context) {
-            return AddDiscountOverall(ref.read(cartNotiferProvider).subtotal);
+            return AddDiscountOverall(ref.read(cartProvider).subtotal);
           });
     }
 
-    OutletState? outletState = ref.watch(outletNotifierProvider).value;
+    OutletState? outletState = ref.watch(outletProvider).value;
 
     bool isDiscountOverallEnabled = outletState is OutletSelected
         ? (outletState.config.discountOverall ?? false)
@@ -63,7 +63,7 @@ class DiscountItem extends ConsumerWidget {
               Expanded(
                 child: Text(
                   CurrencyFormat.currency(
-                    ref.watch(cartNotiferProvider).discOverallTotal,
+                    ref.watch(cartProvider).discOverallTotal,
                     minus: true,
                   ),
                   textAlign: TextAlign.right,

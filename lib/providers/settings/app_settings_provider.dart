@@ -1,13 +1,13 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/data/models/app_settings.dart';
+import 'package:selleri/data/models/app_settings.dart' as model;
 
 part 'app_settings_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class AppSettingsNotifier extends _$AppSettingsNotifier {
+class AppSettings extends _$AppSettings {
   @override
-  AppSettings build() {
-    return const AppSettings(itemLayoutGrid: false);
+  model.AppSettings build() {
+    return const model.AppSettings(itemLayoutGrid: false);
   }
 
   void changeItemLayout() {

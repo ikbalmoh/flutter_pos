@@ -19,14 +19,14 @@ class HoldedPreview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void openHoldedTransaction() {
-      ref.read(cartNotiferProvider.notifier).openHoldedCart(cartHolded);
+      ref.read(cartProvider.notifier).openHoldedCart(cartHolded);
       while (context.canPop()) {
         context.pop();
       }
     }
 
     void onOpenHoldedCart() {
-      final currentCart = ref.read(cartNotiferProvider);
+      final currentCart = ref.read(cartProvider);
       if (currentCart.items.isNotEmpty || currentCart.holdAt != null) {
         showModalBottomSheet(
           context: context,
@@ -47,7 +47,7 @@ class HoldedPreview extends ConsumerWidget {
 
     void onPrintReceipt() async {
       try {
-        await ref.read(transactionsNotifierProvider.notifier).printReceipt(
+        await ref.read(transactionsProvider.notifier).printReceipt(
               cartHolded.dataHold,
               isHold: true,
             );

@@ -47,7 +47,7 @@ class _ShiftHistoryDetailScreenState
     }
     try {
       await ref
-          .read(shiftNotifierProvider.notifier)
+          .read(shiftProvider.notifier)
           .printShift(shiftInfo, throwError: true);
     } catch (e) {
       AppAlert.toast(e.toString());

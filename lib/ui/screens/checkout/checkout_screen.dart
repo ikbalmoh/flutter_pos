@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart.dart' as model;
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
@@ -35,9 +35,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Cart cart = ref.watch(cartNotiferProvider);
+    final model.Cart cart = ref.watch(cartProvider);
 
-    OutletState? outletState = ref.watch(outletNotifierProvider).value;
+    OutletState? outletState = ref.watch(outletProvider).value;
     bool isPartialEnabled = outletState is OutletSelected
         ? (outletState.config.partialPayment ?? false)
         : false;
@@ -153,10 +153,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     Widget paymentDetails = PaymentDetails(
       cart: cart,
       onAddPayment: (payment) =>
-          ref.read(cartNotiferProvider.notifier).addPayment(payment),
+          ref.read(cartProvider.notifier).addPayment(payment),
       onRemovePayment: (String paymentMethodId) =>
-          ref.read(cartNotiferProvider.notifier).removePayment(paymentMethodId),
-      paymentMethods: (ref.read(outletNotifierProvider).value as OutletSelected)
+          ref.read(cartProvider.notifier).removePayment(paymentMethodId),
+      paymentMethods: (ref.read(outletProvider).value as OutletSelected)
               .config
               .paymentMethods ??
           [],

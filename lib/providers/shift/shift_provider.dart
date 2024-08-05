@@ -4,14 +4,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/outlet_config.dart';
-import 'package:selleri/data/models/shift.dart';
+import 'package:selleri/data/models/shift.dart' as model;
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/repository/shift_repository.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/utils/formater.dart';
-import 'package:selleri/utils/printer.dart';
+import 'package:selleri/utils/printer.dart' as util;
 import 'package:uuid/uuid.dart';
 import 'dart:developer';
 
@@ -20,19 +20,18 @@ part 'shift_provider.g.dart';
 var uuid = const Uuid();
 
 @Riverpod(keepAlive: true)
-class ShiftNotifier extends _$ShiftNotifier {
+class Shift extends _$Shift {
   late final ShiftRepository _shiftRepository =
       ref.read(shiftRepositoryProvider);
 
   @override
-  FutureOr<Shift?> build() async {
+  FutureOr<model.Shift?> build() async {
     return future;
   }
 
   Future<void> openShift(double openAmount) async {
     state = const AsyncLoading();
-    final outletState =
-        await ref.read(outletNotifierProvider.future) as OutletSelected;
+    final outletState = await ref.read(outletProvider.future) as OutletSelected;
     final authState =
         await ref.read(authNotifierProvider.future) as Authenticated;
 
@@ -43,7 +42,7 @@ class ShiftNotifier extends _$ShiftNotifier {
 
     final outlet = outletState.outlet;
 
-    final shift = Shift(
+    final shift = model.Shift(
       id: uuid.v4(),
       outletId: outlet.idOutlet,
       outletName: outlet.outletName,
@@ -75,7 +74,7 @@ class ShiftNotifier extends _$ShiftNotifier {
   }) async {
     final user =
         (ref.read(authNotifierProvider).value as Authenticated).user.user;
-    final Shift currentShift = state.value!;
+    final model.Shift currentShift = state.value!;
     try {
       state = const AsyncLoading();
 
@@ -116,17 +115,17 @@ class ShiftNotifier extends _$ShiftNotifier {
 
   Future<void> printShift(ShiftInfo info, {bool? throwError}) async {
     try {
-      final printer = ref.read(printerNotifierProvider).value;
+      final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
       }
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletNotifierProvider).value as OutletSelected)
+          (ref.read(outletProvider).value as OutletSelected)
               .config
               .attributeReceipts;
-      final receipt = await Printer.buildShiftReportBytes(info,
+      final receipt = await util.Printer.buildShiftReportBytes(info,
           attributes: attributeReceipts, size: printer.size);
-      ref.read(printerNotifierProvider.notifier).print(receipt);
+      ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {
       if (throwError == true) {
         rethrow;

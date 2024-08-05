@@ -127,7 +127,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                         style: textTheme.bodyLarge
                             ?.copyWith(fontWeight: FontWeight.w500)),
                   ),
-                  ref.watch(outletListNotifierProvider).when(
+                  ref.watch(outletListProvider).when(
                         data: (data) {
                           setState(() => _isLoading = false);
                           return buildOutletLists(context, data);
@@ -136,7 +136,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                           error: error.toString(),
                           stackTrace: stack.toString(),
                           onRetry: () => ref
-                              .read(outletListNotifierProvider.notifier)
+                              .read(outletListProvider.notifier)
                               .fetchOutletList(),
                         ),
                         loading: () => const Padding(

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart.dart' as model;
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/picked_image.dart';
 import 'package:selleri/ui/screens/checkout/store_transaction.dart';
@@ -49,7 +49,7 @@ class _ConfirmStoreTransactionState
   void onSubmit() async {
     context.pop();
     ref
-        .read(cartNotiferProvider.notifier)
+        .read(cartProvider.notifier)
         .addNote(notes: noteController.text, images: images);
     showModalBottomSheet(
       isDismissible: false,
@@ -70,7 +70,7 @@ class _ConfirmStoreTransactionState
     TextStyle? labelStyle =
         textTheme.bodyMedium?.copyWith(color: Colors.blueGrey.shade600);
 
-    Cart cart = ref.watch(cartNotiferProvider);
+    model.Cart cart = ref.watch(cartProvider);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.7 +

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/pdf.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart.dart' as model;
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
@@ -22,7 +22,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class TransactionDetailScreen extends ConsumerStatefulWidget {
-  final Cart cart;
+  final model.Cart cart;
   final bool? asWidget;
 
   const TransactionDetailScreen({required this.cart, this.asWidget, super.key});
@@ -80,7 +80,7 @@ class _TransactionDetailScreenState
 
   void onPrintReceipt(BuildContext context) async {
     try {
-      await ref.read(transactionsNotifierProvider.notifier).printReceipt(
+      await ref.read(transactionsProvider.notifier).printReceipt(
             widget.cart,
           );
     } catch (e) {
@@ -106,8 +106,8 @@ class _TransactionDetailScreenState
 
   void onContinuePayment(BuildContext context) async {
     log('Continue Payment: ${widget.cart}');
-    Cart prevCart = ref.read(cartNotiferProvider);
-    ref.read(cartNotiferProvider.notifier).reopen(widget.cart);
+    model.Cart prevCart = ref.read(cartProvider);
+    ref.read(cartProvider.notifier).reopen(widget.cart);
     await Navigator.push(
       context,
       CupertinoPageRoute(
@@ -117,15 +117,15 @@ class _TransactionDetailScreenState
       ),
     );
     Future.delayed(const Duration(microseconds: 200), () {
-      ref.read(cartNotiferProvider.notifier).reopen(prevCart);
+      ref.read(cartProvider.notifier).reopen(prevCart);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentShift = ref.read(shiftNotifierProvider).value;
+    final currentShift = ref.read(shiftProvider).value;
     final transaction = ref
-        .watch(transactionsNotifierProvider)
+        .watch(transactionsProvider)
         .value
         ?.data!
         .firstWhere((cart) => cart.transactionNo == widget.cart.transactionNo);

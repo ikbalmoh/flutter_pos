@@ -87,9 +87,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Future<void> loadShift() async {
-    final currentShift = ref.read(shiftNotifierProvider).value;
+    final currentShift = ref.read(shiftProvider).value;
     if (currentShift == null) {
-      ref.read(shiftNotifierProvider.notifier).initShift();
+      ref.read(shiftProvider.notifier).initShift();
     }
   }
 
@@ -114,15 +114,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final outlet = ref.watch(outletNotifierProvider);
-    final cart = ref.watch(cartNotiferProvider);
+    final outlet = ref.watch(outletProvider);
+    final cart = ref.watch(cartProvider);
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     var itemContainer = Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        ref.watch(cartNotiferProvider).holdAt == null
+        ref.watch(cartProvider).holdAt == null
             ? Container()
             : Container(
                 width: MediaQuery.of(context).size.width,
@@ -134,7 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       const BorderRadius.vertical(top: Radius.circular(0)),
                 ),
                 child: Text(
-                  ref.watch(cartNotiferProvider).transactionNo,
+                  ref.watch(cartProvider).transactionNo,
                   style: const TextStyle(
                     color: Colors.white,
                   ),
@@ -206,7 +206,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     icon: const Icon(Icons.menu));
               }),
               actions: [
-                ...ref.watch(shiftNotifierProvider).value == null
+                ...ref.watch(shiftProvider).value == null
                     ? []
                     : [
                         IconButton(

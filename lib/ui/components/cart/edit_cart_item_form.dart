@@ -101,7 +101,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
       picName: picName,
     );
     // Update Item
-    ref.read(cartNotiferProvider.notifier).updateItem(item);
+    ref.read(cartProvider.notifier).updateItem(item);
     context.pop();
   }
 

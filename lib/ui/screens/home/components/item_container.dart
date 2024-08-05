@@ -39,7 +39,7 @@ class ItemContainer extends ConsumerWidget {
       AppAlert.snackbar(context, 'out_of_stock'.tr());
       return;
     }
-    ref.read(cartNotiferProvider.notifier).addToCart(item, variant: variant);
+    ref.read(cartProvider.notifier).addToCart(item, variant: variant);
   }
 
   void showVariants(BuildContext context, Item item, WidgetRef ref) {
@@ -112,7 +112,7 @@ class ItemContainer extends ConsumerWidget {
                 ),
               ),
             )
-          : ref.watch(appSettingsNotifierProvider).itemLayoutGrid
+          : ref.watch(appSettingsProvider).itemLayoutGrid
               ? GridView.count(
                   physics: const AlwaysScrollableScrollPhysics(),
                   crossAxisCount:
@@ -129,7 +129,7 @@ class ItemContainer extends ConsumerWidget {
                     (index) {
                       final Item item = value[index];
                       int qtyOnCart = ref
-                          .read(cartNotiferProvider.notifier)
+                          .read(cartProvider.notifier)
                           .qtyOnCart(item.idItem);
                       return ShopItem(
                         item: item,
@@ -137,7 +137,7 @@ class ItemContainer extends ConsumerWidget {
                         onAddToCart: (item) =>
                             onAddToCart(context, ref, item: item),
                         addQty: (idItem) => ref
-                            .read(cartNotiferProvider.notifier)
+                            .read(cartProvider.notifier)
                             .updateQty(idItem),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
@@ -154,7 +154,7 @@ class ItemContainer extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final item = value[index];
                     int qtyOnCart = ref
-                        .read(cartNotiferProvider.notifier)
+                        .read(cartProvider.notifier)
                         .qtyOnCart(item.idItem);
                     return ShopItemList(
                       item: item,
@@ -162,7 +162,7 @@ class ItemContainer extends ConsumerWidget {
                       onAddToCart: (item) =>
                           onAddToCart(context, ref, item: item),
                       addQty: (idItem) => ref
-                          .read(cartNotiferProvider.notifier)
+                          .read(cartProvider.notifier)
                           .updateQty(idItem),
                       showVariants: (item) => showVariants(context, item, ref),
                       onLongPress: (item) => onLongPress(context, item),

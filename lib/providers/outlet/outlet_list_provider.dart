@@ -5,7 +5,7 @@ import 'package:selleri/data/models/outlet.dart';
 part 'outlet_list_provider.g.dart';
 
 @riverpod
-class OutletListNotifier extends _$OutletListNotifier {
+class OutletList extends _$OutletList {
   @override
   Future<List<Outlet>> build() async {
     final api = OutletApi();

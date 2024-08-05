@@ -26,7 +26,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
 
   @override
   void initState() {
-    final currentPrinter = ref.read(printerNotifierProvider).value;
+    final currentPrinter = ref.read(printerProvider).value;
     setState(() {
       size = currentPrinter?.macAddress == widget.device.macAdress
           ? currentPrinter?.size
@@ -37,7 +37,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
 
   void onConnectPrinter() {
     context.pop();
-    ref.read(printerNotifierProvider.notifier).connectPrinter(
+    ref.read(printerProvider.notifier).connectPrinter(
           widget.device,
           size: size ?? PaperSize.mm58,
         );
@@ -45,7 +45,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
 
   void onUpdatePrinter() {
     context.pop();
-    ref.read(printerNotifierProvider.notifier).updatePrinter(
+    ref.read(printerProvider.notifier).updatePrinter(
           widget.device,
           size: size ?? PaperSize.mm58,
         );
@@ -53,7 +53,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
 
   void onDisconnectPrinter() {
     context.pop();
-    ref.read(printerNotifierProvider.notifier).disconnect();
+    ref.read(printerProvider.notifier).disconnect();
   }
 
   @override
@@ -145,7 +145,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: ref.watch(printerNotifierProvider).value?.macAddress ==
+            children: ref.watch(printerProvider).value?.macAddress ==
                     widget.device.macAdress
                 ? [
                     TextButton(

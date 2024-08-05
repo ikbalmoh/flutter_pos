@@ -9,12 +9,12 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 part 'customer_list_provider.g.dart';
 
 @riverpod
-class CustomerListNotifier extends _$CustomerListNotifier {
+class CustomerList extends _$CustomerList {
   @override
   FutureOr<Pagination<Customer>> build() async {
     final api = CustomerApi();
     try {
-      final name = ref.read(cartNotiferProvider).customerName;
+      final name = ref.read(cartProvider).customerName;
       final customers = await api.customers(page: 1, search: name ?? '');
       return customers;
     } on Exception catch (e) {
@@ -56,7 +56,7 @@ class CustomerListNotifier extends _$CustomerListNotifier {
   Future<void> submitNewCustomer(Map<String, dynamic> payload) async {
     final api = CustomerApi();
     final Customer customer = await api.storeCustomer(payload);
-    ref.read(cartNotiferProvider.notifier).selectCustomer(customer);
+    ref.read(cartProvider.notifier).selectCustomer(customer);
     loadCustomers(page: 1, search: customer.customerName);
   }
 }

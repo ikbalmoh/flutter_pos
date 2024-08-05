@@ -43,7 +43,7 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> logout() async {
-    ref.read(shiftNotifierProvider.notifier).shiftLoading();
+    ref.read(shiftProvider.notifier).shiftLoading();
     try {
       log('API LOGOUT');
       await _authRepoistory.logout();
@@ -54,12 +54,12 @@ class AuthNotifier extends _$AuthNotifier {
       log('API LOGOUT DONE');
     }
     Future.delayed(const Duration(seconds: 1), () async {
-      await ref.read(outletNotifierProvider.notifier).clearOutlet();
+      await ref.read(outletProvider.notifier).clearOutlet();
       objectBox.clearAll();
       ref.invalidate(itemsStreamProvider);
-      ref.invalidate(cartNotiferProvider);
-      ref.invalidate(outletNotifierProvider);
-      ref.invalidate(shiftNotifierProvider);
+      ref.invalidate(cartProvider);
+      ref.invalidate(outletProvider);
+      ref.invalidate(shiftProvider);
     });
   }
 }

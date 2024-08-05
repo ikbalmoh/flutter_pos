@@ -80,7 +80,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
         'address': address,
       };
       await ref
-          .read(customerListNotifierProvider.notifier)
+          .read(customerListProvider.notifier)
           .submitNewCustomer(data);
       // ignore: use_build_context_synchronously
       context.pop();

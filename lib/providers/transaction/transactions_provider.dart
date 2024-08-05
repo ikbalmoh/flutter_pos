@@ -9,18 +9,18 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/utils/printer.dart';
+import 'package:selleri/utils/printer.dart' as util;
 
 part 'transactions_provider.g.dart';
 
 @riverpod
-class TransactionsNotifier extends _$TransactionsNotifier {
+class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
     try {
       final api = TransactionApi();
-      final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
-      String? shiftId = ref.watch(shiftNotifierProvider).value?.id;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+      String? shiftId = ref.watch(shiftProvider).value?.id;
       final transactions = await api.transactions(
           idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
       return transactions;
@@ -39,10 +39,10 @@ class TransactionsNotifier extends _$TransactionsNotifier {
     }
     final api = TransactionApi();
     try {
-      final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId;
       if (currentShift == true) {
-        shiftId = ref.read(shiftNotifierProvider).value?.id;
+        shiftId = ref.read(shiftProvider).value?.id;
       }
       var customers = await api.transactions(
           page: page,
@@ -63,22 +63,22 @@ class TransactionsNotifier extends _$TransactionsNotifier {
 
   Future<void> printReceipt(Cart cart, {bool isHold = false}) async {
     try {
-      final printer = ref.read(printerNotifierProvider).value;
+      final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
       }
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletNotifierProvider).value as OutletSelected)
+          (ref.read(outletProvider).value as OutletSelected)
               .config
               .attributeReceipts;
-      final receipt = await Printer.buildReceiptBytes(
+      final receipt = await util.Printer.buildReceiptBytes(
         cart,
         attributes: attributeReceipts,
         size: printer.size,
         isCopy: true,
         isHold: isHold,
       );
-      ref.read(printerNotifierProvider.notifier).print(receipt);
+      ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {
       rethrow;
     }

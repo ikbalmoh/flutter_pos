@@ -18,7 +18,7 @@ class HomeMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onNewTransaction() {
-      if (ref.read(cartNotiferProvider).items.isNotEmpty) {
+      if (ref.read(cartProvider).items.isNotEmpty) {
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.white,
@@ -29,13 +29,13 @@ class HomeMenu extends ConsumerWidget {
             return HoldForm(
               onHolded: () {
                 context.pop();
-                ref.read(cartNotiferProvider.notifier).initCart();
+                ref.read(cartProvider.notifier).initCart();
               },
             );
           },
         );
       } else {
-        ref.read(cartNotiferProvider.notifier).initCart();
+        ref.read(cartProvider.notifier).initCart();
       }
     }
 
@@ -67,7 +67,7 @@ class HomeMenu extends ConsumerWidget {
           },
           icon: Badge(
             smallSize: 8,
-            backgroundColor: ref.watch(printerNotifierProvider).value != null
+            backgroundColor: ref.watch(printerProvider).value != null
                 ? Colors.transparent
                 : Colors.red.shade600,
             child: const Icon(Icons.more_vert),
@@ -76,18 +76,18 @@ class HomeMenu extends ConsumerWidget {
         );
       },
       menuChildren: [
-        ...ref.watch(shiftNotifierProvider).value == null
+        ...ref.watch(shiftProvider).value == null
             ? []
             : [
                 MenuItemButton(
                   onPressed: () => context.push(Routes.customers),
                   leadingIcon: Icon(
                     CupertinoIcons.rectangle_stack_person_crop,
-                    color: ref.watch(cartNotiferProvider).idCustomer == null
+                    color: ref.watch(cartProvider).idCustomer == null
                         ? Colors.blueGrey.shade500
                         : Colors.green.shade600,
                   ),
-                  child: Text(ref.watch(cartNotiferProvider).customerName ??
+                  child: Text(ref.watch(cartProvider).customerName ??
                       'select_customer'.tr()),
                 ),
                 MenuItemButton(
@@ -109,14 +109,14 @@ class HomeMenu extends ConsumerWidget {
                 const PopupMenuDivider(),
                 MenuItemButton(
                   onPressed: () => ref
-                      .read(appSettingsNotifierProvider.notifier)
+                      .read(appSettingsProvider.notifier)
                       .changeItemLayout(),
                   leadingIcon: Icon(
-                      ref.watch(appSettingsNotifierProvider).itemLayoutGrid
+                      ref.watch(appSettingsProvider).itemLayoutGrid
                           ? CupertinoIcons.rectangle_grid_1x2
                           : CupertinoIcons.square_grid_2x2_fill),
                   child: Text(
-                    ref.watch(appSettingsNotifierProvider).itemLayoutGrid
+                    ref.watch(appSettingsProvider).itemLayoutGrid
                         ? 'list_view'.tr()
                         : 'grid_view'.tr(),
                   ),
@@ -126,7 +126,7 @@ class HomeMenu extends ConsumerWidget {
           onPressed: () => context.push(Routes.printers),
           leadingIcon: Badge(
             smallSize: 8,
-            backgroundColor: ref.watch(printerNotifierProvider).value != null
+            backgroundColor: ref.watch(printerProvider).value != null
                 ? Colors.green.shade500
                 : Colors.red.shade600,
             child: Icon(
@@ -135,7 +135,7 @@ class HomeMenu extends ConsumerWidget {
             ),
           ),
           child:
-              Text(ref.watch(printerNotifierProvider).value?.name ?? 'Printer'),
+              Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
         ),
         MenuItemButton(
           onPressed: onSignOut,

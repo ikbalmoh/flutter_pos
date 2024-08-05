@@ -13,7 +13,7 @@ class ShiftListNotifier extends _$ShiftListNotifier {
   FutureOr<Pagination<Shift>> build() async {
     try {
       final api = ShiftApi();
-      final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       final shifts = api.shifts(idOutlet: outlet.outlet.idOutlet);
       return shifts;
     } catch (e, stackTrace) {
@@ -31,7 +31,7 @@ class ShiftListNotifier extends _$ShiftListNotifier {
     }
     final api = ShiftApi();
     try {
-      final outlet = ref.read(outletNotifierProvider).value as OutletSelected;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       var shifts = await api.shifts(
         page: page,
         q: search,

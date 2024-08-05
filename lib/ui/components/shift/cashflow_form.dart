@@ -50,7 +50,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   void initState() {
     if (widget.cashflow != null) {
       final config =
-          (ref.read(outletNotifierProvider).value as OutletSelected).config;
+          (ref.read(outletProvider).value as OutletSelected).config;
       List<Akun> accounts = List<Akun>.from(config.akunBiaya ?? []);
       accounts.addAll(config.akunPendapatan ?? []);
       accounts.addAll(config.akunSetoran ?? []);
@@ -194,7 +194,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
         ?.copyWith(color: Colors.blueGrey.shade600);
 
     final outletConfig =
-        (ref.read(outletNotifierProvider).value as OutletSelected).config;
+        (ref.read(outletProvider).value as OutletSelected).config;
 
     List<Akun> accountList = switch (status) {
       1 => outletConfig.akunBiaya ?? [],

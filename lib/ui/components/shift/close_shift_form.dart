@@ -48,7 +48,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    OutletState? outletState = ref.read(outletNotifierProvider).value;
+    OutletState? outletState = ref.read(outletProvider).value;
     if (outletState is OutletSelected) {
       setState(() {
         isAttachmentRequired =
@@ -106,7 +106,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     });
     final summary = widget.shift.summary;
     try {
-      await ref.read(shiftNotifierProvider.notifier).closeShift(
+      await ref.read(shiftProvider.notifier).closeShift(
             widget.shift,
             closeAmount: amount,
             diffAmount: diffAmount(),

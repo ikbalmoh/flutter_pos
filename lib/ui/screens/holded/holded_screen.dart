@@ -48,7 +48,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
   }
 
   void loadMore() {
-    final pagination = ref.read(holdedNofierProvider).asData?.value;
+    final pagination = ref.read(holdedProvider).asData?.value;
     if (pagination == null ||
         pagination.to == null ||
         (pagination.to != null && pagination.currentPage >= pagination.to!)) {
@@ -59,7 +59,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
       log('Load hold... ${pagination.currentPage}/${pagination.to}');
-      ref.read(holdedNofierProvider.notifier).loadTransaction(
+      ref.read(holdedProvider.notifier).loadTransaction(
             page: pagination.currentPage + 1,
             search: query,
           );
@@ -70,13 +70,13 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref
-          .read(holdedNofierProvider.notifier)
+          .read(holdedProvider.notifier)
           .loadTransaction(page: 1, search: query);
     });
   }
 
   void openHoldedTransaction(CartHolded holded) {
-    ref.read(cartNotiferProvider.notifier).openHoldedCart(holded);
+    ref.read(cartProvider.notifier).openHoldedCart(holded);
     while (context.canPop()) {
       context.pop();
     }
@@ -151,11 +151,11 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () =>
-                  ref.read(holdedNofierProvider.notifier).loadTransaction(
+                  ref.read(holdedProvider.notifier).loadTransaction(
                         page: 1,
                         search: query,
                       ),
-              child: ref.watch(holdedNofierProvider).when(
+              child: ref.watch(holdedProvider).when(
                     data: (data) => data.data!.isNotEmpty
                         ? ListView.builder(
                             controller: _scrollController,

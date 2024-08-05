@@ -14,7 +14,7 @@ class CashBalance extends ConsumerStatefulWidget {
 class _CashBalanceState extends ConsumerState<CashBalance> {
   @override
   Widget build(BuildContext context) {
-    final outletState = ref.watch(outletNotifierProvider).value;
+    final outletState = ref.watch(outletProvider).value;
     return outletState is OutletSelected
         ? ActionChip(
             tooltip: 'cash_balance'.tr(),
@@ -29,7 +29,7 @@ class _CashBalanceState extends ConsumerState<CashBalance> {
             onPressed: outletState.isSyncing == true
                 ? null
                 : () => ref
-                    .read(outletNotifierProvider.notifier)
+                    .read(outletProvider.notifier)
                     .refreshConfig(only: ['saldo_akun_kas']),
             label: Row(
               mainAxisAlignment: MainAxisAlignment.center,

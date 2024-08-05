@@ -21,7 +21,7 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    OutletState? outletState = ref.read(outletNotifierProvider).value;
+    OutletState? outletState = ref.read(outletProvider).value;
     num defaultAmount = outletState is OutletSelected
         ? (outletState.config.defaultOpenAmount ?? 0)
         : 0;
@@ -75,7 +75,7 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
         ),
         TextButton(
             onPressed: () {
-              ref.read(shiftNotifierProvider.notifier).openShift(
+              ref.read(shiftProvider.notifier).openShift(
                     amount,
                   );
               context.pop();

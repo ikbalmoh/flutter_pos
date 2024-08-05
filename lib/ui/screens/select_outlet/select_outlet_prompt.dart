@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/data/models/outlet.dart';
+import 'package:selleri/data/models/outlet.dart' as model;
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
@@ -10,19 +10,19 @@ import 'package:selleri/ui/widgets/loading_widget.dart';
 class SelectOutletPrompt extends ConsumerWidget {
   const SelectOutletPrompt({required this.outlet, super.key});
 
-  final Outlet outlet;
+  final model.Outlet outlet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     void onDismiss() {
-      ref.read(outletNotifierProvider.notifier).clearOutlet();
+      ref.read(outletProvider.notifier).clearOutlet();
       context.pop();
     }
 
     void onSubmit() {
-      ref.read(outletNotifierProvider.notifier).selectOutlet(
+      ref.read(outletProvider.notifier).selectOutlet(
             outlet,
             onSelected: (config) => context.setLocale(
               config.locale == 'en'
@@ -32,7 +32,7 @@ class SelectOutletPrompt extends ConsumerWidget {
           );
     }
 
-    final outletState = ref.watch(outletNotifierProvider).value;
+    final outletState = ref.watch(outletProvider).value;
 
     return AlertDialog(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),

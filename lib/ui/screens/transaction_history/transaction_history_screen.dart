@@ -42,7 +42,7 @@ class _TransactionHistoryScreenState
     _searchController.addListener(() => onSearchItems(_searchController.text));
     _scrollController.addListener(loadMore);
     setState(() {
-      currentShift = ref.read(shiftNotifierProvider).value != null;
+      currentShift = ref.read(shiftProvider).value != null;
     });
     super.initState();
   }
@@ -61,13 +61,13 @@ class _TransactionHistoryScreenState
         viewTransaction = null;
       });
       ref
-          .read(transactionsNotifierProvider.notifier)
+          .read(transactionsProvider.notifier)
           .loadTransactions(page: 1, search: query, currentShift: currentShift);
     });
   }
 
   void loadMore() {
-    final pagination = ref.read(transactionsNotifierProvider).asData?.value;
+    final pagination = ref.read(transactionsProvider).asData?.value;
     if (pagination == null ||
         pagination.to == null ||
         (pagination.to != null && pagination.currentPage >= pagination.to!)) {
@@ -78,7 +78,7 @@ class _TransactionHistoryScreenState
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
       log('Load transaction... ${pagination.currentPage}/${pagination.to}');
-      ref.read(transactionsNotifierProvider.notifier).loadTransactions(
+      ref.read(transactionsProvider.notifier).loadTransactions(
           page: pagination.currentPage + 1,
           search: _searchController.text,
           currentShift: currentShift);
@@ -124,7 +124,7 @@ class _TransactionHistoryScreenState
         )
       ],
     );
-    return ref.watch(shiftNotifierProvider).value != null
+    return ref.watch(shiftProvider).value != null
         ? Card(
             margin: const EdgeInsets.all(0),
             elevation: 1,
@@ -211,7 +211,7 @@ class _TransactionHistoryScreenState
           Expanded(
             child: RefreshIndicator(
               onRefresh: () => ref
-                  .read(transactionsNotifierProvider.notifier)
+                  .read(transactionsProvider.notifier)
                   .loadTransactions(
                     page: 1,
                     search: _searchController.text,
@@ -221,7 +221,7 @@ class _TransactionHistoryScreenState
                 children: [
                   transactionFilter(isTablet),
                   Expanded(
-                    child: ref.watch(transactionsNotifierProvider).when(
+                    child: ref.watch(transactionsProvider).when(
                           data: (data) => data.data!.isNotEmpty
                               ? ListView.builder(
                                   physics:

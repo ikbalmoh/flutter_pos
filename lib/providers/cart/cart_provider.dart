@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart.dart' as model show Cart;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
@@ -20,16 +20,15 @@ import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'dart:developer';
-
-import 'package:selleri/utils/printer.dart';
+import 'package:selleri/utils/printer.dart' as util;
 
 part 'cart_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class CartNotifer extends _$CartNotifer {
+class Cart extends _$Cart {
   @override
-  Cart build() {
-    return Cart.initial();
+  model.Cart build() {
+    return model.Cart.initial();
   }
 
   Future<void> initCart() async {
@@ -39,12 +38,12 @@ class CartNotifer extends _$CartNotifer {
       }
 
       final outletState =
-          ref.read(outletNotifierProvider).value as OutletSelected;
+          ref.read(outletProvider).value as OutletSelected;
 
       final authState =
           await ref.read(authNotifierProvider.future) as Authenticated;
 
-      final shift = ref.read(shiftNotifierProvider).value;
+      final shift = ref.read(shiftProvider).value;
 
       if (shift == null) {
         log('Shift is not started');
@@ -57,7 +56,7 @@ class CartNotifer extends _$CartNotifer {
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
 
-      Cart cart = Cart.initial();
+      model.Cart cart = model.Cart.initial();
 
       state = cart.copyWith(
         idOutlet: outletState.outlet.idOutlet,
@@ -298,7 +297,8 @@ class CartNotifer extends _$CartNotifer {
 
   void removePayment(String paymentMethodId) {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
-    payments.removeWhere((p) => p.paymentMethodId == paymentMethodId && p.createdAt == null);
+    payments.removeWhere(
+        (p) => p.paymentMethodId == paymentMethodId && p.createdAt == null);
     double totalPayment = payments.isNotEmpty
         ? payments
             .map((payment) => payment.paymentValue)
@@ -312,7 +312,7 @@ class CartNotifer extends _$CartNotifer {
     try {
       final api = TransactionApi();
 
-      final shift = ref.read(shiftNotifierProvider).value;
+      final shift = ref.read(shiftProvider).value;
       if (shift == null) {
         throw 'shift_not_opened'.tr();
       }
@@ -333,28 +333,28 @@ class CartNotifer extends _$CartNotifer {
 
   Future<void> printReceipt({int printCounter = 1}) async {
     try {
-      final printer = ref.read(printerNotifierProvider).value;
+      final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
       }
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletNotifierProvider).value as OutletSelected)
+          (ref.read(outletProvider).value as OutletSelected)
               .config
               .attributeReceipts;
-      final receipt = await Printer.buildReceiptBytes(
+      final receipt = await util.Printer.buildReceiptBytes(
         state,
         attributes: attributeReceipts,
         size: printer.size,
         isCopy: printCounter > 1,
       );
-      ref.read(printerNotifierProvider.notifier).print(receipt);
+      ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> holdCart({required String note, bool createNew = false}) async {
-    Cart cart =
+    model.Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
     final api = TransactionApi();
     if (cart.idTransaction != null) {
@@ -370,9 +370,9 @@ class CartNotifer extends _$CartNotifer {
   }
 
   void openHoldedCart(CartHolded holded) {
-    Cart cart = holded.dataHold.copyWith(
+    model.Cart cart = holded.dataHold.copyWith(
       idTransaction: holded.transactionId,
-      shiftId: ref.read(shiftNotifierProvider).value?.id ?? holded.shiftId,
+      shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
     );
     if (cart.holdAt == null) {
       cart = cart.copyWith(holdAt: DateTime.now());
@@ -380,7 +380,7 @@ class CartNotifer extends _$CartNotifer {
     state = cart;
   }
 
-  void reopen(Cart cart) {
+  void reopen(model.Cart cart) {
     state = cart;
   }
 }

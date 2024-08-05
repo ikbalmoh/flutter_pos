@@ -37,13 +37,13 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
     while (context.canPop() == true) {
       context.pop();
     }
-    ref.read(cartNotiferProvider.notifier).initCart();
+    ref.read(cartProvider.notifier).initCart();
   }
 
   void onPrintReceipt() async {
     try {
       await ref
-          .read(cartNotiferProvider.notifier)
+          .read(cartProvider.notifier)
           .printReceipt(printCounter: printCounter);
       setState(() {
         printCounter += 1;
@@ -61,7 +61,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       });
     }
     try {
-      await ref.read(cartNotiferProvider.notifier).storeTransaction();
+      await ref.read(cartProvider.notifier).storeTransaction();
       setState(() {
         status = Status.success;
       });
@@ -131,7 +131,7 @@ class TransactionSuccess extends ConsumerWidget {
         ),
         const SizedBox(height: 5),
         Text(
-          CurrencyFormat.currency(ref.watch(cartNotiferProvider).change),
+          CurrencyFormat.currency(ref.watch(cartProvider).change),
           style: textTheme.displaySmall?.copyWith(
             fontSize: 30,
             fontWeight: FontWeight.w600,

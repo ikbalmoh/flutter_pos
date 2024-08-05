@@ -20,7 +20,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     Future(() {
-      ref.read(printerListNotifierProvider.notifier).startScanDevices();
+      ref.read(printerListProvider.notifier).startScanDevices();
     });
     super.initState();
   }
@@ -36,7 +36,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
           });
     }
 
-    ref.listen(printerNotifierProvider, (prev, next) {
+    ref.listen(printerProvider, (prev, next) {
       next.when(data: (printer) {
         if (printer != null) {
           AppAlert.toast('printer_connected'.tr(args: [printer.name]));
@@ -54,7 +54,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
         borderRadius: BorderRadius.circular(15),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: ref.watch(printerListNotifierProvider).when(
+      child: ref.watch(printerListProvider).when(
             data: (printers) => printers.isNotEmpty
                 ? Column(
                     children: printers
@@ -70,7 +70,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
                               style: TextStyle(color: Colors.grey.shade600),
                             ),
                             trailing: ref
-                                        .watch(printerNotifierProvider)
+                                        .watch(printerProvider)
                                         .value
                                         ?.macAddress ==
                                     d.macAdress
@@ -136,7 +136,7 @@ class DeviceEmpty extends ConsumerWidget {
             const SizedBox(height: 30),
             TextButton.icon(
               onPressed: () => ref
-                  .read(printerListNotifierProvider.notifier)
+                  .read(printerListProvider.notifier)
                   .startScanDevices(),
               icon: const Icon(Icons.search),
               label: Text(
