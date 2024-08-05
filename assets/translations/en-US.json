@@ -202,5 +202,6 @@
   "receipt_shared": "Receipt has been shared",
   "edit_open_amount": "Edit Open Amount",
   "open_amount_updated_x": "Open amount has been updated to {}",
-  "prev_payments": "Previous Payments"
+  "prev_payments": "Previous Payments",
+  "and": "and"
 }

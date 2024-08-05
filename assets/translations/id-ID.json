@@ -203,5 +203,6 @@
   "receipt_shared": "Struk telah dibagikan",
   "edit_open_amount": "Ubah Saldo Awal",
   "open_amount_updated_x": "Saldo awal telah diubah ke {}",
-  "prev_payments": "Pembayaran Sebelumnya"
+  "prev_payments": "Pembayaran Sebelumnya",
+  "and": "dan"
 }

@@ -35,9 +35,9 @@ class AppAlert {
       {Color? backgroundColor, Color? textColor}) {
     Fluttertoast.showToast(
       msg: message,
-      toastLength: Toast.LENGTH_SHORT,
+      toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
+      timeInSecForIosWeb: 5,
       backgroundColor: backgroundColor ?? Colors.black.withOpacity(0.8),
       textColor: textColor ?? Colors.white,
       fontSize: 16.0,

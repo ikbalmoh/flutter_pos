@@ -66,8 +66,11 @@ class ItemsStream extends _$ItemsStream {
     objectBox.putItems(items);
     if (showUpdateMessage) {
       List<String> messages = [items[0].itemName];
-      if (items.length > 1) {
-        messages.add('and_x_others'.tr(args: [(items.length - 1).toString()]));
+      if (items.length > 2) {
+        messages.add(items[1].itemName);
+        messages.add('and_x_others'.tr(args: [(items.length - 2).toString()]));
+      } else if (items.length > 1) {
+        messages.add("${'and'.tr()} ${items[1].itemName}");
       }
       messages.add('synced'.tr().toLowerCase());
       AppAlert.toast(messages.join(' '));
@@ -84,8 +87,11 @@ class ItemsStream extends _$ItemsStream {
     log('SYNCED ITEMS: $items');
     if (items.isNotEmpty) {
       List<String> messages = [items[0].itemName];
-      if (items.length > 1) {
-        messages.add('and_x_others'.tr(args: [(items.length - 1).toString()]));
+      if (items.length > 2) {
+        messages.add(', ${items[1].itemName}');
+        messages.add('and_x_others'.tr(args: [(items.length - 2).toString()]));
+      } else if (items.length > 1) {
+        messages.add("${'and'.tr()} ${items[1].itemName}");
       }
       messages.add('synced'.tr().toLowerCase());
       AppAlert.toast(messages.join(' '));
