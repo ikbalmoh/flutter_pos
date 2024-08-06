@@ -6,6 +6,7 @@ import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/item_repository.dart';
+import 'package:selleri/providers/promotion/promotion_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 part 'item_provider.g.dart';
@@ -78,24 +79,31 @@ class ItemsStream extends _$ItemsStream {
   }
 
   Future<void> syncItems() async {
-    log('SYNC ITEMS');
+    if (objectBox.categoryBox.isEmpty()) {
+      await loadItems();
+    } else {
+      log('SYNC ITEMS');
 
-    List<Item> items =
-        await ref.read(itemRepositoryProvider).fetchItems(fromLastSync: true);
+      List<Item> items =
+          await ref.read(itemRepositoryProvider).fetchItems(fromLastSync: true);
 
-    objectBox.putItems(items);
-    log('SYNCED ITEMS: $items');
-    if (items.isNotEmpty) {
-      List<String> messages = [items[0].itemName];
-      if (items.length > 2) {
-        messages.add(', ${items[1].itemName}');
-        messages.add('and_x_others'.tr(args: [(items.length - 2).toString()]));
-      } else if (items.length > 1) {
-        messages.add("${'and'.tr()} ${items[1].itemName}");
+      objectBox.putItems(items);
+      log('SYNCED ITEMS: $items');
+      if (items.isNotEmpty) {
+        List<String> messages = [items[0].itemName];
+        if (items.length > 2) {
+          messages.add(', ${items[1].itemName}');
+          messages
+              .add('and_x_others'.tr(args: [(items.length - 2).toString()]));
+        } else if (items.length > 1) {
+          messages.add("${'and'.tr()} ${items[1].itemName}");
+        }
+        messages.add('synced'.tr().toLowerCase());
+        AppAlert.toast(messages.join(' '));
       }
-      messages.add('synced'.tr().toLowerCase());
-      AppAlert.toast(messages.join(' '));
     }
+
+    await ref.read(promotionStreamProvider.notifier).loadPromotions();
   }
 
   double getItemStock(String idItem) {

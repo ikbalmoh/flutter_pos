@@ -17,4 +17,5 @@ class ApiUrl {
   static const String shifts = '/shifts';
   static const String cashFlows = '/cash-flows';
   static const String reportSales = '/report/sales';
+  static const String promotions = '/promotions';
 }

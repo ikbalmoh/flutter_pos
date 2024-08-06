@@ -37,6 +37,13 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
+  Stream<List<Promotion>> promotionsStream() {
+    Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
+
+    QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery);
+    return builder.watch(triggerImmediately: true).map((query) => query.find());
+  }
+
   Stream<List<Item>> itemsStream({
     String idCategory = '',
     String search = '',
@@ -87,6 +94,9 @@ class ObjectBox {
   Item? getItem(String idItem) =>
       itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 
+  Promotion? getPromotion(String idPromotion) =>
+      promotionBox.query(Promotion_.idPromotion.equals(idPromotion)).build().findFirst();
+
   void putItems(List<Item> items) {
     itemBox.putMany(items);
     log('${items.length} ITEMS HAS BEEN STORED');
@@ -101,7 +111,7 @@ class ObjectBox {
 
   void putPromotions(List<Promotion> promotions) {
     promotionBox.putMany(promotions);
-    log('${promotions.length} PROMOTIONS HAS BEEN STORED');
+    log('${promotions.length} PROMOTIONS HAS BEEN STORED\n$promotions');
   }
 
   void clearAll() {

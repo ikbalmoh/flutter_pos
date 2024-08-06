@@ -69,9 +69,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
   void onSearchCustomers(String query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      ref
-          .read(holdedProvider.notifier)
-          .loadTransaction(page: 1, search: query);
+      ref.read(holdedProvider.notifier).loadTransaction(page: 1, search: query);
     });
   }
 
@@ -117,7 +115,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
       appBar: searchVisible
           ? SearchAppBar(
               controller: _searchController,
-              placeholder: 'search_customer'.tr(),
+              placeholder: 'search_x'.tr(args: ['transaction'.tr()]),
               onBack: () {
                 setState(() {
                   searchVisible = false;
@@ -185,8 +183,12 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
 
                               final hold = data.data![idx];
                               return HoldedItem(
-                                color: viewTransaction?.transactionId == hold.transactionId ? Colors.grey.shade100 : Colors.white,
-                                  hold: hold, onSelect: onOpenHoldedCart);
+                                  color: viewTransaction?.transactionId ==
+                                          hold.transactionId
+                                      ? Colors.grey.shade100
+                                      : Colors.white,
+                                  hold: hold,
+                                  onSelect: onOpenHoldedCart);
                             },
                             itemCount: data.data!.length + 1,
                           )
@@ -224,7 +226,10 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                   color: Colors.grey.shade50,
                   width: MediaQuery.of(context).size.width - 400,
                   child: viewTransaction != null
-                      ? HoldedPreview(cartHolded: viewTransaction!, asWidget: true,)
+                      ? HoldedPreview(
+                          cartHolded: viewTransaction!,
+                          asWidget: true,
+                        )
                       : emptyPlaceholder,
                 )
               : Container(),
