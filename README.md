@@ -11,7 +11,7 @@
 
 - run `dart run build_runner build -d` or `dart run build_runner watch -d` once provider or model are changed
 
-### Build APK Staging
+### Build APK Stage
 
 ```
 make op=release platform=ios flavor=dev release_notes="describe about new feature or fixing issue in which part feature"
@@ -26,5 +26,5 @@ make op=patch flavor=dev
 ## Available Flavor
 
 - dev
-- staging
+- stage
 - release

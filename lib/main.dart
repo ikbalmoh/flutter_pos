@@ -24,7 +24,7 @@ final deviceInfoPlugin = DeviceInfoPlugin();
 Future initServices() async {
   log('INITIALIZING APP $appFlavor ...');
 
-  final bool isDev = ['dev', 'staging'].contains(appFlavor);
+  final bool isDev = ['dev', 'stage'].contains(appFlavor);
 
   await EasyLocalization.ensureInitialized();
 
@@ -78,7 +78,7 @@ Future initServices() async {
   storage.write(key: StoreKey.deviceName.toString(), value: deviceName);
 
   var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
-  if (appFlavor == 'staging') {
+  if (appFlavor == 'stage') {
     firebaseOptions =
         firebase_option_stage.DefaultFirebaseOptions.currentPlatform;
   } else if (appFlavor == 'dev') {

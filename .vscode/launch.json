@@ -5,23 +5,23 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Dev",
+      "name": "Debug [Dev]",
       "request": "launch",
       "type": "dart",
       "args": ["--flavor", "dev"]
     },
     {
-      "name": "Selleri [STAGE] (Profile Mode)",
+      "name": "Debug [Stage]",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "stage"]
+    },
+    {
+      "name": "Profile Mode [Stage]",
       "request": "launch",
       "type": "dart",
       "args": ["--flavor", "dev"],
       "flutterMode": "profile"
-    },
-    {
-      "name": "Staging",
-      "request": "launch",
-      "type": "dart",
-      "args": ["--flavor", "staging"]
     },
     {
       "name": "Selleri (release mode)",

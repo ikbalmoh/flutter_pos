@@ -104,7 +104,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:957311922583:android:7bba39f0fe87d0782794d2",
         "android_client_info": {
-          "package_name": "com.dgti.selleri.staging"
+          "package_name": "com.dgti.selleri.stage"
         }
       },
       "oauth_client": [
@@ -112,7 +112,7 @@
           "client_id": "957311922583-kgq0f44cfabjcedsc7vcuamc1de792o7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.dgti.selleri.staging",
+            "package_name": "com.dgti.selleri.stage",
             "certificate_hash": "2807878ff7f11682d560aa15ad3c8ef6ebdd3acb"
           }
         },
