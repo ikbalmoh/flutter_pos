@@ -298,7 +298,7 @@ class ObjectBox {
 
   void putPromotions(List<Promotion> promotions) {
     promotionBox.putMany(promotions);
-    log('${promotions.length} PROMOTIONS HAS BEEN STORED');
+    log('${promotions.length} PROMOTIONS HAS BEEN STORED\n$promotions');
   }
 
   void clearAll() {
