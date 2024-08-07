@@ -91,7 +91,7 @@ class OutletApi {
           await api.get('${ApiUrl.outletConfig}/$id', queryParameters: params);
       return res.data['data'];
     } on DioException catch (e) {
-      throw e.response?.data['message'] ?? e.message;
+      throw e.response?.data['msg'] ?? e.message;
     } catch (e) {
       rethrow;
     }
