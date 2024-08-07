@@ -34,12 +34,7 @@ class HoldButton extends ConsumerWidget {
           ),
         ),
         onPressed: onHold,
-        child: Text(
-          ref.watch(cartProvider).holdAt == null
-              ? 'hold'.tr().toUpperCase()
-              : 'update'.tr().toUpperCase(),
-          overflow: TextOverflow.ellipsis,
-        ),
+        child: Text('hold'.tr().toUpperCase()),
       ),
     );
   }

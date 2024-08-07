@@ -15,9 +15,11 @@ import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/ui/screens/cart/cart_screen.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
 import 'package:selleri/ui/screens/home/components/filter_items_sheet.dart';
+import 'package:selleri/ui/screens/home/components/holded_baner.dart';
 import 'package:selleri/ui/screens/home/components/home_menu.dart';
 import 'package:selleri/ui/screens/home/components/shift_overlay.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
+import 'package:selleri/utils/formater.dart';
 import './components/item_categories.dart';
 import 'package:selleri/ui/screens/home/components/item_container.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
@@ -122,24 +124,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     var itemContainer = Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        ref.watch(cartProvider).holdAt == null
-            ? Container()
-            : Container(
-                width: MediaQuery.of(context).size.width,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.amber.shade800,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(0)),
-                ),
-                child: Text(
-                  ref.watch(cartProvider).transactionNo,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+        !isTablet ? HoldedBaner(cart: cart) : Container(),
         AnimatedContainer(
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
@@ -243,7 +228,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
               isTablet
                   ? Container(
-                      width: 350,
+                      width:
+                          ResponsiveBreakpoints.of(context).largerThan(TABLET)
+                              ? 400
+                              : MediaQuery.of(context).size.width * 0.5,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade50,

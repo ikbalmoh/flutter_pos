@@ -10,6 +10,7 @@ import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart/cart_item.dart';
 import 'package:selleri/ui/components/cart/edit_cart_item_form.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
+import 'package:selleri/ui/screens/home/components/holded_baner.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,6 +81,7 @@ class CartScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.max,
               children: [
+                HoldedBaner(cart: cart),
                 Expanded(
                   child: ListView.builder(
                     itemBuilder: (context, idx) {
@@ -162,15 +164,14 @@ class CartActions extends StatelessWidget {
                   ),
                   Expanded(
                     flex: 2,
-                    child: ElevatedButton.icon(
+                    child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),
                       ),
                       onPressed: onSubmit,
-                      icon: const Icon(CupertinoIcons.creditcard_fill),
-                      label: Text('payments'.tr().toUpperCase()),
+                      child: Text('payments'.tr().toUpperCase()),
                     ),
                   )
                 ],

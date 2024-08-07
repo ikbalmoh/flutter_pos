@@ -134,53 +134,64 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
                           DateTimeFormater.dateToString(shiftInfo.openShift,
                               format: 'dd/MM/y'),
                           style: textTheme.bodySmall
-                              ?.copyWith(color: Colors.black87),
+                              ?.copyWith(color: Colors.green.shade700),
                         ),
                         Text(
                           DateTimeFormater.dateToString(shiftInfo.openShift,
                               format: 'HH:mm'),
                           style: textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87),
+                              color: Colors.green.shade700),
                         )
                       ],
                     ),
-                    const SizedBox(width: 10),
-                    const Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 28,
-                      color: Colors.black54,
-                    ),
-                    const SizedBox(width: 10),
-                    onCloseShift != null
-                        ? TextButton.icon(
-                            style: TextButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.red),
-                            onPressed: onCloseShift,
-                            label: Text('close'.tr()),
-                            icon: const Icon(Icons.stop),
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                    shiftInfo.closeShift != null || onCloseShift != null
+                        ? Row(
                             children: [
-                              Text(
-                                DateTimeFormater.dateToString(
-                                    shiftInfo.closeShift ?? DateTime.now(),
-                                    format: 'dd/MM/y'),
-                                style: textTheme.bodySmall
-                                    ?.copyWith(color: Colors.green),
+                              const SizedBox(width: 10),
+                              const Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 28,
+                                color: Colors.black54,
                               ),
-                              Text(
-                                DateTimeFormater.dateToString(
-                                    shiftInfo.closeShift ?? DateTime.now(),
-                                    format: 'HH:mm'),
-                                style: textTheme.headlineMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.green),
-                              )
+                              const SizedBox(width: 10),
+                              onCloseShift != null
+                                  ? TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.red),
+                                      onPressed: onCloseShift,
+                                      label: Text('close'.tr()),
+                                      icon: const Icon(Icons.stop),
+                                    )
+                                  : shiftInfo.closeShift != null
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              DateTimeFormater.dateToString(
+                                                  shiftInfo.closeShift!,
+                                                  format: 'dd/MM/y'),
+                                              style: textTheme.bodySmall
+                                                  ?.copyWith(color: Colors.red),
+                                            ),
+                                            Text(
+                                              DateTimeFormater.dateToString(
+                                                  shiftInfo.closeShift!,
+                                                  format: 'HH:mm'),
+                                              style: textTheme.headlineMedium
+                                                  ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Colors.red),
+                                            )
+                                          ],
+                                        )
+                                      : Container(),
                             ],
-                          ),
+                          )
+                        : Container()
                   ],
                 ),
               ],
