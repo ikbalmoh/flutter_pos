@@ -106,6 +106,14 @@ class HomeMenu extends ConsumerWidget {
                   ),
                   child: Text('new_transaction'.tr()),
                 ),
+                MenuItemButton(
+                  onPressed: () => context.push(Routes.promotions),
+                  leadingIcon: Icon(
+                    CupertinoIcons.tags,
+                    color: Colors.blueGrey.shade500,
+                  ),
+                  child: Text('promotions'.tr()),
+                ),
                 const PopupMenuDivider(),
                 MenuItemButton(
                   onPressed: () => ref

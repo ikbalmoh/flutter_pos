@@ -204,5 +204,6 @@
   "edit_open_amount": "Edit Open Amount",
   "open_amount_updated_x": "Open amount has been updated to {}",
   "prev_payments": "Previous Payments",
-  "and": "and"
+  "and": "and",
+  "promotions": "Promotions"
 }

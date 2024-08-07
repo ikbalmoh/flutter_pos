@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -93,8 +94,11 @@ class ItemRepository implements ItemRepositoryProtocol {
           final item = Item.fromJson(json);
           items.add(item);
         } on Error catch (e, stackTrace) {
-          log('LOAD ITEM ERROR: $json\n=> $e\n=> $stackTrace');
-          rethrow;
+          if (kDebugMode) {
+            log('LOAD ITEM ERROR: $json\n=> $e\n=> $stackTrace');
+          } else {
+            rethrow;
+          }
         }
       }
       return items;

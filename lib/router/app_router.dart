@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
 import 'package:selleri/ui/screens/holded/holded_screen.dart';
+import 'package:selleri/ui/screens/promotions/promotions_screen.dart';
 import 'package:selleri/ui/screens/shift/shift_history_detail.dart';
 import 'package:selleri/ui/screens/shift/shift_screen.dart';
 import 'package:selleri/ui/screens/splash/splash_screen.dart';
@@ -72,6 +73,11 @@ GoRouter router(RouterRef ref) {
           name: Routes.checkout,
           path: Routes.checkout,
           builder: (context, state) => const CheckoutScreen(),
+        ),
+        GoRoute(
+          name: Routes.promotions,
+          path: Routes.promotions,
+          builder: (context, state) => const PromotionsScreen(),
         ),
         GoRoute(
           name: Routes.printers,

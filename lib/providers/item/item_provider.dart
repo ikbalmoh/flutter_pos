@@ -38,6 +38,11 @@ class ItemsStream extends _$ItemsStream {
     }
     List<Category> categories = await itemRepository.fetchCategoris();
 
+    if (progressCallback != null) {
+      progressCallback('loading_x'.tr(args: ['promotions'.tr()]));
+    }
+    await ref.read(promotionStreamProvider.notifier).loadPromotions();
+
     if (refresh || objectBox.itemBox.isEmpty()) {
       for (var i = 0; i < categories.length; i++) {
         Category category = categories[i];

@@ -9,7 +9,7 @@ class Routes {
   static const String holded = '/holded';
   static const String printers = '/printers';
   static const String transactions = '/transactions';
-  static const String transactionsDetail = '/transactions-detail';
   static const String shift = '/shift';
   static const String shiftDetail = '/shift-detail';
+  static const String promotions = '/promotions';
 }

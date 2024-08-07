@@ -40,7 +40,9 @@ class ObjectBox {
   Stream<List<Promotion>> promotionsStream() {
     Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
 
-    QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery);
+    QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
+      ..order(Promotion_.endDate, flags: Order.descending)
+      ..order(Promotion_.priority, flags: Order.descending);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
@@ -94,8 +96,10 @@ class ObjectBox {
   Item? getItem(String idItem) =>
       itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 
-  Promotion? getPromotion(String idPromotion) =>
-      promotionBox.query(Promotion_.idPromotion.equals(idPromotion)).build().findFirst();
+  Promotion? getPromotion(String idPromotion) => promotionBox
+      .query(Promotion_.idPromotion.equals(idPromotion))
+      .build()
+      .findFirst();
 
   void putItems(List<Item> items) {
     itemBox.putMany(items);

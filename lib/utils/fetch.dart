@@ -7,6 +7,7 @@ import 'package:selleri/data/models/token.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer';
+import 'package:package_info_plus/package_info_plus.dart';
 
 const storage = FlutterSecureStorage();
 
@@ -36,6 +37,9 @@ class CustomInterceptors extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     String? deviceId = await storage.read(key: StoreKey.device.toString());
     options.headers['device'] = deviceId;
+
+    final packageInfo = await PackageInfo.fromPlatform();
+    options.headers['version'] = packageInfo.version;
 
     // User agent
     options.headers['User-Agent'] = 'okhttp/3.12.1';
