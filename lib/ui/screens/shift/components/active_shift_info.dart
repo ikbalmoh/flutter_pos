@@ -37,9 +37,13 @@ class ActiveShiftInfo extends ConsumerWidget {
     }
 
     return Container(
-      color: active ? Colors.lightGreen.shade300 : Colors.grey.shade200,
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.black12,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: SizedBox(
         width: double.infinity,
         child: Card(
@@ -47,7 +51,7 @@ class ActiveShiftInfo extends ConsumerWidget {
           margin: const EdgeInsets.all(0),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          elevation: 3,
+          elevation: 0,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Row(
@@ -133,14 +137,18 @@ class ActiveShiftInfo extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 15, vertical: 15),
                         decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
                             color: active
-                                ? Colors.lightBlue.shade500
+                                ? Colors.green.shade500
                                 : Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(5)),
+                          ),
+                        ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -150,9 +158,7 @@ class ActiveShiftInfo extends ConsumerWidget {
                                           shiftInfo.openShift,
                                           format: 'dd/MM/y'),
                                       style: textTheme.bodySmall?.copyWith(
-                                          color: active
-                                              ? Colors.white
-                                              : Colors.black87),
+                                          color: Colors.green.shade700),
                                       textAlign: TextAlign.left,
                                     ),
                                     Text(
@@ -161,80 +167,91 @@ class ActiveShiftInfo extends ConsumerWidget {
                                           format: 'HH:mm'),
                                       style: textTheme.headlineMedium?.copyWith(
                                           fontWeight: FontWeight.w600,
-                                          color: active
-                                              ? Colors.white
-                                              : Colors.black87),
+                                          color: Colors.green.shade700),
                                       textAlign: TextAlign.left,
                                     )
                                   ],
                                 ),
-                                const SizedBox(width: 5),
-                                Icon(
-                                  Icons.arrow_forward_rounded,
-                                  size: 26,
-                                  color: active ? Colors.white : Colors.black87,
-                                ),
-                                const SizedBox(width: 5),
-                                onCloseShift != null
-                                    ? TextButton.icon(
-                                        style: TextButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: Colors.red),
-                                        onPressed: onCloseShift,
-                                        label: Text('close'.tr()),
-                                        icon: const Icon(Icons.stop),
-                                      )
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                shiftInfo.closeShift != null ||
+                                        onCloseShift != null
+                                    ? Row(
                                         children: [
-                                          Text(
-                                            DateTimeFormater.dateToString(
-                                                shiftInfo.closeShift ??
-                                                    DateTime.now(),
-                                                format: 'dd/MM/y'),
-                                            style: textTheme.bodySmall
-                                                ?.copyWith(
-                                                    color: active
-                                                        ? Colors.white
-                                                        : Colors.black87),
-                                            textAlign: TextAlign.left,
+                                          const SizedBox(width: 10),
+                                          const Icon(
+                                            Icons.arrow_forward_rounded,
+                                            size: 28,
+                                            color: Colors.black54,
                                           ),
-                                          Text(
-                                            DateTimeFormater.dateToString(
-                                                shiftInfo.closeShift ??
-                                                    DateTime.now(),
-                                                format: 'HH:mm'),
-                                            style: textTheme.headlineMedium
-                                                ?.copyWith(
-                                                    fontWeight: FontWeight.w600,
-                                                    color: active
-                                                        ? Colors.white
-                                                        : Colors.black87),
-                                            textAlign: TextAlign.left,
-                                          )
+                                          const SizedBox(width: 10),
+                                          onCloseShift != null
+                                              ? TextButton.icon(
+                                                  style: TextButton.styleFrom(
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                      backgroundColor:
+                                                          Colors.red),
+                                                  onPressed: onCloseShift,
+                                                  label: Text('close'.tr()),
+                                                  icon: const Icon(Icons.stop),
+                                                )
+                                              : shiftInfo.closeShift != null
+                                                  ? Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          DateTimeFormater
+                                                              .dateToString(
+                                                                  shiftInfo
+                                                                      .closeShift!,
+                                                                  format:
+                                                                      'dd/MM/y'),
+                                                          style: textTheme
+                                                              .bodySmall
+                                                              ?.copyWith(
+                                                                  color: Colors
+                                                                      .red),
+                                                        ),
+                                                        Text(
+                                                          DateTimeFormater
+                                                              .dateToString(
+                                                                  shiftInfo
+                                                                      .closeShift!,
+                                                                  format:
+                                                                      'HH:mm'),
+                                                          style: textTheme
+                                                              .headlineMedium
+                                                              ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .red),
+                                                        )
+                                                      ],
+                                                    )
+                                                  : Container(),
                                         ],
-                                      ),
+                                      )
+                                    : Container()
                               ],
                             ),
                             const SizedBox(height: 10),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const SizedBox(width: 10),
-                                Icon(
+                                const Icon(
                                   Icons.key,
                                   size: 16,
-                                  color:
-                                      active ? Colors.white70 : Colors.black54,
+                                  color: Colors.black54,
                                 ),
-                                const SizedBox(width: 5),
+                                const SizedBox(width: 10),
                                 Text(
                                   shiftInfo.codeShift,
                                   style: textTheme.bodySmall?.copyWith(
-                                    color: active
-                                        ? Colors.white70
-                                        : Colors.black54,
+                                    color: Colors.black54,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),

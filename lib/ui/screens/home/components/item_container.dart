@@ -10,7 +10,6 @@ import 'package:selleri/ui/components/cart/shop_item_list.dart';
 import 'package:selleri/ui/components/item/item_info.dart';
 import 'package:selleri/ui/components/cart/item_variant_picker.dart';
 import 'package:selleri/ui/components/cart/shop_item.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -81,98 +80,102 @@ class ItemContainer extends ConsumerWidget {
       filterStock: filterStock,
     ));
 
-    return switch (items) {
-      AsyncData(:final value) => value.isEmpty
-          ? SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 200),
-              controller: scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      CupertinoIcons.bag,
-                      size: 60,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      'No Items',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(color: Colors.grey),
-                    )
-                  ],
+    return LayoutBuilder(builder: (context, constraints) {
+      final width = constraints.maxWidth;
+      final int gridColumn = width > 510
+          ? 4
+          : width > 400
+              ? 3
+              : 2;
+      return switch (items) {
+        AsyncData(:final value) => value.isEmpty
+            ? SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 200),
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        CupertinoIcons.bag,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        'No Items',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall
+                            ?.copyWith(color: Colors.grey),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            )
-          : ref.watch(appSettingsProvider).itemLayoutGrid
-              ? GridView.count(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  crossAxisCount:
-                      ResponsiveBreakpoints.of(context).largerThan(TABLET)
-                          ? 4
-                          : 2,
-                  childAspectRatio: 0.9,
-                  padding: const EdgeInsets.all(7.5),
-                  crossAxisSpacing: 7.5,
-                  mainAxisSpacing: 7.5,
-                  controller: scrollController,
-                  children: List.generate(
-                    value.length,
-                    (index) {
-                      final Item item = value[index];
+              )
+            : ref.watch(appSettingsProvider).itemLayoutGrid
+                ? GridView.count(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    crossAxisCount: gridColumn,
+                    childAspectRatio: 0.9,
+                    padding: const EdgeInsets.all(7.5),
+                    crossAxisSpacing: 7.5,
+                    mainAxisSpacing: 7.5,
+                    controller: scrollController,
+                    children: List.generate(
+                      value.length,
+                      (index) {
+                        final Item item = value[index];
+                        int qtyOnCart = ref
+                            .read(cartProvider.notifier)
+                            .qtyOnCart(item.idItem);
+                        return ShopItem(
+                          item: item,
+                          qtyOnCart: qtyOnCart,
+                          onAddToCart: (item) =>
+                              onAddToCart(context, ref, item: item),
+                          addQty: (idItem) =>
+                              ref.read(cartProvider.notifier).updateQty(idItem),
+                          showVariants: (item) =>
+                              showVariants(context, item, ref),
+                          onLongPress: (item) => onLongPress(context, item),
+                        );
+                      },
+                    ),
+                  )
+                : ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: scrollController,
+                    shrinkWrap: true,
+                    itemCount: value.length,
+                    itemBuilder: (context, index) {
+                      final item = value[index];
                       int qtyOnCart = ref
                           .read(cartProvider.notifier)
                           .qtyOnCart(item.idItem);
-                      return ShopItem(
+                      return ShopItemList(
                         item: item,
                         qtyOnCart: qtyOnCart,
                         onAddToCart: (item) =>
                             onAddToCart(context, ref, item: item),
-                        addQty: (idItem) => ref
-                            .read(cartProvider.notifier)
-                            .updateQty(idItem),
+                        addQty: (idItem) =>
+                            ref.read(cartProvider.notifier).updateQty(idItem),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
                         onLongPress: (item) => onLongPress(context, item),
                       );
                     },
                   ),
-                )
-              : ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  controller: scrollController,
-                  shrinkWrap: true,
-                  itemCount: value.length,
-                  itemBuilder: (context, index) {
-                    final item = value[index];
-                    int qtyOnCart = ref
-                        .read(cartProvider.notifier)
-                        .qtyOnCart(item.idItem);
-                    return ShopItemList(
-                      item: item,
-                      qtyOnCart: qtyOnCart,
-                      onAddToCart: (item) =>
-                          onAddToCart(context, ref, item: item),
-                      addQty: (idItem) => ref
-                          .read(cartProvider.notifier)
-                          .updateQty(idItem),
-                      showVariants: (item) => showVariants(context, item, ref),
-                      onLongPress: (item) => onLongPress(context, item),
-                    );
-                  },
-                ),
-      AsyncError(:final error) => Center(
-          child: Text(error.toString()),
-        ),
-      _ => const LoadingIndicator(color: Colors.teal)
-    };
+        AsyncError(:final error) => Center(
+            child: Text(error.toString()),
+          ),
+        _ => const LoadingIndicator(color: Colors.teal)
+      };
+    });
   }
 }

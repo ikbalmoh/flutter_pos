@@ -94,6 +94,7 @@ class ItemRepository implements ItemRepositoryProtocol {
           items.add(item);
         } on Error catch (e, stackTrace) {
           log('LOAD ITEM ERROR: $json\n=> $e\n=> $stackTrace');
+          rethrow;
         }
       }
       return items;
