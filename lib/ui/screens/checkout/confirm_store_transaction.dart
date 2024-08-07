@@ -134,7 +134,9 @@ class _ConfirmStoreTransactionState
                             const SizedBox(
                               width: 15,
                             ),
-                            Text('insufficient_payment_warning'.tr())
+                            Expanded(
+                                child:
+                                    Text('insufficient_payment_warning'.tr()))
                           ],
                         ),
                       )
