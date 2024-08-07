@@ -25,7 +25,7 @@ class TransactionApi {
 
       return res.data['data'];
     } on DioException catch (e) {
-      throw e.response?.data['message'] ?? e.message;
+      throw e.response?.data['msg'] ?? e.message;
     } catch (e) {
       rethrow;
     }
@@ -84,7 +84,7 @@ class TransactionApi {
 
       return res.data['data'];
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(e.response?.data['msg'] ?? e.message);
     } catch (e) {
       throw Exception(e);
     }
@@ -99,7 +99,7 @@ class TransactionApi {
 
       return res.data['data'];
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(e.response?.data['msg'] ?? e.message);
     } catch (e) {
       throw Exception(e);
     }

@@ -17,7 +17,7 @@ class OutletApi {
           List<Outlet>.from(res.data['data'].map((o) => Outlet.fromJson(o)));
       return outlets;
     } on DioException catch (e) {
-      throw e.response?.data['message'] ?? e.message;
+      throw e.response?.data['msg'] ?? e.message;
     } catch (e) {
       rethrow;
     }
@@ -33,7 +33,7 @@ class OutletApi {
           await api.get('${ApiUrl.outletConfig}/$id', queryParameters: params);
       return res.data['data'];
     } on DioException catch (e) {
-      throw e.response?.data['message'] ?? e.message;
+      throw e.response?.data['msg'] ?? e.message;
     } catch (e) {
       rethrow;
     }

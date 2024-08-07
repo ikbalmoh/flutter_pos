@@ -47,7 +47,7 @@ class PromotionRepository implements PromotionRepositoryProtocol {
       }
       return promotions;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(e.response?.data['msg'] ?? e.message);
     } on PlatformException catch (e) {
       throw Exception(e.message);
     }

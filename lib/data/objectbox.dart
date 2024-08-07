@@ -38,10 +38,10 @@ class ObjectBox {
   }
 
   Stream<List<Promotion>> promotionsStream() {
-    Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
+    Condition<Promotion> promotionQuery = Promotion_.status.equals(true)..and(Promotion_.endDate.greaterThanDate(DateTime.now()));
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
-      ..order(Promotion_.endDate, flags: Order.descending)
+      ..order(Promotion_.endDate)
       ..order(Promotion_.priority, flags: Order.descending);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }

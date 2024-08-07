@@ -81,8 +81,11 @@ class CustomInterceptors extends Interceptor {
         ? isJSON(jsonEncode(err.response?.data))
         : false;
     if (!json) {
-      err.response?.data = {'message': 'connection_error'};
+      err.response?.data = {'msg': 'connection_error'};
     }
+    err.response?.data['msg'] = err.response?.data['msg'] ??
+        err.response?.data['message'] ??
+        err.message;
     if (kDebugMode) {
       log('ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> URI: ${err.requestOptions.uri}\n => DATA: $originalData');
     }

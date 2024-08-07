@@ -19,7 +19,7 @@ class CustomerApi {
       });
       return pagination;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(e.response?.data['msg'] ?? e.message);
     } catch (e) {
       throw Exception(e);
     }
@@ -31,7 +31,7 @@ class CustomerApi {
       final data = res.data['data'];
       return Customer.fromJson(data);
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(e.response?.data['msg'] ?? e.message);
     } catch (e) {
       throw Exception(e);
     }

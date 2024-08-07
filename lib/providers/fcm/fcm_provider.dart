@@ -11,7 +11,6 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:selleri/providers/promotion/promotion_provider.dart';
 
 part 'fcm_provider.g.dart';
 
@@ -44,11 +43,8 @@ class Fcm extends _$Fcm {
       if (sources.contains('categories')) {
         await ref.read(itemRepositoryProvider).fetchCategoris();
       }
-      if (sources.contains('items')) {
+      if (sources.contains('items') || sources.contains('promotions')) {
         await ref.read(itemsStreamProvider().notifier).syncItems();
-      }
-      if (sources.contains('promotions')) {
-        await ref.read(promotionStreamProvider.notifier).loadPromotions();
       }
       if (sources.contains('config')) {
         final only = configOnly ?? [];

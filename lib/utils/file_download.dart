@@ -36,7 +36,7 @@ class FileDownload {
       }
       return savePath;
     } on DioException catch (e) {
-      throw e.response?.data['message'] ?? e.message;
+      throw e.response?.data['msg'] ?? e.message;
     } catch (e) {
       rethrow;
     }

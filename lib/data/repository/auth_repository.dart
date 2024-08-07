@@ -44,7 +44,7 @@ class AuthRepository implements AuthRepositoryProtocol {
       }
       return const AuthFailure(message: 'user authentication failed');
     } on DioException catch (e) {
-      String message = e.response?.data['message'] ?? e.message;
+      String message = e.response?.data['msg'] ?? e.message;
       await tokenRepository.remove();
       return AuthFailure(message: message);
     } on PlatformException catch (e) {
@@ -58,7 +58,7 @@ class AuthRepository implements AuthRepositoryProtocol {
       final json = await api.user();
       return User.fromJson(json);
     } on DioException catch (e) {
-      String message = e.response?.data['message'] ?? e.message;
+      String message = e.response?.data['msg'] ?? e.message;
       throw message;
     } catch (e) {
       rethrow;
@@ -70,7 +70,7 @@ class AuthRepository implements AuthRepositoryProtocol {
     try {
       await api.logout();
     } on DioException catch (e) {
-      String message = e.response?.data['message'] ?? e.message;
+      String message = e.response?.data['msg'] ?? e.message;
       throw Exception(message);
     } catch (e) {
       log('API LOGOUT ERROR: $e');
