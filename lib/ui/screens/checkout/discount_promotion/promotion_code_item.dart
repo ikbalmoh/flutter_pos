@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class PromotionItem extends StatelessWidget {
-  const PromotionItem({
+class PromotionCodeItem extends StatelessWidget {
+  const PromotionCodeItem({
     super.key,
   });
 
@@ -35,7 +35,7 @@ class PromotionItem extends StatelessWidget {
                 child: Text(
                   'Add Promo Code',
                   style: textTheme.bodyMedium
-                      ?.copyWith(color: Colors.grey.shade700),
+                      ?.copyWith(color: Colors.grey.shade800),
                 ),
               ),
               const SizedBox(

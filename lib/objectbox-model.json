@@ -172,7 +172,7 @@
         {
           "id": "6:2866524004547762512",
           "name": "requirementMinimumOrder",
-          "type": 6
+          "type": 8
         },
         {
           "id": "7:1401788865859523023",
@@ -202,17 +202,17 @@
         {
           "id": "12:265528154158988542",
           "name": "discountType",
-          "type": 6
+          "type": 1
         },
         {
           "id": "13:4246510617900233094",
           "name": "rewardNominal",
-          "type": 6
+          "type": 8
         },
         {
           "id": "14:8322847917647204010",
           "name": "rewardMaximumAmount",
-          "type": 6
+          "type": 8
         },
         {
           "id": "15:3990842795393107441",

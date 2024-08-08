@@ -5,6 +5,7 @@ import 'package:selleri/data/models/cart.dart' as model show Cart;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
+import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
@@ -16,6 +17,7 @@ import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/promotion/promotion_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -37,8 +39,7 @@ class Cart extends _$Cart {
         return;
       }
 
-      final outletState =
-          ref.read(outletProvider).value as OutletSelected;
+      final outletState = ref.read(outletProvider).value as OutletSelected;
 
       final authState =
           await ref.read(authNotifierProvider.future) as Authenticated;
@@ -203,7 +204,14 @@ class Cart extends _$Cart {
           ? subtotal * (state.discOverall / 100)
           : state.discOverall;
     }
-    double total = subtotal - discOverallTotal;
+
+    final promotionByOrder = state.promotions.where((p) => p.type == 2);
+
+    double discPromotionsTotal = promotionByOrder.isNotEmpty
+        ? promotionByOrder.map((p) => p.discountValue).reduce((a, b) => a + b)
+        : 0;
+
+    double total = subtotal - discOverallTotal - discPromotionsTotal;
     double grandTotal = total;
     double ppn = state.ppn;
 
@@ -227,6 +235,7 @@ class Cart extends _$Cart {
       total: total,
       grandTotal: grandTotal,
       discOverallTotal: discOverallTotal,
+      discPromotionsTotal: discPromotionsTotal,
       change: change,
       transactionDate: DateTime.now().millisecondsSinceEpoch,
     );
@@ -382,5 +391,41 @@ class Cart extends _$Cart {
 
   void reopen(model.Cart cart) {
     state = cart;
+  }
+
+  Future<void> checkPromotionByOrder() async {
+    List<CartPromotion> currentPromotions =
+        List<CartPromotion>.from(state.promotions)
+            .where((promo) => promo.type != 2)
+            .toList();
+
+    state = state.copyWith(promotions: currentPromotions);
+
+    final promotions = await ref
+        .read(promotionStreamProvider.notifier)
+        .getActivePromotions(
+            type: 2, requirementMinimumOrder: state.grandTotal);
+    log('${promotions.length} PROMOTION BY ORDER: $promotions');
+
+    if (promotions.isNotEmpty) {
+      final promotion = promotions.first;
+      double discountValue = promotion.discountType == true
+          ? state.grandTotal * (promotion.rewardNominal / 100)
+          : promotion.rewardNominal;
+
+      log('APPLY PROMOTION BY ORDER => $discountValue \n ${promotion.rewardMaximumAmount}');
+
+      if (promotion.discountType == false &&
+          discountValue > promotion.rewardMaximumAmount!) {
+        discountValue = promotion.rewardMaximumAmount!;
+      }
+
+      final cartPromo = CartPromotion.fromData(promotion)
+          .copyWith(discountValue: discountValue);
+      currentPromotions.add(cartPromo);
+      state = state.copyWith(promotions: currentPromotions);
+    }
+
+    calculateCart();
   }
 }

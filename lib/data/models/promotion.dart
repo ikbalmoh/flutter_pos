@@ -18,15 +18,16 @@ class Promotion {
   final String name;
   int type;
   int? requirementQuantity;
-  int? requirementMinimumOrder;
+  double? requirementMinimumOrder;
   int? rewardType;
   int? rewardProductType;
   String? rewardProductId;
   int? rewardVariantId;
   int? rewardQty;
-  int? discountType;
-  int? rewardNominal;
-  int? rewardMaximumAmount;
+  @JsonKey(fromJson: Converters.dynamicToBool)
+  bool? discountType;
+  double rewardNominal;
+  double? rewardMaximumAmount;
 
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool status;
@@ -75,7 +76,7 @@ class Promotion {
     this.rewardVariantId,
     this.rewardQty,
     this.discountType,
-    this.rewardNominal,
+    required this.rewardNominal,
     this.rewardMaximumAmount,
     required this.status,
     required this.allOutlet,

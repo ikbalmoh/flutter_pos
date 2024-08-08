@@ -14,12 +14,27 @@ class PromotionStream extends _$PromotionStream {
     return objectBox.promotionsStream();
   }
 
-  Future<void> loadPromotions() async {
+  Future<List<Promotion>> loadPromotions() async {
     log('Load Promotions');
     final PromotionRepository promotionRepository =
         ref.read(promotionRepositoryProvider);
 
     final promotions = await promotionRepository.fetchPromotions();
     objectBox.putPromotions(promotions);
+    return promotions;
+  }
+
+  Future<List<Promotion>> getActivePromotions(
+      {required int type, double? requirementMinimumOrder}) async {
+    log('GET PROMOTION BY TYPE: $type');
+    List<Promotion> result = await objectBox
+        .promotionsStream(
+          type: type,
+          active: true,
+          requirementMinimumOrder: requirementMinimumOrder,
+          needCode: false,
+        )
+        .first;
+    return result;
   }
 }
