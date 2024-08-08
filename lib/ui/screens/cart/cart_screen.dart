@@ -45,20 +45,6 @@ class CartScreen extends ConsumerWidget {
       );
     }
 
-    void onCheckout() {
-      final outletState = ref.read(outletProvider).value;
-      bool isCustomerRequired = outletState is OutletSelected
-          ? (outletState.config.customerTransMandatory ?? false)
-          : false;
-
-      if (isCustomerRequired && cart.idCustomer == null) {
-        AppAlert.toast('select_customer'.tr());
-        context.push(Routes.customers);
-      } else {
-        context.push(Routes.checkout);
-      }
-    }
-
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
