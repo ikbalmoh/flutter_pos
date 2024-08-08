@@ -55,7 +55,7 @@ class DiscountItem extends ConsumerWidget {
               Text(
                 'discount_transaction'.tr(),
                 style:
-                    textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
+                    textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800),
               ),
               const SizedBox(
                 width: 10,

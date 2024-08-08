@@ -22,6 +22,12 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 }
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    super.initState();
+  }
+
   void onConfirmStoreTransaction() async {
     showModalBottomSheet(
       isDismissible: true,
@@ -206,7 +212,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 7.5)
+                        padding: const EdgeInsets.symmetric(
+                                horizontal: 7.5, vertical: 7.5)
                             .copyWith(bottom: 15),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,

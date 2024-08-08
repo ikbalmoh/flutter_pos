@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_item.dart';
-// import 'package:selleri/ui/screens/checkout/discount_promotion/promotion_item.dart';
+import 'package:selleri/ui/screens/checkout/discount_promotion/promotion_items.dart';
+// import 'package:selleri/ui/screens/checkout/discount_promotion/promotion_code_item.dart';
 
 class DiscountPromotion extends StatelessWidget {
   const DiscountPromotion({super.key});
@@ -18,7 +19,7 @@ class DiscountPromotion extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text('discount&permission'.tr(), style: textTheme.bodyLarge),
+            child: Text('discount&promotion'.tr(), style: textTheme.bodyLarge),
           ),
           Divider(
             height: 1,
@@ -29,7 +30,8 @@ class DiscountPromotion extends StatelessWidget {
             child: const Column(
               children: [
                 DiscountItem(),
-                // PromotionItem(),
+                // PromotionCodeItem(),
+                PromotionItems()
               ],
             ),
           )

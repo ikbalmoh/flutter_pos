@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart_payment.dart';
+import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -49,6 +50,7 @@ class Cart with _$Cart {
     String? createdName,
     required List<ItemCart> items,
     required List<CartPayment> payments,
+    required List<CartPromotion> promotions,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
     String? deletedBy,
@@ -68,6 +70,7 @@ class Cart with _$Cart {
         discOverallTotal: 0,
         discPromotionsTotal: 0,
         payments: [],
+        promotions: [],
         totalPayment: 0,
         ppnIsInclude: true,
         ppn: 0,
@@ -135,7 +138,7 @@ class Cart with _$Cart {
       "disc_is_percent": discIsPercent ? 1 : 0,
       "disc_overall": discOverall,
       "disc_overall_total": discOverallTotal,
-      "disc_promotions_total": 0,
+      "disc_promotions_total": discPromotionsTotal,
       "total": total,
       "ppn_is_include": ppnIsInclude == true ? 1 : 0,
       "ppn": ppn,
@@ -157,7 +160,11 @@ class Cart with _$Cart {
       ),
       "vouchers": [],
       "refunds": [],
-      "promotions": [],
+      "promotions": List<Map<String, dynamic>>.from(
+        promotions.map(
+          (promo) => promo.toTransactionPayload(),
+        ),
+      ),
       "created_by": createdBy,
       "images": dataImages,
     };

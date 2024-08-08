@@ -139,20 +139,37 @@ class Printer {
           styles: const PosStyles(align: PosAlign.right),
         ),
       ]);
-      bytes += generator.row([
-        PosColumn(
-          text:
-              '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
-          width: 8,
-          styles: const PosStyles(align: PosAlign.left),
-        ),
-        PosColumn(
-          text:
-              '-${CurrencyFormat.currency(cart.discOverallTotal, symbol: false)}',
-          width: 4,
-          styles: const PosStyles(align: PosAlign.right),
-        ),
-      ]);
+      if (cart.discOverallTotal > 0) {
+        bytes += generator.row([
+          PosColumn(
+            text:
+                '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
+            width: 8,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text:
+                '-${CurrencyFormat.currency(cart.discOverallTotal, symbol: false)}',
+            width: 4,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
+      if (cart.discPromotionsTotal > 0) {
+        bytes += generator.row([
+          PosColumn(
+            text: 'promotions'.tr(),
+            width: 8,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text:
+                '-${CurrencyFormat.currency(cart.discPromotionsTotal, symbol: false)}',
+            width: 4,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
       bytes += generator.row([
         PosColumn(
           text: 'Total',

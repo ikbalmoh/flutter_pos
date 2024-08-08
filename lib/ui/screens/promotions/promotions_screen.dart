@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/promotion/promotion_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
+import 'package:selleri/ui/components/promotions/promotion_type_badge.dart';
 import 'package:selleri/utils/formater.dart';
 
 class PromotionsScreen extends ConsumerStatefulWidget {
@@ -82,10 +83,10 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                             [
                                               DateTimeFormater.dateToString(
                                                   promo.startDate!,
-                                                  format: 'dd MMM'),
+                                                  format: 'dd MMM y'),
                                               DateTimeFormater.dateToString(
                                                   promo.endDate!,
-                                                  format: 'dd MMM'),
+                                                  format: 'dd MMM y'),
                                             ].join(' - '),
                                             style: Theme.of(context)
                                                 .textTheme
@@ -111,26 +112,7 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                   : Container()
                             ],
                           ),
-                          trailing: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 2),
-                            decoration: BoxDecoration(
-                                color: promo.type == 3
-                                    ? Colors.blue.shade100
-                                    : promo.type == 1
-                                        ? Colors.orange.shade100
-                                        : Colors.green.shade100,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Text(
-                              getPromotionType(promo.type),
-                              style: TextStyle(
-                                  color: promo.type == 3
-                                      ? Colors.blue.shade600
-                                      : promo.type == 1
-                                          ? Colors.orange.shade600
-                                          : Colors.green.shade600),
-                            ),
-                          ),
+                          trailing: PromotionTypeBadge(type: promo.type),
                         );
                       },
                     )

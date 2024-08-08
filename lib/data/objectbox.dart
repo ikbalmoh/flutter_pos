@@ -37,12 +37,49 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
-  Stream<List<Promotion>> promotionsStream() {
-    Condition<Promotion> promotionQuery = Promotion_.status.equals(true)..and(Promotion_.endDate.greaterThanDate(DateTime.now()));
+  Stream<List<Promotion>> promotionsStream({
+    int? type,
+    double? requirementMinimumOrder,
+    bool? needCode,
+    bool? active,
+  }) {
+    final DateTime today = DateTime.now();
+    Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
+          Promotion_.endDate.greaterThanDate(
+            today.subtract(
+              const Duration(days: 30),
+            ),
+          ),
+        ));
+
+    if (active == true) {
+      promotionQuery = Promotion_.allTime
+          .equals(true)
+          .or(Promotion_.startDate.lessOrEqualDate(DateTime.now()).and(
+                Promotion_.endDate.greaterOrEqualDate(
+                  DateTime.now(),
+                ),
+              ));
+    }
+
+    if (needCode != null) {
+      promotionQuery = promotionQuery.and(Promotion_.needCode.equals(needCode));
+    }
+
+    if (type != null) {
+      promotionQuery = promotionQuery.and(Promotion_.type.equals(type));
+    }
+
+    if (requirementMinimumOrder != null) {
+      promotionQuery = promotionQuery.and(Promotion_.requirementMinimumOrder
+          .lessOrEqual(requirementMinimumOrder));
+    }
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
-      ..order(Promotion_.endDate)
-      ..order(Promotion_.priority, flags: Order.descending);
+      ..order(Promotion_.status, flags: Order.descending)
+      ..order(Promotion_.allTime)
+      ..order(Promotion_.priority)
+      ..order(Promotion_.endDate);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
@@ -114,8 +151,11 @@ class ObjectBox {
   }
 
   void putPromotions(List<Promotion> promotions) {
-    promotionBox.putMany(promotions);
-    log('${promotions.length} PROMOTIONS HAS BEEN STORED\n$promotions');
+    if (promotions.isNotEmpty) {
+      promotionBox.removeAll();
+      promotionBox.putMany(promotions);
+    }
+    log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
   }
 
   void clearAll() {
