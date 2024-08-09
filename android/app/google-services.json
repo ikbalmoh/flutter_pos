@@ -15,6 +15,43 @@
       },
       "oauth_client": [
         {
+          "client_id": "107680786292-md9uile1r6mdrp4496ft1jqh9vlbssql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dgti.selleri",
+            "certificate_hash": "f99f9b7afc06efc4a95890f62ddb47afe3fccd43"
+          }
+        },
+        {
+          "client_id": "107680786292-hskov1pjc7kiqnj9agccli44rj6eeaue.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF3ioqyBnzSCjVwwPPtlECgsOFMCh05kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107680786292-hskov1pjc7kiqnj9agccli44rj6eeaue.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107680786292:android:33ce365eb80fcee83cee21",
+        "android_client_info": {
+          "package_name": "com.dgti.selleri.prod"
+        }
+      },
+      "oauth_client": [
+        {
           "client_id": "107680786292-hskov1pjc7kiqnj9agccli44rj6eeaue.apps.googleusercontent.com",
           "client_type": 3
         }
