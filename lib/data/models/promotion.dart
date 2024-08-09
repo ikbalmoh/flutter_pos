@@ -7,7 +7,7 @@ import 'package:selleri/data/objectbox.dart';
 
 part 'promotion.g.dart';
 
-@Entity()
+@Entity(uid: 9072647444006103348)
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Promotion {
   int id;

@@ -11,7 +11,7 @@ import 'converters/generic.dart';
 
 part 'item.g.dart';
 
-@Entity()
+@Entity(uid: 1396131410230828223)
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Item {
   int id;
@@ -40,7 +40,7 @@ class Item {
   @Property(type: PropertyType.dateNano)
   DateTime? lastAdjustment;
 
-  List<String>? promotions;
+  final List<String> promotions;
   List<String>? packageCategories;
 
   @VariantRelToManyConverter()
@@ -68,9 +68,9 @@ class Item {
     this.image,
     this.lastAdjustment,
     this.packageCategories,
-    this.promotions,
+    required this.promotions,
     required this.variants,
-    required this.packageItems,
+    required this.packageItems
   });
 
   factory Item.fromJson(Map<String, dynamic> json) {

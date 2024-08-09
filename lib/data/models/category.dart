@@ -1,6 +1,6 @@
 import 'package:objectbox/objectbox.dart';
 
-@Entity()
+@Entity(uid: 5401018273546124526)
 class Category {
   int id;
 

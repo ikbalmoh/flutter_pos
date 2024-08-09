@@ -5,7 +5,7 @@ import 'converters/generic.dart';
 part 'item_package.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-@Entity()
+@Entity(uid: 182247591934260991)
 class ItemPackage {
   int id;
 

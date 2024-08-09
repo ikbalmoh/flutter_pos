@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:uuid/uuid.dart';
@@ -36,6 +37,7 @@ class ItemCart with _$ItemCart {
     required List<ItemCartDetail> details,
     String? picDetailId,
     String? picName,
+    CartPromotion? promotion,
   }) = _ItemCart;
 
   factory ItemCart.fromJson(Map<String, dynamic> json) =>
@@ -55,6 +57,7 @@ class ItemCart with _$ItemCart {
         "discount_is_percent": discountIsPercent ? 1 : 0,
         "discount": discount,
         "discount_total": discountTotal,
+        "promotion_id": promotion?.promotionId,
         "total": total,
         "note": note,
         "item_name": itemName,
