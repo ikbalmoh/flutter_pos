@@ -29,7 +29,7 @@ class OutletItem extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
           ),
-          subtitle: Text(outlet.outletAddress),
+          subtitle: outlet.outletAddress != null ? Text(outlet.outletAddress!) : null,
           trailing: Icon(
             Icons.chevron_right_rounded,
             color: Colors.grey.shade300,

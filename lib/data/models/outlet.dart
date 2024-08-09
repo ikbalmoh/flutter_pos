@@ -4,8 +4,8 @@ class Outlet {
   String idOutlet;
   String outletName;
   String outletCode;
-  String outletPhone;
-  String outletAddress;
+  String? outletPhone;
+  String? outletAddress;
   int? idCity;
   String? cityName;
   int? idRegion;

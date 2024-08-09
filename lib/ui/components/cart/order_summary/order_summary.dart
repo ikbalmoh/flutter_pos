@@ -107,10 +107,12 @@ class OrderSummary extends StatelessWidget {
                 '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
             value: cart.discOverallTotal,
           ),
-          TwoColumn(
-            label: 'promotions'.tr(),
-            value: cart.discPromotionsTotal,
-          ),
+          cart.discPromotionsTotal > 0
+              ? TwoColumn(
+                  label: 'promotions'.tr(),
+                  value: cart.discPromotionsTotal,
+                )
+              : Container(),
           cart.ppnTotal > 0
               ? TwoColumn(
                   label: cart.taxName ?? 'tax'.tr(),

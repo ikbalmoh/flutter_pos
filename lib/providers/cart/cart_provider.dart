@@ -118,6 +118,10 @@ class Cart extends _$Cart {
       return updateItem(existItem.copyWith(quantity: existItem.quantity + 1));
     }
 
+    if (item.promotions.isNotEmpty) {
+      // check promo by order = 3
+    }
+
     ItemCart itemCart = ItemCart(
       identifier: identifier,
       idItem: item.idItem,
@@ -151,7 +155,7 @@ class Cart extends _$Cart {
     if (kDebugMode) {
       log('ADD TO CART: $itemCart');
     }
-    var items = [...state.items];
+    List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
     state = state.copyWith(items: items);
     calculateCart();
@@ -190,55 +194,6 @@ class Cart extends _$Cart {
     state = state.copyWith(items: items);
     calculateCart();
     return true;
-  }
-
-  void calculateCart() {
-    double? subtotal = state.items.isNotEmpty
-        ? state.items
-            .map((i) => i.total)
-            .reduce((value, total) => value + total)
-        : 0;
-    double discOverallTotal = 0;
-    if (subtotal != 0 && state.discOverall > 0) {
-      discOverallTotal = state.discIsPercent
-          ? subtotal * (state.discOverall / 100)
-          : state.discOverall;
-    }
-
-    final promotionByOrder = state.promotions.where((p) => p.type == 2);
-
-    double discPromotionsTotal = promotionByOrder.isNotEmpty
-        ? promotionByOrder.map((p) => p.discountValue).reduce((a, b) => a + b)
-        : 0;
-
-    double total = subtotal - discOverallTotal - discPromotionsTotal;
-    double grandTotal = total;
-    double ppn = state.ppn;
-
-    double ppnTotal = 0;
-    if (state.ppn > 0) {
-      if (state.ppnIsInclude) {
-        double dpp = grandTotal / ((100 + ppn) / 100);
-        ppnTotal = dpp * (ppn / 100);
-      } else {
-        ppnTotal = grandTotal * (ppn / 100);
-        grandTotal += ppnTotal;
-      }
-    }
-
-    double change =
-        state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
-
-    state = state.copyWith(
-      subtotal: subtotal,
-      ppnTotal: ppnTotal,
-      total: total,
-      grandTotal: grandTotal,
-      discOverallTotal: discOverallTotal,
-      discPromotionsTotal: discPromotionsTotal,
-      change: change,
-      transactionDate: DateTime.now().millisecondsSinceEpoch,
-    );
   }
 
   int qtyOnCart(String idItem) {
@@ -401,14 +356,12 @@ class Cart extends _$Cart {
 
     state = state.copyWith(promotions: currentPromotions);
 
-    final promotions = await ref
+    final promotion = await ref
         .read(promotionStreamProvider.notifier)
-        .getActivePromotions(
-            type: 2, requirementMinimumOrder: state.grandTotal);
-    log('${promotions.length} PROMOTION BY ORDER: $promotions');
+        .getPromotionByOrder(requirementMinimumOrder: state.grandTotal);
+    log('PROMOTION BY ORDER: $promotion');
 
-    if (promotions.isNotEmpty) {
-      final promotion = promotions.first;
+    if (promotion != null) {
       double discountValue = promotion.discountType == true
           ? state.grandTotal * (promotion.rewardNominal / 100)
           : promotion.rewardNominal;
@@ -423,9 +376,62 @@ class Cart extends _$Cart {
       final cartPromo = CartPromotion.fromData(promotion)
           .copyWith(discountValue: discountValue);
       currentPromotions.add(cartPromo);
-      state = state.copyWith(promotions: currentPromotions);
+      state = state.copyWith(
+        promotions: currentPromotions,
+        discOverall: 0,
+        discOverallTotal: 0,
+      );
     }
 
     calculateCart();
+  }
+
+  void calculateCart() {
+    double? subtotal = state.items.isNotEmpty
+        ? state.items
+            .map((i) => i.total)
+            .reduce((value, total) => value + total)
+        : 0;
+    double discOverallTotal = 0;
+    if (subtotal != 0 && state.discOverall > 0) {
+      discOverallTotal = state.discIsPercent
+          ? subtotal * (state.discOverall / 100)
+          : state.discOverall;
+    }
+
+    final promotionByOrder = state.promotions.where((p) => p.type == 2);
+
+    double discPromotionsTotal = promotionByOrder.isNotEmpty
+        ? promotionByOrder.map((p) => p.discountValue).reduce((a, b) => a + b)
+        : 0;
+
+    double total = subtotal - discOverallTotal - discPromotionsTotal;
+    double grandTotal = total;
+    double ppn = state.ppn;
+
+    double ppnTotal = 0;
+    if (state.ppn > 0) {
+      if (state.ppnIsInclude) {
+        double dpp = grandTotal / ((100 + ppn) / 100);
+        ppnTotal = dpp * (ppn / 100);
+      } else {
+        ppnTotal = grandTotal * (ppn / 100);
+        grandTotal += ppnTotal;
+      }
+    }
+
+    double change =
+        state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
+
+    state = state.copyWith(
+      subtotal: subtotal,
+      ppnTotal: ppnTotal,
+      total: total,
+      grandTotal: grandTotal,
+      discOverallTotal: discOverallTotal,
+      discPromotionsTotal: discPromotionsTotal,
+      change: change,
+      transactionDate: DateTime.now().millisecondsSinceEpoch,
+    );
   }
 }
