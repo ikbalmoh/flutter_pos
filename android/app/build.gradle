@@ -111,6 +111,10 @@ android {
             applicationIdSuffix ".stage"
             manifestPlaceholders = [applicationLabel: "Selleri Stage"]
         }
+        prod {
+            resValue "string", "app_name", "Selleri"
+            manifestPlaceholders = [applicationLabel: "Selleri"]
+        }
     }
 }
 
