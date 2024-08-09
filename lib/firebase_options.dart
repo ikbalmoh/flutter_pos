@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAF3ioqyBnzSCjVwwPPtlECgsOFMCh05kg',
-    appId: '1:107680786292:android:0c1ead6246023db5',
+    appId: '1:107680786292:android:33ce365eb80fcee83cee21',
     messagingSenderId: '107680786292',
     projectId: 'selleri-486e6',
     databaseURL: 'https://selleri-486e6.firebaseio.com',
