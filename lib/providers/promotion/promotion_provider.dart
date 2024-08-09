@@ -24,17 +24,17 @@ class PromotionStream extends _$PromotionStream {
     return promotions;
   }
 
-  Future<List<Promotion>> getActivePromotions(
-      {required int type, double? requirementMinimumOrder}) async {
-    log('GET PROMOTION BY TYPE: $type');
+  Future<Promotion?> getPromotionByOrder(
+      {double? requirementMinimumOrder}) async {
+    log('GET PROMOTION BY ORDER');
     List<Promotion> result = await objectBox
         .promotionsStream(
-          type: type,
+          type: 2,
           active: true,
           requirementMinimumOrder: requirementMinimumOrder,
           needCode: false,
         )
         .first;
-    return result;
+    return result.isNotEmpty ? result.first : null;
   }
 }
