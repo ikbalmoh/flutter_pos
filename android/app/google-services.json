@@ -1,136 +1,34 @@
 {
   "project_info": {
-    "project_number": "957311922583",
-    "project_id": "selleri-dev",
-    "storage_bucket": "selleri-dev.appspot.com"
+    "project_number": "107680786292",
+    "firebase_url": "https://selleri-486e6.firebaseio.com",
+    "project_id": "selleri-486e6",
+    "storage_bucket": "selleri-486e6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:957311922583:android:a50e521c44edf66a2794d2",
+        "mobilesdk_app_id": "1:107680786292:android:0c1ead6246023db5",
         "android_client_info": {
-          "package_name": "com.dgti.selleri.debug"
+          "package_name": "com.dgti.selleri"
         }
       },
       "oauth_client": [
         {
-          "client_id": "957311922583-i8l8po7sbpval4skd5jfdsd5s43440a6.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.dgti.selleri.debug",
-            "certificate_hash": "56a84055a229c20d8b57dfe7d5b909f5f18f8b9d"
-          }
-        },
-        {
-          "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
+          "client_id": "107680786292-hskov1pjc7kiqnj9agccli44rj6eeaue.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U"
+          "current_key": "AIzaSyAF3ioqyBnzSCjVwwPPtlECgsOFMCh05kg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:957311922583:android:f25f459b9ab8092f2794d2",
-        "android_client_info": {
-          "package_name": "com.dgti.selleri.dev"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:957311922583:android:d61a59e4b45bfdd62794d2",
-        "android_client_info": {
-          "package_name": "com.dgti.selleri.stage"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:957311922583:android:7bba39f0fe87d0782794d2",
-        "android_client_info": {
-          "package_name": "com.dgti.selleri.stage"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "957311922583-kgq0f44cfabjcedsc7vcuamc1de792o7.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.dgti.selleri.stage",
-            "certificate_hash": "2807878ff7f11682d560aa15ad3c8ef6ebdd3acb"
-          }
-        },
-        {
-          "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAIKA_ylPQZ-goWyS4C_Qg5zphnW3dGC5U"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "957311922583-19r17nkgh3ibvd9kmk08ghi7h5pkaloj.apps.googleusercontent.com",
+              "client_id": "107680786292-hskov1pjc7kiqnj9agccli44rj6eeaue.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

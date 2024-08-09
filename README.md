@@ -28,3 +28,17 @@ make op=patch flavor=dev
 - dev
 - stage
 - release
+
+### Note for prod release
+
+#### Android
+
+Place .keystore file to android/app directory
+
+Create android/key.properties file with following config
+```
+storePassword=
+keyPassword=
+keyAlias=
+storeFile=
+```

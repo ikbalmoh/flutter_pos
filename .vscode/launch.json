@@ -27,6 +27,7 @@
       "name": "Selleri (release mode)",
       "request": "launch",
       "type": "dart",
+      "args": ["--flavor", "prod"],
       "flutterMode": "release"
     }
   ]
