@@ -260,7 +260,7 @@ class Printer {
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
 
-    late Image? img;
+    Image? img;
     String? headers;
 
     if (attributes != null) {

@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
@@ -38,7 +37,7 @@ class AuthNotifier extends _$AuthNotifier {
       state = AsyncData(Authenticating());
       state = AsyncData(await _authRepoistory.login(username, password));
     } catch (e) {
-      state = AsyncData(AuthFailure(message: 'login_failed'.tr()));
+      state = AsyncData(AuthFailure(message: e.toString()));
     }
   }
 

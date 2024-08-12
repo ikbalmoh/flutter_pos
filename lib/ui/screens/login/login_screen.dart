@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -166,6 +167,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const SizedBox(height: 15),
                           TextFormField(
                             decoration: InputDecoration(
+                              suffix: GestureDetector(
+                                onTap: () => setState(() {
+                                  hidePassword = !hidePassword;
+                                }),
+                                child: Icon(
+                                  hidePassword
+                                      ? CupertinoIcons.eye_slash_fill
+                                      : CupertinoIcons.eye_solid,
+                                  size: 18,
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
                               labelText: "Password",
                               contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10,

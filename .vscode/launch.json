@@ -17,6 +17,12 @@
       "args": ["--flavor", "stage"]
     },
     {
+      "name": "Debug [Prod]",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "prod"]
+    },
+    {
       "name": "Profile Mode [Stage]",
       "request": "launch",
       "type": "dart",
