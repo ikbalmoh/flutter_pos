@@ -118,7 +118,7 @@ class OutletRepository implements OutletRepositoryProtocol {
     final configString = json.encode(config.toJson());
     const storage = FlutterSecureStorage();
     await storage.write(
-        key: StoreKey.outletConfig.toString(), value: configString);
+        key: StoreKey.outletConfig.name, value: configString);
   }
 
   @override

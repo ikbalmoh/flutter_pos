@@ -122,7 +122,7 @@ class OutletApi {
 
   Future<dynamic> storeFcmToken(
       {required String token, required String outletId}) async {
-    String? deviceId = await storage.read(key: StoreKey.device.toString());
+    String? deviceId = await storage.read(key: StoreKey.device.name);
 
     Map<String, dynamic> data = {
       "device_id": deviceId,

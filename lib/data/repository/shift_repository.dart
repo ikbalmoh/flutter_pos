@@ -165,6 +165,6 @@ class ShiftRepository implements ShiftRepositoryProtocol {
 
   @override
   Future<void> clear() async {
-    await storage.delete(key: StoreKey.shift.toString());
+    await storage.delete(key: StoreKey.shift.name);
   }
 }
