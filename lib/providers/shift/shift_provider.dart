@@ -38,7 +38,7 @@ class Shift extends _$Shift {
     final userAccount = authState.user.user;
 
     const storage = FlutterSecureStorage();
-    final deviceId = await storage.read(key: StoreKey.device.toString());
+    final deviceId = await storage.read(key: StoreKey.device.name);
 
     final outlet = outletState.outlet;
 

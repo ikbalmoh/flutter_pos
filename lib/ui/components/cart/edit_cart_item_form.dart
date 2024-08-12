@@ -24,6 +24,7 @@ class EditCartItemForm extends ConsumerStatefulWidget {
 }
 
 class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
+  final priceController = TextEditingController();
   final noteController = TextEditingController();
 
   final _priceFormater = CurrencyFormat.currencyInput();
@@ -40,8 +41,6 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
   void initState() {
     super.initState();
 
-    noteController.text = widget.item.note ?? '';
-
     setState(() {
       price = widget.item.price;
       discount = widget.item.discount;
@@ -50,6 +49,10 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
       picDetailId = widget.item.picDetailId;
       picName = widget.item.picName;
     });
+
+    priceController.text = _priceFormater.formatDouble(widget.item.price);
+    noteController.text = widget.item.note ?? '';
+
     super.initState();
   }
 
@@ -216,8 +219,6 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                 children: [
                   TextFormField(
                     inputFormatters: <TextInputFormatter>[_priceFormater],
-                    initialValue:
-                        _priceFormater.formatDouble(widget.item.price),
                     onChanged: (value) {
                       setState(() {
                         price = _priceFormater.getUnformattedValue().toDouble();
@@ -240,6 +241,11 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                         style: labelStyle,
                       ),
                       alignLabelWithHint: true,
+                    ),
+                    controller: priceController,
+                    onTap: () => priceController.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: priceController.value.text.length,
                     ),
                   ),
                   Container(

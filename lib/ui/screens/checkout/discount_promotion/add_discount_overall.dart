@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
@@ -18,6 +19,8 @@ class AddDiscountOverall extends ConsumerStatefulWidget {
 }
 
 class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
+  TextEditingController amountController = TextEditingController();
+
   late double discount;
   late bool discountIsPercent;
 
@@ -30,6 +33,11 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
       discount = cart.discOverall;
       discountIsPercent = cart.discIsPercent;
     });
+    final discountText =
+        _discountFormatter.formatDouble(ref.read(cartProvider).discOverall);
+    amountController.text = discountText;
+    amountController.selection =
+        TextSelection(baseOffset: 0, extentOffset: discountText.length);
     super.initState();
   }
 
@@ -109,8 +117,6 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
           ),
           TextFormField(
             inputFormatters: [_discountFormatter],
-            initialValue: _discountFormatter
-                .formatDouble(ref.read(cartProvider).discOverall),
             onChanged: onChangeDiscountValue,
             textAlign: TextAlign.right,
             keyboardType: TextInputType.number,
@@ -136,6 +142,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
                 ),
               ),
             ),
+            controller: amountController,
           ),
           const SizedBox(
             height: 20,

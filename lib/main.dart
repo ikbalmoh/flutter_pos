@@ -73,9 +73,9 @@ Future initServices() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   if (deviceId != null && deviceId.isNotEmpty) {
-    storage.write(key: StoreKey.device.toString(), value: deviceId);
+    storage.write(key: StoreKey.device.name, value: deviceId);
   }
-  storage.write(key: StoreKey.deviceName.toString(), value: deviceName);
+  storage.write(key: StoreKey.deviceName.name, value: deviceName);
 
   var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
   if (appFlavor == 'stage') {
@@ -109,6 +109,8 @@ Future initServices() async {
   } else {
     log('FCM NOTIFICATION: User declined or has not accepted permission');
   }
+
+  log(StoreKey.deviceName.name);
 
   WakelockPlus.enable();
 }

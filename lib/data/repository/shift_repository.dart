@@ -51,7 +51,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     try {
       const storage = FlutterSecureStorage();
       await api.closeShift(id, payload);
-      await storage.delete(key: StoreKey.shift.toString());
+      await storage.delete(key: StoreKey.shift.name);
     } catch (e, stackTrack) {
       log('CLOSE SHIFT ERROR: $e => $stackTrack');
       rethrow;
@@ -67,11 +67,11 @@ class ShiftRepository implements ShiftRepositoryProtocol {
       if (outlet == null) {
         return null;
       }
-      String? stringShift = await storage.read(key: StoreKey.shift.toString());
+      String? stringShift = await storage.read(key: StoreKey.shift.name);
       if (stringShift != null) {
         final shift = Shift.fromJson(json.decode(stringShift));
         if (outlet.idOutlet != shift.outletId) {
-          await storage.delete(key: StoreKey.shift.toString());
+          await storage.delete(key: StoreKey.shift.name);
           return null;
         }
         return shift;
@@ -127,11 +127,11 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     const storage = FlutterSecureStorage();
     final shiftJson = shift.toJson();
     final stringShift = json.encode(shiftJson);
-    await storage.write(key: StoreKey.shift.toString(), value: stringShift);
+    await storage.write(key: StoreKey.shift.name, value: stringShift);
   }
 
   @override
   Future<void> clear() async {
-    await storage.delete(key: StoreKey.shift.toString());
+    await storage.delete(key: StoreKey.shift.name);
   }
 }

@@ -59,13 +59,16 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Padding(
+    return Container(
       padding: EdgeInsets.only(
         top: 10,
         left: 15,
         right: 15,
         bottom: MediaQuery.of(context).viewInsets.bottom + 15,
       ),
+      height: (MediaQuery.of(context).size.height * 0.5) +
+          MediaQuery.of(context).viewInsets.bottom +
+          15,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,59 +90,69 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
-          Text(
-            'Printer',
-            style: textTheme.bodySmall?.copyWith(
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            widget.device.name,
-            style: textTheme.bodyMedium,
-          ),
-          Text(
-            widget.device.macAdress,
-            style: textTheme.bodySmall,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Text(
-            'paper_size'.tr(),
-            style: textTheme.bodySmall?.copyWith(
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          ...paperSizeSettings
-              .map(
-                (paper) => ListTile(
-                  minLeadingWidth: 0,
-                  dense: true,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  visualDensity:
-                      const VisualDensity(horizontal: 0, vertical: -4),
-                  horizontalTitleGap: -7,
-                  title: Text('${paper.width} mm'),
-                  leading: Radio<PaperSize>(
-                    visualDensity: const VisualDensity(horizontal: 0),
-                    value: paper.size,
-                    groupValue: size,
-                    onChanged: (PaperSize? value) {
-                      setState(() {
-                        size = value;
-                      });
-                    },
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Printer',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-              )
-              .toList(),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    widget.device.name,
+                    style: textTheme.bodyMedium,
+                  ),
+                  Text(
+                    widget.device.macAdress,
+                    style: textTheme.bodySmall,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    'paper_size'.tr(),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  ...paperSizeSettings
+                      .map(
+                        (paper) => ListTile(
+                          minLeadingWidth: 0,
+                          dense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 0),
+                          visualDensity:
+                              const VisualDensity(horizontal: 0, vertical: -4),
+                          horizontalTitleGap: -7,
+                          title: Text('${paper.width} mm'),
+                          leading: Radio<PaperSize>(
+                            visualDensity: const VisualDensity(horizontal: 0),
+                            value: paper.size,
+                            groupValue: size,
+                            onChanged: (PaperSize? value) {
+                              setState(() {
+                                size = value;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ],
+              ),
+            ),
+          ),
           Divider(
             color: Colors.blueGrey.shade50,
           ),

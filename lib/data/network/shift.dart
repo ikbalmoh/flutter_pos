@@ -40,7 +40,7 @@ class ShiftApi {
   }
 
   Future<void> currentShift() async {
-    String? deviceId = await storage.read(key: StoreKey.device.toString());
+    String? deviceId = await storage.read(key: StoreKey.device.name);
     api.get('/info/urrent-shift/$deviceId');
   }
 

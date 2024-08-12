@@ -19,6 +19,7 @@ class PaymentForm extends StatefulWidget {
 
 class _PaymentFormState extends State<PaymentForm> {
   TextEditingController refController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
 
   final _formatter = CurrencyFormat.currencyInput();
 
@@ -34,6 +35,11 @@ class _PaymentFormState extends State<PaymentForm> {
     setState(() {
       amount = inititalValue < 0 ? 0 : inititalValue;
     });
+
+    final amountText = _formatter.formatDouble(amount);
+    amountController.text = amountText;
+    amountController.selection =
+        TextSelection(baseOffset: 0, extentOffset: amountText.length);
     super.initState();
   }
 
@@ -100,7 +106,6 @@ class _PaymentFormState extends State<PaymentForm> {
           ),
           TextFormField(
             inputFormatters: [_formatter],
-            initialValue: _formatter.formatDouble(amount),
             onChanged: (_) => setState(() {
               amount = _formatter.getUnformattedValue().toDouble();
             }),
@@ -120,6 +125,11 @@ class _PaymentFormState extends State<PaymentForm> {
                 style: labelStyle,
               ),
               alignLabelWithHint: true,
+            ),
+            controller: amountController,
+            onTap: () => amountController.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: amountController.value.text.length,
             ),
           ),
           TextFormField(

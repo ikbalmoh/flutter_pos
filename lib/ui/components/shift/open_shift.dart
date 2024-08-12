@@ -14,6 +14,8 @@ class OpenShift extends ConsumerStatefulWidget {
 }
 
 class _OpenShiftState extends ConsumerState<OpenShift> {
+  TextEditingController amountController = TextEditingController();
+
   final _amountFormater = CurrencyFormat.currencyInput();
 
   double amount = 0;
@@ -28,6 +30,10 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
     setState(() {
       amount = defaultAmount.toDouble();
     });
+    final amountText = _amountFormater.formatDouble(amount);
+    amountController.text = amountText;
+    amountController.selection =
+        TextSelection(baseOffset: 0, extentOffset: amountText.length);
     super.initState();
   }
 
@@ -42,7 +48,6 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
       title: Text('open_shift'.tr()),
       content: TextFormField(
         inputFormatters: [_amountFormater],
-        initialValue: _amountFormater.formatDouble(amount),
         onChanged: (value) {
           setState(() {
             amount = _amountFormater.getUnformattedValue().toDouble();
@@ -64,6 +69,7 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
           alignLabelWithHint: true,
         ),
         autofocus: true,
+        controller: amountController,
       ),
       actions: [
         TextButton(

@@ -35,7 +35,7 @@ class CustomInterceptors extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    String? deviceId = await storage.read(key: StoreKey.device.toString());
+    String? deviceId = await storage.read(key: StoreKey.device.name);
     options.headers['device'] = deviceId;
 
     final packageInfo = await PackageInfo.fromPlatform();
@@ -44,7 +44,7 @@ class CustomInterceptors extends Interceptor {
     // User agent
     options.headers['User-Agent'] = 'okhttp/3.12.1';
 
-    String? tokenString = await storage.read(key: StoreKey.token.toString());
+    String? tokenString = await storage.read(key: StoreKey.token.name);
     if (tokenString != null) {
       final Token token = Token.fromJson(json.decode(tokenString));
       options.headers['Authorization'] = 'Bearer ${token.accessToken}';

@@ -33,13 +33,13 @@ class OutletRepository implements OutletRepositoryProtocol {
   @override
   Future<void> remove() async {
     const storage = FlutterSecureStorage();
-    await storage.delete(key: StoreKey.outlet.toString());
+    await storage.delete(key: StoreKey.outlet.name);
   }
 
   @override
   Future<Outlet?> retrieveOutlet() async {
     const storage = FlutterSecureStorage();
-    String? outletString = await storage.read(key: StoreKey.outlet.toString());
+    String? outletString = await storage.read(key: StoreKey.outlet.name);
     if (outletString != null) {
       final jsonOutlet = json.decode(outletString);
       return Outlet.fromJson(jsonOutlet);
@@ -52,7 +52,7 @@ class OutletRepository implements OutletRepositoryProtocol {
     try {
       const storage = FlutterSecureStorage();
       String? outletConfigString =
-          await storage.read(key: StoreKey.outletConfig.toString());
+          await storage.read(key: StoreKey.outletConfig.name);
       log('RETRIEVE CONFIG: $outletConfigString');
       if (outletConfigString != null) {
         final jsonConfig = json.decode(outletConfigString);
@@ -71,7 +71,7 @@ class OutletRepository implements OutletRepositoryProtocol {
   Future<void> saveOutlet(Outlet outlet) async {
     const storage = FlutterSecureStorage();
     await storage.write(
-        key: StoreKey.outlet.toString(), value: outlet.toString());
+        key: StoreKey.outlet.name, value: outlet.toString());
   }
 
   @override
@@ -79,7 +79,7 @@ class OutletRepository implements OutletRepositoryProtocol {
     final configString = json.encode(config.toJson());
     const storage = FlutterSecureStorage();
     await storage.write(
-        key: StoreKey.outletConfig.toString(), value: configString);
+        key: StoreKey.outletConfig.name, value: configString);
   }
 
   @override

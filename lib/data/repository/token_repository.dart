@@ -21,13 +21,13 @@ class TokenRepository implements TokenRepositoryProtocol {
   @override
   Future<void> remove() async {
     const storage = FlutterSecureStorage();
-    await storage.delete(key: StoreKey.token.toString());
+    await storage.delete(key: StoreKey.token.name);
   }
 
   @override
   Future<Token?> fetchToken() async {
     const storage = FlutterSecureStorage();
-    String? tokenValue = await storage.read(key: StoreKey.token.toString());
+    String? tokenValue = await storage.read(key: StoreKey.token.name);
     if (tokenValue != null) {
       final jsonToken = json.decode(tokenValue);
       return Token.fromJson(jsonToken);
@@ -38,7 +38,6 @@ class TokenRepository implements TokenRepositoryProtocol {
   @override
   Future<void> saveToken(Token token) async {
     const storage = FlutterSecureStorage();
-    await storage.write(
-        key: StoreKey.token.toString(), value: token.toString());
+    await storage.write(key: StoreKey.token.name, value: token.toString());
   }
 }

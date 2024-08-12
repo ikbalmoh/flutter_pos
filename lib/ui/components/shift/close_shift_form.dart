@@ -34,6 +34,7 @@ class CloseShiftForm extends ConsumerStatefulWidget {
 
 class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   final _amountFormater = CurrencyFormat.currencyInput();
+  final inputController = TextEditingController();
 
   int status = 1;
   DateTime transDate = DateTime.now();
@@ -155,7 +156,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
       child: isLoading
           ? const LoadingPlaceholder()
           : Container(
-              margin: const EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 10),
               height:
                   (widget.height ?? MediaQuery.of(context).size.height * 0.6) +
                       MediaQuery.of(context).viewInsets.bottom,
@@ -233,8 +234,6 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                               inputFormatters: <TextInputFormatter>[
                                 _amountFormater
                               ],
-                              initialValue:
-                                  _amountFormater.formatDouble(amount),
                               onChanged: (value) {
                                 setState(() {
                                   amount = _amountFormater
@@ -259,6 +258,13 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                                 ),
                                 alignLabelWithHint: true,
                               ),
+                              autofocus: true,
+                              controller: inputController,
+                              onTap: () => inputController.selection =
+                                  TextSelection(
+                                      baseOffset: 0,
+                                      extentOffset:
+                                          inputController.value.text.length),
                             ),
                           ),
                           diffAmount() != 0
