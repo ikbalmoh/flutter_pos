@@ -145,12 +145,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     cart: cart,
                     radius: const Radius.circular(10),
                     mainAxisSize: MainAxisSize.max,
+                    outletState:
+                        ref.watch(outletProvider).value as OutletSelected,
                   ),
                 )
               : OrderSummary(
                   cart: cart,
                   radius: const Radius.circular(10),
                   mainAxisSize: MainAxisSize.min,
+                  outletState:
+                      ref.watch(outletProvider).value as OutletSelected,
                 ),
         ],
       ),

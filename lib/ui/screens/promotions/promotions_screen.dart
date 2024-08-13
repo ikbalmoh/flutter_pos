@@ -41,8 +41,6 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
     final promotions =
         ref.watch(promotionStreamProvider(search: _searchController.text));
 
-    TextTheme textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       appBar: searchVisible
           ? SearchAppBar(

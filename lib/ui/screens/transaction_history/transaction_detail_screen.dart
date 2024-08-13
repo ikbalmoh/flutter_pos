@@ -9,6 +9,7 @@ import 'package:pdf/pdf.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart.dart' as model;
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/cart/cancel_transaction_form.dart';
@@ -34,6 +35,7 @@ class TransactionDetailScreen extends ConsumerStatefulWidget {
 
 class _TransactionDetailScreenState
     extends ConsumerState<TransactionDetailScreen> {
+  
   final GlobalKey summaryContainerKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
 
@@ -131,6 +133,9 @@ class _TransactionDetailScreenState
         .firstWhere((cart) => cart.transactionNo == widget.cart.transactionNo);
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(TABLET);
+
+    final OutletSelected outletState =
+        ref.watch(outletProvider).value as OutletSelected;
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
@@ -269,6 +274,7 @@ class _TransactionDetailScreenState
                           radius: const Radius.circular(5),
                           cart: transaction,
                           withAttribute: true,
+                          outletState: outletState,
                         ),
                       ),
                     ),

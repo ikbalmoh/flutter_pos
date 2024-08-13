@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/providers/outlet/outlet_state.dart';
 import 'package:selleri/utils/formater.dart';
 import 'order_item.dart';
 import 'receipt_attributes.dart';
@@ -11,12 +12,14 @@ class OrderSummary extends StatelessWidget {
   final Radius? radius;
   final MainAxisSize? mainAxisSize;
   final bool? withAttribute;
+  final OutletSelected outletState;
 
   const OrderSummary({
     required this.cart,
     this.radius,
     this.mainAxisSize,
     this.withAttribute,
+    required this.outletState,
     super.key,
   });
 
@@ -28,9 +31,11 @@ class OrderSummary extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         withAttribute == true
-            ? const Padding(
-                padding: EdgeInsets.only(top: 20, bottom: 10),
-                child: ReceiptHeader(),
+            ? Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 10),
+                child: ReceiptHeader(
+                  outletState: outletState,
+                ),
               )
             : Container(),
         Padding(
@@ -157,10 +162,11 @@ class OrderSummary extends StatelessWidget {
             value: cart.change,
           ),
           const SizedBox(height: 10),
-          withAttribute == true
-              ? const Padding(
-                  padding: EdgeInsets.only(top: 20, bottom: 10),
-                  child: ReceiptFooter(),
+          withAttribute == true && outletState.config.attributeReceipts != null
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 10),
+                  child: ReceiptFooter(
+                      attributeReceipts: outletState.config.attributeReceipts!),
                 )
               : Container(),
         ],
