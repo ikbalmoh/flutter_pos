@@ -22,7 +22,7 @@ enum Status { loading, success, error }
 
 class _StoreTransactionState extends ConsumerState<StoreTransaction> {
   Status status = Status.loading;
-  int printCounter = 0;
+  int printCounter = 1;
   String error = '';
 
   @override
