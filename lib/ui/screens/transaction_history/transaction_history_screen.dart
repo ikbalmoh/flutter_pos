@@ -210,13 +210,12 @@ class _TransactionHistoryScreenState
         children: [
           Expanded(
             child: RefreshIndicator(
-              onRefresh: () => ref
-                  .read(transactionsProvider.notifier)
-                  .loadTransactions(
-                    page: 1,
-                    search: _searchController.text,
-                    currentShift: currentShift,
-                  ),
+              onRefresh: () =>
+                  ref.read(transactionsProvider.notifier).loadTransactions(
+                        page: 1,
+                        search: _searchController.text,
+                        currentShift: currentShift,
+                      ),
               child: Column(
                 children: [
                   transactionFilter(isTablet),
@@ -272,11 +271,16 @@ class _TransactionHistoryScreenState
                                               CupertinoIcons.xmark_circle_fill,
                                               color: Colors.red,
                                             )
-                                          : const Icon(
-                                              CupertinoIcons
-                                                  .checkmark_alt_circle_fill,
-                                              color: Colors.green,
-                                            ),
+                                          : cart.totalPayment < cart.grandTotal
+                                              ? Icon(
+                                                  CupertinoIcons.exclamationmark_circle_fill,
+                                                  color: Colors.amber.shade600,
+                                                )
+                                              : const Icon(
+                                                  CupertinoIcons
+                                                      .checkmark_alt_circle_fill,
+                                                  color: Colors.green,
+                                                ),
                                       shape: Border(
                                         bottom: BorderSide(
                                           width: 0.5,
@@ -361,7 +365,10 @@ class _TransactionHistoryScreenState
                     ),
                     color: Colors.grey.shade100,
                   ),
-                  width: ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP) ? MediaQuery.of(context).size.width - 400 : MediaQuery.of(context).size.width * 0.5,
+                  width:
+                      ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP)
+                          ? MediaQuery.of(context).size.width - 400
+                          : MediaQuery.of(context).size.width * 0.5,
                   child: viewTransaction != null
                       ? Card(
                           margin: const EdgeInsets.all(15),

@@ -203,15 +203,59 @@ class _TransactionDetailScreenState
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 10),
-                        child: Text(
-                          '${'canceled'.tr()} ${DateTimeFormater.dateToString(transaction.deletedAt!, format: 'dd MMM y HH:mm')}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.white),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'canceled'.tr(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.white),
+                            ),
+                            Text(
+                              DateTimeFormater.dateToString(
+                                  transaction.deletedAt!,
+                                  format: 'dd MMM y HH:mm'),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: Colors.white),
+                            ),
+                          ],
                         ),
                       )
-                    : Container(),
+                    : transaction.totalPayment < transaction.grandTotal
+                        ? Container(
+                            color: Colors.amber.shade600,
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'insufficient_payment'.tr(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(color: Colors.white),
+                                ),
+                                Text(
+                                  CurrencyFormat.currency(
+                                      transaction.grandTotal -
+                                          transaction.totalPayment),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
