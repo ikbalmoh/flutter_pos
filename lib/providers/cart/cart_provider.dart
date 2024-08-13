@@ -357,7 +357,7 @@ class Cart extends _$Cart {
     state = state.copyWith(promotions: currentPromotions);
 
     final promotion = await ref
-        .read(promotionStreamProvider.notifier)
+        .read(promotionStreamProvider().notifier)
         .getPromotionByOrder(requirementMinimumOrder: state.grandTotal);
     log('PROMOTION BY ORDER: $promotion');
 

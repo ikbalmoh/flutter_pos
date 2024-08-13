@@ -42,6 +42,7 @@ class ObjectBox {
     double? requirementMinimumOrder,
     bool? needCode,
     bool? active,
+    String? search,
   }) {
     final DateTime today = DateTime.now();
     Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
@@ -64,6 +65,12 @@ class ObjectBox {
 
     if (needCode != null) {
       promotionQuery = promotionQuery.and(Promotion_.needCode.equals(needCode));
+    }
+
+    if (search != null) {
+      promotionQuery = promotionQuery.and(Promotion_.name
+          .contains(search, caseSensitive: false)
+          .or(Promotion_.promoCode.equals(search, caseSensitive: false)));
     }
 
     if (type != null) {

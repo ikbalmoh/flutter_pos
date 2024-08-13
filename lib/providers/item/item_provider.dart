@@ -41,7 +41,7 @@ class ItemsStream extends _$ItemsStream {
     if (progressCallback != null) {
       progressCallback('loading_x'.tr(args: ['promotions'.tr()]));
     }
-    await ref.read(promotionStreamProvider.notifier).loadPromotions();
+    await ref.read(promotionStreamProvider().notifier).loadPromotions();
 
     if (refresh || objectBox.itemBox.isEmpty()) {
       for (var i = 0; i < categories.length; i++) {
@@ -108,7 +108,7 @@ class ItemsStream extends _$ItemsStream {
       }
     }
 
-    await ref.read(promotionStreamProvider.notifier).loadPromotions();
+    await ref.read(promotionStreamProvider().notifier).loadPromotions();
   }
 
   double getItemStock(String idItem) {
