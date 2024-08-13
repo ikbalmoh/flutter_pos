@@ -8,6 +8,8 @@ import 'package:selleri/providers/promotion/promotion_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/promotions/promotion_date.dart';
+import 'package:selleri/ui/components/promotions/promotion_days.dart';
+import 'package:selleri/ui/components/promotions/promotion_times.dart';
 import 'package:selleri/ui/components/promotions/promotion_type_badge.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
@@ -109,7 +111,11 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                               children: [
                                 promo.allTime == false
                                     ? PromotionDate(promo: promo)
-                                    : Container()
+                                    : Container(),
+                                PromotionDays(promo: promo),
+                                promo.times != null
+                                    ? PromotionTimes(promo: promo)
+                                    : Container(),
                               ],
                             ),
                             const SizedBox(

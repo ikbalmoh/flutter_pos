@@ -205,5 +205,13 @@
   "open_amount_updated_x": "Open amount has been updated to {}",
   "prev_payments": "Previous Payments",
   "and": "and",
-  "promotions": "Promotions"
+  "promotions": "Promotions",
+  "sunday": "Sunday",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "everyday": "Everyday"
 }
