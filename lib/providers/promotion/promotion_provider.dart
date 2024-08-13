@@ -10,8 +10,8 @@ part 'promotion_provider.g.dart';
 @Riverpod(keepAlive: true)
 class PromotionStream extends _$PromotionStream {
   @override
-  Stream<List<Promotion>> build() {
-    return objectBox.promotionsStream();
+  Stream<List<Promotion>> build({String? search}) {
+    return objectBox.promotionsStream(search: search);
   }
 
   Future<List<Promotion>> loadPromotions() async {
