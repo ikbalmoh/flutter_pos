@@ -12,7 +12,7 @@ class PromotionDays extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-
+    
     return Container(
       decoration: BoxDecoration(
           color: Colors.blueGrey.shade50,
