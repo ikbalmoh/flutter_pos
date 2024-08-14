@@ -11,6 +11,8 @@ import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
 class ObjectBox {
   late final Store store;
 
@@ -180,6 +182,18 @@ class ObjectBox {
       }
       promotionQuery = promotionQuery.and(
         Promotion_.allTime.equals(true).or(rangeQuery),
+      );
+    }
+
+    if (range != null) {
+      promotionQuery = promotionQuery.and(
+        Promotion_.allTime.equals(true).or(
+              Promotion_.startDate.lessOrEqualDate(range.startDate!).and(
+                    Promotion_.endDate.greaterOrEqualDate(
+                      range.endDate!,
+                    ),
+                  ),
+            ),
       );
     }
 
