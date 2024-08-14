@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/promotion.dart';
-import 'package:selleri/utils/formater.dart';
 
 class PromotionDays extends StatelessWidget {
   const PromotionDays({
@@ -15,7 +13,7 @@ class PromotionDays extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-
+    
     return Container(
       decoration: BoxDecoration(
           color: Colors.blueGrey.shade50,

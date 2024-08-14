@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
+import 'package:selleri/ui/screens/checkout/transaction_receipt.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -54,6 +55,15 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
     }
   }
 
+  void onViewReceipt() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return TransactionReceipt(cart: ref.watch(cartProvider));
+      },
+    );
+  }
+
   void submitTransaction() async {
     if (status != Status.loading) {
       setState(() {
@@ -92,7 +102,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
           : status == Status.success
               ? TransactionSuccess(
                   onReset: resetCart,
-                  onPrintReceipt: onPrintReceipt,
+                  onViewReceipt: onViewReceipt,
                 )
               : TransactionError(
                   onRetry: submitTransaction,
@@ -105,10 +115,10 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
 
 class TransactionSuccess extends ConsumerWidget {
   final Function() onReset;
-  final Function() onPrintReceipt;
+  final Function() onViewReceipt;
   const TransactionSuccess({
     required this.onReset,
-    required this.onPrintReceipt,
+    required this.onViewReceipt,
     super.key,
   });
 
@@ -141,11 +151,12 @@ class TransactionSuccess extends ConsumerWidget {
         const SizedBox(height: 40),
         Row(
           children: [
-            TextButton(
+            TextButton.icon(
               style:
                   TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
-              onPressed: onPrintReceipt,
-              child: Text('print_receipt'.tr()),
+              onPressed: onViewReceipt,
+              label: Text('view_receipt'.tr()),
+              icon: const Icon(Icons.receipt_long),
             ),
             const SizedBox(width: 15),
             Expanded(

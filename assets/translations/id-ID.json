@@ -214,5 +214,7 @@
   "thursday": "Kamis",
   "friday": "Jumat",
   "saturday": "Sabtu",
-  "everyday": "Setiap Hari"
+  "everyday": "Setiap Hari",
+  "transaction_receipt": "Struk Transaksi",
+  "view_receipt": "Lihat Struk"
 }

@@ -213,5 +213,7 @@
   "thursday": "Thursday",
   "friday": "Friday",
   "saturday": "Saturday",
-  "everyday": "Everyday"
+  "everyday": "Everyday",
+  "transaction_receipt": "Transaction Receipt",
+  "view_receipt": "View Receipt"
 }
