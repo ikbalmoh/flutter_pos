@@ -183,8 +183,8 @@ class PromotionType {
 
   static List<PromotionType> filter() => [
         PromotionType(id: 0, name: 'all_type'.tr()),
+        PromotionType(id: 2, name: 'transaction'.tr()),
+        PromotionType(id: 3, name: 'item'.tr()),
         const PromotionType(id: 1, name: 'A get B'),
-        PromotionType(id: 2, name: 'item'.tr()),
-        PromotionType(id: 3, name: 'transaction'.tr()),
       ];
 }
