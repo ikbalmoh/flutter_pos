@@ -6,10 +6,12 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DatePicker extends ConsumerStatefulWidget {
-  const DatePicker({this.initialForm, this.initialTo, super.key});
+  const DatePicker(
+      {this.initialForm, this.initialTo, this.allowFuture, super.key});
 
   final DateTime? initialForm;
   final DateTime? initialTo;
+  final bool? allowFuture;
 
   @override
   ConsumerState<DatePicker> createState() => _DatePickerState();
@@ -85,7 +87,7 @@ class _DatePickerState extends ConsumerState<DatePicker> {
             view: DateRangePickerView.month,
             enableMultiView: false,
             selectionMode: DateRangePickerSelectionMode.extendableRange,
-            maxDate: DateTime.now(),
+            maxDate: widget.allowFuture == true ? null : DateTime.now(),
             onSelectionChanged: _onSelectionChanged,
             initialSelectedRanges: [
               PickerDateRange(widget.initialForm, widget.initialTo)

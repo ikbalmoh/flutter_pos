@@ -216,5 +216,6 @@
   "saturday": "Sabtu",
   "everyday": "Setiap Hari",
   "transaction_receipt": "Struk Transaksi",
-  "view_receipt": "Lihat Struk"
+  "view_receipt": "Lihat Struk",
+  "all_type": "Semua Jenis"
 }

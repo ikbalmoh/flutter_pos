@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:objectbox/objectbox.dart';
@@ -118,4 +119,21 @@ class Promotion {
   String toString() {
     return toJson().toString();
   }
+}
+
+class PromotionType {
+  final int id;
+  final String name;
+
+  const PromotionType({
+    required this.id,
+    required this.name,
+  });
+
+  static List<PromotionType> filter() => [
+        PromotionType(id: 0, name: 'all_type'.tr()),
+        const PromotionType(id: 1, name: 'A get B'),
+        PromotionType(id: 2, name: 'item'.tr()),
+        PromotionType(id: 3, name: 'transaction'.tr()),
+      ];
 }

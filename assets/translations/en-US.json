@@ -215,5 +215,6 @@
   "saturday": "Saturday",
   "everyday": "Everyday",
   "transaction_receipt": "Transaction Receipt",
-  "view_receipt": "View Receipt"
+  "view_receipt": "View Receipt",
+  "all_type": "All Type"
 }

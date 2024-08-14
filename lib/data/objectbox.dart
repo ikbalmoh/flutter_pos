@@ -6,6 +6,8 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
 class ObjectBox {
   late final Store store;
 
@@ -37,13 +39,13 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
-  Stream<List<Promotion>> promotionsStream({
-    int? type,
-    double? requirementMinimumOrder,
-    bool? needCode,
-    bool? active,
-    String? search,
-  }) {
+  Stream<List<Promotion>> promotionsStream(
+      {int? type,
+      double? requirementMinimumOrder,
+      bool? needCode,
+      bool? active,
+      String? search,
+      PickerDateRange? range}) {
     final DateTime today = DateTime.now();
     Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
           Promotion_.endDate.greaterThanDate(
@@ -61,6 +63,18 @@ class ObjectBox {
                   DateTime.now(),
                 ),
               ));
+    }
+
+    if (range != null) {
+      promotionQuery = promotionQuery.and(
+        Promotion_.allTime.equals(true).or(
+              Promotion_.startDate.lessOrEqualDate(range.startDate!).and(
+                    Promotion_.endDate.greaterOrEqualDate(
+                      range.endDate!,
+                    ),
+                  ),
+            ),
+      );
     }
 
     if (needCode != null) {
