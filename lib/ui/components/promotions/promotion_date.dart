@@ -24,8 +24,8 @@ class PromotionDate extends StatelessWidget {
           color: isExpired ? Colors.red.shade50 : Colors.green.shade50,
           borderRadius: BorderRadius.circular(5)),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      margin: const EdgeInsets.only(right: 10),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             CupertinoIcons.calendar,

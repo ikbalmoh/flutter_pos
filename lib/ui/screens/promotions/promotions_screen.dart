@@ -225,9 +225,9 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                   const SizedBox(
                                     height: 3,
                                   ),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                  Wrap(
+                                    direction: Axis.horizontal,
+                                    spacing: 10,
                                     children: [
                                       promo.allTime == false
                                           ? PromotionDate(promo: promo)
