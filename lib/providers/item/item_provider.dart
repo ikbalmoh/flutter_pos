@@ -6,7 +6,7 @@ import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/item_repository.dart';
-import 'package:selleri/providers/promotion/promotion_provider.dart';
+import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 part 'item_provider.g.dart';
@@ -41,7 +41,7 @@ class ItemsStream extends _$ItemsStream {
     if (progressCallback != null) {
       progressCallback('loading_x'.tr(args: ['promotions'.tr()]));
     }
-    await ref.read(promotionStreamProvider().notifier).loadPromotions();
+    await ref.read(promotionsProvider.notifier).loadPromotions();
 
     if (refresh || objectBox.itemBox.isEmpty()) {
       for (var i = 0; i < categories.length; i++) {
@@ -108,7 +108,7 @@ class ItemsStream extends _$ItemsStream {
       }
     }
 
-    await ref.read(promotionStreamProvider().notifier).loadPromotions();
+    await ref.read(promotionsProvider.notifier).loadPromotions();
   }
 
   double getItemStock(String idItem) {

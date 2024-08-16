@@ -35,6 +35,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      useSafeArea: true,
       builder: (context) => const ConfirmStoreTransaction(),
     );
   }
@@ -49,6 +50,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         : false;
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+    bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
     var buttonPay = ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -58,21 +60,19 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         backgroundColor:
             cart.totalPayment >= cart.grandTotal ? Colors.teal : Colors.red,
       ),
-      onPressed: (cart.totalPayment >= cart.grandTotal || isPartialEnabled)
+      onPressed: ((isPartialEnabled && cart.totalPayment > 0) ||
+              cart.totalPayment >= cart.grandTotal ||
+              cart.grandTotal == 0)
           ? onConfirmStoreTransaction
           : null,
       child: Text(
           '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalCurrentPayment())}'),
     );
+
     Widget actions = Card(
       margin: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 0),
       color: Colors.white,
       elevation: 5,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25),
-        ),
-      ),
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17.5),
@@ -144,7 +144,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   child: OrderSummary(
                     cart: cart,
                     radius: const Radius.circular(10),
-                    mainAxisSize: MainAxisSize.max,
+                    mainAxisSize:
+                        isKeyboardVisible ? MainAxisSize.min : MainAxisSize.max,
                     outletState:
                         ref.watch(outletProvider).value as OutletSelected,
                   ),
@@ -236,7 +237,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       ),
                     ),
                   ),
-                  actions
+                  cart.payments.isNotEmpty ? actions : Container()
                 ],
               ),
             ),

@@ -19,6 +19,7 @@ class ItemCart with _$ItemCart {
   const factory ItemCart({
     String? identifier,
     required String idItem,
+    required String idCategory,
     required String itemName,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isPackage,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isManualPrice,

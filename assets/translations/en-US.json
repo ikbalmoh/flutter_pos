@@ -206,6 +206,8 @@
   "prev_payments": "Previous Payments",
   "and": "and",
   "promotions": "Promotions",
+  "promotions_available": "Promotions Available",
+  "promotion_list": "Promotions List",
   "sunday": "Sunday",
   "monday": "Monday",
   "tuesday": "Tuesday",
@@ -216,5 +218,8 @@
   "everyday": "Everyday",
   "transaction_receipt": "Transaction Receipt",
   "view_receipt": "View Receipt",
-  "all_type": "All Type"
+  "all_type": "All Type",
+  "can_be_combined": "Can be Combiner",
+  "cannot_be_combined": "Cannot be Combined",
+  "no_valid_promotions": "There are no valid promotion"
 }

@@ -207,6 +207,8 @@
   "prev_payments": "Pembayaran Sebelumnya",
   "and": "dan",
   "promotions": "Promosi",
+  "promotions_available": "Promosi Tersedia",
+  "promotion_list": "Daftar Promo",
   "sunday": "Minggu",
   "monday": "Senin",
   "tuesday": "Selasa",
@@ -217,5 +219,8 @@
   "everyday": "Setiap Hari",
   "transaction_receipt": "Struk Transaksi",
   "view_receipt": "Lihat Struk",
-  "all_type": "Semua Jenis"
+  "all_type": "Semua Jenis",
+  "can_be_combined": "Dapat Digabung",
+  "cannot_be_combined": "Tidak Dapat Digabung",
+  "no_valid_promotions": "Tidak ada promo yang berlaku"
 }

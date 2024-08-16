@@ -6,13 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/promotion.dart';
-import 'package:selleri/providers/promotion/promotion_provider.dart';
+import 'package:selleri/providers/promotion/promotion_list_provider.dart';
+import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/date_picker.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/promotions/promotion_date.dart';
 import 'package:selleri/ui/components/promotions/promotion_days.dart';
-import 'package:selleri/ui/components/promotions/promotion_times.dart';
+import 'package:selleri/ui/components/promotions/promotion_policy.dart';
 import 'package:selleri/ui/components/promotions/promotion_type_badge.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/promotions/promotion_type_filter.dart';
@@ -89,10 +90,11 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final promotions = ref.watch(promotionStreamProvider(
-        search: _searchController.text,
-        type: type > 0 ? type : null,
-        range: range));
+    final promotions = ref.watch(promotionListProvider(
+      search: _searchController.text,
+      type: type > 0 ? type : null,
+      range: range,
+    ));
 
     return Scaffold(
       appBar: searchVisible
@@ -193,9 +195,8 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
           ),
           Expanded(
             child: RefreshIndicator(
-                onRefresh: () => ref
-                    .read(promotionStreamProvider().notifier)
-                    .loadPromotions(),
+                onRefresh: () =>
+                    ref.read(promotionsProvider.notifier).loadPromotions(),
                 child: switch (promotions) {
                   AsyncData(:final value) => value.isNotEmpty
                       ? ListView.builder(
@@ -220,7 +221,7 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                 promo.name,
                               ),
                               subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   const SizedBox(
                                     height: 3,
@@ -228,18 +229,18 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                   Wrap(
                                     direction: Axis.horizontal,
                                     spacing: 10,
+                                    runSpacing: 3,
                                     children: [
-                                      promo.allTime == false
-                                          ? PromotionDate(promo: promo)
-                                          : Container(),
-                                      PromotionDays(promo: promo),
-                                      promo.times != null
-                                          ? PromotionTimes(promo: promo)
-                                          : Container(),
+                                      PromotionPolicy(policy: promo.policy),
+                                      PromotionDate(
+                                          allTime: promo.allTime,
+                                          startDate: promo.startDate,
+                                          endDate: promo.endDate),
+                                      PromotionDays(days: promo.days),
                                     ],
                                   ),
                                   const SizedBox(
-                                    height: 3,
+                                    height: 5,
                                   ),
                                   promo.description != null
                                       ? Text(

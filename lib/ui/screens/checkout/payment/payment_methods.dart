@@ -34,8 +34,7 @@ class PaymentMethods extends ConsumerWidget {
               (isPrevious == true
                   ? payment.createdAt != null
                   : payment.createdAt == null) &&
-              payment.paymentMethodId == method.id &&
-              payment.paymentValue > 0,
+              payment.paymentMethodId == method.id,
         );
         bool inUse = cartPayment != null;
         return Padding(

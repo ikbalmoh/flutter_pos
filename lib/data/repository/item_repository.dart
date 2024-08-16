@@ -51,9 +51,7 @@ class ItemRepository implements ItemRepositoryProtocol {
           log('LOAD CATEGORY ERROR: $json\n=> $e\n=> $stackTrace');
         }
       }
-      if (categories.isNotEmpty) {
-        objectBox.putCategories(categories);
-      }
+      objectBox.putCategories(categories);
       return categories;
     } on DioException catch (e) {
       throw Exception(e.response?.data['msg'] ?? e.message);

@@ -85,13 +85,13 @@ class Promotion {
     this.endDate,
     required this.allTime,
     required this.hourly,
-    required this.assignCustomer,
+    required this.assignCustomer, // 1 - all, 2 - member, 3 - non member, 4  - group
     required this.policy,
     required this.needCode,
     this.promoCode,
     required this.kelipatan,
     this.priority,
-    this.requirementProductType,
+    this.requirementProductType, // 1 - item, 3 - category,
     this.requirementProductId,
     this.requirementVariantId,
     this.typeName,
@@ -134,6 +134,6 @@ class PromotionType {
         PromotionType(id: 0, name: 'all_type'.tr()),
         PromotionType(id: 2, name: 'transaction'.tr()),
         PromotionType(id: 3, name: 'item'.tr()),
-        const PromotionType(id: 1, name: 'A get B'),
+        // const PromotionType(id: 1, name: 'A get B'),
       ];
 }

@@ -88,11 +88,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
       if (payment == null) {
         return;
       }
-      if (payment.paymentValue > 0) {
-        widget.onAddPayment(payment);
-      } else {
-        widget.onRemovePayment(payment.paymentMethodId);
-      }
+      widget.onAddPayment(payment);
     }
 
     TextTheme textTheme = Theme.of(context).textTheme;

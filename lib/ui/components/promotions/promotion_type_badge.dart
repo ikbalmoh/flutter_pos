@@ -31,6 +31,7 @@ class PromotionTypeBadge extends StatelessWidget {
       child: Text(
         getPromotionType(type),
         style: TextStyle(
+            fontSize: 12,
             color: type == 3
                 ? Colors.blue.shade600
                 : type == 1

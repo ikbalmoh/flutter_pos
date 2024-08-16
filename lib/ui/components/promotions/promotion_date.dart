@@ -1,23 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/utils/formater.dart';
 
 class PromotionDate extends StatelessWidget {
   const PromotionDate({
     super.key,
-    required this.promo,
+    required this.allTime,
+    required this.startDate,
+    required this.endDate,
   });
 
-  final Promotion promo;
+  final bool allTime;
+  final DateTime? startDate;
+  final DateTime? endDate;
 
   @override
   Widget build(BuildContext context) {
-    final isExpired = promo.allTime == false &&
-        !(promo.startDate!.isBefore(DateTime.now()) &&
-            promo.endDate!.isAfter(DateTime.now()));
+    final isExpired = allTime == false &&
+        !(startDate!.isBefore(DateTime.now()) &&
+            endDate!.isAfter(DateTime.now()));
 
     TextTheme textTheme = Theme.of(context).textTheme;
+
+    if (allTime) {
+      return const SizedBox(
+        width: 0,
+        height: 0,
+      );
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -35,9 +45,8 @@ class PromotionDate extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             [
-              DateTimeFormater.dateToString(promo.startDate!,
-                  format: 'dd MMM y'),
-              DateTimeFormater.dateToString(promo.endDate!, format: 'dd MMM y'),
+              DateTimeFormater.dateToString(startDate!, format: 'dd MMM y'),
+              DateTimeFormater.dateToString(endDate!, format: 'dd MMM y'),
             ].join(' - '),
             style: textTheme.bodySmall?.copyWith(
                 color: isExpired ? Colors.red.shade600 : Colors.green.shade600,

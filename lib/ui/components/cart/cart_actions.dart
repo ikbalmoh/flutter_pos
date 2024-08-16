@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/router/routes.dart';
+import 'package:selleri/ui/components/cart/promotions/cart_promotions.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
@@ -53,55 +54,61 @@ class _CartActionsState extends ConsumerState<CartActions> {
     return Card(
       color: Colors.white,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
       margin: const EdgeInsets.all(0),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 15,
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CartPromotions(),
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
                 children: [
-                  Text(
-                    'Subtotal',
-                    style: TextStyle(color: Colors.blueGrey.shade700),
-                  ),
-                  Text(
-                    CurrencyFormat.currency(widget.cart.subtotal),
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const HoldButton(),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                        ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Subtotal',
+                        style: TextStyle(color: Colors.blueGrey.shade700),
                       ),
-                      onPressed: isLoading ? null : () => onCheckout(context),
-                      child: Text('payments'.tr().toUpperCase()),
-                    ),
+                      Text(
+                        CurrencyFormat.currency(widget.cart.subtotal),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const HoldButton(),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                          ),
+                          onPressed:
+                              isLoading ? null : () => onCheckout(context),
+                          child: Text('payments'.tr().toUpperCase()),
+                        ),
+                      )
+                    ],
                   )
                 ],
-              )
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );

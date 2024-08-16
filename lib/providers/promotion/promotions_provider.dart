@@ -4,20 +4,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/promotion_repository.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:selleri/data/models/cart.dart' as model;
+import 'package:selleri/providers/cart/cart_provider.dart';
 
-part 'promotion_provider.g.dart';
+part 'promotions_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class PromotionStream extends _$PromotionStream {
+class Promotions extends _$Promotions {
   @override
-  Stream<List<Promotion>> build(
-      {String? search, int? type, PickerDateRange? range}) {
-    return objectBox.promotionsStream(
-      search: search,
-      type: type,
-      range: range,
-    );
+  List<Promotion> build() {
+    model.Cart cart = ref.watch(cartProvider);
+    log('get promotion: $cart');
+    return objectBox.transactionPromotions(cart: cart);
   }
 
   Future<List<Promotion>> loadPromotions() async {

@@ -112,7 +112,7 @@ class HomeMenu extends ConsumerWidget {
                     CupertinoIcons.tags,
                     color: Colors.blueGrey.shade500,
                   ),
-                  child: Text('promotions'.tr()),
+                  child: Text('promotion_list'.tr()),
                 ),
                 const PopupMenuDivider(),
                 MenuItemButton(

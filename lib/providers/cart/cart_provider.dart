@@ -17,7 +17,7 @@ import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
-import 'package:selleri/providers/promotion/promotion_provider.dart';
+import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -125,6 +125,7 @@ class Cart extends _$Cart {
     ItemCart itemCart = ItemCart(
       identifier: identifier,
       idItem: item.idItem,
+      idCategory: item.idCategory,
       itemName: itemName,
       price: itemPrice,
       isPackage: item.isPackage,
@@ -243,9 +244,7 @@ class Cart extends _$Cart {
     int paymentIdx = payments.indexWhere((cp) =>
         cp.createdAt == null && cp.paymentMethodId == payment.paymentMethodId);
 
-    if (payment.paymentValue <= 0) {
-      payments.removeWhere((p) => p.paymentMethodId == payment.paymentMethodId);
-    } else if (paymentIdx >= 0) {
+    if (paymentIdx >= 0) {
       // Update payment
       payments[paymentIdx] = payment;
     } else {
@@ -357,7 +356,7 @@ class Cart extends _$Cart {
     state = state.copyWith(promotions: currentPromotions);
 
     final promotion = await ref
-        .read(promotionStreamProvider().notifier)
+        .read(promotionsProvider.notifier)
         .getPromotionByOrder(requirementMinimumOrder: state.grandTotal);
     log('PROMOTION BY ORDER: $promotion');
 

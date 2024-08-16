@@ -72,10 +72,13 @@ class _ConfirmStoreTransactionState
 
     model.Cart cart = ref.watch(cartProvider);
 
+    bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+
+    double height =
+        MediaQuery.of(context).size.height * (isKeyboardVisible ? 0.95 : 0.7);
+
     return Container(
-      height: MediaQuery.of(context).size.height * 0.7 +
-          MediaQuery.of(context).viewInsets.bottom +
-          15,
+      height: height,
       padding: EdgeInsets.only(
         top: 10,
         left: 15,
@@ -110,11 +113,9 @@ class _ConfirmStoreTransactionState
               ],
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
           Expanded(
               child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               children: [
                 cart.totalPayment < cart.grandTotal
@@ -303,20 +304,19 @@ class _ConfirmStoreTransactionState
               ],
             ),
           )),
-          const SizedBox(
-            height: 25,
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(30),
-                ),
-              ),
-            ),
-            onPressed: onSubmit,
-            child: Text('finish'.tr()),
-          )
+          isKeyboardVisible
+              ? Container()
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                    ),
+                  ),
+                  onPressed: onSubmit,
+                  child: Text('finish'.tr()),
+                )
         ],
       ),
     );

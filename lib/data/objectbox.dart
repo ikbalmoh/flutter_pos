@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_package.dart';
@@ -39,6 +41,66 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
+  List<Promotion> transactionPromotions({required Cart cart}) {
+    Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
+
+    promotionQuery = promotionQuery.and(Promotion_.days.isNull().or(
+        Promotion_.days.containsElement(
+            DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
+
+    // Filter promo by current date
+    promotionQuery = promotionQuery.and(Promotion_.allTime.equals(true).or(
+        Promotion_.startDate
+            .lessOrEqualDate(DateTime.now())
+            .and(Promotion_.endDate.greaterOrEqualDate(DateTime.now()))));
+
+    // Disable promo A get B
+    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
+
+    Condition<Promotion> promotionTermsQuery = Promotion_.type
+        .equals(2)
+        .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.total));
+
+    // Filter promotions by product
+    if (cart.items.isNotEmpty) {
+      Condition<Promotion> requirementProductIds =
+          Promotion_.requirementProductId.containsElement(cart.items[0].idItem);
+
+      Condition<Promotion> requirementCategoryIds = Promotion_
+          .requirementProductId
+          .containsElement(cart.items[0].idCategory);
+
+      for (var i = 1; i < cart.items.length; i++) {
+        requirementProductIds = requirementProductIds.or(Promotion_
+            .requirementProductId
+            .containsElement(cart.items[i].idItem));
+        requirementCategoryIds = requirementCategoryIds.or(Promotion_
+            .requirementProductId
+            .containsElement(cart.items[i].idCategory));
+      }
+
+      Condition<Promotion> requirementProductQuery = Promotion_
+          .requirementProductType
+          .equals(1)
+          .and(requirementProductIds)
+          .or(Promotion_.requirementProductType
+              .equals(3)
+              .and(requirementCategoryIds));
+
+      promotionTermsQuery = promotionTermsQuery
+          .or(Promotion_.type.equals(3).and(requirementProductQuery));
+    }
+
+    promotionQuery = promotionQuery.and(promotionTermsQuery);
+
+    QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
+      ..order(Promotion_.priority)
+      ..order(Promotion_.rewardMaximumAmount)
+      ..order(Promotion_.allTime);
+
+    return builder.build().find();
+  }
+
   Stream<List<Promotion>> promotionsStream(
       {int? type,
       double? requirementMinimumOrder,
@@ -53,7 +115,7 @@ class ObjectBox {
               const Duration(days: 30),
             ),
           ),
-        ));
+        )).and(Promotion_.type.notEquals(1));
 
     if (active == true) {
       promotionQuery = Promotion_.allTime
