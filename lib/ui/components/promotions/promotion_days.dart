@@ -19,12 +19,13 @@ class PromotionDays extends StatelessWidget {
           borderRadius: BorderRadius.circular(5)),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       child: Text(
-        days != null && days!.length < 7
-            ? days!.map((day) => day.tr()).join(', ')
-            : 'everyday'.tr(),
+        days == null || days!.length == 7
+            ? 'everyday'.tr()
+            : days!.map((day) => day.tr()).join(', '),
         style: textTheme.bodySmall?.copyWith(
             color: Colors.blueGrey.shade600, fontWeight: FontWeight.w600),
       ),
     );
   }
 }
+ 

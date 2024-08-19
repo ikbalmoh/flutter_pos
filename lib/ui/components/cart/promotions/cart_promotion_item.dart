@@ -48,12 +48,12 @@ class CartPromotionItem extends StatelessWidget {
                       runSpacing: 5,
                       children: [
                         PromotionPolicy(policy: promo.policy),
+                        PromotionDays(days: promo.days),
                         PromotionDate(
                           allTime: promo.allTime,
                           startDate: promo.startDate,
                           endDate: promo.endDate,
                         ),
-                        PromotionDays(days: promo.days),
                       ],
                     ),
                     const SizedBox(height: 5),

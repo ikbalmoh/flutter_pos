@@ -60,7 +60,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         backgroundColor:
             cart.totalPayment >= cart.grandTotal ? Colors.teal : Colors.red,
       ),
-      onPressed: ((isPartialEnabled && cart.totalPayment > 0) ||
+      onPressed: ((isPartialEnabled && cart.payments.isNotEmpty) ||
               cart.totalPayment >= cart.grandTotal ||
               cart.grandTotal == 0)
           ? onConfirmStoreTransaction

@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/promotion.dart';
@@ -63,22 +64,21 @@ class ObjectBox {
 
     // Filter promotions by product
     if (cart.items.isNotEmpty) {
+      List<ItemCart> items = List<ItemCart>.from(cart.items.toList());
+
       Condition<Promotion> requirementProductIds =
-          Promotion_.requirementProductId.containsElement(cart.items[0].idItem);
+          Promotion_.requirementProductId.containsElement(items[0].idItem);
 
-      Condition<Promotion> requirementCategoryIds = Promotion_
-          .requirementProductId
-          .containsElement(cart.items[0].idCategory);
+      Condition<Promotion> requirementCategoryIds =
+          Promotion_.requirementProductId.containsElement(items[0].idCategory);
 
-      for (var i = 1; i < cart.items.length; i++) {
-        requirementProductIds = requirementProductIds.or(Promotion_
-            .requirementProductId
-            .containsElement(cart.items[i].idItem));
+      for (var i = 1; i < items.length; i++) {
+        requirementProductIds = requirementProductIds.or(
+            Promotion_.requirementProductId.containsElement(items[i].idItem));
         requirementCategoryIds = requirementCategoryIds.or(Promotion_
             .requirementProductId
             .containsElement(cart.items[i].idCategory));
       }
-
       Condition<Promotion> requirementProductQuery = Promotion_
           .requirementProductType
           .equals(1)
@@ -86,6 +86,25 @@ class ObjectBox {
           .or(Promotion_.requirementProductType
               .equals(3)
               .and(requirementCategoryIds));
+
+      List<ItemCart> packageItems = List<ItemCart>.from(
+          cart.items.where((item) => item.isPackage).toList());
+
+      if (packageItems.isNotEmpty) {
+        Condition<Promotion> requirementPackageIds = Promotion_
+            .requirementProductId
+            .containsElement(cart.items[0].idItem);
+        for (var i = 1; i < packageItems.length; i++) {
+          requirementPackageIds = requirementPackageIds.or(Promotion_
+              .requirementProductId
+              .containsElement(packageItems[i].idItem));
+        }
+
+        requirementProductQuery = requirementProductQuery.or(Promotion_
+            .requirementProductType
+            .equals(2)
+            .and(requirementPackageIds));
+      }
 
       promotionTermsQuery = promotionTermsQuery
           .or(Promotion_.type.equals(3).and(requirementProductQuery));
@@ -118,13 +137,15 @@ class ObjectBox {
         )).and(Promotion_.type.notEquals(1));
 
     if (active == true) {
-      promotionQuery = Promotion_.allTime
+      promotionQuery = (Promotion_.allTime
           .equals(true)
           .or(Promotion_.startDate.lessOrEqualDate(DateTime.now()).and(
                 Promotion_.endDate.greaterOrEqualDate(
                   DateTime.now(),
                 ),
-              ));
+              ))).and(Promotion_.days.isNull().or(Promotion_.days
+          .containsElement(
+              DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
     }
 
     if (range != null) {
