@@ -105,7 +105,6 @@ class ObjectBox {
             .and(
                 Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity)));
       }
-
       Condition<Promotion> requirementProductQuery = Promotion_
           .requirementProductType
           .equals(1)
