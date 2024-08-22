@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
+import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -181,9 +183,20 @@ class Cart extends _$Cart {
         state.items.indexWhere((i) => i.identifier == item.identifier);
     if (index > -1) {
       List<ItemCart> items = [...state.items];
-      double finalPrice = item.price - item.discountTotal;
+      double discount = item.discount;
+      double discountTotal = item.discountTotal;
+      if (item.promotion != null) {
+        discount = 0;
+        discountTotal = 0;
+      }
+      double finalPrice = item.price - discountTotal;
       double total = item.quantity * finalPrice;
-      items[index] = item.copyWith(total: total);
+      items[index] = item.copyWith(
+        total: total,
+        discount: discount,
+        discountTotal: discountTotal,
+        promotion: null,
+      );
       state = state.copyWith(items: items);
       calculateCart();
     }
@@ -191,8 +204,13 @@ class Cart extends _$Cart {
 
   Future<bool> removeItem(String identifier) async {
     List<ItemCart> items = [...state.items];
+    List<CartPromotion> promotions = [...state.promotions];
+    ItemCart item = items.firstWhere((item) => item.identifier == identifier);
     items.removeWhere((i) => i.identifier == identifier);
-    state = state.copyWith(items: items);
+    promotions.removeWhere(
+      (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
+    );
+    state = state.copyWith(items: items, promotions: promotions);
     calculateCart();
     return true;
   }
@@ -348,19 +366,28 @@ class Cart extends _$Cart {
   }
 
   Future<void> checkPromotionByOrder() async {
-    List<CartPromotion> currentPromotions =
-        List<CartPromotion>.from(state.promotions)
-            .where((promo) => promo.type != 2)
-            .toList();
-
-    state = state.copyWith(promotions: currentPromotions);
+    if (state.promotions.isNotEmpty) {
+      return;
+    }
 
     final promotion = await ref
         .read(promotionsProvider.notifier)
         .getPromotionByOrder(requirementMinimumOrder: state.grandTotal);
-    log('PROMOTION BY ORDER: $promotion');
 
     if (promotion != null) {
+      bool isPromotionAdded = state.promotions
+          .where((p) => p.promotionId == promotion.idPromotion)
+          .isNotEmpty;
+
+      if (isPromotionAdded) {
+        return;
+      }
+
+      List<CartPromotion> currentPromotions =
+          List<CartPromotion>.from(state.promotions)
+              .where((promo) => promo.type != 2)
+              .toList();
+
       double discountValue = promotion.discountType == true
           ? state.grandTotal * (promotion.rewardNominal / 100)
           : promotion.rewardNominal;
@@ -385,24 +412,144 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
+  void applyPromotions(List<Promotion> promotions) {
+    log('APPLY PROMOTIONS: $promotions');
+    List<ItemCart> items = List<ItemCart>.from(state.items)
+        .map((item) => item.promotion == null
+            ? item
+            : item.copyWith(
+                promotion: null,
+                discountTotal: 0,
+                discount: 0,
+                total: item.price * item.quantity,
+              ))
+        .toList();
+    List<CartPromotion> cartPromotions = [];
+    for (var i = 0; i < promotions.length; i++) {
+      Promotion promo = promotions[i];
+
+      CartPromotion cartPromo = CartPromotion.fromData(promo);
+
+      if (promo.type == 3) {
+        // PROMO BY PRODUCT
+        List<ItemCart> eligibleItems = [];
+
+        if (promo.requirementProductType == 1) {
+          // require product id
+          eligibleItems = items
+              .where((item) =>
+                  (item.idVariant != null &&
+                          promo.requirementVariantId.isNotEmpty
+                      ? promo.requirementVariantId
+                          .contains(item.idVariant.toString())
+                      : promo.requirementProductId.contains(item.idItem)) &&
+                  item.quantity >= promo.requirementQuantity!.toInt())
+              .toList();
+        } else if (promo.requirementProductType == 2) {
+          // require package id
+          eligibleItems = items
+              .where((item) =>
+                  promo.requirementProductId.contains(item.idItem) &&
+                  item.quantity >= promo.requirementQuantity!.toInt())
+              .toList();
+        } else if (promo.requirementProductType == 3) {
+          // require category id
+          eligibleItems = items
+              .where((item) =>
+                  promo.requirementProductId.contains(item.idCategory) &&
+                  item.quantity >= promo.requirementQuantity!.toInt())
+              .toList();
+        }
+
+        if (eligibleItems.isEmpty) {
+          continue;
+        }
+
+        for (ItemCart itemCart in eligibleItems) {
+          int itemIdx = items.indexWhere(
+            (item) => item.identifier == itemCart.identifier,
+          );
+          double discountTotal = cartPromo.discountIsPercent
+              ? itemCart.price * (promo.rewardNominal / 100)
+              : promo.rewardNominal;
+
+          cartPromo = cartPromo.copyWith(
+            discountValue: discountTotal,
+            idItem: itemCart.idItem,
+            variantId: itemCart.idVariant,
+          );
+
+          double finalPrice = itemCart.price - discountTotal;
+
+          itemCart = itemCart.copyWith(
+            discountIsPercent: cartPromo.discountIsPercent,
+            discountTotal: discountTotal,
+            discount: promo.rewardNominal,
+            total: finalPrice * itemCart.quantity,
+            promotion: cartPromo,
+          );
+
+          log('ITEM GET PROMO: $itemCart');
+
+          cartPromotions.add(cartPromo);
+          items[itemIdx] = itemCart;
+        }
+      } else if (promo.type == 2) {
+        // PROMO BY TRANSACTION
+        double discountValue = cartPromo.discountIsPercent
+            ? state.total * (promo.rewardNominal / 100)
+            : promo.rewardNominal;
+
+        cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
+      }
+    }
+    state = state.copyWith(items: items, promotions: cartPromotions);
+    calculateCart();
+  }
+
+  List<CartPromotion> activePromotion() {
+    List<CartPromotion> promotions = [];
+    for (var promo in state.promotions) {
+      int index =
+          promotions.indexWhere((p) => p.promotionId == promo.promotionId);
+      if (index < 0) {
+        promotions.add(promo);
+      } else {
+        promotions[index] = promotions[index].copyWith(
+            discountValue:
+                promotions[index].discountValue + promo.discountValue);
+      }
+    }
+    return promotions;
+  }
+
   void calculateCart() {
+    List<String> activePromoByProductIds = state.items
+        .where((item) => item.promotion != null)
+        .map((item) => item.promotion!.promotionId)
+        .toList();
+
+    List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
+        .where((p) =>
+            p.type == 2 || activePromoByProductIds.contains(p.promotionId))
+        .toList();
+
     double? subtotal = state.items.isNotEmpty
         ? state.items
             .map((i) => i.total)
             .reduce((value, total) => value + total)
         : 0;
     double discOverallTotal = 0;
-    if (subtotal != 0 && state.discOverall > 0) {
+
+    final promotionByOrder = promotions.firstWhereOrNull((p) => p.type == 2);
+    double discPromotionsTotal =
+        promotionByOrder != null ? promotionByOrder.discountValue : 0;
+
+    if (subtotal != 0 && state.discOverall > 0 && discPromotionsTotal == 0) {
       discOverallTotal = state.discIsPercent
           ? subtotal * (state.discOverall / 100)
           : state.discOverall;
     }
-
-    final promotionByOrder = state.promotions.where((p) => p.type == 2);
-
-    double discPromotionsTotal = promotionByOrder.isNotEmpty
-        ? promotionByOrder.map((p) => p.discountValue).reduce((a, b) => a + b)
-        : 0;
 
     double total = subtotal - discOverallTotal - discPromotionsTotal;
     double grandTotal = total;
@@ -431,6 +578,7 @@ class Cart extends _$Cart {
       discPromotionsTotal: discPromotionsTotal,
       change: change,
       transactionDate: DateTime.now().millisecondsSinceEpoch,
+      promotions: promotions,
     );
   }
 }

@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/ui/components/cart/promotions/cart_promotions_list.dart';
 
@@ -17,24 +16,35 @@ class CartPromotions extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final List<Promotion> promotions = ref.watch(promotionsProvider);
 
-    void onViewPromotions() {
-      log('promotions: ${promotions.map((promo) => promo.name)}');
-      showModalBottomSheet(
+    void onViewPromotions() async {
+      List<Promotion>? promotions = await showModalBottomSheet(
           backgroundColor: Colors.white,
           isScrollControlled: true,
           context: context,
           builder: (context) {
             return const CartPromotionsList();
           });
+
+      if (promotions != null) {
+        ref.read(cartProvider.notifier).applyPromotions(promotions);
+      }
     }
 
+    int promotionsApplied =
+        ref.watch(cartProvider.notifier).activePromotion().length;
+
     return Material(
-      color: promotions.isEmpty ? Colors.grey.shade50 : Colors.green.shade50,
+      color: promotions.isEmpty
+          ? Colors.grey.shade50
+          : promotionsApplied > 0
+              ? Colors.green.shade50
+              : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
         side: BorderSide(
-            color:
-                promotions.isEmpty ? Colors.transparent : Colors.green.shade600,
+            color: promotionsApplied > 0
+                ? Colors.green.shade600
+                : Colors.transparent,
             width: 1),
       ),
       child: InkWell(
@@ -66,7 +76,9 @@ class CartPromotions extends ConsumerWidget {
                     Text(
                       promotions.isEmpty
                           ? 'no_valid_promotions'.tr()
-                          : '${promotions.length} ${'promotions_available'.tr()}',
+                          : promotionsApplied > 0
+                              ? '$promotionsApplied ${'promotions_appiled'.tr()}'
+                              : '${promotions.length} ${'promotions_available'.tr()}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: promotions.isEmpty
                               ? Colors.grey.shade600

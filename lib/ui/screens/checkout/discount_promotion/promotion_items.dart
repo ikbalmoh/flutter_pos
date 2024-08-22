@@ -10,7 +10,7 @@ class PromotionItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<CartPromotion> promotions = ref.watch(cartProvider).promotions;
+    final List<CartPromotion> promotions = ref.watch(cartProvider.notifier).activePromotion();
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return ListView.builder(

@@ -66,19 +66,33 @@ class ObjectBox {
     if (cart.items.isNotEmpty) {
       List<ItemCart> items = List<ItemCart>.from(cart.items.toList());
 
-      Condition<Promotion> requirementProductIds =
-          Promotion_.requirementProductId.containsElement(items[0].idItem);
+      Condition<Promotion> requirementProductIds = (Promotion_
+          .requirementProductId
+          .containsElement(items[0].idItem)
+          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity)));
 
-      Condition<Promotion> requirementCategoryIds =
-          Promotion_.requirementProductId.containsElement(items[0].idCategory);
+      Condition<Promotion> requirementCategoryIds = (Promotion_
+          .requirementProductId
+          .containsElement(items[0].idCategory ?? '')
+          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity)));
 
       for (var i = 1; i < items.length; i++) {
-        requirementProductIds = requirementProductIds.or(
-            Promotion_.requirementProductId.containsElement(items[i].idItem));
-        requirementCategoryIds = requirementCategoryIds.or(Promotion_
-            .requirementProductId
-            .containsElement(cart.items[i].idCategory));
+        ItemCart itemCart = items[i];
+        requirementProductIds = requirementProductIds.or((itemCart.idVariant !=
+                    null
+                ? Promotion_.requirementVariantId
+                    .containsElement(itemCart.idVariant!.toString())
+                : Promotion_.requirementProductId
+                    .containsElement(itemCart.idItem))
+            .and(
+                Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity)));
+        requirementCategoryIds = requirementCategoryIds.or((Promotion_
+                .requirementProductId
+                .containsElement(itemCart.idCategory ?? ''))
+            .and(
+                Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity)));
       }
+
       Condition<Promotion> requirementProductQuery = Promotion_
           .requirementProductType
           .equals(1)
@@ -180,6 +194,7 @@ class ObjectBox {
     }
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
+      ..order(Promotion_.needCode, flags: Order.descending)
       ..order(Promotion_.status, flags: Order.descending)
       ..order(Promotion_.allTime)
       ..order(Promotion_.priority)

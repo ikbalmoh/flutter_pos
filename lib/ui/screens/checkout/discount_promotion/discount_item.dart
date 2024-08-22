@@ -31,57 +31,62 @@ class DiscountItem extends ConsumerWidget {
         ? (outletState.config.discountOverall ?? false)
         : false;
 
-    return Material(
-      color: Colors.white,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(30))),
-      child: InkWell(
-        onTap: isDiscountOverallEnabled ? showDiscountOverall : null,
-        splashColor: Colors.blueGrey.shade50,
-        highlightColor: Colors.blueGrey.shade100,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                Icons.percent,
-                size: 14,
-                color: Colors.red.shade700,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                'discount_transaction'.tr(),
-                style:
-                    textTheme.bodyMedium?.copyWith(color: Colors.grey.shade800),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Text(
-                  CurrencyFormat.currency(
-                    ref.watch(cartProvider).discOverallTotal,
-                    minus: true,
-                  ),
-                  textAlign: TextAlign.right,
-                  style: textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600, color: Colors.red.shade600),
+    return ref.watch(cartProvider).promotions.indexWhere((p) => p.type == 2) >=
+            0
+        ? Container()
+        : Material(
+            color: Colors.white,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            child: InkWell(
+              onTap: isDiscountOverallEnabled ? showDiscountOverall : null,
+              splashColor: Colors.blueGrey.shade50,
+              highlightColor: Colors.blueGrey.shade100,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(
+                      Icons.percent,
+                      size: 14,
+                      color: Colors.red.shade700,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'discount_transaction'.tr(),
+                      style: textTheme.bodyMedium
+                          ?.copyWith(color: Colors.grey.shade800),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Text(
+                        CurrencyFormat.currency(
+                          ref.watch(cartProvider).discOverallTotal,
+                          minus: true,
+                        ),
+                        textAlign: TextAlign.right,
+                        style: textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red.shade600),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.blueGrey.shade300,
+                    )
+                  ],
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.blueGrey.shade300,
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }

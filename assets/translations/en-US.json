@@ -20,7 +20,7 @@
   "order_summary": "Order Summary",
   "discount": "Discount",
   "discount&promotion": "Discount & Promotions",
-  "discount_transaction": "Discount Transaction",
+  "discount_transaction": "Transaction Discount",
   "add_promotion_code": "Add Promotion Code",
   "payments": "Payments",
   "logout_confirmation": "are you sure want to logout?",
@@ -221,5 +221,8 @@
   "all_type": "All Type",
   "can_be_combined": "Can be Combiner",
   "cannot_be_combined": "Cannot be Combined",
-  "no_valid_promotions": "There are no valid promotion"
+  "no_valid_promotions": "There are no valid promotion",
+  "discount_item": "Item Discount",
+  "discount_free_gift": "Buy Product Free Gift",
+  "promotions_appiled": "Promotions Applied"
 }

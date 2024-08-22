@@ -222,5 +222,8 @@
   "all_type": "Semua Jenis",
   "can_be_combined": "Dapat Digabung",
   "cannot_be_combined": "Tidak Dapat Digabung",
-  "no_valid_promotions": "Tidak ada promo yang berlaku"
+  "no_valid_promotions": "Tidak ada promo yang berlaku",
+  "discount_item": "Diskon Produk",
+  "discount_free_gift": "Beli Produk Dapat Gratis",
+  "promotions_appiled": "Promo Digunakan"
 }

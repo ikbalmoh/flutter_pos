@@ -52,8 +52,8 @@ class Promotion {
   bool kelipatan;
   int? priority;
   int? requirementProductType;
-  List<String>? requirementProductId;
-  List<int>? requirementVariantId;
+  List<String> requirementProductId;
+  List<String> requirementVariantId;
   String? typeName;
   List<String>? days;
   String? description;
@@ -92,8 +92,8 @@ class Promotion {
     required this.kelipatan,
     this.priority,
     this.requirementProductType, // 1 - item, 3 - category,
-    this.requirementProductId,
-    this.requirementVariantId,
+    required this.requirementProductId,
+    required this.requirementVariantId,
     this.typeName,
     this.days,
     this.description,
@@ -110,6 +110,10 @@ class Promotion {
     Promotion? existPromotion = objectBox.getPromotion(idPromotion);
     json['id_promotion'] = idPromotion;
     json['id'] = existPromotion?.id ?? 0;
+    json['requirement_variant_id'] = json['requirement_variant_id'] != null
+        ? List.from(json['requirement_variant_id'])
+            .map((id) => id.toString()).toList()
+        : [];
     return _$PromotionFromJson(json);
   }
 

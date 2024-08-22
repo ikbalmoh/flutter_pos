@@ -32,6 +32,22 @@ class Converters {
     return value;
   }
 
+  static int? dynamicToInt(dynamic value) {
+    if (value == null) {
+      return null;
+    } else if (value is String) {
+      return null;
+    }
+    return value;
+  }
+
+  static String? dynamicToString(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    return value?.toString();
+  }
+
   static Map<String, dynamic> stringToMap(String value) {
     final data = json.decode(value);
     return data;

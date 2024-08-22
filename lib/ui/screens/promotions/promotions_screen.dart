@@ -223,25 +223,6 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  const SizedBox(
-                                    height: 3,
-                                  ),
-                                  Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 10,
-                                    runSpacing: 3,
-                                    children: [
-                                      PromotionPolicy(policy: promo.policy),
-                                      PromotionDate(
-                                          allTime: promo.allTime,
-                                          startDate: promo.startDate,
-                                          endDate: promo.endDate),
-                                      PromotionDays(days: promo.days),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
                                   promo.description != null
                                       ? Text(
                                           promo.description!,
@@ -251,7 +232,23 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                               ?.copyWith(
                                                   color: Colors.grey.shade600),
                                         )
-                                      : Container()
+                                      : Container(),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Wrap(
+                                    direction: Axis.horizontal,
+                                    spacing: 10,
+                                    runSpacing: 3,
+                                    children: [
+                                      PromotionPolicy(policy: promo.policy),
+                                      PromotionDays(days: promo.days),
+                                      PromotionDate(
+                                          allTime: promo.allTime,
+                                          startDate: promo.startDate,
+                                          endDate: promo.endDate),
+                                    ],
+                                  ),
                                 ],
                               ),
                               trailing: Column(

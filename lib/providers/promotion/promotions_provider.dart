@@ -14,7 +14,6 @@ class Promotions extends _$Promotions {
   @override
   List<Promotion> build() {
     model.Cart cart = ref.watch(cartProvider);
-    log('get promotion: $cart');
     return objectBox.transactionPromotions(cart: cart);
   }
 

@@ -25,13 +25,15 @@ class DiscountPromotion extends StatelessWidget {
             height: 1,
             color: Colors.blueGrey.shade50,
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: const Column(
+          const ClipRRect(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20)),
+            child: Column(
               children: [
                 DiscountItem(),
+                PromotionItems(),
                 // PromotionCodeItem(),
-                PromotionItems()
               ],
             ),
           )

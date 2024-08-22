@@ -282,7 +282,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      enabled: widget.item.manualDiscount,
+                      enabled: widget.item.manualDiscount &&
+                          widget.item.promotion == null,
                       contentPadding:
                           const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -299,7 +300,9 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                         padding: const EdgeInsets.only(left: 8.0),
                         child: DiscountTypeToggle(
                           isPercent: discountIsPercent,
-                          onChange: onChangeDiscountType,
+                          onChange: widget.item.promotion == null
+                              ? onChangeDiscountType
+                              : null,
                         ),
                       ),
                     ),

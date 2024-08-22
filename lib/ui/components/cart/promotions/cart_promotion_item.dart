@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/ui/components/promotions/promotion_date.dart';
-import 'package:selleri/ui/components/promotions/promotion_days.dart';
 import 'package:selleri/ui/components/promotions/promotion_policy.dart';
 import 'package:selleri/ui/components/promotions/promotion_type_badge.dart';
 
@@ -9,52 +8,52 @@ class CartPromotionItem extends StatelessWidget {
   const CartPromotionItem({
     super.key,
     required this.promo,
+    required this.onSelect,
+    required this.active,
+    this.disabled,
   });
 
   final Promotion promo;
+  final bool active;
+  final bool? disabled;
+  final Function(Promotion) onSelect;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: disabled == true
+          ? Colors.grey.shade200
+          : active
+              ? Colors.green.shade50
+              : Colors.white,
       child: InkWell(
         borderRadius: BorderRadius.circular(5),
         splashColor: Colors.green.shade50,
-        onTap: () {},
+        onTap: disabled == true ? null : () => onSelect(promo),
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300, width: 1),
+              border: Border.all(
+                  color:
+                      active ? Colors.green.shade200 : Colors.blueGrey.shade200,
+                  width: 1),
               borderRadius: BorderRadius.circular(5)),
-          padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12.5, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    PromotionTypeBadge(type: promo.type),
+                    const SizedBox(height: 5),
                     Text(
                       promo.name,
                       style: Theme.of(context)
                           .textTheme
                           .titleSmall
                           ?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 3),
-                    Wrap(
-                      direction: Axis.horizontal,
-                      spacing: 10,
-                      runSpacing: 5,
-                      children: [
-                        PromotionPolicy(policy: promo.policy),
-                        PromotionDays(days: promo.days),
-                        PromotionDate(
-                          allTime: promo.allTime,
-                          startDate: promo.startDate,
-                          endDate: promo.endDate,
-                        ),
-                      ],
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -65,8 +64,25 @@ class CartPromotionItem extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
-              PromotionTypeBadge(type: promo.type)
+              Container(
+                width: double.infinity,
+                color: Colors.blueGrey.shade50.withOpacity(0.5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 10,
+                  runSpacing: 5,
+                  children: [
+                    PromotionPolicy(policy: promo.policy),
+                    PromotionDate(
+                      allTime: promo.allTime,
+                      startDate: promo.startDate,
+                      endDate: promo.endDate,
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),

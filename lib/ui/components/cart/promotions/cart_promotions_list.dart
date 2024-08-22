@@ -1,15 +1,58 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/ui/components/cart/promotions/cart_promotion_item.dart';
 
-class CartPromotionsList extends ConsumerWidget {
+class CartPromotionsList extends ConsumerStatefulWidget {
   const CartPromotionsList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CartPromotionsList> createState() => _CartPromotionsListState();
+}
+
+class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
+  List<Promotion> selected = [];
+
+  @override
+  void initState() {
+    List<String> ids = ref
+        .read(cartProvider)
+        .promotions
+        .map((promo) => promo.promotionId)
+        .toList();
+
+    setState(() {
+      selected = ref
+          .read(promotionsProvider)
+          .where((promo) => ids.contains(promo.idPromotion))
+          .toList();
+    });
+    super.initState();
+  }
+
+  void onSelect(Promotion promo) {
+    final int idx = selected.indexWhere((p) => p.id == promo.id);
+    if (idx >= 0) {
+      setState(() {
+        selected = selected..removeAt(idx);
+      });
+    } else {
+      setState(() {
+        selected = selected..add(promo);
+      });
+    }
+  }
+
+  bool hasCannotCombinedPromo(int exceptId) {
+    return selected.indexWhere((p) => !p.policy && p.id != exceptId) >= 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     List<Promotion> promotions = ref.watch(promotionsProvider);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -39,18 +82,55 @@ class CartPromotionsList extends ConsumerWidget {
             ),
           ),
           Expanded(
-              child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 7.5),
-            shrinkWrap: true,
-            itemBuilder: (context, idx) {
-              Promotion promo = promotions[idx];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 7.5),
-                child: CartPromotionItem(promo: promo),
-              );
-            },
-            itemCount: promotions.length,
-          ))
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 7.5),
+              shrinkWrap: true,
+              itemBuilder: (context, idx) {
+                Promotion promo = promotions[idx];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 7.5),
+                  child: CartPromotionItem(
+                    promo: promo,
+                    onSelect: onSelect,
+                    active: selected.map((p) => p.id).contains(promo.id),
+                    disabled:
+                        (selected.where((p) => p.id != promo.id).isNotEmpty &&
+                                !promo.policy) ||
+                            hasCannotCombinedPromo(promo.id),
+                  ),
+                );
+              },
+              itemCount: promotions.length,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+            child: Row(
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey.shade700,
+                  ),
+                  onPressed: () => context.pop(),
+                  child: Text(
+                    'cancel'.tr(),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                      ),
+                    ),
+                    onPressed: () => context.pop(selected),
+                    child: Text('apply'.tr()),
+                  ),
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

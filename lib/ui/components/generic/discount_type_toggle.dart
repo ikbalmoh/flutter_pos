@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 class DiscountTypeToggle extends StatefulWidget {
   final bool isPercent;
-  final Function onChange;
-  const DiscountTypeToggle(
-      {super.key, required this.isPercent, required this.onChange});
+  final Function? onChange;
+  const DiscountTypeToggle({
+    super.key,
+    required this.isPercent,
+    this.onChange,
+  });
 
   @override
   State<DiscountTypeToggle> createState() => _DiscountTypeToggleState();
@@ -14,7 +17,7 @@ class _DiscountTypeToggleState extends State<DiscountTypeToggle> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => widget.onChange(),
+      onTap: widget.onChange == null ? null : () => widget.onChange!(),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
