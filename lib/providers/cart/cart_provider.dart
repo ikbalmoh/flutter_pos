@@ -474,7 +474,7 @@ class Cart extends _$Cart {
               : promo.rewardNominal;
 
           cartPromo = cartPromo.copyWith(
-            discountValue: discountTotal,
+            discountValue: discountTotal * itemCart.quantity,
             idItem: itemCart.idItem,
             variantId: itemCart.idVariant,
           );
