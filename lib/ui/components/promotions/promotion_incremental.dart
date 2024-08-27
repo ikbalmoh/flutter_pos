@@ -17,7 +17,7 @@ class PromotionIncremental extends StatelessWidget {
           borderRadius: BorderRadius.circular(3),
           color: incremental ? Colors.amber.shade50 : Colors.blueGrey.shade50),
       child: Text(
-        incremental ? 'incremental'.tr() : 'flat'.tr(),
+        incremental ? 'incremental'.tr() : 'flat_rate'.tr(),
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color:
                 incremental ? Colors.amber.shade700 : Colors.blueGrey.shade700),

@@ -61,7 +61,7 @@ class ObjectBox {
             .or(Promotion_.endDate.equalsDate(today))));
 
     // Disable promo A get B
-    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
+    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1)).and(Promotion_.needCode.equals(false));
 
     Condition<Promotion> promotionTermsQuery = Promotion_.type
         .equals(2)
@@ -132,6 +132,7 @@ class ObjectBox {
     promotionQuery = promotionQuery.and(promotionTermsQuery);
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
+      ..order(Promotion_.needCode)
       ..order(Promotion_.priority)
       ..order(Promotion_.rewardMaximumAmount)
       ..order(Promotion_.allTime);
@@ -152,7 +153,7 @@ class ObjectBox {
           Promotion_.endDate.greaterThanDate(
             today.subtract(const Duration(days: 30)),
           ),
-        )).and(Promotion_.type.notEquals(1));
+        )).and(Promotion_.type.notEquals(1)).and(Promotion_.needCode.equals(false));
 
     if (active == true) {
       promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
@@ -195,7 +196,7 @@ class ObjectBox {
     }
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
-      ..order(Promotion_.needCode, flags: Order.descending)
+      ..order(Promotion_.needCode)
       ..order(Promotion_.status, flags: Order.descending)
       ..order(Promotion_.allTime)
       ..order(Promotion_.priority)

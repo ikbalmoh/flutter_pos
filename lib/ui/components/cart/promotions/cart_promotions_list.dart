@@ -93,10 +93,10 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                     promo: promo,
                     onSelect: onSelect,
                     active: selected.map((p) => p.id).contains(promo.id),
-                    disabled:
+                    disabled: promo.needCode ||
                         (selected.where((p) => p.id != promo.id).isNotEmpty &&
-                                !promo.policy) ||
-                            hasCannotCombinedPromo(promo.id),
+                            !promo.policy) ||
+                        hasCannotCombinedPromo(promo.id),
                   ),
                 );
               },

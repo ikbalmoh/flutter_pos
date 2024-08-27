@@ -473,27 +473,34 @@ class Cart extends _$Cart {
               ? itemCart.price * (promo.rewardNominal / 100)
               : promo.rewardNominal;
 
+          int requirementQty = cartPromo.requirementQuantity!;
+          int eligibleQty = cartPromo.kelipatan == true
+              ? (itemCart.quantity ~/ requirementQty) * requirementQty
+              : requirementQty;
+
+          double finalDiscountTotal = discountTotal * eligibleQty;
+
           cartPromo = cartPromo.copyWith(
-            discountValue: discountTotal * itemCart.quantity,
+            discountValue: finalDiscountTotal,
             idItem: itemCart.idItem,
             variantId: itemCart.idVariant,
           );
 
-          double finalPrice = itemCart.price - discountTotal;
+          double finalPrice = itemCart.price * itemCart.quantity;
 
           itemCart = itemCart.copyWith(
             discountIsPercent: cartPromo.discountIsPercent,
-            discountTotal: discountTotal,
+            discountTotal: finalDiscountTotal,
             discount: promo.rewardNominal,
-            total: finalPrice * itemCart.quantity,
+            total: finalPrice - finalDiscountTotal,
             promotion: cartPromo,
           );
 
-          log('ITEM GET PROMO: $itemCart');
+          log('ITEM GET PROMO: $eligibleQty \n $itemCart');
 
           cartPromotions.add(cartPromo);
           items[itemIdx] = itemCart;
-      }
+        }
       } else if (promo.type == 2) {
         // PROMO BY TRANSACTION
         double discountValue = cartPromo.discountIsPercent

@@ -215,7 +215,8 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                     ? false
                                     : !(promo.startDate!.isBefore(today) &&
                                         promo.endDate!.isAfter(today));
-                            final isActive = promo.status && !isExpired;
+                            final isActive =
+                                !promo.needCode && promo.status && !isExpired;
                             return ListTile(
                               tileColor: isActive
                                   ? Colors.white
