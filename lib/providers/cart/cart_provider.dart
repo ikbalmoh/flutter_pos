@@ -424,93 +424,106 @@ class Cart extends _$Cart {
                 total: item.price * item.quantity,
               ))
         .toList();
+    List<Promotion> promotionByProducts =
+        promotions.where((promo) => promo.type == 3).toList();
+    Promotion? promotionByOrder =
+        promotions.firstWhereOrNull((promo) => promo.type == 2);
+
     List<CartPromotion> cartPromotions = [];
-    for (var i = 0; i < promotions.length; i++) {
-      Promotion promo = promotions[i];
+
+    // PROMO BY PRODUCT
+    for (var i = 0; i < promotionByProducts.length; i++) {
+      Promotion promo = promotionByProducts[i];
 
       CartPromotion cartPromo = CartPromotion.fromData(promo);
 
-      if (promo.type == 3) {
-        // PROMO BY PRODUCT
-        List<ItemCart> eligibleItems = [];
+      List<ItemCart> eligibleItems = [];
 
-        if (promo.requirementProductType == 1) {
-          // require product id
-          eligibleItems = items
-              .where((item) =>
-                  (item.idVariant != null &&
-                          promo.requirementVariantId.isNotEmpty
-                      ? promo.requirementVariantId
-                          .contains(item.idVariant.toString())
-                      : promo.requirementProductId.contains(item.idItem)) &&
-                  item.quantity >= promo.requirementQuantity!.toInt())
-              .toList();
-        } else if (promo.requirementProductType == 2) {
-          // require package id
-          eligibleItems = items
-              .where((item) =>
-                  promo.requirementProductId.contains(item.idItem) &&
-                  item.quantity >= promo.requirementQuantity!.toInt())
-              .toList();
-        } else if (promo.requirementProductType == 3) {
-          // require category id
-          eligibleItems = items
-              .where((item) =>
-                  promo.requirementProductId.contains(item.idCategory) &&
-                  item.quantity >= promo.requirementQuantity!.toInt())
-              .toList();
-        }
+      if (promo.requirementProductType == 1) {
+        // require product id
+        eligibleItems = items
+            .where((item) =>
+                (item.idVariant != null && promo.requirementVariantId.isNotEmpty
+                    ? promo.requirementVariantId
+                        .contains(item.idVariant.toString())
+                    : promo.requirementProductId.contains(item.idItem)) &&
+                item.quantity >= promo.requirementQuantity!.toInt())
+            .toList();
+      } else if (promo.requirementProductType == 2) {
+        // require package id
+        eligibleItems = items
+            .where((item) =>
+                promo.requirementProductId.contains(item.idItem) &&
+                item.quantity >= promo.requirementQuantity!.toInt())
+            .toList();
+      } else if (promo.requirementProductType == 3) {
+        // require category id
+        eligibleItems = items
+            .where((item) =>
+                promo.requirementProductId.contains(item.idCategory) &&
+                item.quantity >= promo.requirementQuantity!.toInt())
+            .toList();
+      }
 
-        if (eligibleItems.isEmpty) {
-          continue;
-        }
+      if (eligibleItems.isEmpty) {
+        continue;
+      }
 
-        for (ItemCart itemCart in eligibleItems) {
-          int itemIdx = items.indexWhere(
-            (item) => item.identifier == itemCart.identifier,
-          );
-          double discountTotal = cartPromo.discountIsPercent
-              ? itemCart.price * (promo.rewardNominal / 100)
-              : promo.rewardNominal;
-
-          int requirementQty = cartPromo.requirementQuantity!;
-          int eligibleQty = cartPromo.kelipatan == true
-              ? (itemCart.quantity ~/ requirementQty) * requirementQty
-              : requirementQty;
-
-          double finalDiscountTotal = discountTotal * eligibleQty;
-
-          cartPromo = cartPromo.copyWith(
-            discountValue: finalDiscountTotal,
-            idItem: itemCart.idItem,
-            variantId: itemCart.idVariant,
-          );
-
-          double finalPrice = itemCart.price * itemCart.quantity;
-
-          itemCart = itemCart.copyWith(
-            discountIsPercent: cartPromo.discountIsPercent,
-            discountTotal: finalDiscountTotal,
-            discount: promo.rewardNominal,
-            total: finalPrice - finalDiscountTotal,
-            promotion: cartPromo,
-          );
-
-          log('ITEM GET PROMO: $eligibleQty \n $itemCart');
-
-          cartPromotions.add(cartPromo);
-          items[itemIdx] = itemCart;
-        }
-      } else if (promo.type == 2) {
-        // PROMO BY TRANSACTION
-        double discountValue = cartPromo.discountIsPercent
-            ? state.subtotal * (promo.rewardNominal / 100)
+      for (ItemCart itemCart in eligibleItems) {
+        int itemIdx = items.indexWhere(
+          (item) => item.identifier == itemCart.identifier,
+        );
+        double discountTotal = cartPromo.discountIsPercent
+            ? itemCart.price * (promo.rewardNominal / 100)
             : promo.rewardNominal;
 
-        cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
+        int requirementQty = cartPromo.requirementQuantity!;
+        int eligibleQty = cartPromo.kelipatan == true
+            ? (itemCart.quantity ~/ requirementQty) * requirementQty
+            : requirementQty;
+
+        double finalDiscountTotal = discountTotal * eligibleQty;
+
+        cartPromo = cartPromo.copyWith(
+          discountValue: finalDiscountTotal,
+          idItem: itemCart.idItem,
+          variantId: itemCart.idVariant,
+        );
+
+        double finalPrice = itemCart.price * itemCart.quantity;
+
+        itemCart = itemCart.copyWith(
+          discountIsPercent: cartPromo.discountIsPercent,
+          discountTotal: finalDiscountTotal,
+          discount: promo.rewardNominal,
+          total: finalPrice - finalDiscountTotal,
+          promotion: cartPromo,
+        );
+
+        log('ITEM GET PROMO: $eligibleQty \n $itemCart');
+
+        cartPromotions.add(cartPromo);
+        items[itemIdx] = itemCart;
       }
     }
-    state = state.copyWith(items: items, promotions: cartPromotions);
+
+    double subtotal = items.isNotEmpty
+        ? items.map((i) => i.total).reduce((value, total) => value + total)
+        : 0;
+
+    // PROMO BY ORDER
+    if (promotionByOrder != null) {
+      CartPromotion cartPromo = CartPromotion.fromData(promotionByOrder);
+      // PROMO BY TRANSACTION
+      double discountValue = cartPromo.discountIsPercent
+          ? subtotal * (promotionByOrder.rewardNominal / 100)
+          : promotionByOrder.rewardNominal;
+
+      cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
+    }
+
+    state = state.copyWith(
+        items: items, promotions: cartPromotions, subtotal: subtotal);
     calculateCart();
   }
 
@@ -536,23 +549,29 @@ class Cart extends _$Cart {
         .map((item) => item.promotion!.promotionId)
         .toList();
 
-    List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
-        .where((p) =>
-            p.type == 2 || activePromoByProductIds.contains(p.promotionId))
-        .toList();
-
     double? subtotal = state.items.isNotEmpty
         ? state.items
             .map((i) => i.total)
             .reduce((value, total) => value + total)
         : 0;
+
+    List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
+        .where((p) =>
+            p.type == 2 && p.requirementMinimumOrder! <= subtotal || activePromoByProductIds.contains(p.promotionId))
+        .toList();
+
     double discOverallTotal = 0;
+    double discPromotionsTotal = 0;
 
-    final promotionByOrder = promotions.firstWhereOrNull((p) => p.type == 2);
-    double discPromotionsTotal =
-        promotionByOrder != null ? promotionByOrder.discountValue : 0;
-
-    if (subtotal != 0 && state.discOverall > 0 && discPromotionsTotal == 0) {
+    int promoByOrderIndex = promotions.indexWhere((p) => p.type == 2);
+    if (promoByOrderIndex >= 0) {
+      CartPromotion promoByOrder = promotions[promoByOrderIndex];
+      discPromotionsTotal = promoByOrder.discountIsPercent
+          ? subtotal * (promoByOrder.discountNominal / 100)
+          : promoByOrder.discountNominal;
+      promotions[promoByOrderIndex] =
+          promoByOrder.copyWith(discountValue: discPromotionsTotal);
+    } else if (state.discOverall > 0) {
       discOverallTotal = state.discIsPercent
           ? subtotal * (state.discOverall / 100)
           : state.discOverall;

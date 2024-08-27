@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart/promotions/cart_promotions.dart';
@@ -39,7 +38,7 @@ class _CartActionsState extends ConsumerState<CartActions> {
       setState(() {
         isLoading = true;
       });
-      await ref.read(cartProvider.notifier).checkPromotionByOrder();
+      // await ref.read(cartProvider.notifier).checkPromotionByOrder();
       setState(() {
         isLoading = false;
       });

@@ -30,6 +30,7 @@ class CartPromotion with _$CartPromotion {
     bool? kelipatan,
     int? requirementProductType,
     int? requirementQuantity,
+    double? requirementMinimumOrder,
   }) = _CartPromotion;
 
   factory CartPromotion.fromJson(Map<String, dynamic> json) =>
@@ -47,6 +48,7 @@ class CartPromotion with _$CartPromotion {
         requirementQuantity: data.requirementQuantity,
         requirementProductId: data.requirementProductId,
         requirementProductType: data.requirementProductType,
+        requirementMinimumOrder: data.requirementMinimumOrder,
         policy: data.policy,
         quantity: 0,
         kelipatan: data.kelipatan,
