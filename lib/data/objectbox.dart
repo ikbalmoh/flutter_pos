@@ -187,13 +187,7 @@ class ObjectBox {
 
     if (range != null) {
       promotionQuery = promotionQuery.and(
-        Promotion_.allTime.equals(true).or(
-              Promotion_.startDate.lessOrEqualDate(range.startDate!).and(
-                    Promotion_.endDate.greaterOrEqualDate(
-                      range.endDate!,
-                    ),
-                  ),
-            ),
+        Promotion_.allTime.equals(true).or(rangeQuery),
       );
     }
 
