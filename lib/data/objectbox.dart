@@ -61,11 +61,13 @@ class ObjectBox {
             .or(Promotion_.endDate.equalsDate(today))));
 
     // Disable promo A get B
-    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1)).and(Promotion_.needCode.equals(false));
+    promotionQuery = promotionQuery
+        .and(Promotion_.type.notEquals(1))
+        .and(Promotion_.needCode.equals(false));
 
     Condition<Promotion> promotionTermsQuery = Promotion_.type
         .equals(2)
-        .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.total));
+        .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
     // Filter promotions by product
     if (cart.items.isNotEmpty) {
@@ -150,10 +152,12 @@ class ObjectBox {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
-          Promotion_.endDate.greaterThanDate(
-            today.subtract(const Duration(days: 30)),
-          ),
-        )).and(Promotion_.type.notEquals(1)).and(Promotion_.needCode.equals(false));
+              Promotion_.endDate.greaterThanDate(
+                today.subtract(const Duration(days: 30)),
+              ),
+            ))
+        .and(Promotion_.type.notEquals(1))
+        .and(Promotion_.needCode.equals(false));
 
     if (active == true) {
       promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
