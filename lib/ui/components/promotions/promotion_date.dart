@@ -16,9 +16,14 @@ class PromotionDate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isExpired = allTime == false &&
-        !(startDate!.isBefore(DateTime.now()) &&
-            endDate!.isAfter(DateTime.now()));
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    final isSameDay = startDate == today || endDate == today;
+    final isExpired = allTime
+        ? false
+        : isSameDay
+            ? false
+            : !(startDate!.isBefore(today) && endDate!.isAfter(today));
 
     TextTheme textTheme = Theme.of(context).textTheme;
 

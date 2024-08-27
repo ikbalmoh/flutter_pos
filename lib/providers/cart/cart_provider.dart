@@ -493,11 +493,11 @@ class Cart extends _$Cart {
 
           cartPromotions.add(cartPromo);
           items[itemIdx] = itemCart;
-        }
+      }
       } else if (promo.type == 2) {
         // PROMO BY TRANSACTION
         double discountValue = cartPromo.discountIsPercent
-            ? state.total * (promo.rewardNominal / 100)
+            ? state.subtotal * (promo.rewardNominal / 100)
             : promo.rewardNominal;
 
         cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));

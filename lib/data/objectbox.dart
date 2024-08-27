@@ -8,7 +8,6 @@ import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
-
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class ObjectBox {
@@ -43,6 +42,8 @@ class ObjectBox {
   }
 
   List<Promotion> transactionPromotions({required Cart cart}) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
     Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
 
     promotionQuery = promotionQuery.and(Promotion_.days.isNull().or(
@@ -50,10 +51,14 @@ class ObjectBox {
             DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
 
     // Filter promo by current date
-    promotionQuery = promotionQuery.and(Promotion_.allTime.equals(true).or(
-        Promotion_.startDate
-            .lessOrEqualDate(DateTime.now())
-            .and(Promotion_.endDate.greaterOrEqualDate(DateTime.now()))));
+    promotionQuery = promotionQuery.and(Promotion_.allTime
+        .equals(true)
+        .or(Promotion_.startDate
+            .lessOrEqualDate(today)
+            .and(Promotion_.endDate.greaterOrEqualDate(today)))
+        .or(Promotion_.startDate
+            .equalsDate(today)
+            .or(Promotion_.endDate.equalsDate(today))));
 
     // Disable promo A get B
     promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
@@ -141,36 +146,32 @@ class ObjectBox {
       bool? active,
       String? search,
       PickerDateRange? range}) {
-    final DateTime today = DateTime.now();
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
     Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
           Promotion_.endDate.greaterThanDate(
-            today.subtract(
-              const Duration(days: 30),
-            ),
+            today.subtract(const Duration(days: 30)),
           ),
         )).and(Promotion_.type.notEquals(1));
 
     if (active == true) {
-      promotionQuery = (Promotion_.allTime
-          .equals(true)
-          .or(Promotion_.startDate.lessOrEqualDate(DateTime.now()).and(
-                Promotion_.endDate.greaterOrEqualDate(
-                  DateTime.now(),
-                ),
-              ))).and(Promotion_.days.isNull().or(Promotion_.days
-          .containsElement(
+      promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
+              .lessOrEqualDate(today)
+              .and(Promotion_.endDate.greaterOrEqualDate(today))
+              .or(Promotion_.startDate
+                  .equalsDate(today)
+                  .or(Promotion_.endDate.equalsDate(today)))))
+          .and(Promotion_.days.isNull().or(Promotion_.days.containsElement(
               DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
     }
 
     if (range != null) {
+      var rangeQuery = Promotion_.startDate.lessOrEqualDate(range.startDate!);
+      if (range.endDate != null) {
+        rangeQuery.and(Promotion_.endDate.greaterOrEqualDate(range.endDate!));
+      }
       promotionQuery = promotionQuery.and(
-        Promotion_.allTime.equals(true).or(
-              Promotion_.startDate.lessOrEqualDate(range.startDate!).and(
-                    Promotion_.endDate.greaterOrEqualDate(
-                      range.endDate!,
-                    ),
-                  ),
-            ),
+        Promotion_.allTime.equals(true).or(rangeQuery),
       );
     }
 

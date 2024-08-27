@@ -225,5 +225,7 @@
   "no_valid_promotions": "Tidak ada promo yang berlaku",
   "discount_item": "Diskon Produk",
   "discount_free_gift": "Beli Produk Dapat Gratis",
-  "promotions_appiled": "Promo Digunakan"
+  "promotions_appiled": "Promo Digunakan",
+  "incremental": "Kelipatan",
+  "flat": "Tetap"
 }

@@ -96,6 +96,9 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
       range: range,
     ));
 
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+
     return Scaffold(
       appBar: searchVisible
           ? SearchAppBar(
@@ -178,7 +181,8 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                   DateTimeFormater.dateToString(
                                       range!.startDate!,
                                       format: 'dd MMM y'),
-                                  DateTimeFormater.dateToString(range!.endDate!,
+                                  DateTimeFormater.dateToString(
+                                      range!.endDate ?? range!.startDate!,
                                       format: 'dd MMM y')
                                 ].join(' - ')),
                           const SizedBox(
@@ -203,9 +207,14 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                           itemCount: value.length,
                           itemBuilder: (context, index) {
                             final promo = value[index];
-                            final isExpired = promo.allTime == false &&
-                                !(promo.startDate!.isBefore(DateTime.now()) &&
-                                    promo.endDate!.isAfter(DateTime.now()));
+                            final isSameDay = promo.startDate == today ||
+                                promo.endDate == today;
+                            final isExpired = promo.allTime
+                                ? false
+                                : isSameDay
+                                    ? false
+                                    : !(promo.startDate!.isBefore(today) &&
+                                        promo.endDate!.isAfter(today));
                             final isActive = promo.status && !isExpired;
                             return ListTile(
                               tileColor: isActive
@@ -217,9 +226,7 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                   color: Colors.blueGrey.shade50,
                                 ),
                               ),
-                              title: Text(
-                                promo.name,
-                              ),
+                              title: Text(promo.name),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
@@ -244,9 +251,10 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                       PromotionPolicy(policy: promo.policy),
                                       PromotionDays(days: promo.days),
                                       PromotionDate(
-                                          allTime: promo.allTime,
-                                          startDate: promo.startDate,
-                                          endDate: promo.endDate),
+                                        allTime: promo.allTime,
+                                        startDate: promo.startDate,
+                                        endDate: promo.endDate,
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -290,8 +298,9 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                         leading: false,
                       ),
                     ),
-                  AsyncError(:final error) => ErrorHandler(
+                  AsyncError(:final error, :final stackTrace) => ErrorHandler(
                       error: error.toString(),
+                      stackTrace: stackTrace.toString(),
                     ),
                   _ => const LoadingIndicator(color: Colors.teal)
                 }),

@@ -224,5 +224,7 @@
   "no_valid_promotions": "There are no valid promotion",
   "discount_item": "Item Discount",
   "discount_free_gift": "Buy Product Free Gift",
-  "promotions_appiled": "Promotions Applied"
+  "promotions_appiled": "Promotions Applied",
+  "incremental": "Incremental",
+  "flat": "Flat"
 }
