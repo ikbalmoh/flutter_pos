@@ -4,6 +4,7 @@ import 'package:selleri/ui/components/promotions/promotion_assign.dart';
 import 'package:selleri/ui/components/promotions/promotion_date.dart';
 import 'package:selleri/ui/components/promotions/promotion_incremental.dart';
 import 'package:selleri/ui/components/promotions/promotion_policy.dart';
+import 'package:selleri/ui/components/promotions/promotion_times.dart';
 import 'package:selleri/ui/components/promotions/promotion_type_badge.dart';
 
 class CartPromotionItem extends StatelessWidget {
@@ -86,6 +87,7 @@ class CartPromotionItem extends StatelessWidget {
                       startDate: promo.startDate,
                       endDate: promo.endDate,
                     ),
+                    PromotionTimes(times: promo.times ?? []),
                   ],
                 ),
               )

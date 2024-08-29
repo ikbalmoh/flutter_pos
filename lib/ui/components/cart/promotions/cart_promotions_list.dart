@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/ui/components/cart/promotions/cart_promotion_item.dart';
+import 'package:selleri/utils/formater.dart';
 
 class CartPromotionsList extends ConsumerStatefulWidget {
   const CartPromotionsList({super.key});
@@ -17,6 +20,10 @@ class CartPromotionsList extends ConsumerStatefulWidget {
 
 class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   List<Promotion> selected = [];
+
+  final now = DateTime.now().millisecondsSinceEpoch;
+  final today =
+      DateTimeFormater.dateToString(DateTime.now(), format: 'y-MM-dd');
 
   @override
   void initState() {
@@ -103,7 +110,27 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                                     .where((id) => promoGroup.contains(id))
                                     .isNotEmpty
                             : true;
-                bool isDisabled = !isCustomerEligible ||
+                bool isTimeEligible =
+                    promo.times == null || promo.times!.isEmpty;
+                if (promo.times != null) {
+                  for (var i = 0; i < promo.times!.length; i++) {
+                    List<String> times = promo.times![i].split('-');
+                    int? start = DateTimeFormater.stringToDateTime(
+                            '$today ${times[0]}:00')
+                        ?.millisecondsSinceEpoch;
+                    int? end = DateTimeFormater.stringToDateTime(
+                            '$today ${times[1]}:00')
+                        ?.millisecondsSinceEpoch;
+                    if (start != null && end != null) {
+                      if (start <= now && now <= end) {
+                        isTimeEligible = true;
+                        break;
+                      }
+                    }
+                  }
+                }
+                bool isDisabled = !isTimeEligible ||
+                    !isCustomerEligible ||
                     promo.needCode ||
                     (selected.where((p) => p.id != promo.id).isNotEmpty &&
                         !promo.policy) ||

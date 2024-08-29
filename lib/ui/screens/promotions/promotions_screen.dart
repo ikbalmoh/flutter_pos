@@ -15,6 +15,7 @@ import 'package:selleri/ui/components/promotions/promotion_assign.dart';
 import 'package:selleri/ui/components/promotions/promotion_date.dart';
 import 'package:selleri/ui/components/promotions/promotion_days.dart';
 import 'package:selleri/ui/components/promotions/promotion_policy.dart';
+import 'package:selleri/ui/components/promotions/promotion_times.dart';
 import 'package:selleri/ui/components/promotions/promotion_type_badge.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/promotions/promotion_type_filter.dart';
@@ -261,6 +262,7 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                         startDate: promo.startDate,
                                         endDate: promo.endDate,
                                       ),
+                                      PromotionTimes(times: promo.times ?? [])
                                     ],
                                   ),
                                 ],

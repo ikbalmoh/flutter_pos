@@ -138,7 +138,7 @@
     },
     {
       "id": "8:9072647444006103348",
-      "lastPropertyId": "38:9067765030426907225",
+      "lastPropertyId": "39:8733744967570010592",
       "name": "Promotion",
       "properties": [
         {
@@ -322,6 +322,11 @@
         {
           "id": "38:9067765030426907225",
           "name": "requirementVariantId",
+          "type": 30
+        },
+        {
+          "id": "39:8733744967570010592",
+          "name": "times",
           "type": 30
         }
       ],

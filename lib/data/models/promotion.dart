@@ -3,7 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:selleri/data/models/customer_group.dart';
-import 'package:selleri/data/models/promotion_time.dart';
 import 'package:selleri/data/objectbox.dart';
 
 part 'promotion.g.dart';
@@ -61,7 +60,7 @@ class Promotion {
   List<int>? numberOfDays;
   String? rewardProductName;
   int? rewardItemPrice;
-  List<PromotionTime>? times;
+  List<String>? times;
 
   @AssignGroupRelToManyConverter()
   final ToMany<CustomerGroup> assignGroups;
@@ -120,6 +119,11 @@ class Promotion {
     if (json['assign_groups'] == null) {
       json['assign_groups'] = [];
     }
+    json['times'] = json['times'] == null
+        ? []
+        : List.from(json['times']).map((time) {
+            return "${(time['start_time'] as String).substring(0, 5)}-${(time['end_time'] as String).substring(0, 5)}";
+          }).toList();
     return _$PromotionFromJson(json);
   }
 
