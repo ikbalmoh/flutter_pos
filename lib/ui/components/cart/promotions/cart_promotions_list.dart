@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/cart.dart' as cart_model;
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
@@ -73,6 +74,7 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   @override
   Widget build(BuildContext context) {
     List<Promotion> promotions = ref.watch(promotionsProvider);
+    cart_model.Cart cart = ref.watch(cartProvider);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       height: MediaQuery.of(context).size.height *
