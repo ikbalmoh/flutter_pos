@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:restart_app/restart_app.dart';
@@ -16,8 +15,16 @@ class UpdatePatch extends StatefulWidget {
 class _UpdatePatchState extends State<UpdatePatch> {
   final shorebirdCodePush = ShorebirdCodePush();
 
+  bool downloading = false;
 
-  void restart() {
+  void downloadUpdate() async {
+    setState(() {
+      downloading = true;
+    });
+    await shorebirdCodePush.downloadUpdateIfAvailable();
+    setState(() {
+      downloading = true;
+    });
     Restart.restartApp();
   }
 
@@ -37,12 +44,14 @@ class _UpdatePatchState extends State<UpdatePatch> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 15),
-          Text('update_available'.tr(),
+          Text(
+            'update_available'.tr(),
             style: textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          Text('update_note'.tr(),
+          Text(
+            'update_note'.tr(),
             style: textTheme.bodySmall?.copyWith(color: Colors.grey),
             textAlign: TextAlign.center,
           ),
@@ -56,7 +65,7 @@ class _UpdatePatchState extends State<UpdatePatch> {
                 ),
               ),
             ),
-            onPressed: restart,
+            onPressed: downloading ? null : downloadUpdate,
             child: Text('apply_update'.tr()),
           ),
           const SizedBox(height: 10),
@@ -81,7 +90,6 @@ class _UpdatePatcherState extends State<UpdatePatcher> {
     if (!available) {
       return;
     }
-    await shorebirdCodePush.downloadUpdateIfAvailable();
     Future.delayed(
       Duration.zero,
       () {
