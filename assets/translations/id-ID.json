@@ -227,5 +227,8 @@
   "discount_free_gift": "Beli Produk Dapat Gratis",
   "promotions_appiled": "Promo Digunakan",
   "incremental": "Kelipatan",
-  "flat_rate": "Nilai Tetap"
+  "flat_rate": "Nilai Tetap",
+  "all_customer": "Semua Pelanggan",
+  "member": "Member",
+  "non_member": "Non Member"
 }

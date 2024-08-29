@@ -62,7 +62,9 @@ class Promotion {
   String? rewardProductName;
   int? rewardItemPrice;
   List<PromotionTime>? times;
-  List<CustomerGroup>? assignGroups;
+
+  @AssignGroupRelToManyConverter()
+  final ToMany<CustomerGroup> assignGroups;
 
   Promotion({
     required this.id,
@@ -102,7 +104,7 @@ class Promotion {
     this.rewardProductName,
     this.rewardItemPrice,
     this.times,
-    this.assignGroups,
+    required this.assignGroups,
   });
 
   factory Promotion.fromJson(Map<String, dynamic> json) {
@@ -112,8 +114,12 @@ class Promotion {
     json['id'] = existPromotion?.id ?? 0;
     json['requirement_variant_id'] = json['requirement_variant_id'] != null
         ? List.from(json['requirement_variant_id'])
-            .map((id) => id.toString()).toList()
+            .map((id) => id.toString())
+            .toList()
         : [];
+    if (json['assign_groups'] == null) {
+      json['assign_groups'] = [];
+    }
     return _$PromotionFromJson(json);
   }
 
@@ -123,6 +129,26 @@ class Promotion {
   String toString() {
     return toJson().toString();
   }
+
+  static Map<int, String> assignsType = {
+    1: 'all_customer'.tr(),
+    2: 'member'.tr(),
+    3: 'non_member'.tr(),
+    4: 'group'.tr()
+  };
+}
+
+class AssignGroupRelToManyConverter
+    implements JsonConverter<ToMany<CustomerGroup>, List?> {
+  const AssignGroupRelToManyConverter();
+
+  @override
+  ToMany<CustomerGroup> fromJson(List? json) => ToMany<CustomerGroup>(
+      items: json?.map((e) => CustomerGroup.fromJson(e)).toList());
+
+  @override
+  List<Map<String, dynamic>>? toJson(ToMany<CustomerGroup> rel) =>
+      rel.map((CustomerGroup obj) => obj.toJson()).toList();
 }
 
 class PromotionType {

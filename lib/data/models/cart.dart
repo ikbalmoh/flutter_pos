@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/converters/generic.dart';
+import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/utils/formater.dart';
@@ -56,6 +57,7 @@ class Cart with _$Cart {
     String? deletedBy,
     String? deleteReason,
     @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
+    List<CustomerGroup>? customerGroup,
   }) = _Cart;
 
   factory Cart.initial() => Cart(

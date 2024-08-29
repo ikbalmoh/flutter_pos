@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
+import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_package.dart';
@@ -18,6 +19,7 @@ class ObjectBox {
   late final Box<ItemVariant> itemVariantBox;
   late final Box<ItemPackage> itemPackageBox;
   late final Box<Promotion> promotionBox;
+  late final Box<CustomerGroup> customerGroupBox;
 
   ObjectBox._create(this.store) {
     categoryBox = Box<Category>(store);
@@ -25,6 +27,7 @@ class ObjectBox {
     itemVariantBox = Box<ItemVariant>(store);
     itemPackageBox = Box<ItemPackage>(store);
     promotionBox = Box<Promotion>(store);
+    customerGroupBox = Box<CustomerGroup>(store);
   }
 
   static Future<ObjectBox> create() async {
@@ -257,6 +260,11 @@ class ObjectBox {
 
   Item? getItem(String idItem) =>
       itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
+
+  CustomerGroup? getCustomerGroup(int groupId) => customerGroupBox
+      .query(CustomerGroup_.groupId.equals(groupId))
+      .build()
+      .findFirst();
 
   Promotion? getPromotion(String idPromotion) => promotionBox
       .query(Promotion_.idPromotion.equals(idPromotion))

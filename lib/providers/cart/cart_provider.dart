@@ -227,7 +227,11 @@ class Cart extends _$Cart {
 
   void selectCustomer(Customer customer) {
     state = state.copyWith(
-        customerName: customer.customerName, idCustomer: customer.idCustomer);
+      customerName: customer.customerName,
+      idCustomer: customer.idCustomer,
+      customerGroup: customer.groups,
+    );
+    applyPromotions([]);
   }
 
   void unselectCustomer() {
@@ -557,7 +561,8 @@ class Cart extends _$Cart {
 
     List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
         .where((p) =>
-            p.type == 2 && p.requirementMinimumOrder! <= subtotal || activePromoByProductIds.contains(p.promotionId))
+            p.type == 2 && p.requirementMinimumOrder! <= subtotal ||
+            activePromoByProductIds.contains(p.promotionId))
         .toList();
 
     double discOverallTotal = 0;

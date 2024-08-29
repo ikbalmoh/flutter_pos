@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/cart.dart' as cart_model;
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
@@ -54,6 +55,7 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   @override
   Widget build(BuildContext context) {
     List<Promotion> promotions = ref.watch(promotionsProvider);
+    cart_model.Cart cart = ref.watch(cartProvider);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       height: (MediaQuery.of(context).size.height * 0.8) +
@@ -87,16 +89,32 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
               shrinkWrap: true,
               itemBuilder: (context, idx) {
                 Promotion promo = promotions[idx];
+                bool isActive = selected.map((p) => p.id).contains(promo.id);
+                List<int> promoGroup =
+                    promo.assignGroups.map((group) => group.groupId).toList();
+                bool isCustomerEligible = promo.assignCustomer == 2
+                    ? cart.idCustomer != null
+                    : promo.assignCustomer == 3
+                        ? cart.idCustomer == null
+                        : promo.assignCustomer == 4
+                            ? cart.customerGroup != null &&
+                                cart.customerGroup!
+                                    .map((group) => group.groupId)
+                                    .where((id) => promoGroup.contains(id))
+                                    .isNotEmpty
+                            : true;
+                bool isDisabled = !isCustomerEligible ||
+                    promo.needCode ||
+                    (selected.where((p) => p.id != promo.id).isNotEmpty &&
+                        !promo.policy) ||
+                    hasCannotCombinedPromo(promo.id);
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 7.5),
                   child: CartPromotionItem(
                     promo: promo,
                     onSelect: onSelect,
-                    active: selected.map((p) => p.id).contains(promo.id),
-                    disabled: promo.needCode ||
-                        (selected.where((p) => p.id != promo.id).isNotEmpty &&
-                            !promo.policy) ||
-                        hasCannotCombinedPromo(promo.id),
+                    active: isActive,
+                    disabled: isDisabled,
                   ),
                 );
               },

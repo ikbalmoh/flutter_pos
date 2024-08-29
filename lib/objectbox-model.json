@@ -325,7 +325,13 @@
           "type": 30
         }
       ],
-      "relations": []
+      "relations": [
+        {
+          "id": "9:7705758440998874336",
+          "name": "assignGroups",
+          "targetId": "11:6381855780669130651"
+        }
+      ]
     },
     {
       "id": "10:1396131410230828223",
@@ -443,11 +449,37 @@
           "targetId": "2:182247591934260991"
         }
       ]
+    },
+    {
+      "id": "11:6381855780669130651",
+      "lastPropertyId": "3:6973333266811927089",
+      "name": "CustomerGroup",
+      "properties": [
+        {
+          "id": "1:6627831225925806804",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6480060314674566662",
+          "name": "groupId",
+          "type": 6,
+          "flags": 8,
+          "indexId": "11:472039151203136157"
+        },
+        {
+          "id": "3:6973333266811927089",
+          "name": "groupName",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "10:1396131410230828223",
-  "lastIndexId": "10:1926630203947606046",
-  "lastRelationId": "7:2941575558521524290",
+  "lastEntityId": "11:6381855780669130651",
+  "lastIndexId": "11:472039151203136157",
+  "lastRelationId": "9:7705758440998874336",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
@@ -524,7 +556,8 @@
   "retiredRelationUids": [
     5739101837765130491,
     8246245317476307642,
-    4292434469509689165
+    4292434469509689165,
+    5137418927091890049
   ],
   "version": 1
 }

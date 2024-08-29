@@ -11,6 +11,7 @@ import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/date_picker.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
+import 'package:selleri/ui/components/promotions/promotion_assign.dart';
 import 'package:selleri/ui/components/promotions/promotion_date.dart';
 import 'package:selleri/ui/components/promotions/promotion_days.dart';
 import 'package:selleri/ui/components/promotions/promotion_policy.dart';
@@ -249,6 +250,10 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                     spacing: 10,
                                     runSpacing: 3,
                                     children: [
+                                      PromotionAssign(
+                                        assignCustomer: promo.assignCustomer,
+                                        groups: promo.assignGroups,
+                                      ),
                                       PromotionPolicy(policy: promo.policy),
                                       PromotionDays(days: promo.days),
                                       PromotionDate(

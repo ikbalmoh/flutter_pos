@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/ui/components/promotions/promotion_assign.dart';
 import 'package:selleri/ui/components/promotions/promotion_date.dart';
 import 'package:selleri/ui/components/promotions/promotion_incremental.dart';
 import 'package:selleri/ui/components/promotions/promotion_policy.dart';
@@ -75,6 +76,9 @@ class CartPromotionItem extends StatelessWidget {
                   spacing: 10,
                   runSpacing: 5,
                   children: [
+                    PromotionAssign(
+                        assignCustomer: promo.assignCustomer,
+                        groups: promo.assignGroups),
                     PromotionPolicy(policy: promo.policy),
                     PromotionIncremental(incremental: promo.kelipatan),
                     PromotionDate(

@@ -12,6 +12,7 @@ import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/customer/customer_detail.dart';
+import 'package:selleri/ui/screens/customer/customer_item.dart';
 
 class CustomerScreen extends ConsumerStatefulWidget {
   const CustomerScreen({super.key});
@@ -169,42 +170,10 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                           Customer customer = data.data![idx];
                           bool selected =
                               selectedCustomer == customer.idCustomer;
-                          bool isExpired = customer.expiredDate != null
-                              ? customer.expiredDate!.isBefore(DateTime.now())
-                              : false;
-                          return ListTile(
-                            title: Text(customer.customerName.trim()),
-                            subtitle: Text(customer.code.trim()),
-                            shape: Border(
-                              bottom: BorderSide(
-                                width: 0.5,
-                                color: Colors.blueGrey.shade50,
-                              ),
-                            ),
-                            onTap: () => showCustomerSheet(customer),
-                            trailing: selected
-                                ? const Icon(
-                                    Icons.check_circle,
-                                    color: Colors.teal,
-                                  )
-                                : isExpired
-                                    ? Chip(
-                                        padding: const EdgeInsets.all(3),
-                                        label: Text('expired'.tr()),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          side: const BorderSide(
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                        backgroundColor: Colors.red.shade50,
-                                        labelStyle: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(color: Colors.red),
-                                      )
-                                    : null,
+                          return CustomerItem(
+                            customer: customer,
+                            selected: selected,
+                            onTap: showCustomerSheet,
                           );
                         },
                         itemCount: data.data!.length + 1,
