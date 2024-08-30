@@ -111,13 +111,13 @@ class ObjectBox {
               .equals(3)
               .and(requirementCategoryIds));
 
-      List<ItemCart> packageItems = List<ItemCart>.from(
-          cart.items.where((item) => item.isPackage).toList());
+      List<ItemCart> packageItems =
+          items.where((item) => item.isPackage).toList();
 
       if (packageItems.isNotEmpty) {
         Condition<Promotion> requirementPackageIds = Promotion_
             .requirementProductId
-            .containsElement(cart.items[0].idItem);
+            .containsElement(packageItems[0].idItem);
         for (var i = 1; i < packageItems.length; i++) {
           requirementPackageIds = requirementPackageIds.or(Promotion_
               .requirementProductId
@@ -139,7 +139,7 @@ class ObjectBox {
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
       ..order(Promotion_.needCode)
       ..order(Promotion_.priority)
-      ..order(Promotion_.rewardMaximumAmount)
+      ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)
       ..order(Promotion_.allTime);
 
     return builder.build().find();
@@ -204,7 +204,7 @@ class ObjectBox {
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
       ..order(Promotion_.needCode)
-      ..order(Promotion_.status, flags: Order.descending)
+      ..order(Promotion_.status)
       ..order(Promotion_.allTime)
       ..order(Promotion_.priority)
       ..order(Promotion_.endDate);
