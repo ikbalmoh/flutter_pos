@@ -5,6 +5,8 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 enum Status { waiting, downloading, downloaded }
 
+final _shorebirdCodePush = ShorebirdCodePush();
+
 class UpdatePatch extends StatefulWidget {
   const UpdatePatch({super.key});
 
@@ -13,18 +15,24 @@ class UpdatePatch extends StatefulWidget {
 }
 
 class _UpdatePatchState extends State<UpdatePatch> {
-  final shorebirdCodePush = ShorebirdCodePush();
-
   bool downloading = false;
+  bool downloaded = false;
 
   void downloadUpdate() async {
     setState(() {
       downloading = true;
     });
-    await shorebirdCodePush.downloadUpdateIfAvailable();
+    await Future.wait([
+      _shorebirdCodePush.downloadUpdateIfAvailable(),
+      Future<void>.delayed(const Duration(milliseconds: 250)),
+    ]);
     setState(() {
-      downloading = true;
+      downloading = false;
+      downloaded = true;
     });
+  }
+
+  void onRestart() {
     Restart.restartApp();
   }
 
@@ -45,29 +53,42 @@ class _UpdatePatchState extends State<UpdatePatch> {
         children: [
           const SizedBox(height: 15),
           Text(
-            'update_available'.tr(),
+            downloaded ? 'update_applied' : 'update_available'.tr(),
             style: textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           Text(
-            'update_note'.tr(),
+            downloaded ? 'please_restart'.tr() : 'update_note'.tr(),
             style: textTheme.bodySmall?.copyWith(color: Colors.grey),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(30),
+          downloaded
+              ? ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                    ),
+                  ),
+                  onPressed: onRestart,
+                  child: Text('restart'.tr()),
+                )
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                    ),
+                  ),
+                  onPressed: downloading ? null : downloadUpdate,
+                  child: Text('apply_update'.tr()),
                 ),
-              ),
-            ),
-            onPressed: downloading ? null : downloadUpdate,
-            child: Text('apply_update'.tr()),
-          ),
           const SizedBox(height: 10),
         ],
       ),
@@ -83,10 +104,8 @@ class UpdatePatcher extends StatefulWidget {
 }
 
 class _UpdatePatcherState extends State<UpdatePatcher> {
-  final shorebirdCodePush = ShorebirdCodePush();
-
   void checkUpdate() async {
-    final available = await shorebirdCodePush.isNewPatchAvailableForDownload();
+    final available = await _shorebirdCodePush.isNewPatchAvailableForDownload();
     if (!available) {
       return;
     }
