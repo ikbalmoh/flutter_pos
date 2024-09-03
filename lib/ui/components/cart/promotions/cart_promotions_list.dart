@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -161,29 +159,34 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-            child: Row(
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey.shade700,
-                  ),
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    'cancel'.tr(),
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
+          selected.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+                  child: Row(
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade700,
+                        ),
+                        onPressed: () => context.pop(),
+                        child: Text(
+                          'cancel'.tr(),
+                        ),
                       ),
-                    ),
-                    onPressed: () => context.pop(selected),
-                    child: Text('apply'.tr()),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                          ),
+                          onPressed: () => context.pop(selected),
+                          child: Text('apply'.tr()),
+                        ),
+                      )
+                    ],
                   ),
                 )
               ],
