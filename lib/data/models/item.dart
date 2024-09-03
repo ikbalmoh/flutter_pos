@@ -83,6 +83,7 @@ class Item {
       };
     }
     json['id'] = existItem?.id ?? 0;
+    json['item_name'] = existItem?.itemName ?? json['item_name'];
     json['variants'] = json['variants']?.map((variant) {
       ItemVariant? existVariant = objectBox.itemVariantBox
           .query(ItemVariant_.idVariant.equals(variant['id_variant']))

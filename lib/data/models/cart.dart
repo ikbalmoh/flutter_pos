@@ -56,6 +56,7 @@ class Cart with _$Cart {
     DateTime? deletedAt,
     String? deletedBy,
     String? deleteReason,
+    String? promoCode,
     @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
     List<CustomerGroup>? customerGroup,
   }) = _Cart;

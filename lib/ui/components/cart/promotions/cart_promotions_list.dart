@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +7,7 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/ui/components/cart/promotions/cart_promotion_item.dart';
+import 'package:selleri/ui/components/cart/promotions/promotion_code_input.dart';
 import 'package:selleri/utils/formater.dart';
 
 class CartPromotionsList extends ConsumerStatefulWidget {
@@ -55,6 +54,13 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
     }
   }
 
+
+  void onSelectPromoByCode(Promotion promo) {
+    setState(() {
+      selected = [promo];
+    });
+  }
+
   bool hasCannotCombinedPromo(int exceptId) {
     return selected.indexWhere((p) => !p.policy && p.id != exceptId) >= 0;
   }
@@ -65,9 +71,8 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
     cart_model.Cart cart = ref.watch(cartProvider);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      height: (MediaQuery.of(context).size.height * 0.8) +
-          MediaQuery.of(context).viewInsets.bottom +
-          15,
+      height: MediaQuery.of(context).size.height *
+          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.65),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,91 +96,110 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 7.5),
-              shrinkWrap: true,
-              itemBuilder: (context, idx) {
-                Promotion promo = promotions[idx];
-                bool isActive = selected.map((p) => p.id).contains(promo.id);
-                List<int> promoGroup =
-                    promo.assignGroups.map((group) => group.groupId).toList();
-                bool isCustomerEligible = promo.assignCustomer == 2
-                    ? cart.idCustomer != null
-                    : promo.assignCustomer == 3
-                        ? cart.idCustomer == null
-                        : promo.assignCustomer == 4
-                            ? cart.customerGroup != null &&
-                                cart.customerGroup!
-                                    .map((group) => group.groupId)
-                                    .where((id) => promoGroup.contains(id))
-                                    .isNotEmpty
-                            : true;
-                bool isTimeEligible =
-                    promo.times == null || promo.times!.isEmpty;
-                if (promo.times != null) {
-                  for (var i = 0; i < promo.times!.length; i++) {
-                    List<String> times = promo.times![i].split('-');
-                    int? start = DateTimeFormater.stringToDateTime(
-                            '$today ${times[0]}:00')
-                        ?.millisecondsSinceEpoch;
-                    int? end = DateTimeFormater.stringToDateTime(
-                            '$today ${times[1]}:00')
-                        ?.millisecondsSinceEpoch;
-                    if (start != null && end != null) {
-                      if (start <= now && now <= end) {
-                        isTimeEligible = true;
-                        break;
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  PromotionCodeInput(
+                      onSelect: onSelectPromoByCode,
+                      active: selected.where((p) => p.needCode == true).isNotEmpty),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 0, vertical: 7.5),
+                    shrinkWrap: true,
+                    itemBuilder: (context, idx) {
+                      Promotion promo = promotions[idx];
+                      bool isActive =
+                          selected.map((p) => p.id).contains(promo.id);
+                      List<int> promoGroup = promo.assignGroups
+                          .map((group) => group.groupId)
+                          .toList();
+                      bool isCustomerEligible = promo.assignCustomer == 2
+                          ? cart.idCustomer != null
+                          : promo.assignCustomer == 3
+                              ? cart.idCustomer == null
+                              : promo.assignCustomer == 4
+                                  ? cart.customerGroup != null &&
+                                      cart.customerGroup!
+                                          .map((group) => group.groupId)
+                                          .where(
+                                              (id) => promoGroup.contains(id))
+                                          .isNotEmpty
+                                  : true;
+                      bool isTimeEligible =
+                          promo.times == null || promo.times!.isEmpty;
+                      if (promo.times != null) {
+                        for (var i = 0; i < promo.times!.length; i++) {
+                          List<String> times = promo.times![i].split('-');
+                          int? start = DateTimeFormater.stringToDateTime(
+                                  '$today ${times[0]}:00')
+                              ?.millisecondsSinceEpoch;
+                          int? end = DateTimeFormater.stringToDateTime(
+                                  '$today ${times[1]}:00')
+                              ?.millisecondsSinceEpoch;
+                          if (start != null && end != null) {
+                            if (start <= now && now <= end) {
+                              isTimeEligible = true;
+                              break;
+                            }
+                          }
+                        }
                       }
-                    }
-                  }
-                }
-                bool isDisabled = !isTimeEligible ||
-                    !isCustomerEligible ||
-                    promo.needCode ||
-                    (selected.where((p) => p.id != promo.id).isNotEmpty &&
-                        !promo.policy) ||
-                    hasCannotCombinedPromo(promo.id);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 7.5),
-                  child: CartPromotionItem(
-                    promo: promo,
-                    onSelect: onSelect,
-                    active: isActive,
-                    disabled: isDisabled,
-                  ),
-                );
-              },
-              itemCount: promotions.length,
+                      bool isDisabled = !isTimeEligible ||
+                          !isCustomerEligible ||
+                          promo.needCode ||
+                          (selected.where((p) => p.id != promo.id).isNotEmpty &&
+                              !promo.policy) ||
+                          hasCannotCombinedPromo(promo.id);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 7.5),
+                        child: CartPromotionItem(
+                          promo: promo,
+                          onSelect: onSelect,
+                          active: isActive,
+                          disabled: isDisabled,
+                        ),
+                      );
+                    },
+                    itemCount: promotions.length,
+                  )
+                ],
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-            child: Row(
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey.shade700,
-                  ),
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    'cancel'.tr(),
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
+          selected.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+                  child: Row(
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade700,
+                        ),
+                        onPressed: () => context.pop(),
+                        child: Text(
+                          'cancel'.tr(),
+                        ),
                       ),
-                    ),
-                    onPressed: () => context.pop(selected),
-                    child: Text('apply'.tr()),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                          ),
+                          onPressed: () => context.pop(selected),
+                          child: Text('apply'.tr()),
+                        ),
+                      )
+                    ],
                   ),
                 )
-              ],
-            ),
-          )
+              : Container()
         ],
       ),
     );

@@ -12,6 +12,7 @@ part 'promotion_repository.g.dart';
 
 abstract class PromotionRepositoryProtocol {
   Future<List<Promotion>> fetchPromotions();
+  Future<Promotion?> getPromoByCode(String code);
 }
 
 @riverpod
@@ -50,6 +51,25 @@ class PromotionRepository implements PromotionRepositoryProtocol {
       throw Exception(e.response?.data['msg'] ?? e.message);
     } on PlatformException catch (e) {
       throw Exception(e.message);
+    }
+  }
+
+  @override
+  Future<Promotion?> getPromoByCode(String code) async {
+    try {
+      final outlet = await outletState.retrieveOutlet();
+      if (outlet == null) {
+        return null;
+      }
+      final data = await api.promotionByCode(code, outlet.idOutlet);
+      if (data['data'] != null) {
+        return Promotion.fromJson(data['data']);
+      }
+      throw Exception('Promotion Not Found!');
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 }

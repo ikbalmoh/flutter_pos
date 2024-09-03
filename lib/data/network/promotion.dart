@@ -13,4 +13,14 @@ class PromotionApi {
     final res = await api.get(ApiUrl.promotions, queryParameters: query);
     return res.data;
   }
+
+  Future promotionByCode(String code, String idOulet) async {
+    Map<String, dynamic> query = {
+      'code': code,
+      'id_outlet': idOulet,
+    };
+    final res =
+        await api.get(ApiUrl.promotionByVoucher, queryParameters: query);
+    return res.data;
+  }
 }

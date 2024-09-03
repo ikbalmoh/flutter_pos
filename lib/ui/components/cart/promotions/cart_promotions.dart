@@ -48,7 +48,7 @@ class CartPromotions extends ConsumerWidget {
             width: 1),
       ),
       child: InkWell(
-        onTap: promotions.isEmpty ? null : onViewPromotions,
+        onTap: onViewPromotions,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -69,20 +69,16 @@ class CartPromotions extends ConsumerWidget {
                     Text(
                       'promotions'.tr(),
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: promotions.isEmpty
-                              ? Colors.grey.shade700
-                              : Colors.black),
+                          color:Colors.black),
                     ),
                     Text(
                       promotions.isEmpty
-                          ? 'no_valid_promotions'.tr()
+                          ? 'add_promotion_code'.tr()
                           : promotionsApplied > 0
                               ? '$promotionsApplied ${'promotions_appiled'.tr()}'
                               : '${promotions.length} ${'promotions_available'.tr()}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: promotions.isEmpty
-                              ? Colors.grey.shade600
-                              : Colors.black87),
+                          color: Colors.black87),
                     ),
                   ],
                 ),

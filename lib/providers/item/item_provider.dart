@@ -66,10 +66,18 @@ class ItemsStream extends _$ItemsStream {
 
   void saveJsonItems(List<dynamic> jsonItems,
       {bool showUpdateMessage = false}) {
-    List<Item> items = List<Item>.from(jsonItems.map(
-      (json) => Item.fromJson(json),
-    ));
-    objectBox.putItems(items);
+    List<Item> items = [];
+    for (var json in jsonItems) {
+      try {
+        Item item = Item.fromJson(json);
+        items.add(item);
+      } catch (e) {
+        log('parse item failed: $e');
+      }
+    }
+    if (items.isNotEmpty) {
+      objectBox.putItems(items);
+    }
     if (showUpdateMessage) {
       List<String> messages = [items[0].itemName];
       if (items.length > 2) {
