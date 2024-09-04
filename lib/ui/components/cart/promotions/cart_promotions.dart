@@ -57,7 +57,7 @@ class CartPromotions extends ConsumerWidget {
             children: [
               Icon(
                 CupertinoIcons.tickets_fill,
-                color: promotions.isNotEmpty
+                color: promotionsApplied > 0 || promotions.isNotEmpty
                     ? Colors.amber.shade600
                     : Colors.grey.shade600,
               ),
