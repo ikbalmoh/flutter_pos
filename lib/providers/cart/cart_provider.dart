@@ -487,6 +487,10 @@ class Cart extends _$Cart {
             : requirementQty;
 
         double finalDiscountTotal = discountTotal * eligibleQty;
+        if (promo.rewardMaximumAmount != null &&
+            finalDiscountTotal > promo.rewardMaximumAmount!) {
+          finalDiscountTotal = promo.rewardMaximumAmount!;
+        }
 
         cartPromo = cartPromo.copyWith(
           discountValue: finalDiscountTotal,
@@ -522,6 +526,11 @@ class Cart extends _$Cart {
       double discountValue = cartPromo.discountIsPercent
           ? subtotal * (promotionByOrder.rewardNominal / 100)
           : promotionByOrder.rewardNominal;
+
+      if (promotionByOrder.rewardMaximumAmount != null &&
+          discountValue > promotionByOrder.rewardMaximumAmount!) {
+        discountValue = promotionByOrder.rewardMaximumAmount!;
+      }
 
       cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
     }
