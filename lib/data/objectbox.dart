@@ -66,9 +66,10 @@ class ObjectBox {
             .or(Promotion_.endDate.equalsDate(today))));
 
     // Disable promo A get B
-    promotionQuery = promotionQuery
-        .and(Promotion_.type.notEquals(1))
-        .and(Promotion_.needCode.equals(false));
+    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
+
+    // FILTER PROMO BY CODE
+    promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
     // FILTER PROMO BY CODE
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
