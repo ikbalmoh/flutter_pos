@@ -526,8 +526,15 @@ class Cart extends _$Cart {
       cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
     }
 
+    // PROMO BY CODE
+    Promotion? promoByCode = promotions.firstWhereOrNull((p) => p.needCode);
+
     state = state.copyWith(
-        items: items, promotions: cartPromotions, subtotal: subtotal);
+      items: items,
+      promotions: cartPromotions,
+      subtotal: subtotal,
+      promoCode: promoByCode?.promoCode,
+    );
     calculateCart();
   }
 
@@ -545,6 +552,10 @@ class Cart extends _$Cart {
       }
     }
     return promotions;
+  }
+
+  void setPromotionCode(String code) {
+    state = state.copyWith(promoCode: code);
   }
 
   void calculateCart() {

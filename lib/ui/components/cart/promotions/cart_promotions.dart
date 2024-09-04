@@ -34,10 +34,10 @@ class CartPromotions extends ConsumerWidget {
         ref.watch(cartProvider.notifier).activePromotion().length;
 
     return Material(
-      color: promotions.isEmpty
-          ? Colors.grey.shade50
-          : promotionsApplied > 0
-              ? Colors.green.shade50
+      color: promotionsApplied > 0
+          ? Colors.green.shade50
+          : promotions.isEmpty
+              ? Colors.grey.shade50
               : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
@@ -57,9 +57,9 @@ class CartPromotions extends ConsumerWidget {
             children: [
               Icon(
                 CupertinoIcons.tickets_fill,
-                color: promotions.isEmpty
-                    ? Colors.grey.shade600
-                    : Colors.amber.shade600,
+                color: promotionsApplied > 0
+                    ? Colors.amber.shade600
+                    : Colors.grey.shade600,
               ),
               const SizedBox(width: 15),
               Expanded(
@@ -68,17 +68,21 @@ class CartPromotions extends ConsumerWidget {
                   children: [
                     Text(
                       'promotions'.tr(),
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color:Colors.black),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: Colors.black),
                     ),
                     Text(
-                      promotions.isEmpty
-                          ? 'add_promotion_code'.tr()
-                          : promotionsApplied > 0
-                              ? '$promotionsApplied ${'promotions_appiled'.tr()}'
+                      promotionsApplied > 0
+                          ? '$promotionsApplied ${'promotions_appiled'.tr()}'
+                          : promotions.isEmpty
+                              ? 'add_promotion_code'.tr()
                               : '${promotions.length} ${'promotions_available'.tr()}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.black87),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Colors.black87),
                     ),
                   ],
                 ),

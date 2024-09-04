@@ -52,6 +52,7 @@ class CartPromotion with _$CartPromotion {
         policy: data.policy,
         quantity: 0,
         kelipatan: data.kelipatan,
+        voucherCode: data.promoCode,
       );
 
   Map<String, dynamic> toTransactionPayload() => <String, dynamic>{

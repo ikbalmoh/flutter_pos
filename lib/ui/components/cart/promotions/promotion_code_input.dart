@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'dart:developer';
 
@@ -27,6 +29,20 @@ class _PromotionCodeInputState extends ConsumerState<PromotionCodeInput> {
   String? validation;
   Promotion? promotion;
 
+  @override
+  void initState() {
+    final promoByCode = ref
+        .read(cartProvider)
+        .promotions
+        .firstWhereOrNull((p) => p.needCode == true);
+        log('APPLIED PROMO BY CODE: $promoByCode');
+    if (promoByCode != null) {
+      controller.text = promoByCode.voucherCode ?? '';
+      onSubmit(promoByCode.voucherCode!);
+    }
+    super.initState();
+  }
+
   bool isPromotionEligible(Promotion? promo) {
     return ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
   }
@@ -47,11 +63,15 @@ class _PromotionCodeInputState extends ConsumerState<PromotionCodeInput> {
       Promotion? promo = await ref
           .read(promotionsProvider.notifier)
           .getPromotionByCode(controller.text);
+
       setState(() {
         isLoading = false;
         promotion = promo;
       });
-      if (isPromotionEligible(promo)) {
+
+      bool isEligible = isPromotionEligible(promo);
+      log('isEligible $isEligible');
+      if (isEligible) {
         widget.onSelect(promo!);
       }
     } on Exception catch (e) {

@@ -54,11 +54,17 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
     }
   }
 
-
   void onSelectPromoByCode(Promotion promo) {
-    setState(() {
-      selected = [promo];
-    });
+    final int idx = selected.indexWhere((p) => p.id == promo.id);
+    if (idx >= 0) {
+      setState(() {
+        selected = [];
+      });
+    } else {
+      setState(() {
+        selected = [promo];
+      });
+    }
   }
 
   bool hasCannotCombinedPromo(int exceptId) {
@@ -102,69 +108,85 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   PromotionCodeInput(
-                      onSelect: onSelectPromoByCode,
-                      active: selected.where((p) => p.needCode == true).isNotEmpty),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 0, vertical: 7.5),
-                    shrinkWrap: true,
-                    itemBuilder: (context, idx) {
-                      Promotion promo = promotions[idx];
-                      bool isActive =
-                          selected.map((p) => p.id).contains(promo.id);
-                      List<int> promoGroup = promo.assignGroups
-                          .map((group) => group.groupId)
-                          .toList();
-                      bool isCustomerEligible = promo.assignCustomer == 2
-                          ? cart.idCustomer != null
-                          : promo.assignCustomer == 3
-                              ? cart.idCustomer == null
-                              : promo.assignCustomer == 4
-                                  ? cart.customerGroup != null &&
-                                      cart.customerGroup!
-                                          .map((group) => group.groupId)
-                                          .where(
-                                              (id) => promoGroup.contains(id))
-                                          .isNotEmpty
-                                  : true;
-                      bool isTimeEligible =
-                          promo.times == null || promo.times!.isEmpty;
-                      if (promo.times != null) {
-                        for (var i = 0; i < promo.times!.length; i++) {
-                          List<String> times = promo.times![i].split('-');
-                          int? start = DateTimeFormater.stringToDateTime(
-                                  '$today ${times[0]}:00')
-                              ?.millisecondsSinceEpoch;
-                          int? end = DateTimeFormater.stringToDateTime(
-                                  '$today ${times[1]}:00')
-                              ?.millisecondsSinceEpoch;
-                          if (start != null && end != null) {
-                            if (start <= now && now <= end) {
-                              isTimeEligible = true;
-                              break;
+                    onSelect: onSelectPromoByCode,
+                    active:
+                        selected.where((p) => p.needCode == true).isNotEmpty,
+                  ),
+                  promotions.isNotEmpty
+                      ? ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 7.5),
+                          shrinkWrap: true,
+                          itemBuilder: (context, idx) {
+                            Promotion promo = promotions[idx];
+                            bool isActive =
+                                selected.map((p) => p.id).contains(promo.id);
+                            List<int> promoGroup = promo.assignGroups
+                                .map((group) => group.groupId)
+                                .toList();
+                            bool isCustomerEligible = promo.assignCustomer == 2
+                                ? cart.idCustomer != null
+                                : promo.assignCustomer == 3
+                                    ? cart.idCustomer == null
+                                    : promo.assignCustomer == 4
+                                        ? cart.customerGroup != null &&
+                                            cart.customerGroup!
+                                                .map((group) => group.groupId)
+                                                .where((id) =>
+                                                    promoGroup.contains(id))
+                                                .isNotEmpty
+                                        : true;
+                            bool isTimeEligible =
+                                promo.times == null || promo.times!.isEmpty;
+                            if (promo.times != null) {
+                              for (var i = 0; i < promo.times!.length; i++) {
+                                List<String> times = promo.times![i].split('-');
+                                int? start = DateTimeFormater.stringToDateTime(
+                                        '$today ${times[0]}:00')
+                                    ?.millisecondsSinceEpoch;
+                                int? end = DateTimeFormater.stringToDateTime(
+                                        '$today ${times[1]}:00')
+                                    ?.millisecondsSinceEpoch;
+                                if (start != null && end != null) {
+                                  if (start <= now && now <= end) {
+                                    isTimeEligible = true;
+                                    break;
+                                  }
+                                }
+                              }
                             }
-                          }
-                        }
-                      }
-                      bool isDisabled = !isTimeEligible ||
-                          !isCustomerEligible ||
-                          promo.needCode ||
-                          (selected.where((p) => p.id != promo.id).isNotEmpty &&
-                              !promo.policy) ||
-                          hasCannotCombinedPromo(promo.id);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 7.5),
-                        child: CartPromotionItem(
-                          promo: promo,
-                          onSelect: onSelect,
-                          active: isActive,
-                          disabled: isDisabled,
-                        ),
-                      );
-                    },
-                    itemCount: promotions.length,
-                  )
+                            bool isDisabled = !isTimeEligible ||
+                                !isCustomerEligible ||
+                                promo.needCode ||
+                                (selected
+                                        .where((p) => p.id != promo.id)
+                                        .isNotEmpty &&
+                                    !promo.policy) ||
+                                hasCannotCombinedPromo(promo.id);
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 7.5),
+                              child: CartPromotionItem(
+                                promo: promo,
+                                onSelect: onSelect,
+                                active: isActive,
+                                disabled: isDisabled,
+                              ),
+                            );
+                          },
+                          itemCount: promotions.length,
+                        )
+                      : Container(
+                          margin: const EdgeInsets.only(top: 100),
+                          child: Text(
+                            'no_valid_promotions'.tr(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(color: Colors.grey.shade500),
+                          ),
+                        )
                 ],
               ),
             ),

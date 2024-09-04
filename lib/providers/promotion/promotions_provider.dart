@@ -79,10 +79,27 @@ class Promotions extends _$Promotions {
       bool endDatePassed = promo.endDate != null
           ? DateTimeFormater.stringToTimestamp(promo.endDate!) >= timestamp
           : true;
-      return starDatePassed && endDatePassed;
+      if (!starDatePassed || !endDatePassed) {
+        return false;
+      }
     }
 
     model.Cart cart = ref.read(cartProvider);
+
+    if (promo.assignCustomer == 2) {
+      return cart.idCustomer != null;
+    } else if (promo.assignCustomer == 3) {
+      return cart.idCustomer == null;
+    } else if (promo.assignCustomer == 4) {
+      final promoGroup =
+          promo.assignGroups.map((group) => group.groupId).toList();
+      return cart.customerGroup != null
+          ? cart.customerGroup!
+                  .indexWhere((g) => promoGroup.contains(g.groupId)) >=
+              0
+          : false;
+    }
+
     List<String> itemIds = cart.items.map((item) => item.idItem).toList();
     List<String> categoryIds =
         cart.items.map((item) => item.idCategory!).toList();
