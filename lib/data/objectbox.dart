@@ -281,7 +281,7 @@ class ObjectBox {
       .query(Promotion_.idPromotion.equals(idPromotion))
       .build()
       .findFirst();
-      
+
   List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
       .query(Promotion_.idPromotion.oneOf(idPromotions))
       .build()
