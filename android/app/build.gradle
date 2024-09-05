@@ -110,11 +110,13 @@ android {
             resValue "string", "app_name", "Selleri Stage"
             applicationIdSuffix ".stage"
             manifestPlaceholders = [applicationLabel: "Selleri Stage"]
+            signingConfig signingConfigs.stage
         }
         prod {
             resValue "string", "app_name", "Selleri"
             manifestPlaceholders = [applicationLabel: "Selleri"]
             applicationIdSuffix ".prod"
+            signingConfig signingConfigs.release
         }
     }
 }
