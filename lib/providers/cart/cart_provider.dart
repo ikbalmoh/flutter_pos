@@ -355,14 +355,32 @@ class Cart extends _$Cart {
   }
 
   void openHoldedCart(CartHolded holded) {
+    log('OPEN HOLDED CART $holded');
     model.Cart cart = holded.dataHold.copyWith(
       idTransaction: holded.transactionId,
       shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
+      holdAt: holded.dataHold.holdAt ?? DateTime.now(),
+      promotions: [],
     );
-    if (cart.holdAt == null) {
-      cart = cart.copyWith(holdAt: DateTime.now());
-    }
     state = cart;
+
+    List<CartPromotion> cartPromotions = [];
+    List<Promotion> promotions = objectBox.getPromotions(holded
+            .dataHold.promotions
+            .map((p) => p.promotionId)
+            .toList()) ??
+        [];
+    if (promotions.isNotEmpty) {
+      for (Promotion promo in promotions) {
+        if (ref.read(promotionsProvider.notifier).isPromotionEligible(promo)) {
+          cartPromotions.add(CartPromotion.fromData(promo));
+        }
+      }
+    }
+    if (cartPromotions.isNotEmpty) {
+      state = state.copyWith(promotions: cartPromotions);
+    }
+    calculateCart();
   }
 
   void reopen(model.Cart cart) {

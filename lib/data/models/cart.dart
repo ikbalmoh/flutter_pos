@@ -108,7 +108,7 @@ class Cart with _$Cart {
         };
       }).toList();
     }
-    data['promotions'] = [];
+    data['promotions'] = data['promotions'] ?? [];
     return Cart.fromJson(data);
   }
 
