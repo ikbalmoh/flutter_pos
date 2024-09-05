@@ -13,14 +13,36 @@
 
 ### Build APK Stage
 
+add and fill following properties on android/key.properties
+
 ```
-make op=release platform=ios flavor=dev release_notes="describe about new feature or fixing issue in which part feature"
+storePasswordStage=
+keyPasswordStage=
+keyAliasStage=
+storeFileStage=
+```
+
+run following commain
+
+```
+make op=release platform=ios flavor=stage release_notes="describe about new feature or fixing issue in which part feature"
 ```
 
 ### Release Patch
 
+add and fill following properties on android/key.properties
+
 ```
-make op=patch flavor=dev
+storePassword=
+keyPassword=
+keyAlias=
+storeFile=
+```
+
+run following commain
+
+```
+make op=patch flavor=prod
 ```
 
 ## Available Flavor
