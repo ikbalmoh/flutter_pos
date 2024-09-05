@@ -160,8 +160,7 @@ class ObjectBox {
                 today.subtract(const Duration(days: 30)),
               ),
             ))
-        .and(Promotion_.type.notEquals(1))
-        .and(Promotion_.needCode.equals(false));
+        .and(Promotion_.type.notEquals(1));
 
     if (active == true) {
       promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
@@ -271,7 +270,7 @@ class ObjectBox {
       .query(Promotion_.idPromotion.equals(idPromotion))
       .build()
       .findFirst();
-      
+
   List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
       .query(Promotion_.idPromotion.oneOf(idPromotions))
       .build()
