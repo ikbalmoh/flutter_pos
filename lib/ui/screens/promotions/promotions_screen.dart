@@ -229,7 +229,42 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                   color: Colors.blueGrey.shade50,
                                 ),
                               ),
-                              title: Text(promo.name),
+                              title: Row(
+                                children: [
+                                  Text(promo.name),
+                                  promo.needCode
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.amber,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          margin:
+                                              const EdgeInsets.only(left: 10),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 3),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                CupertinoIcons.tag_fill,
+                                                color: Colors.white,
+                                                size: 14,
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Text(
+                                                promo.promoCode!,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall
+                                                    ?.copyWith(
+                                                        color: Colors.white),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      : Container()
+                                ],
+                              ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [

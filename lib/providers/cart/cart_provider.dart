@@ -365,10 +365,8 @@ class Cart extends _$Cart {
     state = cart;
 
     List<CartPromotion> cartPromotions = [];
-    List<Promotion> promotions = objectBox.getPromotions(holded
-            .dataHold.promotions
-            .map((p) => p.promotionId)
-            .toList()) ??
+    List<Promotion> promotions = objectBox.getPromotions(
+            holded.dataHold.promotions.map((p) => p.promotionId).toList()) ??
         [];
     if (promotions.isNotEmpty) {
       for (Promotion promo in promotions) {
@@ -506,6 +504,7 @@ class Cart extends _$Cart {
 
         double finalDiscountTotal = discountTotal * eligibleQty;
         if (promo.rewardMaximumAmount != null &&
+            promo.rewardMaximumAmount! > 0 &&
             finalDiscountTotal > promo.rewardMaximumAmount!) {
           finalDiscountTotal = promo.rewardMaximumAmount!;
         }
@@ -526,7 +525,7 @@ class Cart extends _$Cart {
           promotion: cartPromo,
         );
 
-        log('ITEM GET PROMO: $eligibleQty \n $itemCart');
+        log('ITEM GET PROMO: $discountTotal => $eligibleQty \n $itemCart');
 
         cartPromotions.add(cartPromo);
         items[itemIdx] = itemCart;
@@ -546,6 +545,7 @@ class Cart extends _$Cart {
           : promotionByOrder.rewardNominal;
 
       if (promotionByOrder.rewardMaximumAmount != null &&
+          promotionByOrder.rewardMaximumAmount! > 0 &&
           discountValue > promotionByOrder.rewardMaximumAmount!) {
         discountValue = promotionByOrder.rewardMaximumAmount!;
       }

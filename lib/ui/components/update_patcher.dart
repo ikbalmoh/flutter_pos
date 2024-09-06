@@ -53,7 +53,7 @@ class _UpdatePatchState extends State<UpdatePatch> {
         children: [
           const SizedBox(height: 15),
           Text(
-            downloaded ? 'update_applied' : 'update_available'.tr(),
+            downloaded ? 'update_applied'.tr() : 'update_available'.tr(),
             style: textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),

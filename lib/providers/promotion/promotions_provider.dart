@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/promotion_repository.dart';
@@ -105,38 +106,45 @@ class Promotions extends _$Promotions {
       }
     }
 
-    List<String> itemIds = cart.items.map((item) => item.idItem).toList();
-    List<String> categoryIds =
-        cart.items.map((item) => item.idCategory!).toList();
-    List<String> variantIds = cart.items
-        .where((item) => item.idVariant != null)
-        .map((item) => item.idVariant!.toString())
-        .toList();
-
     // Promo by order
     if (promo.type == 2) {
       return promo.requirementMinimumOrder == null
           ? true
           : promo.requirementMinimumOrder! <= cart.subtotal;
-    } else if (promo.type == 3) {
-      if (cart.items.isNotEmpty) {
-        switch (promo.requirementProductType) {
-          case 1:
-            return promo.requirementProductId
-                    .indexWhere((id) => itemIds.contains(id)) >=
-                0;
+    } else if (promo.type == 3 && cart.items.isNotEmpty) {
+      List<ItemCart> eligibleItems = [];
+      switch (promo.requirementProductType) {
+        case 1:
+          eligibleItems = cart.items
+              .where((item) =>
+                  promo.requirementProductId.contains(item.idItem) &&
+                  item.quantity >= promo.requirementQuantity!)
+              .toList();
+          break;
 
-          case 2:
-            return promo.requirementProductId
-                    .indexWhere((id) => variantIds.contains(id)) >=
-                0;
+        case 2:
+          eligibleItems = cart.items
+              .where((item) =>
+                  promo.requirementProductId.contains(item.idVariant) &&
+                  item.quantity >= promo.requirementQuantity!)
+              .toList();
+          break;
 
-          default:
-            return promo.requirementProductId
-                    .indexWhere((id) => categoryIds.contains(id)) >=
-                0;
-        }
+        default:
+          eligibleItems = cart.items
+              .where((item) =>
+                  promo.requirementProductId.contains(item.idCategory) &&
+                  item.quantity >= promo.requirementQuantity!)
+              .toList();
+          break;
       }
+
+      log('eligibleItems: $eligibleItems');
+
+      if (eligibleItems.isEmpty) {
+        return false;
+      }
+    } else {
       return false;
     }
 
