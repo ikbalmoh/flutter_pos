@@ -364,21 +364,14 @@ class Cart extends _$Cart {
     );
     state = cart;
 
-    List<CartPromotion> cartPromotions = [];
     List<Promotion> promotions = objectBox.getPromotions(
             holded.dataHold.promotions.map((p) => p.promotionId).toList()) ??
         [];
     if (promotions.isNotEmpty) {
-      for (Promotion promo in promotions) {
-        if (ref.read(promotionsProvider.notifier).isPromotionEligible(promo)) {
-          cartPromotions.add(CartPromotion.fromData(promo));
-        }
-      }
+      applyPromotions(promotions);
+    } else {
+      calculateCart();
     }
-    if (cartPromotions.isNotEmpty) {
-      state = state.copyWith(promotions: cartPromotions);
-    }
-    calculateCart();
   }
 
   void reopen(model.Cart cart) {
@@ -432,8 +425,18 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void applyPromotions(List<Promotion> promotions) {
-    log('APPLY PROMOTIONS: $promotions');
+  void applyPromotions(List<Promotion> selectedPromotions) {
+    log('APPLY PROMOTIONS: $selectedPromotions');
+
+    List<Promotion> promotions = [];
+    for (Promotion promo in selectedPromotions) {
+      bool isEligible =
+          ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
+      if (isEligible) {
+        promotions.add(promo);
+      }
+    }
+
     List<ItemCart> items = List<ItemCart>.from(state.items)
         .map((item) => item.promotion == null
             ? item

@@ -74,7 +74,6 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   @override
   Widget build(BuildContext context) {
     List<Promotion> promotions = ref.watch(promotionsProvider);
-    cart_model.Cart cart = ref.watch(cartProvider);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       height: MediaQuery.of(context).size.height *
@@ -122,42 +121,10 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                             Promotion promo = promotions[idx];
                             bool isActive =
                                 selected.map((p) => p.id).contains(promo.id);
-                            List<int> promoGroup = promo.assignGroups
-                                .map((group) => group.groupId)
-                                .toList();
-                            bool isCustomerEligible = promo.assignCustomer == 2
-                                ? cart.idCustomer != null
-                                : promo.assignCustomer == 3
-                                    ? cart.idCustomer == null
-                                    : promo.assignCustomer == 4
-                                        ? cart.customerGroup != null &&
-                                            cart.customerGroup!
-                                                .map((group) => group.groupId)
-                                                .where((id) =>
-                                                    promoGroup.contains(id))
-                                                .isNotEmpty
-                                        : true;
-                            bool isTimeEligible =
-                                promo.times == null || promo.times!.isEmpty;
-                            if (promo.times != null) {
-                              for (var i = 0; i < promo.times!.length; i++) {
-                                List<String> times = promo.times![i].split('-');
-                                int? start = DateTimeFormater.stringToDateTime(
-                                        '$today ${times[0]}:00')
-                                    ?.millisecondsSinceEpoch;
-                                int? end = DateTimeFormater.stringToDateTime(
-                                        '$today ${times[1]}:00')
-                                    ?.millisecondsSinceEpoch;
-                                if (start != null && end != null) {
-                                  if (start <= now && now <= end) {
-                                    isTimeEligible = true;
-                                    break;
-                                  }
-                                }
-                              }
-                            }
-                            bool isDisabled = !isTimeEligible ||
-                                !isCustomerEligible ||
+                            bool isEligible = ref
+                                .read(promotionsProvider.notifier)
+                                .isPromotionEligible(promo);
+                            bool isDisabled = !isEligible ||
                                 promo.needCode ||
                                 (selected
                                         .where((p) => p.id != promo.id)
@@ -191,37 +158,34 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
               ),
             ),
           ),
-          selected.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-                  child: Row(
-                    children: [
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey.shade700,
-                        ),
-                        onPressed: () => context.pop(),
-                        child: Text(
-                          'cancel'.tr(),
-                        ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+            child: Row(
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey.shade700,
+                  ),
+                  onPressed: () => context.pop(),
+                  child: Text(
+                    'cancel'.tr(),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30)),
-                            ),
-                          ),
-                          onPressed: () => context.pop(selected),
-                          child: Text('apply'.tr()),
-                        ),
-                      )
-                    ],
+                    ),
+                    onPressed: () => context.pop(selected),
+                    child: Text('apply'.tr()),
                   ),
                 )
-              : Container()
+              ],
+            ),
+          ),
         ],
       ),
     );

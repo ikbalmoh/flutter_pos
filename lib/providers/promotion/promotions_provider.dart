@@ -64,6 +64,11 @@ class Promotions extends _$Promotions {
     if (promo.type == 1) {
       return false;
     }
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final today =
+        DateTimeFormater.dateToString(DateTime.now(), format: 'y-MM-dd');
+
     // Check days
     if (promo.days != null && promo.days!.isNotEmpty) {
       if (!promo.days!
@@ -83,6 +88,27 @@ class Promotions extends _$Promotions {
       if (!starDatePassed || !endDatePassed) {
         return false;
       }
+    }
+
+    bool isTimeEligible = promo.times == null || promo.times!.isEmpty;
+    if (promo.times != null && promo.times!.isNotEmpty) {
+      for (var i = 0; i < promo.times!.length; i++) {
+        List<String> times = promo.times![i].split('-');
+        int? start = DateTimeFormater.stringToDateTime('$today ${times[0]}:00')
+            ?.millisecondsSinceEpoch;
+        int? end = DateTimeFormater.stringToDateTime('$today ${times[1]}:00')
+            ?.millisecondsSinceEpoch;
+        if (start != null && end != null) {
+          if (start <= now && now <= end) {
+            isTimeEligible = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!isTimeEligible) {
+      return false;
     }
 
     model.Cart cart = ref.read(cartProvider);
