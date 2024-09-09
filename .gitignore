@@ -41,3 +41,16 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+.env
+.env.stage
+
+# FVM Version Cache
+.fvm/
+
+# Generated file
+*.freezed.dart
+*.g.dart
+
+# firebase
+firebase.json
+firepit-log.txt

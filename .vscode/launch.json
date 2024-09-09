@@ -1,0 +1,40 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug [Dev]",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "dev"]
+    },
+    {
+      "name": "Debug [Stage]",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "stage"]
+    },
+    {
+      "name": "Debug [Prod]",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "prod"]
+    },
+    {
+      "name": "Profile Mode [Stage]",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "dev"],
+      "flutterMode": "profile"
+    },
+    {
+      "name": "Selleri (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--flavor", "prod"],
+      "flutterMode": "release"
+    }
+  ]
+}
