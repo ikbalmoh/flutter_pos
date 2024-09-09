@@ -1,16 +1,66 @@
-# selleri
+# Selleri POS
 
-A new Flutter project.
+## Requirement
 
-## Getting Started
+- Flutter 3.22.2
+- Shorebird
+- Makefile
+- Firebase Tools
 
-This project is a starting point for a Flutter application.
+### Generate Provider or Model
 
-A few resources to get you started if this is your first Flutter project:
+- run `dart run build_runner build -d` or `dart run build_runner watch -d` once provider or model are changed
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Build APK Stage
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+add and fill following properties on android/key.properties
+
+```
+storePasswordStage=
+keyPasswordStage=
+keyAliasStage=
+storeFileStage=
+```
+
+run following commain
+
+```
+make op=release platform=ios flavor=stage release_notes="describe about new feature or fixing issue in which part feature"
+```
+
+### Release Patch
+
+add and fill following properties on android/key.properties
+
+```
+storePassword=
+keyPassword=
+keyAlias=
+storeFile=
+```
+
+run following commain
+
+```
+make op=patch flavor=prod
+```
+
+## Available Flavor
+
+- dev
+- stage
+- release
+
+### Note for prod release
+
+#### Android
+
+Place .keystore file to android/app directory
+
+Create android/key.properties file with following config
+```
+storePassword=
+keyPassword=
+keyAlias=
+storeFile=
+```
