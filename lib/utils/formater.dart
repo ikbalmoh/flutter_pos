@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 import 'package:validators/validators.dart';
