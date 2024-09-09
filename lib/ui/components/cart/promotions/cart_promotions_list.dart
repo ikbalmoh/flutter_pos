@@ -74,7 +74,6 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   @override
   Widget build(BuildContext context) {
     List<Promotion> promotions = ref.watch(promotionsProvider);
-    cart_model.Cart cart = ref.watch(cartProvider);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       height: MediaQuery.of(context).size.height *
@@ -159,34 +158,29 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
               ),
             ),
           ),
-          selected.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-                  child: Row(
-                    children: [
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey.shade700,
-                        ),
-                        onPressed: () => context.pop(),
-                        child: Text(
-                          'cancel'.tr(),
-                        ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+            child: Row(
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey.shade700,
+                  ),
+                  onPressed: () => context.pop(),
+                  child: Text(
+                    'cancel'.tr(),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30)),
-                            ),
-                          ),
-                          onPressed: () => context.pop(selected),
-                          child: Text('apply'.tr()),
-                        ),
-                      )
-                    ],
+                    ),
+                    onPressed: () => context.pop(selected),
+                    child: Text('apply'.tr()),
                   ),
                 )
               ],
