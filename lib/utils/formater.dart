@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 import 'package:validators/validators.dart';
@@ -53,15 +55,17 @@ class DateTimeFormater {
   }
 
   static int stringToTimestamp(dynamic value) {
+    int result = DateTime.now().millisecondsSinceEpoch;
     if (value is int || value is num) {
-      return value;
-    }
-    if (value is String) {
+      result = value;
+    } else if (value is String) {
       if (isDate(value)) {
-        return DateTime.parse(value).millisecondsSinceEpoch;
+        result = DateTime.parse(value).millisecondsSinceEpoch;
       }
+    } else if (value is DateTime) {
+      result = value.millisecondsSinceEpoch;
     }
-    return DateTime.now().millisecondsSinceEpoch;
+    return result;
   }
 
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {

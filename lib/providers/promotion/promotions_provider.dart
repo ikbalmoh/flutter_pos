@@ -77,15 +77,14 @@ class Promotions extends _$Promotions {
       }
     }
     // Check date
-    if (promo.allTime) {
-      int timestamp = DateTime.now().millisecondsSinceEpoch;
-      bool starDatePassed = promo.startDate != null
-          ? DateTimeFormater.stringToTimestamp(promo.startDate!) <= timestamp
-          : true;
-      bool endDatePassed = promo.endDate != null
-          ? DateTimeFormater.stringToTimestamp(promo.endDate!) >= timestamp
-          : true;
-      if (!starDatePassed || !endDatePassed) {
+    if (!promo.allTime) {
+      int now = DateTime.now().millisecondsSinceEpoch;
+      int start = DateTimeFormater.stringToTimestamp(promo.startDate!);
+      int end = DateTimeFormater.stringToTimestamp(promo.endDate!);
+
+      bool dateIsValid = now >= start && now <= end;
+
+      if (!dateIsValid) {
         return false;
       }
     }
