@@ -230,5 +230,7 @@
   "flat_rate": "Nilai Tetap",
   "all_customer": "Semua Pelanggan",
   "member": "Member",
-  "non_member": "Non Member"
+  "non_member": "Non Member",
+  "delete_transaction": "Hapus Transaksi",
+  "delete_transaction_confirmation": "Apakah anda yakin? Transaksi ini akan dihapus dan tidak dapat dibuka kembali"
 }

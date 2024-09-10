@@ -86,7 +86,17 @@ class TransactionApi {
     } on DioException catch (e) {
       throw Exception(e.response?.data['msg'] ?? e.message);
     } catch (e) {
-      throw Exception(e);
+      rethrow;
+    }
+  }
+
+  Future deleteHoldedTransaction(String transactionId) async {
+    try {
+      await api.delete('${ApiUrl.hold}/$transactionId');
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } catch (e) {
+      rethrow;
     }
   }
 
