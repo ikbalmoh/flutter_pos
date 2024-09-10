@@ -229,5 +229,7 @@
   "flat_rate": "Flat Rate",
   "all_customer": "All Customer",
   "member": "Member",
-  "non_member": "Non Member"
+  "non_member": "Non Member",
+  "delete_transaction": "Delete Transaction",
+  "delete_transaction_confirmation": "Are you sure? This transaction will be deleted and can no longer be opened"
 }

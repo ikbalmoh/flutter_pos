@@ -60,6 +60,11 @@ class Promotions extends _$Promotions {
     if (promo == null) {
       return false;
     }
+
+    if (!promo.status) {
+      return false;
+    }
+
     // Disabled A get B
     if (promo.type == 1) {
       return false;

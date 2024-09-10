@@ -434,6 +434,13 @@ class Cart extends _$Cart {
     }
   }
 
+  void removeHoldedCart() async {
+    final api = TransactionApi();
+    String idTransaction = state.idTransaction!;
+    initCart();
+    await api.deleteHoldedTransaction(idTransaction);
+  }
+
   void reopen(model.Cart cart) {
     state = cart;
   }

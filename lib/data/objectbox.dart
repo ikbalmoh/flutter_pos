@@ -161,11 +161,10 @@ class ObjectBox {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
-              Promotion_.endDate.greaterThanDate(
-                today.subtract(const Duration(days: 30)),
-              ),
-            ))
-        .and(Promotion_.type.notEquals(1));
+          Promotion_.endDate.greaterThanDate(
+            today.subtract(const Duration(days: 30)),
+          ),
+        )).and(Promotion_.type.notEquals(1));
 
     if (active == true) {
       promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
@@ -283,7 +282,9 @@ class ObjectBox {
       .findFirst();
 
   List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
-      .query(Promotion_.idPromotion.oneOf(idPromotions))
+      .query(Promotion_.idPromotion
+          .oneOf(idPromotions)
+          .and(Promotion_.status.equals(true)))
       .build()
       .find();
 

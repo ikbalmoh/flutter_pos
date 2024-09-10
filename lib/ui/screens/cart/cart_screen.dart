@@ -45,6 +45,16 @@ class CartScreen extends ConsumerWidget {
       );
     }
 
+    void confirmDeleteTransaction(BuildContext context) {
+      AppAlert.confirm(
+        context,
+        title: 'delete_transaction'.tr(),
+        subtitle: 'delete_transaction_confirmation'.tr(),
+        confirmLabel: 'delete'.tr(),
+        onConfirm: () => ref.read(cartProvider.notifier).removeHoldedCart(),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
@@ -57,6 +67,16 @@ class CartScreen extends ConsumerWidget {
         leading:
             asWidget == true ? const Icon(CupertinoIcons.shopping_cart) : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
+        actions: cart.holdAt != null
+            ? [
+                IconButton(
+                    onPressed: () => confirmDeleteTransaction(context),
+                    icon: const Icon(
+                      CupertinoIcons.trash,
+                      color: Colors.red,
+                    ))
+              ]
+            : [],
       ),
       body: cart.items.isNotEmpty
           ? Column(
