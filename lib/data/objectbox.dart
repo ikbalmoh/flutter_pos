@@ -284,7 +284,7 @@ class ObjectBox {
   List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
       .query(Promotion_.idPromotion
           .oneOf(idPromotions)
-          .and(Promotion_.status.equals(true)))
+          .and(Promotion_.type.notEquals(1)))
       .build()
       .find();
 

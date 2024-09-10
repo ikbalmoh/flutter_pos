@@ -128,9 +128,11 @@ class Promotions extends _$Promotions {
     } else if (promo.assignCustomer == 4) {
       final promoGroup =
           promo.assignGroups.map((group) => group.groupId).toList();
-      bool hasPromoGroup = cart.customerGroup!
-              .indexWhere((g) => promoGroup.contains(g.groupId)) >=
-          0;
+      bool hasPromoGroup = cart.customerGroup == null
+          ? false
+          : cart.customerGroup!
+                  .indexWhere((g) => promoGroup.contains(g.groupId)) >=
+              0;
       if (!hasPromoGroup) {
         return false;
       }

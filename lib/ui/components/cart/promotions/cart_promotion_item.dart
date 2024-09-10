@@ -11,7 +11,7 @@ class CartPromotionItem extends StatelessWidget {
   const CartPromotionItem({
     super.key,
     required this.promo,
-    required this.onSelect,
+    this.onSelect,
     required this.active,
     this.disabled,
   });
@@ -19,7 +19,7 @@ class CartPromotionItem extends StatelessWidget {
   final Promotion promo;
   final bool active;
   final bool? disabled;
-  final Function(Promotion) onSelect;
+  final Function(Promotion)? onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class CartPromotionItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(5),
         splashColor: Colors.green.shade50,
-        onTap: disabled == true ? null : () => onSelect(promo),
+        onTap: disabled == true || onSelect == null ? null : () => onSelect!(promo),
         child: Container(
           decoration: BoxDecoration(
               border: Border.all(
