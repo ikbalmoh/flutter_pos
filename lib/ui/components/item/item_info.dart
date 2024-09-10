@@ -3,18 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_package.dart';
+import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/providers/promotion/promotions_provider.dart';
+import 'package:selleri/ui/components/cart/promotions/cart_promotion_item.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ItemInfo extends StatelessWidget {
+class ItemInfo extends ConsumerWidget {
   final Item item;
 
   const ItemInfo({required this.item, super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<String> promotionsIds = item.promotions;
+    if (item.variants.isNotEmpty) {
+      for (ItemVariant variant in item.variants) {
+        if (variant.promotions != null) {
+          promotionsIds = promotionsIds..addAll(variant.promotions!);
+        }
+      }
+    }
+    List<Promotion> promotions = objectBox.getPromotions(promotionsIds) ?? [];
     return Padding(
       padding: EdgeInsets.only(
         top: 10,
@@ -55,14 +69,54 @@ class ItemInfo extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 10),
-          item.isPackage
-              ? ItemPackagesQtyInfo(
-                  details: item.packageItems,
-                  stockControl: item.stockControl,
-                )
-              : ItemQtyInfo(stockItem: item.stockItem),
-          const SizedBox(height: 10),
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                item.isPackage
+                    ? ItemPackagesQtyInfo(
+                        details: item.packageItems,
+                        stockControl: item.stockControl,
+                      )
+                    : ItemQtyInfo(stockItem: item.stockItem),
+                const SizedBox(height: 10),
+                promotions.isNotEmpty
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'promotions'.tr(),
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (context, idx) {
+                              Promotion promo = promotions[idx];
+                              bool isEligible = ref
+                                  .read(promotionsProvider.notifier)
+                                  .isPromotionEligible(promo);
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                child: CartPromotionItem(
+                                  promo: promo,
+                                  onSelect: null,
+                                  active: isEligible,
+                                ),
+                              );
+                            },
+                            itemCount: promotions.length,
+                          )
+                        ],
+                      )
+                    : Container()
+              ],
+            ),
+          ),
         ],
       ),
     );
