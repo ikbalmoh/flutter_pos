@@ -357,12 +357,26 @@ class Cart extends _$Cart {
   void openHoldedCart(CartHolded holded) {
     log('OPEN HOLDED CART $holded');
     model.Cart cart = holded.dataHold.copyWith(
-      idTransaction: holded.transactionId,
-      shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
-      holdAt: holded.dataHold.holdAt ?? DateTime.now(),
-      promotions: [],
-    );
-    state = cart;
+        idTransaction: holded.transactionId,
+        shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
+        holdAt: holded.dataHold.holdAt ?? DateTime.now(),
+        promotions: [],
+        items: []);
+
+    List<ItemCart> items = [];
+    for (ItemCart item in holded.dataHold.items) {
+      if (item.promotion != null) {
+        item = item.copyWith(
+          discountTotal: 0,
+          discount: 0,
+          discountIsPercent: true,
+          total: item.price * item.quantity,
+        );
+      }
+      items.add(item);
+    }
+
+    state = cart.copyWith(items: items);
 
     List<Promotion> promotions = objectBox.getPromotions(
             holded.dataHold.promotions.map((p) => p.promotionId).toList()) ??
