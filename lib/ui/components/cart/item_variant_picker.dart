@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:go_router/go_router.dart';
@@ -181,9 +182,19 @@ class VariantItem extends StatelessWidget {
                       const SizedBox(
                         height: 3,
                       ),
-                      StockBadge(
-                          stockItem: variant.stockItem,
-                          stockControl: stockControl)
+                      Wrap(
+                        spacing: 5,
+                        children: [
+                          variant.promotions != null &&
+                                  variant.promotions!.isNotEmpty
+                              ? const PromotionBadge()
+                              : Container(),
+                          StockBadge(
+                            stockItem: variant.stockItem,
+                            stockControl: stockControl,
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),

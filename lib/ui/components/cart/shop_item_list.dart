@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -92,22 +93,7 @@ class ShopItemList extends StatelessWidget {
                         spacing: 5,
                         children: [
                           item.promotions.isNotEmpty
-                              ? Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.amber.shade100
-                                          .withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(3)),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 5,
-                                  ),
-                                  child: Text(
-                                    'promotions'.tr(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(color: Colors.yellow.shade900),
-                                  ),
-                                )
+                              ? const PromotionBadge()
                               : Container(),
                           StockBadge(
                             stockItem: item.stockItem,
