@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -87,9 +88,20 @@ class ShopItem extends StatelessWidget {
                         Positioned(
                           bottom: 5,
                           left: 5,
-                          child: StockBadge(
-                            stockItem: item.stockItem,
-                            stockControl: item.stockControl,
+                          child: Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: 5,
+                            direction: Axis.horizontal,
+                            children: [
+                              StockBadge(
+                                stockItem: item.stockItem,
+                                stockControl: item.stockControl,
+                                packageItems: item.packageItems,
+                              ),
+                              item.promotions.isNotEmpty
+                                  ? const PromotionBadge()
+                                  : Container(),
+                            ],
                           ),
                         )
                       ],
