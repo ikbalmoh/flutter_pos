@@ -65,11 +65,6 @@ class Promotions extends _$Promotions {
       return false;
     }
 
-    // Disabled A get B
-    if (promo.type == 1) {
-      return false;
-    }
-
     final now = DateTime.now().millisecondsSinceEpoch;
     final today =
         DateTimeFormater.dateToString(DateTime.now(), format: 'y-MM-dd');
@@ -143,7 +138,7 @@ class Promotions extends _$Promotions {
       return promo.requirementMinimumOrder == null
           ? true
           : promo.requirementMinimumOrder! <= cart.subtotal;
-    } else if (promo.type == 3 && cart.items.isNotEmpty) {
+    } else if (cart.items.isNotEmpty) {
       List<ItemCart> eligibleItems = [];
       switch (promo.requirementProductType) {
         case 1:

@@ -168,6 +168,6 @@ class PromotionType {
         PromotionType(id: 0, name: 'all_type'.tr()),
         PromotionType(id: 2, name: 'transaction'.tr()),
         PromotionType(id: 3, name: 'item'.tr()),
-        // const PromotionType(id: 1, name: 'A get B'),
+        const PromotionType(id: 1, name: 'A get B'),
       ];
 }

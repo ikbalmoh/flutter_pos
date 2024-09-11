@@ -63,14 +63,10 @@ class ObjectBox {
             .equalsDate(today)
             .or(Promotion_.endDate.equalsDate(today))));
 
-    // Disable promo A get B
-    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
-
     // FILTER PROMO BY CODE
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
-    Condition<Promotion> promotionTermsQuery = Promotion_.type
-        .equals(2)
+    Condition<Promotion> promotionTermsQuery = (Promotion_.type.equals(2))
         .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
     // Filter promotions by product
@@ -132,7 +128,7 @@ class ObjectBox {
       }
 
       promotionTermsQuery = promotionTermsQuery
-          .or(Promotion_.type.equals(3).and(requirementProductQuery));
+          .or(Promotion_.type.oneOf([1, 3]).and(requirementProductQuery));
     }
 
     promotionQuery = promotionQuery.and(promotionTermsQuery);
@@ -155,11 +151,11 @@ class ObjectBox {
       PickerDateRange? range}) {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
-    Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
+    Condition<Promotion> promotionQuery = Promotion_.allTime.equals(true).or(
           Promotion_.endDate.greaterThanDate(
             today.subtract(const Duration(days: 30)),
           ),
-        )).and(Promotion_.type.notEquals(1));
+        );
 
     if (active == true) {
       promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
@@ -271,9 +267,7 @@ class ObjectBox {
       .findFirst();
 
   List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
-      .query(Promotion_.idPromotion
-          .oneOf(idPromotions)
-          .and(Promotion_.type.notEquals(1)))
+      .query(Promotion_.idPromotion.oneOf(idPromotions))
       .build()
       .find();
 
