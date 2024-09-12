@@ -1,54 +1,72 @@
-script:
-  - &shorebird_install
-    name: Install Shorebird CLI
-    script: |
-      # Install the Shorebird CLI
-      curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
-      # Set Shorebird PATH
-      echo PATH="/Users/builder/.shorebird/bin:$PATH" >> $CM_ENV
-  - &flutter_analyze
-    name: Run static code analysis
-    script: flutter analyze
-  - &setup_local_properties
-    name: Set up local.properties
-    script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-  - &get_flutter_packages
-    name: Get Flutter packages
-    script: | 
-      flutter pub get
-  - &build_runner
-    name: Build Runner
-    script: | 
-      dart run build_runner build -d
-workflows:
-  android-stage-workflow:
-    name: Release Android Stage
-    instance_type: mac_mini_m1
-    environment:
-      android_signing:
-        - selleri_stage_keystore
+definitions:
+  environment:
+    shared_env: &shared_env
+      flutter: 3.22.3
       groups:
         - shorebird
         - selleri-stage
       vars:
         FLUTTER_VERSION: 3.22.3
-      flutter: 
-        version: fvm
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: release
+  scripts:
+    - &shorebird_install
+      name: Install Shorebird
+      script: |
+        # Install Shorebird
+        curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+
+        # Add Shorebird to PATH
+        echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
+    - &fetch_dependencies
+      name: Fetch Dependencies
+      script: |
+        flutter pub get
+    - &build_runner
+      name: Build Runner
+      script: |
+        dart run build_runner build -d
+    - &analyze_and_test
+      name: Analyze and Test
+      script: |
+        flutter analyze
+
+workflows:
+  release-android-stage-workflow:
+    name: Release Android Stage
+    instance_type: mac_mini_m1
+    environment:
+      <<: *shared_env
+      android_signing:
+        - selleri_stage_keystore
     scripts:
-      - *setup_local_properties
-      - *get_flutter_packages
       - *shorebird_install
+      - *fetch_dependencies
       - *build_runner
+      - *analyze_and_test
       - name: Shorebird Release
         script: |
           shorebird release android \
-          --flavor=stage --flutter-version="$FLUTTER_VERSION"
+            --flavor=stage --flutter-version="$FLUTTER_VERSION" --artifact apk
     artifacts:
       - build/**/outputs/**/*.apk
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
+
+  patch-android-stage-workflow:
+    name: Patch Android
+    instance_type: mac_mini_m1
+    environment:
+      <<: *shared_env
+      android_signing:
+        - selleri_stage_keystore
+    inputs:
+      release_version:
+        description: The stage version to patch
+    scripts:
+      - *shorebird_install
+      - *fetch_dependencies
+      - *build_runner
+      - *analyze_and_test
+      - name: Shorebird Patch
+        script: |
+          shorebird patch android \
+            --flavor=stage --release-version=${{ inputs.release_version }}
