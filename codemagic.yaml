@@ -1,0 +1,56 @@
+script:
+  - &shorebird_install
+    name: Install Shorebird CLI
+    script: |
+      # Install the Shorebird CLI
+      curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+      # Set Shorebird PATH
+      echo PATH="/Users/builder/.shorebird/bin:$PATH" >> $CM_ENV
+  - &flutter_analyze
+    name: Run static code analysis
+    script: flutter analyze
+  - &setup_local_properties
+    name: Set up local.properties
+    script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+  - &get_flutter_packages
+    name: Get Flutter packages
+    script: | 
+      flutter pub get
+  - &build_runner
+    name: Build Runner
+    script: | 
+      dart run build_runner build -d
+workflows:
+  android-stage-workflow:
+    name: Release Android Stage
+    instance_type: mac_mini_m1
+    environment:
+      android_signing:
+        - selleri_stage_keystore
+      groups:
+        - shorebird
+        - selleri-stage
+      vars:
+        FLUTTER_VERSION: 3.22.3
+      flutter: 
+        version: fvm
+        flavor: stage
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: release
+    scripts:
+      - *setup_local_properties
+      - *get_flutter_packages
+      - *shorebird_install
+      - *build_runner
+      - *flutter_analyze
+      - name: Shorebird Release
+        script: |
+          shorebird release android \
+          --flavor=stage --flutter-version="$FLUTTER_VERSION"
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
