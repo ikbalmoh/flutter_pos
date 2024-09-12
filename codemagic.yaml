@@ -61,6 +61,8 @@ workflows:
         - selleri_stage_keystore
     scripts:
       - *shorebird_install
+      - *create_env
+      - *create_env_stage
       - *fetch_dependencies
       - *build_runner
       - *analyze_and_test
