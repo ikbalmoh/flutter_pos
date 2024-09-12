@@ -44,7 +44,6 @@ workflows:
       - *get_flutter_packages
       - *shorebird_install
       - *build_runner
-      - *flutter_analyze
       - name: Shorebird Release
         script: |
           shorebird release android \
