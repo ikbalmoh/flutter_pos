@@ -34,7 +34,6 @@ workflows:
         FLUTTER_VERSION: 3.22.3
       flutter: 
         version: fvm
-        flavor: stage
     triggering:
       events:
         - push
