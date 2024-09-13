@@ -92,6 +92,7 @@ workflows:
       ios_signing:
         certificates:
           - CODEMAGIC_DISTRIBUTION
+        distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
     scripts:
       - *shorebird_install
@@ -116,17 +117,13 @@ workflows:
           groups:
             - dgti
 
-  patch-stage-workflow:
-    name: Patch Stage Update
+  patch-android-stage-workflow:
+    name: Patch Android Stage Update
     instance_type: mac_mini_m1
     environment:
       <<: *shared_env
       android_signing:
         - selleri_stage_keystore
-      ios_signing:
-        certificates:
-          - CODEMAGIC_DISTRIBUTION
-        bundle_identifier: com.dgti.selleri.stage
     inputs:
       release_version:
         description: The stage version to patch
@@ -141,3 +138,42 @@ workflows:
         script: |
           shorebird patch android \
             --flavor=stage --release-version=${{ inputs.release_version }}
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'dev'
+          include: true
+          source: true
+
+  patch-ios-stage-workflow:
+    name: Patch iOS Stage Update
+    instance_type: mac_mini_m1
+    environment:
+      <<: *shared_env
+      ios_signing:
+        certificates:
+          - CODEMAGIC_DISTRIBUTION
+        distribution_type: ad_hoc
+        bundle_identifier: com.dgti.selleri.stage
+    inputs:
+      release_version:
+        description: The stage version to patch
+    scripts:
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *fetch_dependencies
+      - *build_runner
+      - *analyze_and_test
+      - name: Shorebird Patch
+        script: |
+          shorebird patch ios \
+            --flavor=stage --release-version=${{ inputs.release_version }}
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'dev'
+          include: true
+          source: true
