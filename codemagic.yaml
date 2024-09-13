@@ -124,9 +124,6 @@ workflows:
       <<: *shared_env
       android_signing:
         - selleri_stage_keystore
-    inputs:
-      release_version:
-        description: The stage version to patch
     scripts:
       - *shorebird_install
       - *create_env
@@ -137,7 +134,7 @@ workflows:
       - name: Shorebird Patch
         script: |
           shorebird patch android \
-            --flavor=stage --release-version=${{ inputs.release_version }}
+            --flavor=stage --release-version=$(grep 'version:' pubspec.yaml | awk '{print $$2}')
     triggering:
       events:
         - push
@@ -156,9 +153,6 @@ workflows:
           - apple-development
         distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
-    inputs:
-      release_version:
-        description: The stage version to patch
     scripts:
       - *shorebird_install
       - *create_env
@@ -169,7 +163,7 @@ workflows:
       - name: Shorebird Patch
         script: |
           shorebird patch ios \
-            --flavor=stage --release-version=${{ inputs.release_version }}
+            --flavor=stage --release-version=$(grep 'version:' pubspec.yaml | awk '{print $$2}')
     triggering:
       events:
         - push
