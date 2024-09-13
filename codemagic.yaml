@@ -92,6 +92,8 @@ workflows:
       ios_signing:
         certificates:
           - CODEMAGIC_DISTRIBUTION
+        distribution_type: development
+        bundle_identifier: com.dgti.selleri.stage
     scripts:
       - *shorebird_install
       - *create_env
@@ -125,6 +127,8 @@ workflows:
       ios_signing:
         certificates:
           - CODEMAGIC_DISTRIBUTION
+        distribution_type: development
+        bundle_identifier: com.dgti.selleri.stage
     inputs:
       release_version:
         description: The stage version to patch
