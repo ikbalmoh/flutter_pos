@@ -1,13 +1,13 @@
 definitions:
   environment:
     shared_env: &shared_env
-      flutter: 3.22.3
+      flutter: fvm
       groups:
         - shorebird
         - firebase_credentials
         - selleri-stage
       vars:
-        FLUTTER_VERSION: 3.22.3
+        FLUTTER_VERSION: fvm
   scripts:
     - &create_env
       name: Create .env
@@ -126,7 +126,7 @@ workflows:
         - selleri_stage_keystore
     inputs:
       release_version:
-        description: The release version to patch
+        description: The stage version to patch
     scripts:
       - *shorebird_install
       - *create_env
@@ -138,6 +138,13 @@ workflows:
         script: |
           shorebird patch android \
             --flavor=stage --release-version=${{ inputs.release_version }}
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'dev'
+          include: true
+          source: true
 
   patch-ios-stage-workflow:
     name: Patch iOS Stage Update
@@ -146,12 +153,12 @@ workflows:
       <<: *shared_env
       ios_signing:
         certificates:
-          - CODEMAGIC_DISTRIBUTION
+          - apple-development
         distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
     inputs:
       release_version:
-        description: The release version to patch
+        description: The stage version to patch
     scripts:
       - *shorebird_install
       - *create_env
@@ -163,3 +170,10 @@ workflows:
         script: |
           shorebird patch ios \
             --flavor=stage --release-version=${{ inputs.release_version }}
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'dev'
+          include: true
+          source: true
