@@ -126,7 +126,7 @@ workflows:
         - selleri_stage_keystore
     inputs:
       release_version:
-        description: The stage version to patch
+        description: The release version to patch
     scripts:
       - *shorebird_install
       - *create_env
@@ -138,13 +138,6 @@ workflows:
         script: |
           shorebird patch android \
             --flavor=stage --release-version=${{ inputs.release_version }}
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'dev'
-          include: true
-          source: true
 
   patch-ios-stage-workflow:
     name: Patch iOS Stage Update
@@ -158,7 +151,7 @@ workflows:
         bundle_identifier: com.dgti.selleri.stage
     inputs:
       release_version:
-        description: The stage version to patch
+        description: The release version to patch
     scripts:
       - *shorebird_install
       - *create_env
@@ -170,10 +163,3 @@ workflows:
         script: |
           shorebird patch ios \
             --flavor=stage --release-version=${{ inputs.release_version }}
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'dev'
-          include: true
-          source: true
