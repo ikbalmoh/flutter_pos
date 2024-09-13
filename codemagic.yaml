@@ -92,7 +92,6 @@ workflows:
       ios_signing:
         certificates:
           - CODEMAGIC_DISTRIBUTION
-        distribution_type: development
         bundle_identifier: com.dgti.selleri.stage
     scripts:
       - *shorebird_install
@@ -127,7 +126,6 @@ workflows:
       ios_signing:
         certificates:
           - CODEMAGIC_DISTRIBUTION
-        distribution_type: development
         bundle_identifier: com.dgti.selleri.stage
     inputs:
       release_version:
