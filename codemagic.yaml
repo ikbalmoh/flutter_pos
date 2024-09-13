@@ -4,6 +4,7 @@ definitions:
       flutter: 3.22.3
       groups:
         - shorebird
+        - firebase_credentials
         - selleri-stage
       vars:
         FLUTTER_VERSION: 3.22.3
@@ -74,6 +75,44 @@ workflows:
       - build/**/outputs/**/*.apk
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: 1:957311922583:android:d61a59e4b45bfdd62794d2
+          groups:
+            - dgti
+          artifact_type: 'apk'
+
+  release-ios-stage-workflow:
+    name: Release iOS Stage
+    instance_type: mac_mini_m1
+    environment:
+      <<: *shared_env
+      android_signing:
+        - selleri_stage_keystore
+    scripts:
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *fetch_dependencies
+      - *build_runner
+      - *analyze_and_test
+      - name: Shorebird Release
+        script: |
+          shorebird release ios \
+            --flavor=stage --flutter-version="$FLUTTER_VERSION"
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        ios:
+          app_id: 1:957311922583:ios:487efa18122c20842794d2
+          groups:
+            - dgti
 
   patch-android-stage-workflow:
     name: Patch Android
