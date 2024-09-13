@@ -89,8 +89,9 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       <<: *shared_env
-      android_signing:
-        - selleri_stage_keystore
+      ios_signing:
+        certificates:
+          - CODEMAGIC_DISTRIBUTION
     scripts:
       - *shorebird_install
       - *create_env
@@ -114,13 +115,16 @@ workflows:
           groups:
             - dgti
 
-  patch-android-stage-workflow:
-    name: Patch Android
+  patch-stage-workflow:
+    name: Patch Stage Update
     instance_type: mac_mini_m1
     environment:
       <<: *shared_env
       android_signing:
         - selleri_stage_keystore
+      ios_signing:
+        certificates:
+          - CODEMAGIC_DISTRIBUTION
     inputs:
       release_version:
         description: The stage version to patch
