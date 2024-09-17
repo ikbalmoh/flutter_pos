@@ -314,6 +314,11 @@ class Cart extends _$Cart {
     state = state.copyWith(notes: notes, images: images);
   }
 
+  Future<void> setPic(PersonInCharge? pic) {
+    state = state.copyWith(personInCharge: pic?.id);
+    return Future.delayed(const Duration(milliseconds: 200));
+  }
+
   void addPayment(CartPayment payment) {
     final auth = ref.read(authNotifierProvider).value as Authenticated;
 

@@ -27,7 +27,7 @@ class PicPicker extends ConsumerWidget {
         children: [
           Container(
             padding:
-                const EdgeInsets.only(top: 8, left: 15, right: 15, bottom: 12),
+                const EdgeInsets.only(top: 0, left: 15, right: 15, bottom: 5),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -42,6 +42,10 @@ class PicPicker extends ConsumerWidget {
                 Text(
                   'select_x'.tr(args: ['pic'.tr()]),
                   style: Theme.of(context).textTheme.titleMedium,
+                ),
+                IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.close),
                 ),
               ],
             ),

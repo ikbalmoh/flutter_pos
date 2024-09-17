@@ -171,6 +171,7 @@ class Cart with _$Cart {
       ),
       "created_by": createdBy,
       "images": dataImages,
+      "person_in_charge": personInCharge
     };
     if (deletedAt != null) {
       jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);

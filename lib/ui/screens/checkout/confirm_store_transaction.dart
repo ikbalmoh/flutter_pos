@@ -8,8 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart.dart' as model;
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/generic/picked_image.dart';
+import 'package:selleri/ui/components/pic_picker.dart';
 import 'package:selleri/ui/screens/checkout/store_transaction.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -46,22 +49,52 @@ class _ConfirmStoreTransactionState
     });
   }
 
-  void onSubmit() async {
-    context.pop();
-    ref
-        .read(cartProvider.notifier)
-        .addNote(notes: noteController.text, images: images);
-    showModalBottomSheet(
-      isDismissible: false,
-      enableDrag: false,
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      builder: (context) => const PopScope(
-        canPop: false,
-        child: StoreTransaction(),
-      ),
-    );
+  void onSubmit(BuildContext context) async {
+    // context.pop();
+
+    final cartAction = ref.read(cartProvider.notifier);
+
+    cartAction.addNote(notes: noteController.text, images: images);
+
+    bool isPicRequired = false;
+    final outletState = ref.watch(outletProvider).value;
+    if (outletState is OutletSelected) {
+      isPicRequired = outletState.config.saleWithPic == true;
+    }
+
+    PersonInCharge? pic;
+    if (isPicRequired) {
+      pic = await showModalBottomSheet(
+          isScrollControlled: true,
+          backgroundColor: Colors.white,
+          context: context,
+          enableDrag: true,
+          builder: (context) {
+            return const PicPicker();
+          });
+
+      if (pic == null) {
+        return;
+      }
+    }
+
+    log('PIC: ${pic?.name}');
+
+    await cartAction.setPic(pic);
+
+    if (context.mounted) {
+      showModalBottomSheet(
+        isDismissible: false,
+        enableDrag: false,
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        builder: (context) => const PopScope(
+          canPop: false,
+          child: StoreTransaction(),
+        ),
+      );
+    }
   }
 
   @override
@@ -314,7 +347,7 @@ class _ConfirmStoreTransactionState
                       ),
                     ),
                   ),
-                  onPressed: onSubmit,
+                  onPressed: () => onSubmit(context),
                   child: Text('finish'.tr()),
                 )
         ],
