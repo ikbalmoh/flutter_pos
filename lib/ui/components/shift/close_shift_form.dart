@@ -86,8 +86,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
 
   void onSubmit(BuildContext context) {
     if (images.isEmpty && isAttachmentRequired) {
-      AppAlert.snackbar(
-          context, 'field_required'.tr(args: ['attachments'.tr()]));
+      AppAlert.toast('field_required'.tr(args: ['attachments'.tr()]));
       return;
     }
     if (diffAmount() != 0) {
