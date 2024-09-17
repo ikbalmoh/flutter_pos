@@ -149,8 +149,8 @@ workflows:
     environment:
       <<: *shared_env
       ios_signing:
-        certificates:
-          - apple-development
+        provisioning_profiles:
+          - CM Dist
         distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
     scripts:
