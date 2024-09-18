@@ -53,7 +53,9 @@ class HoldedPreview extends ConsumerWidget {
               isHold: true,
             );
       } catch (e) {
-        AppAlert.snackbar(context, e.toString());
+        if (context.mounted) {
+          AppAlert.snackbar(context, e.toString());
+        }
       }
     }
 
