@@ -140,7 +140,7 @@ workflows:
       - name: Patch Android
         script: |
           shorebird patch android \
-            --release-version=${{ inputs.release_version }}
+            --flavor=stage --release-version=${{ inputs.release_version }}
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
       # - name: Patch iOS
