@@ -79,33 +79,31 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: ref.watch(printerListProvider).when(
             data: (printers) => printers.isNotEmpty
-                ? Column(
-                    children: printers
-                        .map(
-                          (d) => ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 0,
-                              vertical: 0,
-                            ),
-                            title: Text(d.name),
-                            subtitle: Text(
-                              d.macAdress,
-                              style: TextStyle(color: Colors.grey.shade600),
-                            ),
-                            trailing: ref
-                                        .watch(printerProvider)
-                                        .value
-                                        ?.macAddress ==
+                ? ListView.builder(
+                    itemBuilder: (context, idx) {
+                      final d = printers[idx];
+                      return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 0,
+                          vertical: 0,
+                        ),
+                        title: Text(d.name),
+                        subtitle: Text(
+                          d.macAdress,
+                          style: TextStyle(color: Colors.grey.shade600),
+                        ),
+                        trailing:
+                            ref.watch(printerProvider).value?.macAddress ==
                                     d.macAdress
                                 ? const Icon(
                                     Icons.check_circle_rounded,
                                     color: Colors.teal,
                                   )
                                 : null,
-                            onTap: () => onSelectPrinter(d),
-                          ),
-                        )
-                        .toList(),
+                        onTap: () => onSelectPrinter(d),
+                      );
+                    },
+                    itemCount: printers.length,
                   )
                 : const DeviceEmpty(),
             error: (e, trace) => DeviceEmpty(
@@ -158,9 +156,8 @@ class DeviceEmpty extends ConsumerWidget {
             ),
             const SizedBox(height: 30),
             TextButton.icon(
-              onPressed: () => ref
-                  .read(printerListProvider.notifier)
-                  .startScanDevices(),
+              onPressed: () =>
+                  ref.read(printerListProvider.notifier).startScanDevices(),
               icon: const Icon(Icons.search),
               label: Text(
                 'scan_again'.tr(),
