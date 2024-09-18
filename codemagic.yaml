@@ -90,8 +90,6 @@ workflows:
     environment:
       <<: *shared_env
       ios_signing:
-        certificates:
-          - CODEMAGIC_DISTRIBUTION
         distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
     scripts:
@@ -149,8 +147,6 @@ workflows:
     environment:
       <<: *shared_env
       ios_signing:
-        provisioning_profiles:
-          - CM Dist
         distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
     scripts:
