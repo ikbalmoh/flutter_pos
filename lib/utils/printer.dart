@@ -39,9 +39,10 @@ class Printer {
     bool withPrice = true,
   }) async {
     try {
+      log('PRINTER SIZE: ${size?.value.toString()}');
       log('BUILD RECEIPT: $cart\n$attributes');
       final profile = await CapabilityProfile.load();
-      final generator = Generator(PaperSize.mm58, profile);
+      final generator = Generator(size ?? PaperSize.mm58, profile);
       List<int> bytes = [];
 
       Image? img;
