@@ -115,37 +115,13 @@ workflows:
           groups:
             - dgti
 
-  patch-android-stage-workflow:
+  patch-stage-workflow:
     name: Patch Android Stage Update
     instance_type: mac_mini_m1
     environment:
       <<: *shared_env
       android_signing:
         - selleri_stage_keystore
-    scripts:
-      - *shorebird_install
-      - *create_env
-      - *create_env_stage
-      - *fetch_dependencies
-      - *build_runner
-      - *analyze_and_test
-      - name: Shorebird Patch
-        script: |
-          shorebird patch android \
-            --flavor=stage --release-version=$(grep 'version:' pubspec.yaml | awk '{print $$2}')
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'dev'
-          include: true
-          source: true
-
-  patch-ios-stage-workflow:
-    name: Patch iOS Stage Update
-    instance_type: mac_mini_m1
-    environment:
-      <<: *shared_env
       ios_signing:
         distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
@@ -156,7 +132,11 @@ workflows:
       - *fetch_dependencies
       - *build_runner
       - *analyze_and_test
-      - name: Shorebird Patch
+      - name: Patch Android
+        script: |
+          shorebird patch android \
+            --flavor=stage --release-version=$(grep 'version:' pubspec.yaml | awk '{print $$2}')
+      - name: Patch iOS
         script: |
           shorebird patch ios \
             --flavor=stage --release-version=$(grep 'version:' pubspec.yaml | awk '{print $$2}')
