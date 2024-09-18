@@ -127,6 +127,9 @@ workflows:
       ios_signing:
         provisioning_profiles:
           - ios-stage
+    inputs:
+      release_version:
+        description: The release version to patch
     scripts:
       - *shorebird_install
       - *create_env
@@ -137,17 +140,11 @@ workflows:
       - name: Patch Android
         script: |
           app_version=$(awk '/version:/ {print $2}' pubspec.yaml) \
-          shorebird patch android --flavor=stage --release-version="$app_version"
+          echo "App Version: $app_version"" \
+          shorebird patch android --flavor=stage --release-version=${{ inputs.release_version }}
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
       # - name: Patch iOS
       #   script: |
       #     app_version=$(awk '/version:/ {print $2}' pubspec.yaml) \
       #     shorebird patch ios --flavor=stage --release-version="$app_version"
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'dev'
-          include: true
-          source: true
