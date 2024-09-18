@@ -7,7 +7,7 @@ definitions:
         - firebase_credentials
         - selleri-stage
       vars:
-        FLUTTER_VERSION: "3.22.3"
+        FLUTTER_VERSION: '3.22.3'
   scripts:
     - &create_env
       name: Create .env
@@ -90,8 +90,8 @@ workflows:
     environment:
       <<: *shared_env
       ios_signing:
-        distribution_type: ad_hoc
-        bundle_identifier: com.dgti.selleri.stage
+        provisioning_profiles:
+          - CM Dist Selleri Stage
     scripts:
       - *shorebird_install
       - *create_env
@@ -123,8 +123,8 @@ workflows:
       android_signing:
         - selleri_stage_keystore
       ios_signing:
-        distribution_type: ad_hoc
-        bundle_identifier: com.dgti.selleri.stage
+        provisioning_profiles:
+          - CM Dist Selleri Stage
     scripts:
       - *shorebird_install
       - *create_env
