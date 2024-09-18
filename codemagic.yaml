@@ -67,7 +67,7 @@ workflows:
       - *fetch_dependencies
       - *build_runner
       - *analyze_and_test
-      - name: Shorebird Release
+      - name: Shorebird Release Android
         script: |
           shorebird release android \
             --flavor=stage --flutter-version="$FLUTTER_VERSION" --artifact apk
@@ -99,7 +99,9 @@ workflows:
       - *fetch_dependencies
       - *build_runner
       - *analyze_and_test
-      - name: Shorebird Release
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Shorebird Release iOS
         script: |
           shorebird release ios \
             --flavor=stage --flutter-version="$FLUTTER_VERSION"
@@ -136,6 +138,8 @@ workflows:
         script: |
           VERSION=$(awk '/version:/{print $2}' pubspec.yaml) \
           shorebird patch android --flavor=stage --release-version="$VERSION"
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
       - name: Patch iOS
         script: |
           VERSION=$(awk '/version:/{print $2}' pubspec.yaml) \
