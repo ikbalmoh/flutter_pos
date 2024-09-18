@@ -61,7 +61,8 @@ class Transactions extends _$Transactions {
     }
   }
 
-  Future<void> printReceipt(Cart cart, {bool isHold = false}) async {
+  Future<void> printReceipt(Cart cart,
+      {bool isHold = false, bool withPrice = true}) async {
     try {
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
@@ -77,6 +78,7 @@ class Transactions extends _$Transactions {
         size: printer.size,
         isCopy: true,
         isHold: isHold,
+        withPrice: withPrice,
       );
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {
