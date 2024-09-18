@@ -136,14 +136,14 @@ workflows:
       - *analyze_and_test
       - name: Patch Android
         script: |
-          VERSION=$(awk '/version:/{print $2}' pubspec.yaml) \
-          shorebird patch android --flavor=stage --release-version=$(($VERSION))
+          app_version=$(awk '/version:/ {print $2}' pubspec.yaml) \
+          shorebird patch android --flavor=stage --release-version="$app_version"
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
-      - name: Patch iOS
-        script: |
-          VERSION=$(awk '/version:/{print $2}' pubspec.yaml) \
-          shorebird patch ios --flavor=stage --release-version=$(($VERSION))
+      # - name: Patch iOS
+      #   script: |
+      #     app_version=$(awk '/version:/ {print $2}' pubspec.yaml) \
+      #     shorebird patch ios --flavor=stage --release-version="$app_version"
     triggering:
       events:
         - push
