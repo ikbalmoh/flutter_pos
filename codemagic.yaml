@@ -91,7 +91,7 @@ workflows:
       <<: *shared_env
       ios_signing:
         provisioning_profiles:
-          - CM Dist Selleri Stage
+          - ios-stage
     scripts:
       - *shorebird_install
       - *create_env
@@ -126,7 +126,7 @@ workflows:
         - selleri_stage_keystore
       ios_signing:
         provisioning_profiles:
-          - CM Dist Selleri Stage
+          - ios-stage
     scripts:
       - *shorebird_install
       - *create_env
@@ -137,13 +137,13 @@ workflows:
       - name: Patch Android
         script: |
           VERSION=$(awk '/version:/{print $2}' pubspec.yaml) \
-          shorebird patch android --flavor=stage --release-version="$VERSION"
+          shorebird patch android --flavor=stage --release-version=$(($VERSION))
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
       - name: Patch iOS
         script: |
           VERSION=$(awk '/version:/{print $2}' pubspec.yaml) \
-          shorebird patch ios --flavor=stage --release-version="$VERSION"
+          shorebird patch ios --flavor=stage --release-version=$(($VERSION))
     triggering:
       events:
         - push
