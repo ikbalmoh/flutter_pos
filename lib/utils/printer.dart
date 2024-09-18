@@ -36,6 +36,7 @@ class Printer {
     PaperSize? size = PaperSize.mm58,
     bool isCopy = false,
     bool isHold = false,
+    bool withPrice = true,
   }) async {
     try {
       log('BUILD RECEIPT: $cart\n$attributes');
@@ -86,141 +87,146 @@ class Printer {
 
       // items
       for (ItemCart item in cart.items) {
-        bytes += generator.text(item.itemName);
+        bytes += generator.text(
+            withPrice ? item.itemName : "${item.quantity} x ${item.itemName}");
         if (item.details.isNotEmpty) {
           for (var i = 0; i < item.details.length; i++) {
             final detail = item.details[i];
             bytes += generator.text(' - ${detail.quantity} x ${detail.name}');
           }
         }
-        bytes += generator.row([
-          PosColumn(
-            text:
-                '${item.quantity} x ${CurrencyFormat.currency(item.price, symbol: false)}',
-            width: 9,
-            styles: const PosStyles(align: PosAlign.left),
-          ),
-          PosColumn(
-            text: CurrencyFormat.currency(
-              item.price * item.quantity,
-              symbol: false,
-            ),
-            width: 3,
-            styles: const PosStyles(align: PosAlign.right),
-          ),
-        ]);
-        if (item.discountTotal > 0) {
+        if (withPrice) {
           bytes += generator.row([
             PosColumn(
-              text: 'discount'.tr(),
+              text:
+                  '${item.quantity} x ${CurrencyFormat.currency(item.price, symbol: false)}',
               width: 9,
               styles: const PosStyles(align: PosAlign.left),
             ),
             PosColumn(
-              text:
-                  '-${CurrencyFormat.currency(item.discountTotal, symbol: false)}',
+              text: CurrencyFormat.currency(
+                item.price * item.quantity,
+                symbol: false,
+              ),
               width: 3,
               styles: const PosStyles(align: PosAlign.right),
             ),
           ]);
+          if (item.discountTotal > 0) {
+            bytes += generator.row([
+              PosColumn(
+                text: 'discount'.tr(),
+                width: 9,
+                styles: const PosStyles(align: PosAlign.left),
+              ),
+              PosColumn(
+                text:
+                    '-${CurrencyFormat.currency(item.discountTotal, symbol: false)}',
+                width: 3,
+                styles: const PosStyles(align: PosAlign.right),
+              ),
+            ]);
+          }
         }
       }
-      bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
-      // subtotal
-      bytes += generator.row([
-        PosColumn(
-          text: 'Subtotal',
-          width: 9,
-          styles: const PosStyles(align: PosAlign.left),
-        ),
-        PosColumn(
-          text: CurrencyFormat.currency(cart.subtotal, symbol: false),
-          width: 3,
-          styles: const PosStyles(align: PosAlign.right),
-        ),
-      ]);
-      if (cart.discOverallTotal > 0) {
-        bytes += generator.row([
-          PosColumn(
-            text:
-                '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
-            width: 8,
-            styles: const PosStyles(align: PosAlign.left),
-          ),
-          PosColumn(
-            text:
-                '-${CurrencyFormat.currency(cart.discOverallTotal, symbol: false)}',
-            width: 4,
-            styles: const PosStyles(align: PosAlign.right),
-          ),
-        ]);
-      }
-      if (cart.discPromotionsTotal > 0) {
-        bytes += generator.row([
-          PosColumn(
-            text: 'promotions'.tr(),
-            width: 8,
-            styles: const PosStyles(align: PosAlign.left),
-          ),
-          PosColumn(
-            text:
-                '-${CurrencyFormat.currency(cart.discPromotionsTotal, symbol: false)}',
-            width: 4,
-            styles: const PosStyles(align: PosAlign.right),
-          ),
-        ]);
-      }
-      bytes += generator.row([
-        PosColumn(
-          text: 'Total',
-          width: 8,
-          styles: const PosStyles(align: PosAlign.left),
-        ),
-        PosColumn(
-          text: CurrencyFormat.currency(cart.total, symbol: false),
-          width: 4,
-          styles: const PosStyles(align: PosAlign.right),
-        ),
-      ]);
-      // Payments
-      bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
-      bytes += generator.text('payments'.tr());
-      for (var payment in cart.payments) {
-        bytes += generator.row([
-          PosColumn(
-            text: payment.paymentName,
-            width: 7,
-            styles: const PosStyles(align: PosAlign.left),
-          ),
-          PosColumn(
-            text: CurrencyFormat.currency(payment.paymentValue, symbol: false),
-            width: 5,
-            styles: const PosStyles(align: PosAlign.right),
-          ),
-        ]);
-      }
-      // Change
-      bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
-      bytes += generator.row([
-        PosColumn(
-          text: 'change'.tr(),
-          width: 8,
-          styles: const PosStyles(align: PosAlign.left),
-        ),
-        PosColumn(
-          text: CurrencyFormat.currency(cart.change, symbol: false),
-          width: 4,
-          styles: const PosStyles(align: PosAlign.right),
-        ),
-      ]);
 
-      // footer
+      if (withPrice) {
+        bytes +=
+            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        // subtotal
+        bytes += generator.row([
+          PosColumn(
+            text: 'Subtotal',
+            width: 9,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: CurrencyFormat.currency(cart.subtotal, symbol: false),
+            width: 3,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+        if (cart.discOverallTotal > 0) {
+          bytes += generator.row([
+            PosColumn(
+              text:
+                  '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
+              width: 8,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text:
+                  '-${CurrencyFormat.currency(cart.discOverallTotal, symbol: false)}',
+              width: 4,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
+        if (cart.discPromotionsTotal > 0) {
+          bytes += generator.row([
+            PosColumn(
+              text: 'promotions'.tr(),
+              width: 8,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text:
+                  '-${CurrencyFormat.currency(cart.discPromotionsTotal, symbol: false)}',
+              width: 4,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
+        bytes += generator.row([
+          PosColumn(
+            text: 'Total',
+            width: 8,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: CurrencyFormat.currency(cart.total, symbol: false),
+            width: 4,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+        // Payments
+        bytes +=
+            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.text('payments'.tr());
+        for (var payment in cart.payments) {
+          bytes += generator.row([
+            PosColumn(
+              text: payment.paymentName,
+              width: 7,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text:
+                  CurrencyFormat.currency(payment.paymentValue, symbol: false),
+              width: 5,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
+        // Change
+        bytes +=
+            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.row([
+          PosColumn(
+            text: 'change'.tr(),
+            width: 8,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: CurrencyFormat.currency(cart.change, symbol: false),
+            width: 4,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
+
       bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58),
           linesAfter: 1);
-      if (footers != null) {
-        bytes += generator.text(footers,
-            linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
-      }
 
       if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),
@@ -229,6 +235,12 @@ class Printer {
               align: PosAlign.center,
               bold: true,
             ));
+      } else {
+        // footer
+        if (footers != null) {
+          bytes += generator.text(footers,
+              linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
+        }
       }
 
       if (isCopy) {

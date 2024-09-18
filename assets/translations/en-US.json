@@ -231,5 +231,7 @@
   "member": "Member",
   "non_member": "Non Member",
   "delete_transaction": "Delete Transaction",
-  "delete_transaction_confirmation": "Are you sure? This transaction will be deleted and can no longer be opened"
+  "delete_transaction_confirmation": "Are you sure? This transaction will be deleted and can no longer be opened",
+  "with_price": "With Price",
+  "without_price": "Without Price"
 }
