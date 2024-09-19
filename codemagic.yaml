@@ -83,6 +83,12 @@ definitions:
         flutter packages pub get
         echo "Flutter packages get done"
 
+    - &build_runner
+      name: Run build runnder
+      script: |
+        dart run build_runner build -d
+        echo "build runner done"
+
     - &setup_local_properties
       name: Set up local.properties
       script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
