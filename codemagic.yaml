@@ -39,6 +39,9 @@ definitions:
 
         # Add Shorebird to PATH
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
+    - &ios_use_profile
+      name: Set up code signing settings on Xcode project
+      script: xcode-project use-profiles
     - &fetch_dependencies
       name: Fetch Dependencies
       script: |
@@ -90,17 +93,16 @@ workflows:
     environment:
       <<: *shared_env
       ios_signing:
-        provisioning_profiles:
-          - ios-stage
+        distribution_type: ad_hoc
+        bundle_identifier: com.dgti.selleri.stage
     scripts:
       - *shorebird_install
+      - *ios_use_profile
       - *create_env
       - *create_env_stage
       - *fetch_dependencies
       - *build_runner
       - *analyze_and_test
-      - name: Set up code signing settings on Xcode project
-        script: xcode-project use-profiles
       - name: Shorebird Release iOS
         script: |
           shorebird release ios \
@@ -125,13 +127,14 @@ workflows:
       android_signing:
         - selleri_stage_keystore
       ios_signing:
-        provisioning_profiles:
-          - ios-stage
+        distribution_type: ad_hoc
+        bundle_identifier: com.dgti.selleri.stage
     inputs:
       release_version:
         description: The release version to patch
     scripts:
       - *shorebird_install
+      - *ios_use_profile
       - *create_env
       - *create_env_stage
       - *fetch_dependencies
@@ -141,8 +144,6 @@ workflows:
         script: |
           shorebird patch android \
             --flavor=stage --release-version=${{ inputs.release_version }} --allow-asset-diffs
-      - name: Set up code signing settings on Xcode project
-        script: xcode-project use-profiles
       # - name: Patch iOS
       #   script: |
       #     app_version=$(awk '/version:/ {print $2}' pubspec.yaml) \
