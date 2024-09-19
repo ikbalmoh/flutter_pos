@@ -164,7 +164,7 @@ definitions:
 
 workflows:
   release-staging:
-    name: Release Staging Workflow
+    name: Release Staging
     instance_type: mac_mini_m1
     environment:
       <<: *staging_env
@@ -191,8 +191,8 @@ workflows:
             - dgti
       <<: *publishing_notifications
 
-  patch-staging-workflow:
-    name: Patch Staging Workflow
+  patch-staging:
+    name: Patch Staging
     instance_type: mac_mini_m1
     environment:
       <<: *staging_env
