@@ -101,7 +101,7 @@ definitions:
     - &xcode_project_use_profiles
       name: Use Xcode profiles
       script: xcode-project use-profiles
-          
+
     - &shorebird_install
       name: Install Shorebird
       script: |
@@ -110,10 +110,10 @@ definitions:
 
         # Add Shorebird to PATH
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
-        
+
     - &shorebird_android_release
       name: Build with Shorebird for Android release
-      script: shorebird release android --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols
+      script: shorebird release android --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols --artifact apk
 
     - &shorebird_ios_release
       name: Build with Shorebird for iOS release
@@ -131,7 +131,7 @@ definitions:
     email:
       recipients:
         - dgti.developer@gmail.com
-  
+
   release_scripts: &release_scripts
     scripts:
       - *get_flavor
@@ -164,11 +164,11 @@ definitions:
 
 workflows:
   release-staging:
-    name: Release Staging Stage
+    name: Release Staging Workflow
     instance_type: mac_mini_m1
     environment:
       <<: *staging_env
-    
+
     <<: *release_scripts
 
     artifacts:
@@ -196,8 +196,8 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       <<: *staging_env
-    
+
     <<: *patch_scripts
-    
+
     publishing:
       <<: *publishing_notifications
