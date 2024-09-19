@@ -113,7 +113,7 @@ definitions:
 
     - &shorebird_android_release
       name: Build with Shorebird for Android release
-      script: shorebird release android --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols --artifact apk
+      script: shorebird release android --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols -- --artifact apk
 
     - &shorebird_ios_release
       name: Build with Shorebird for iOS release
