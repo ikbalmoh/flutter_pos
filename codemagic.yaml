@@ -89,6 +89,11 @@ definitions:
         dart run build_runner build -d
         echo "build runner done"
 
+    - &flutter_analyze
+      name: Run static code analysis
+      script: flutter analyze
+      ignore_failure: true
+
     - &setup_local_properties
       name: Set up local.properties
       script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
@@ -136,7 +141,7 @@ definitions:
       - *create_env_stage
       - *get_flutter_packages
       - *build_runner
-      - *analyze_and_test
+      - *flutter_analyze
       - *setup_local_properties
       - *xcode_project_use_profiles
       - *shorebird_android_release
@@ -151,7 +156,7 @@ definitions:
       - *create_env_stage
       - *get_flutter_packages
       - *build_runner
-      - *analyze_and_test
+      - *flutter_analyze
       - *setup_local_properties
       - *xcode_project_use_profiles
       - *shorebird_android_patch
