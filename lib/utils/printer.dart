@@ -270,7 +270,7 @@ class Printer {
       bool isCopy = false}) async {
     log('BUILD SHIFT RERORT: $shift');
     final profile = await CapabilityProfile.load();
-    final generator = Generator(PaperSize.mm58, profile);
+    final generator = Generator(size ?? PaperSize.mm58, profile);
     List<int> bytes = [];
 
     Image? img;
