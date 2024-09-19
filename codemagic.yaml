@@ -1,6 +1,6 @@
 definitions:
   environment:
-    shared_env: &shared_env
+    staging_env: &staging_env
       flutter: fvm
       groups:
         - shorebird
@@ -8,7 +8,51 @@ definitions:
         - selleri-stage
       vars:
         FLUTTER_VERSION: '3.22.3'
+      android_signing:
+        - selleri_stage_keystore
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.dgti.selleri.stage
   scripts:
+    - &get_flavor
+      name: Get flavor
+      script: |
+        CURRENT_BRANCH=${CM_BRANCH}
+        if [[ "$CURRENT_BRANCH" == "main" ]]; then
+          FLAVOR="prod"
+        elif [[ "$CURRENT_BRANCH" == "dev" ]]; then
+          FLAVOR="stage"
+        else
+          FLAVOR="dev"
+        fi
+        echo "FLAVOR=$FLAVOR" >> $CM_ENV
+
+    - &extract_version
+      name: Extract version
+      script: |
+        #!/bin/sh
+        # Extract the version line from pubspec.yaml
+        VERSION_LINE=$(grep '^version:' pubspec.yaml)
+
+        if [ -z "$VERSION_LINE" ]; then
+          echo "Error: Version not found in pubspec.yaml"
+          exit 1
+        fi
+
+        # Extract build name (e.g., 1.0.4)
+        BUILD_NAME=$(echo $VERSION_LINE | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+
+        # Extract build number (e.g., 13)
+        BUILD_NUMBER=$(echo $VERSION_LINE | grep -o '\+[0-9]\+' | tr -d '+')
+
+        echo "Starting build with version: $VERSION_LINE"
+        echo "BUILD_NAME=$BUILD_NAME"
+        echo "BUILD_NUMBER=$BUILD_NUMBER"
+
+        # Write variables to CM_ENV
+        echo "BUILD_NAME=$BUILD_NAME" >> $CM_ENV
+        echo "BUILD_NUMBER=$BUILD_NUMBER" >> $CM_ENV
+
     - &create_env
       name: Create .env
       script: |
@@ -20,6 +64,7 @@ definitions:
           CLIENT_SECRET=7lJC833F5COjxMfFGS9xcLoPFEmKTIXnf6gYClKR
           APP_ID=selleri
           EOF
+
     - &create_env_stage
       name: Create .env.stage
       script: |
@@ -31,6 +76,15 @@ definitions:
           CLIENT_SECRET=7lJC833F5COjxMfFGS9xcLoPFEmKTIXnf6gYClKR
           APP_ID=dev-selleri
           EOF
+          
+    - &setup_local_properties
+      name: Set up local.properties
+      script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+
+    - &xcode_project_use_profiles
+      name: Use Xcode profiles
+      script: xcode-project use-profiles
+          
     - &shorebird_install
       name: Install Shorebird
       script: |
@@ -39,44 +93,74 @@ definitions:
 
         # Add Shorebird to PATH
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
-    - &ios_use_profile
-      name: Set up code signing settings on Xcode project
-      script: xcode-project use-profiles
-    - &fetch_dependencies
-      name: Fetch Dependencies
-      script: |
-        flutter pub get
-    - &build_runner
-      name: Build Runner
-      script: |
-        dart run build_runner build -d
-    - &analyze_and_test
-      name: Analyze and Test
-      script: |
-        flutter analyze
+        
+    - &shorebird_android_release
+      name: Build with Shorebird for Android release
+      script: shorebird release android --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols
 
-workflows:
-  release-android-stage-workflow:
-    name: Release Android Stage
-    instance_type: mac_mini_m1
-    environment:
-      <<: *shared_env
-      android_signing:
-        - selleri_stage_keystore
+    - &shorebird_ios_release
+      name: Build with Shorebird for iOS release
+      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --export-options-plist=/Users/builder/export_options.plist
+
+    - &shorebird_android_patch
+      name: Build with Shorebird for Android patch
+      script: shorebird patch android --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols
+
+    - &shorebird_ios_patch
+      name: Build with Shorebird for iOS patch
+      script: shorebird patch ios --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=$FLAVOR -- --export-options-plist=/Users/builder/export_options.plist
+
+  publishing_notifications: &publishing_notifications
+    email:
+      recipients:
+        - dgti.developer@gmail.com
+  
+  release_scripts: &release_scripts
     scripts:
+      - *get_flavor
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
+      - *setup_local_properties
+      - *ios_use_profile
+      - *xcode_project_use_profiles
       - *fetch_dependencies
       - *build_runner
       - *analyze_and_test
-      - name: Shorebird Release Android
-        script: |
-          shorebird release android \
-            --flavor=stage --flutter-version="$FLUTTER_VERSION" --artifact apk
+      - *shorebird_android_release
+      - *shorebird_ios_release
+
+  patch_scripts: &patch_scripts
+    scripts:
+      - *get_flavor
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *setup_local_properties
+      - *ios_use_profile
+      - *xcode_project_use_profiles
+      - *fetch_dependencies
+      - *build_runner
+      - *analyze_and_test
+      - *shorebird_android_patch
+      - *shorebird_ios_patch
+
+workflows:
+  release-staging:
+    name: Release Staging Stage
+    instance_type: mac_mini_m1
+    environment:
+      <<: *staging_env
+    
+    <<: *release_scripts
+
     artifacts:
       - build/**/outputs/**/*.apk
       - build/**/outputs/**/mapping.txt
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
     publishing:
       firebase:
@@ -86,65 +170,19 @@ workflows:
           groups:
             - dgti
           artifact_type: 'apk'
-
-  release-ios-stage-workflow:
-    name: Release iOS Stage
-    instance_type: mac_mini_m1
-    environment:
-      <<: *shared_env
-      ios_signing:
-        distribution_type: ad_hoc
-        bundle_identifier: com.dgti.selleri.stage
-    scripts:
-      - *shorebird_install
-      - *ios_use_profile
-      - *create_env
-      - *create_env_stage
-      - *fetch_dependencies
-      - *build_runner
-      - *analyze_and_test
-      - name: Shorebird Release iOS
-        script: |
-          shorebird release ios \
-            --flavor=stage --flutter-version="$FLUTTER_VERSION"
-    artifacts:
-      - build/**/outputs/**/*.apk
-      - build/**/outputs/**/mapping.txt
-      - flutter_drive.log
-    publishing:
-      firebase:
-        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         ios:
           app_id: 1:957311922583:ios:487efa18122c20842794d2
           groups:
             - dgti
+      <<: *publishing_notifications
 
-  patch-stage-workflow:
-    name: Patch Stage Update
+  patch-staging-workflow:
+    name: Patch Staging Workflow
     instance_type: mac_mini_m1
     environment:
-      <<: *shared_env
-      android_signing:
-        - selleri_stage_keystore
-      ios_signing:
-        distribution_type: ad_hoc
-        bundle_identifier: com.dgti.selleri.stage
-    inputs:
-      release_version:
-        description: The release version to patch
-    scripts:
-      - *shorebird_install
-      - *ios_use_profile
-      - *create_env
-      - *create_env_stage
-      - *fetch_dependencies
-      - *build_runner
-      - *analyze_and_test
-      - name: Patch Android
-        script: |
-          shorebird patch android \
-            --flavor=stage --release-version=${{ inputs.release_version }} --allow-asset-diffs
-      # - name: Patch iOS
-      #   script: |
-      #     app_version=$(awk '/version:/ {print $2}' pubspec.yaml) \
-      #     shorebird patch ios --flavor=stage --release-version="$app_version"
+      <<: *staging_env
+    
+    <<: *patch_scripts
+    
+    publishing:
+      <<: *publishing_notifications
