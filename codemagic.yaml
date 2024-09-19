@@ -84,7 +84,7 @@ definitions:
         echo "Flutter packages get done"
 
     - &build_runner
-      name: Run build runnder
+      name: Run build runner
       script: |
         dart run build_runner build -d
         echo "build runner done"
@@ -113,7 +113,7 @@ definitions:
 
     - &shorebird_android_release
       name: Build with Shorebird for Android release
-      script: shorebird release android --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols -- --artifact apk
+      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols
 
     - &shorebird_ios_release
       name: Build with Shorebird for iOS release
@@ -173,6 +173,7 @@ workflows:
 
     artifacts:
       - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
