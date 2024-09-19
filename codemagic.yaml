@@ -77,6 +77,12 @@ definitions:
           APP_ID=dev-selleri
           EOF
 
+    - &get_flutter_packages
+      name: Get Flutter packages
+      script: |
+        flutter packages pub get
+        echo "Flutter packages get done"
+
     - &setup_local_properties
       name: Set up local.properties
       script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
@@ -122,11 +128,11 @@ definitions:
       - *shorebird_install
       - *create_env
       - *create_env_stage
-      - *setup_local_properties
-      - *xcode_project_use_profiles
-      - *fetch_dependencies
+      - *get_flutter_packages
       - *build_runner
       - *analyze_and_test
+      - *setup_local_properties
+      - *xcode_project_use_profiles
       - *shorebird_android_release
       - *shorebird_ios_release
 
@@ -137,11 +143,11 @@ definitions:
       - *shorebird_install
       - *create_env
       - *create_env_stage
-      - *setup_local_properties
-      - *xcode_project_use_profiles
-      - *fetch_dependencies
+      - *get_flutter_packages
       - *build_runner
       - *analyze_and_test
+      - *setup_local_properties
+      - *xcode_project_use_profiles
       - *shorebird_android_patch
       - *shorebird_ios_patch
 
