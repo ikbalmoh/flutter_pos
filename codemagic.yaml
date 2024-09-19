@@ -76,7 +76,7 @@ definitions:
           CLIENT_SECRET=7lJC833F5COjxMfFGS9xcLoPFEmKTIXnf6gYClKR
           APP_ID=dev-selleri
           EOF
-          
+
     - &setup_local_properties
       name: Set up local.properties
       script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
@@ -123,7 +123,6 @@ definitions:
       - *create_env
       - *create_env_stage
       - *setup_local_properties
-      - *ios_use_profile
       - *xcode_project_use_profiles
       - *fetch_dependencies
       - *build_runner
@@ -139,7 +138,6 @@ definitions:
       - *create_env
       - *create_env_stage
       - *setup_local_properties
-      - *ios_use_profile
       - *xcode_project_use_profiles
       - *fetch_dependencies
       - *build_runner
