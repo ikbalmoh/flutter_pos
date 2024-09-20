@@ -18,6 +18,7 @@ import 'firebase_options_stage.dart' as firebase_option_stage;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -103,6 +104,30 @@ Future initServices() async {
   await Firebase.initializeApp(
     options: firebaseOptions,
   );
+
+  const fatalError = true;
+  // Non-async exceptions
+  FlutterError.onError = (errorDetails) {
+    if (fatalError) {
+      // record a "fatal" exception
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      // ignore: dead_code
+    } else {
+      // record a "non-fatal" exception
+      FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+    }
+  };
+  // Async exceptions
+  PlatformDispatcher.instance.onError = (error, stack) {
+    if (fatalError) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      // ignore: dead_code
+    } else {
+      // record a "non-fatal" exception
+      FirebaseCrashlytics.instance.recordError(error, stack);
+    }
+    return true;
+  };
 
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
