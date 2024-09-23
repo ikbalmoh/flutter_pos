@@ -1,6 +1,6 @@
 definitions:
   environment:
-    staging_env: &staging_env
+    stage_env: &stage_env
       flutter: fvm
       groups:
         - shorebird
@@ -13,6 +13,19 @@ definitions:
       ios_signing:
         distribution_type: ad_hoc
         bundle_identifier: com.dgti.selleri.stage
+    prod_env: &prod_env
+      flutter: fvm
+      groups:
+        - shorebird
+        - firebase_credentials_prod
+        - selleri-prod
+      vars:
+        FLUTTER_VERSION: '3.22.3'
+      android_signing:
+        - selleri_release_keystore
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.dgti.selleri
   scripts:
     - &get_flavor
       name: Get flavor
@@ -112,29 +125,51 @@ definitions:
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
 
     - &shorebird_android_release
-      name: Build with Shorebird for Android release
-      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols
+      name: Shorebird release Android
+      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
 
     - &shorebird_ios_release
-      name: Build with Shorebird for iOS release
-      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=$FLAVOR -- --export-options-plist=/Users/builder/export_options.plist
+      name: Shorebird release iOS
+      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist
 
     - &shorebird_android_patch
-      name: Build with Shorebird for Android patch
-      script: shorebird patch android --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=$FLAVOR -- --obfuscate --split-debug-info=./build/app/outputs/bundle/$FLAVORRelease/symbols
+      name: Shorebird patch Android
+      script: shorebird patch android --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
 
     - &shorebird_ios_patch
-      name: Build with Shorebird for iOS patch
-      script: shorebird patch ios --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=$FLAVOR -- --export-options-plist=/Users/builder/export_options.plist
+      name: Shorebird patch Android iOS
+      script: shorebird patch ios --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist
+
+    - &shorebird_android_release_stage
+      name: Shorebird release Android
+      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=stage -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+
+    - &shorebird_ios_release_stage
+      name: Shorebird release iOS
+      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=stage -- --export-options-plist=/Users/builder/export_options.plist
+
+    - &shorebird_android_patch_stage
+      name: Shorebird patch Android
+      script: shorebird patch android --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=stage -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+
+    - &shorebird_ios_patch_stage
+      name: Shorebird patch Android iOS
+      script: shorebird patch ios --release-version"$BUILD_NAME"+"$BUILD_NUMBER" --flavor=stage -- --export-options-plist=/Users/builder/export_options.plist
 
   publishing_notifications: &publishing_notifications
     email:
       recipients:
         - dgti.developer@gmail.com
+        - hikmat.iqbal@gmail.com
 
-  release_scripts: &release_scripts
+workflows:
+  release-prod:
+    name: Release Production
+    instance_type: mac_mini_m1
+    environment:
+      <<: *prod_env
+
     scripts:
-      - *get_flavor
       - *extract_version
       - *shorebird_install
       - *create_env
@@ -147,9 +182,34 @@ definitions:
       - *shorebird_android_release
       - *shorebird_ios_release
 
-  patch_scripts: &patch_scripts
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: 1:107680786292:android:33ce365eb80fcee83cee21
+          groups:
+            - dgti
+          artifact_type: 'apk'
+        ios:
+          app_id: 1:107680786292:ios:25e36a95642325833cee21
+          groups:
+            - dgti
+      <<: *publishing_notifications
+
+  release-staging:
+    name: Release Staging
+    instance_type: mac_mini_m1
+    environment:
+      <<: *stage_env
+
     scripts:
-      - *get_flavor
       - *extract_version
       - *shorebird_install
       - *create_env
@@ -159,17 +219,8 @@ definitions:
       - *flutter_analyze
       - *setup_local_properties
       - *xcode_project_use_profiles
-      - *shorebird_android_patch
-      - *shorebird_ios_patch
-
-workflows:
-  release-staging:
-    name: Release Staging
-    instance_type: mac_mini_m1
-    environment:
-      <<: *staging_env
-
-    <<: *release_scripts
+      - *shorebird_android_release_stage
+      - *shorebird_ios_release_stage
 
     artifacts:
       - build/**/outputs/**/*.apk
@@ -192,13 +243,46 @@ workflows:
             - dgti
       <<: *publishing_notifications
 
+  patch-prod:
+    name: Patch Production
+    instance_type: mac_mini_m1
+    environment:
+      <<: *prod_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *xcode_project_use_profiles
+      - *shorebird_android_patch
+      - *shorebird_ios_patch
+
+    publishing:
+      <<: *publishing_notifications
+
   patch-staging:
     name: Patch Staging
     instance_type: mac_mini_m1
     environment:
-      <<: *staging_env
+      <<: *stage_env
 
-    <<: *patch_scripts
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *xcode_project_use_profiles
+      - *shorebird_android_patch_stage
+      - *shorebird_ios_patch_stage
 
     publishing:
       <<: *publishing_notifications
