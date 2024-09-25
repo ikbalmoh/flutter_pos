@@ -19,9 +19,6 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    Future(() {
-      ref.read(printerListProvider.notifier).startScanDevices();
-    });
     super.initState();
   }
 
@@ -117,7 +114,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
                 ),
               ),
             ),
-          ),
+      ),
     );
   }
 }
