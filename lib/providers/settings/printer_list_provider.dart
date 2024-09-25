@@ -8,7 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 part 'printer_list_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class PrinterList extends _$PrinterList {
   @override
   FutureOr<List<BluetoothInfo>> build() async {
@@ -16,7 +16,10 @@ class PrinterList extends _$PrinterList {
     return [];
   }
 
-  void startScanDevices() async {
+  Future<void> startScanDevices() async {
+    if (state.isLoading) {
+      return;
+    }
     state = const AsyncLoading();
     try {
       log('START SCAN PRINTERS...');
@@ -55,7 +58,9 @@ class PrinterList extends _$PrinterList {
       }
     } catch (e) {
       log('SCAN PRINTER ERROR: $e');
-      state = AsyncError(e, StackTrace.current);
+      if (state.isLoading) {
+        state = AsyncError(e, StackTrace.current);
+      }
     } finally {
       log('SCAN PRINTER DONE');
     }
