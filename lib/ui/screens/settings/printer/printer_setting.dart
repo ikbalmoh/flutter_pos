@@ -73,7 +73,6 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -87,6 +86,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
                           horizontal: 0,
                           vertical: 0,
                         ),
+                        tileColor: Colors.white,
                         title: Text(d.name),
                         subtitle: Text(
                           d.macAdress,

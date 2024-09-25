@@ -6,6 +6,7 @@ import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
 import 'package:selleri/ui/screens/holded/holded_screen.dart';
 import 'package:selleri/ui/screens/promotions/promotions_screen.dart';
+import 'package:selleri/ui/screens/settings/setting_screen.dart';
 import 'package:selleri/ui/screens/shift/shift_history_detail.dart';
 import 'package:selleri/ui/screens/shift/shift_screen.dart';
 import 'package:selleri/ui/screens/splash/splash_screen.dart';
@@ -106,6 +107,11 @@ GoRouter router(RouterRef ref) {
             final String shiftId = state.pathParameters['id'] ?? '';
             return ShiftHistoryDetailScreen(shiftId: shiftId);
           },
+        ),
+        GoRoute(
+          name: Routes.settings,
+          path: Routes.settings,
+          builder: (context, state) => const SettingScreen(),
         ),
       ],
       refreshListenable: appState,

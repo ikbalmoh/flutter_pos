@@ -233,5 +233,12 @@
   "delete_transaction": "Delete Transaction",
   "delete_transaction_confirmation": "Are you sure? This transaction will be deleted and can no longer be opened",
   "with_price": "With Price",
-  "without_price": "Without Price"
+  "without_price": "Without Price",
+  "settings": "Settings",
+  "sync_data": "Sync Data",
+  "about_app": "About App",
+  "auto_print": "Automatic Print",
+  "app_version": "App Version",
+  "build_number": "Build Number",
+  "patch_version": "Patch Version"
 }
