@@ -241,5 +241,6 @@
   "auto_print": "Cetak Otomatis",
   "app_version": "Versi Aplikasi",
   "build_number": "Nomor Build",
-  "patch_version": "Versi Patch"
+  "patch_version": "Versi Patch",
+  "run_sync": "Jalankan Sinkronisasi"
 }
