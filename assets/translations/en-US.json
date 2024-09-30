@@ -240,5 +240,6 @@
   "auto_print": "Automatic Print",
   "app_version": "App Version",
   "build_number": "Build Number",
-  "patch_version": "Patch Version"
+  "patch_version": "Patch Version",
+  "run_sync": "Run Sync"
 }

@@ -6,7 +6,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/screens/settings/about_app_screen.dart';
+import 'package:selleri/ui/screens/settings/auto_print_screen.dart';
 import 'package:selleri/ui/screens/settings/printer/printer_setting.dart';
+import 'package:selleri/ui/screens/settings/sync_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -62,16 +64,16 @@ class _SettingScreenState extends State<SettingScreen> {
               ListTile(
                 leading: const Icon(CupertinoIcons.cloud),
                 title: Text('sync_data'.tr()),
-                onTap: () => onPressMenu('sync_data'),
-                tileColor: visibleSetting == 'sync_data'
+                onTap: () => onPressMenu(Routes.syncData),
+                tileColor: visibleSetting == Routes.syncData
                     ? Colors.grey.shade100
                     : Colors.white,
               ),
               ListTile(
                 leading: const Icon(Icons.receipt_long_sharp),
                 title: Text('auto_print'.tr()),
-                onTap: () => onPressMenu('auto_print'),
-                tileColor: visibleSetting == 'auto_print'
+                onTap: () => onPressMenu(Routes.autoPrint),
+                tileColor: visibleSetting == Routes.autoPrint
                     ? Colors.grey.shade100
                     : Colors.white,
               ),
@@ -103,9 +105,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         : MediaQuery.of(context).size.width * 0.5,
                 child: visibleSetting == Routes.printers
                     ? const PrinterSetting()
-                    : visibleSetting == Routes.about
-                        ? const AboutApp()
-                        : Container())
+                    : visibleSetting == Routes.syncData
+                        ? const SyncData()
+                        : visibleSetting == Routes.autoPrint
+                            ? const AutoPrint()
+                            : visibleSetting == Routes.about
+                                ? const AboutApp()
+                                : Container())
             : Container()
       ]),
     );

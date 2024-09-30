@@ -26,6 +26,12 @@ class ItemsStream extends _$ItemsStream {
     );
   }
 
+  Future<List<Category>> syncCategories() async {
+    final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
+    List<Category> categories = await itemRepository.fetchCategoris();
+    return categories;
+  }
+
   Future<void> loadItems({
     bool refresh = false,
     Function(String progress)? progressCallback,
@@ -36,7 +42,7 @@ class ItemsStream extends _$ItemsStream {
     if (progressCallback != null) {
       progressCallback('loading_x'.tr(args: ['categories'.tr()]));
     }
-    List<Category> categories = await itemRepository.fetchCategoris();
+    List<Category> categories = await syncCategories();
 
     if (progressCallback != null) {
       progressCallback('loading_x'.tr(args: ['promotions'.tr()]));

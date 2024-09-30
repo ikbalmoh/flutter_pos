@@ -13,5 +13,7 @@ class Routes {
   static const String shiftDetail = '/shift-detail';
   static const String promotions = '/promotions';
   static const String settings = '/settings';
+  static const String syncData = '/sync';
+  static const String autoPrint = '/auto-print';
   static const String about = '/about';
 }

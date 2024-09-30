@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 import 'package:selleri/ui/screens/checkout/transaction_receipt.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -75,7 +76,10 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       setState(() {
         status = Status.success;
       });
-      onPrintReceipt();
+      bool isAutoPrint = ref.read(appSettingsProvider).autoPrintReceipt;
+      if (isAutoPrint) {
+        onPrintReceipt();
+      }
     } catch (e, stackTrace) {
       log('TRANSACTION ERROR: ${e.toString()}\n${stackTrace.toString()}');
       setState(() {
