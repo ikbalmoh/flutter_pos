@@ -127,11 +127,11 @@ definitions:
 
     - &shorebird_android_patch
       name: Shorebird patch Android
-      script: shorebird patch android --release-version=$RELEASE_VERSION --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
+      script: shorebird patch android --release-version=$RELEASE_VERSION --flavor=prod --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
 
     - &shorebird_ios_patch
       name: Shorebird patch Android iOS
-      script: shorebird patch ios --release-version=$RELEASE_VERSION --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist
+      script: shorebird patch ios --release-version=$RELEASE_VERSION --flavor=prod --allow-asset-diffs -- --export-options-plist=/Users/builder/export_options.plist
 
     - &shorebird_android_release_stage
       name: Shorebird release Android
@@ -143,11 +143,11 @@ definitions:
 
     - &shorebird_android_patch_stage
       name: Shorebird patch Android
-      script: shorebird patch android --flavor=stage  --release-version=$RELEASE_VERSION -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+      script: shorebird patch android --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
 
     - &shorebird_ios_patch_stage
       name: Shorebird patch Android iOS
-      script: shorebird patch ios --flavor=stage  --release-version=$RELEASE_VERSION -- --export-options-plist=/Users/builder/export_options.plist
+      script: shorebird patch ios --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --export-options-plist=/Users/builder/export_options.plist
 
   publishing_notifications: &publishing_notifications
     email:
