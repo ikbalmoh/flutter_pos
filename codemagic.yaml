@@ -21,6 +21,7 @@ definitions:
         - selleri-prod
       vars:
         FLUTTER_VERSION: '3.22.3'
+        APP_VERSION: '2.0.2+2'
       android_signing:
         - selleri_release_keystore
       ios_signing:
@@ -49,7 +50,7 @@ definitions:
 
         echo "APP_VERSION=$APP_VERSION"
 
-        if [ -z "$VERSION_LINE" ]; then
+        if [ -z "$APP_VERSION" ]; then
           echo "Error: Version not found in pubspec.yaml"
           exit 1
         fi
@@ -161,7 +162,7 @@ workflows:
       <<: *prod_env
 
     scripts:
-      - *extract_version
+      # - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -201,7 +202,7 @@ workflows:
       <<: *stage_env
 
     scripts:
-      - *extract_version
+      # - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -241,7 +242,7 @@ workflows:
       <<: *prod_env
 
     scripts:
-      - *extract_version
+      # - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -263,7 +264,7 @@ workflows:
       <<: *stage_env
 
     scripts:
-      - *extract_version
+      # - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
