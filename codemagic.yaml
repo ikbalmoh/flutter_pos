@@ -8,6 +8,7 @@ definitions:
         - selleri-stage
       vars:
         FLUTTER_VERSION: '3.22.3'
+        RELEASE_VERSION: '2.0.2+2'
       android_signing:
         - selleri_stage_keystore
       ios_signing:
