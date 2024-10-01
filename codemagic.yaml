@@ -142,11 +142,11 @@ definitions:
 
     - &shorebird_android_patch_stage
       name: Shorebird patch Android
-      script: shorebird patch android --release-version"$APP_VERSION" --flavor=stage -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+      script: shorebird patch android --flavor=stage  --release-version="$APP_VERSION" -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
 
     - &shorebird_ios_patch_stage
       name: Shorebird patch Android iOS
-      script: shorebird patch ios --release-version"$APP_VERSION" --flavor=stage -- --export-options-plist=/Users/builder/export_options.plist
+      script: shorebird patch ios --flavor=stage  --release-version="$APP_VERSION" -- --export-options-plist=/Users/builder/export_options.plist
 
   publishing_notifications: &publishing_notifications
     email:
