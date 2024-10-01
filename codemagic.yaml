@@ -21,7 +21,7 @@ definitions:
         - selleri-prod
       vars:
         FLUTTER_VERSION: '3.22.3'
-        APP_VERSION: '2.0.2+2'
+        RELEASE_VERSION: '2.0.2+2'
       android_signing:
         - selleri_release_keystore
       ios_signing:
@@ -46,17 +46,17 @@ definitions:
       script: |
         #!/bin/sh
         # Extract the version line from pubspec.yaml
-        APP_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+        RELEASE_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //')
 
-        echo "APP_VERSION=$APP_VERSION"
+        echo "RELEASE_VERSION=$RELEASE_VERSION"
 
-        if [ -z "$APP_VERSION" ]; then
+        if [ -z "$RELEASE_VERSION" ]; then
           echo "Error: Version not found in pubspec.yaml"
           exit 1
         fi
 
         # Write variables to CM_ENV
-        echo "APP_VERSION=$APP_VERSION" >> $CM_ENV
+        echo "RELEASE_VERSION=$RELEASE_VERSION" >> $CM_ENV
 
     - &create_env
       name: Create .env
@@ -126,11 +126,11 @@ definitions:
 
     - &shorebird_android_patch
       name: Shorebird patch Android
-      script: shorebird patch android --release-version"$APP_VERSION" --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
+      script: shorebird patch android --release-version=$RELEASE_VERSION --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
 
     - &shorebird_ios_patch
       name: Shorebird patch Android iOS
-      script: shorebird patch ios --release-version"$APP_VERSION" --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist
+      script: shorebird patch ios --release-version=$RELEASE_VERSION --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist
 
     - &shorebird_android_release_stage
       name: Shorebird release Android
@@ -142,11 +142,11 @@ definitions:
 
     - &shorebird_android_patch_stage
       name: Shorebird patch Android
-      script: shorebird patch android --flavor=stage  --release-version="$APP_VERSION" -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+      script: shorebird patch android --flavor=stage  --release-version=$RELEASE_VERSION -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
 
     - &shorebird_ios_patch_stage
       name: Shorebird patch Android iOS
-      script: shorebird patch ios --flavor=stage  --release-version="$APP_VERSION" -- --export-options-plist=/Users/builder/export_options.plist
+      script: shorebird patch ios --flavor=stage  --release-version=$RELEASE_VERSION -- --export-options-plist=/Users/builder/export_options.plist
 
   publishing_notifications: &publishing_notifications
     email:
