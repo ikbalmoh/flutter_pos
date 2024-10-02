@@ -21,8 +21,4 @@ class AppSettings extends _$AppSettings {
   void toggleAutoPrintShiftReport(bool value) {
     state = state.copyWith(autoPrintShiftReport: value);
   }
-
-  void toggleAutoPrintOnMakePayment(bool value) {
-    state = state.copyWith(autoPrintOnMakePayment: value);
-  }
 }

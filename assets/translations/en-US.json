@@ -241,5 +241,11 @@
   "app_version": "App Version",
   "build_number": "Build Number",
   "patch_version": "Patch Version",
-  "run_sync": "Run Sync"
+  "run_sync": "Run Sync",
+  "account_info": "Account Information",
+  "full_name": "Full Name",
+  "company": "Company",
+  "company_email": "Company's email",
+  "contact_support": "Contact Support",
+  "email_support": "Email Support"
 }
