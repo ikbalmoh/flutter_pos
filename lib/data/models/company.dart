@@ -11,10 +11,12 @@ class Company {
   String? cityName;
   String locale;
   bool? statusConfigured;
+  String? companyEmail;
 
   Company({
     required this.idCompany,
     required this.companyName,
+    required this.companyEmail,
     required this.countryCode,
     this.countryName,
     required this.regionCode,
@@ -28,6 +30,7 @@ class Company {
   Company.fromJson(Map<dynamic, dynamic> json)
       : idCompany = json['id_company'],
         companyName = json['company_name'],
+        companyEmail = json['company_email'],
         countryCode = json['country_code'],
         countryName = json['country_name'],
         regionCode = json['region_code'],
@@ -40,6 +43,7 @@ class Company {
   Map<String, dynamic> toJson() => {
         'id_company': idCompany,
         'company_name': companyName,
+        'company_email': companyEmail,
         'country_code': countryCode,
         'country_name': countryName,
         'region_code': regionCode,

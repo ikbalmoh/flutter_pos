@@ -31,10 +31,6 @@ class _AutoPrintState extends ConsumerState<AutoPrint> {
         ref.read(appSettingsProvider.notifier).toggleAutoPrintReceipt(value);
         break;
 
-      case 'autoPrintOnMakePayment':
-        ref.read(appSettingsProvider.notifier).toggleAutoPrintOnMakePayment(value);
-        break;
-
       case 'autoPrintShiftReport':
         ref
             .read(appSettingsProvider.notifier)
@@ -56,13 +52,6 @@ class _AutoPrintState extends ConsumerState<AutoPrint> {
                 value: ref.watch(appSettingsProvider).autoPrintReceipt,
                 onChanged: (bool value) =>
                     onToggleAutoPrint('autoPrintReceipt', value)),
-          ),
-          ListTile(
-            title: Text('payment'.tr(args: [''])),
-            trailing: Switch(
-                value: ref.watch(appSettingsProvider).autoPrintOnMakePayment,
-                onChanged: (bool value) =>
-                    onToggleAutoPrint('autoPrintOnMakePayment', value)),
           ),
           ListTile(
             title: Text('shift'.tr()),

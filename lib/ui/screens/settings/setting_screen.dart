@@ -6,6 +6,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/screens/settings/about_app_screen.dart';
+import 'package:selleri/ui/screens/settings/account_information_screen.dart';
 import 'package:selleri/ui/screens/settings/auto_print_screen.dart';
 import 'package:selleri/ui/screens/settings/printer/printer_setting.dart';
 import 'package:selleri/ui/screens/settings/sync_screen.dart';
@@ -54,14 +55,6 @@ class _SettingScreenState extends State<SettingScreen> {
           child: ListView(
             children: [
               ListTile(
-                leading: const Icon(CupertinoIcons.printer),
-                title: Text('printer_setting'.tr()),
-                onTap: () => onPressMenu(Routes.printers),
-                tileColor: visibleSetting == Routes.printers
-                    ? Colors.grey.shade100
-                    : Colors.white,
-              ),
-              ListTile(
                 leading: const Icon(CupertinoIcons.cloud),
                 title: Text('sync_data'.tr()),
                 onTap: () => onPressMenu(Routes.syncData),
@@ -74,6 +67,14 @@ class _SettingScreenState extends State<SettingScreen> {
                 title: Text('auto_print'.tr()),
                 onTap: () => onPressMenu(Routes.autoPrint),
                 tileColor: visibleSetting == Routes.autoPrint
+                    ? Colors.grey.shade100
+                    : Colors.white,
+              ),
+              ListTile(
+                leading: const Icon(CupertinoIcons.person_crop_circle_fill),
+                title: Text('account_info'.tr()),
+                onTap: () => onPressMenu(Routes.account),
+                tileColor: visibleSetting == Routes.account
                     ? Colors.grey.shade100
                     : Colors.white,
               ),
@@ -109,9 +110,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         ? const SyncData()
                         : visibleSetting == Routes.autoPrint
                             ? const AutoPrint()
-                            : visibleSetting == Routes.about
-                                ? const AboutApp()
-                                : Container())
+                            : visibleSetting == Routes.account
+                                ? const AccountInformation()
+                                : visibleSetting == Routes.about
+                                    ? const AboutApp()
+                                    : Container())
             : Container()
       ]),
     );

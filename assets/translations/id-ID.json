@@ -242,5 +242,11 @@
   "app_version": "Versi Aplikasi",
   "build_number": "Nomor Build",
   "patch_version": "Versi Patch",
-  "run_sync": "Jalankan Sinkronisasi"
-}
+  "run_sync": "Jalankan Sinkronisasi",
+  "account_info": "Informasi Akun",
+  "full_name": "Nama Lengkap",
+  "company": "Perusahaan",
+  "company_email": "Email Perusahaan",
+  "contact_support": "Dukungan Telepon",
+  "email_support": "Dukungan Email"
+  }

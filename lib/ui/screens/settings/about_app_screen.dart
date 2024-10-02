@@ -73,6 +73,16 @@ class _AboutAppState extends State<AboutApp> {
           subtitle: Text('$patchVersion'),
           tileColor: Colors.white,
         ),
+        ListTile(
+          title: Text('contact_support'.tr()),
+          subtitle: const Text('022-87353061'),
+          tileColor: Colors.white,
+        ),
+        ListTile(
+          title: Text('email_support'.tr()),
+          subtitle: const Text('support@dgti.co.id'),
+          tileColor: Colors.white,
+        ),
       ],
     );
   }
