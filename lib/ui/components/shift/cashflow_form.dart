@@ -49,8 +49,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   @override
   void initState() {
     if (widget.cashflow != null) {
-      final config =
-          (ref.read(outletProvider).value as OutletSelected).config;
+      final config = (ref.read(outletProvider).value as OutletSelected).config;
       List<Akun> accounts = List<Akun>.from(config.akunBiaya ?? []);
       accounts.addAll(config.akunPendapatan ?? []);
       accounts.addAll(config.akunSetoran ?? []);
@@ -316,45 +315,52 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                               ],
                             ),
                           ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 15),
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            decoration: BoxDecoration(
-                                border: Border(
-                              bottom: BorderSide(
-                                width: 1,
-                                color: Colors.blueGrey.shade100,
-                              ),
-                            )),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'account'.tr(),
-                                  style: labelStyle,
-                                ),
-                                DropdownButton<Akun>(
-                                  dropdownColor: Colors.white,
-                                  value: account,
-                                  hint: Text(
-                                      'select_x'.tr(args: ['account'.tr()])),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      account = value;
-                                    });
-                                  },
-                                  items: accountList
-                                      .map<DropdownMenuItem<Akun>>((Akun akun) {
-                                    return DropdownMenuItem<Akun>(
-                                      value: akun,
-                                      child: Text(akun.namaAkun),
-                                    );
-                                  }).toList(),
-                                  underline: const SizedBox(),
+                          outletConfig.addOns != null &&
+                                  outletConfig.addOns!.contains('accounting')
+                              ? Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 0),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                    bottom: BorderSide(
+                                      width: 1,
+                                      color: Colors.blueGrey.shade100,
+                                    ),
+                                  )),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'account'.tr(),
+                                        style: labelStyle,
+                                      ),
+                                      DropdownButton<Akun>(
+                                        dropdownColor: Colors.white,
+                                        value: account,
+                                        hint: Text('select_x'
+                                            .tr(args: ['account'.tr()])),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            account = value;
+                                          });
+                                        },
+                                        items: accountList
+                                            .map<DropdownMenuItem<Akun>>(
+                                                (Akun akun) {
+                                          return DropdownMenuItem<Akun>(
+                                            value: akun,
+                                            child: Text(akun.namaAkun),
+                                          );
+                                        }).toList(),
+                                        underline: const SizedBox(),
+                                      )
+                                    ],
+                                  ),
                                 )
-                              ],
-                            ),
-                          ),
+                              : Container(),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: TextFormField(
@@ -516,7 +522,6 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                             onPressed: isLoading ||
                                     amount == 0 ||
                                     descriptions == '' ||
-                                    account == null ||
                                     (images.isEmpty && prevImages.isEmpty)
                                 ? null
                                 : submitCashflow,
