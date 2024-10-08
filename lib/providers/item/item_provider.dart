@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/network/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/item_repository.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
@@ -128,5 +129,16 @@ class ItemsStream extends _$ItemsStream {
   double getItemStock(String idItem) {
     final item = objectBox.getItem(idItem);
     return item?.stockItem ?? 0;
+  }
+
+  Future<void> storeItem(Map<String, dynamic> item) async {
+    final api = ItemApi();
+
+    try {
+      final res = await api.storeItem(item);
+      return res;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

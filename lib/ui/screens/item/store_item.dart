@@ -1,0 +1,109 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/ui/components/error_handler.dart';
+import 'package:selleri/ui/widgets/loading_widget.dart';
+
+enum Status { loading, success, error }
+
+class StoreItem extends ConsumerStatefulWidget {
+  final Map<String, dynamic> itemPayload;
+
+  const StoreItem({super.key, required this.itemPayload});
+
+  @override
+  ConsumerState<StoreItem> createState() => _StoreItemState();
+}
+
+class _StoreItemState extends ConsumerState<StoreItem> {
+  Status status = Status.loading;
+  String error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    submitItem();
+  }
+
+  void submitItem() async {
+    setState(() {
+      status = Status.loading;
+    });
+    try {
+      await ref
+          .read(ItemsStreamProvider().notifier)
+          .storeItem(widget.itemPayload);
+      setState(() {
+        status = Status.success;
+      });
+    } on Exception catch (e) {
+      setState(() {
+        error = e.toString();
+        status = Status.error;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        actions: status == Status.error
+            ? [
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                  onPressed: () => context.pop(false),
+                  child: Text('cancel'.tr()),
+                ),
+                TextButton(
+                  onPressed: submitItem,
+                  child: Text('retry'.tr()),
+                )
+              ]
+            : status == Status.success
+                ? [
+                    TextButton(
+                      onPressed: () => context.pop(true),
+                      child: Text('done'.tr()),
+                    )
+                  ]
+                : [],
+        content: status == Status.loading
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 20),
+                  const LoadingIndicator(color: Colors.teal),
+                  const SizedBox(height: 20),
+                  Text(
+                    'please_wait'.tr(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  )
+                ],
+              )
+            : status == Status.error
+                ? ErrorHandler(
+                    error: error,
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 20),
+                      const Icon(
+                        CupertinoIcons.checkmark_circle,
+                        color: Colors.teal,
+                        size: 40,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'item_stored'.tr(),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      )
+                    ],
+                  ));
+  }
+}
