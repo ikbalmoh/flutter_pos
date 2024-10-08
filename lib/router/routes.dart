@@ -17,4 +17,5 @@ class Routes {
   static const String autoPrint = '/auto-print';
   static const String account = '/account';
   static const String about = '/about';
+  static const String addItem = '/add-item';
 }

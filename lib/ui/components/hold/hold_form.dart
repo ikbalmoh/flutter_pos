@@ -105,8 +105,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
             const SizedBox(height: 20),
             Text(
               'total_transaction'.tr(args: [
-                CurrencyFormat.currency(
-                    ref.read(cartProvider).grandTotal)
+                CurrencyFormat.currency(ref.read(cartProvider).grandTotal)
               ]),
               style: textTheme.bodyLarge?.copyWith(
                 color: Colors.grey.shade700,
@@ -198,10 +197,9 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                           onPressed: description.length >= 3 && !holding
                               ? () => onHold(false)
                               : null,
-                          child: Text(
-                              ref.read(cartProvider).holdAt == null
-                                  ? 'hold'.tr()
-                                  : 'update'.tr()),
+                          child: Text(ref.read(cartProvider).holdAt == null
+                              ? 'hold'.tr()
+                              : 'update'.tr()),
                         ),
                       ),
                     ],

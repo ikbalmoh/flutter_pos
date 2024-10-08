@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
 import 'package:selleri/ui/screens/holded/holded_screen.dart';
+import 'package:selleri/ui/screens/item/add_item_screen.dart';
 import 'package:selleri/ui/screens/promotions/promotions_screen.dart';
 import 'package:selleri/ui/screens/settings/about_app_screen.dart';
 import 'package:selleri/ui/screens/settings/account_information_screen.dart';
@@ -136,6 +137,11 @@ GoRouter router(RouterRef ref) {
           name: Routes.about,
           path: Routes.about,
           builder: (context, state) => const AboutAppScreen(),
+        ),
+        GoRoute(
+          name: Routes.addItem,
+          path: Routes.addItem,
+          builder: (context, state) => const AddItemScreen(),
         ),
       ],
       refreshListenable: appState,

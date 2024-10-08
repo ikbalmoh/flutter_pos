@@ -106,13 +106,22 @@ class HomeMenu extends ConsumerWidget {
                   ),
                   child: Text('new_transaction'.tr()),
                 ),
+                const PopupMenuDivider(),
                 MenuItemButton(
                   onPressed: () => context.push(Routes.promotions),
                   leadingIcon: Icon(
                     CupertinoIcons.tags,
-                    color: Colors.blueGrey.shade500,
+                    color: Colors.amber.shade800,
                   ),
                   child: Text('promotion_list'.tr()),
+                ),
+                MenuItemButton(
+                  onPressed: () => context.push(Routes.addItem),
+                  leadingIcon: Icon(
+                    CupertinoIcons.plus_rectangle_on_rectangle,
+                    color: Colors.teal.shade700,
+                  ),
+                  child: Text('add_item'.tr()),
                 ),
                 const PopupMenuDivider(),
                 MenuItemButton(
