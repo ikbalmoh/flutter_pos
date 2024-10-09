@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_attribute_variant.dart';
 import 'package:selleri/data/network/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/item_repository.dart';
@@ -131,11 +132,30 @@ class ItemsStream extends _$ItemsStream {
     return item?.stockItem ?? 0;
   }
 
-  Future<void> storeItem(Map<String, dynamic> item) async {
+  Future<void> storeItem(
+      Map<String, dynamic> item, List<AttributeVariant> attributes) async {
     final api = ItemApi();
 
     try {
       final res = await api.storeItem(item);
+
+      if (attributes.isNotEmpty) {
+        List<Map<String, dynamic>> variants =
+            attributes.asMap().entries.map<Map<String, dynamic>>((attr) {
+          var idx = attr.key;
+          var value = attr.value;
+          return {
+            'attr_name': value.attrName,
+            'options': value.options.map((opt) {
+              return {'option_name': opt};
+            }).toList(),
+            'is_primary': idx == 0 ? true : false,
+          };
+        }).toList();
+        String idItem = res['data']['id_item'];
+        await api.storeItemAttributes(idItem, variants);
+      }
+
       return res;
     } catch (e) {
       throw Exception(e);
