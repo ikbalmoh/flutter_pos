@@ -3,17 +3,8 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/item_attribute_variant.dart';
 import 'package:selleri/ui/components/generic/chip_input.dart';
-
-class AttributeVariant {
-  final String attrName;
-  final List<String> options;
-
-  const AttributeVariant({
-    required this.attrName,
-    required this.options,
-  });
-}
 
 class AddVariantForm extends StatefulWidget {
   const AddVariantForm({super.key});

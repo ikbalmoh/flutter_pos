@@ -1,12 +1,12 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/category.dart';
+import 'package:selleri/data/models/item_attribute_variant.dart';
 import 'package:selleri/providers/item/category_provider.dart';
 import 'package:selleri/ui/screens/item/add_variant_form.dart';
 import 'package:selleri/ui/screens/item/store_item.dart';
@@ -35,6 +35,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   List<AttributeVariant> attributes = [];
 
   void resetForm() {
+    _formKey.currentState!.reset();
     setState(() {
       category = null;
       itemName = '';
@@ -63,22 +64,16 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       'barcode': barcode,
       'min_stock': 0,
       'initial_stock': initialStock ?? 0,
-      'attributes':
-          attributes.asMap().entries.map<Map<String, dynamic>>((attr) {
-        var idx = attr.key;
-        var value = attr.value;
-        return {
-          'attr_name': value.attrName,
-          'options': value.options,
-          'is_primary': idx == 0 ? true : false,
-        };
-      }).toList()
     };
+
     final isStored = await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return StoreItem(itemPayload: itemPayload);
+          return StoreItem(
+            itemPayload: itemPayload,
+            attributes: attributes,
+          );
         });
     if (isStored) {
       resetForm();
@@ -94,8 +89,6 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
         builder: (context) {
           return const AddVariantForm();
         });
-
-    log('add variant: $attribute');
 
     if (attribute != null) {
       setState(() {

@@ -262,6 +262,7 @@
   "variant_name": "Variant Name",
   "options": "Options",
   "item_stored": "Item Has Been Stored",
+  "x_stored": "{} Has Been Saved",
   "done": "Done",
   "chip_input_note": "Use comma to add other options"
 }

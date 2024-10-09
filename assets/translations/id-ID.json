@@ -263,6 +263,7 @@
   "variant_name": "Nama Varian",
   "options": "Pilihan",
   "item_stored": "Barang Tersimpan",
+  "x_stored": "{} Tersimpan",
   "done": "Selesai",
   "chip_input_note": "Gunakan koma untuk menambahkan pilihan"
   }

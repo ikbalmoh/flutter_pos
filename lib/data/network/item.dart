@@ -38,4 +38,18 @@ class ItemApi {
       rethrow;
     }
   }
+
+  Future storeItemAttributes(
+      String idItem, List<Map<String, dynamic>> attributes) async {
+    try {
+      Map<String, dynamic> payload = {'attributes': attributes};
+      final res =
+          await api.post('${ApiUrl.items}/$idItem/attributes', data: payload);
+      return res.data;
+    } on DioException catch (e) {
+      throw e.response?.data['msg'] ?? e.message;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
