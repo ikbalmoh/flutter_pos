@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/category.dart';
@@ -25,25 +24,32 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   final _stockFormater = CurrencyFormat.currencyInput();
   final _hppFormater = CurrencyFormat.currencyInput();
 
+  final _itemNameController = TextEditingController();
+  final _itemPriceController = TextEditingController();
+  final _initialStockController = TextEditingController();
+  final _hppItemController = TextEditingController();
+  final _skuController = TextEditingController();
+  final _barcodeController = TextEditingController();
+
   Category? category;
-  String itemName = '';
   double? itemPrice;
   double? initialStock;
   double? hppItem;
-  String sku = '';
-  String barcode = '';
   List<AttributeVariant> attributes = [];
 
   void resetForm() {
     _formKey.currentState!.reset();
+    _itemNameController.text = '';
+    _itemPriceController.text = '';
+    _initialStockController.text = '';
+    _hppItemController.text = '';
+    _skuController.text = '';
+    _barcodeController.text = '';
     setState(() {
       category = null;
-      itemName = '';
       itemPrice = null;
       initialStock = null;
       hppItem = null;
-      sku = '';
-      barcode = '';
       attributes = [];
     });
   }
@@ -57,18 +63,21 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     }
     Map<String, dynamic> itemPayload = {
       'id_category': category?.idCategory,
-      'item_name': itemName,
+      'item_name': _itemNameController.text,
       'hpp_item': hppItem,
       'item_price': itemPrice,
-      'sku': sku,
-      'barcode': barcode,
+      'sku': _skuController.text,
+      'barcode': _barcodeController.text,
       'min_stock': 0,
       'initial_stock': initialStock ?? 0,
     };
 
-    final isStored = await showDialog(
+    final isStored = await showModalBottomSheet(
         context: context,
-        barrierDismissible: false,
+        isDismissible: false,
+        isScrollControlled: true,
+        enableDrag: false,
+        backgroundColor: Colors.white,
         builder: (context) {
           return StoreItem(
             itemPayload: itemPayload,
@@ -291,9 +300,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                           ),
                           alignLabelWithHint: true,
                         ),
-                        onChanged: (value) => setState(() {
-                          itemName = value;
-                        }),
+                        controller: _itemNameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'enter_x'.tr(args: ['item_name'.tr()]);
@@ -316,10 +323,11 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                           itemPrice =
                               _priceFormater.getUnformattedValue().toDouble();
                         }),
+                        controller: _itemPriceController,
                         inputFormatters: <TextInputFormatter>[_priceFormater],
-                        initialValue: itemPrice != null
-                            ? _priceFormater.formatDouble(itemPrice!)
-                            : '',
+                        // initialValue: itemPrice != null
+                        //     ? _priceFormater.formatDouble(itemPrice!)
+                        //     : '',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'enter_x'.tr(args: ['price'.tr()]);
@@ -338,6 +346,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                           ),
                           alignLabelWithHint: true,
                         ),
+                        controller: _initialStockController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'enter_x'.tr(args: ['initial_stock'.tr()]);
@@ -345,9 +354,9 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                           return null;
                         },
                         inputFormatters: <TextInputFormatter>[_stockFormater],
-                        initialValue: initialStock != null
-                            ? _stockFormater.formatDouble(initialStock!)
-                            : '',
+                        // initialValue: initialStock != null
+                        //     ? _stockFormater.formatDouble(initialStock!)
+                        //     : '',
                       ),
                       TextFormField(
                         keyboardType: TextInputType.number,
@@ -365,7 +374,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               _hppFormater.getUnformattedValue().toDouble();
                         }),
                         inputFormatters: <TextInputFormatter>[_hppFormater],
-                        initialValue: '',
+                        controller: _hppItemController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'enter_x'.tr(args: ['initial_stock'.tr()]);
@@ -383,9 +392,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                           ),
                           alignLabelWithHint: true,
                         ),
-                        onChanged: (value) => setState(() {
-                          sku = value;
-                        }),
+                        controller: _skuController,
                       ),
                       TextFormField(
                         decoration: InputDecoration(
@@ -397,9 +404,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                           ),
                           alignLabelWithHint: true,
                         ),
-                        onChanged: (value) => setState(() {
-                          barcode = value;
-                        }),
+                        controller: _barcodeController,
                       ),
                       const SizedBox(height: 15),
                     ],
