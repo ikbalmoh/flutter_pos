@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item_attribute_variant.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
+import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 
 enum Status { loading, success, error }
 
@@ -55,66 +55,85 @@ class _StoreItemState extends ConsumerState<StoreItem> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        actions: status == Status.error
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 20,
+        left: 15,
+        right: 15,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: status == Status.loading
             ? [
-                TextButton(
-                  style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                  onPressed: () => context.pop(false),
-                  child: Text('cancel'.tr()),
-                ),
-                TextButton(
-                  onPressed: submitItem,
-                  child: Text('retry'.tr()),
-                )
+                const LoadingPlaceholder(),
               ]
-            : status == Status.success
+            : status == Status.error
                 ? [
-                    ElevatedButton(
-                      onPressed: () {
-                        while (context.canPop()) {
-                          context.pop(true);
-                        }
-                      },
-                      child: Text('done'.tr()),
+                    ErrorHandler(
+                      error: error,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              foregroundColor: Colors.grey),
+                          onPressed: () => context.pop(false),
+                          child: Text('cancel'.tr()),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: submitItem,
+                            child: Text('retry'.tr()),
+                          ),
+                        ),
+                      ],
                     )
                   ]
-                : [],
-        content: status == Status.loading
-            ? Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 20),
-                  const LoadingIndicator(color: Colors.teal),
-                  const SizedBox(height: 20),
-                  Text(
-                    'please_wait'.tr(),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  )
-                ],
-              )
-            : status == Status.error
-                ? ErrorHandler(
-                    error: error,
-                  )
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(height: 20),
-                      const Icon(
-                        CupertinoIcons.checkmark_circle,
-                        color: Colors.teal,
-                        size: 40,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'x_stored'.tr(args: [widget.itemPayload['item_name']]),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      )
-                    ],
-                  ));
+                : [
+                    const SizedBox(height: 20),
+                    const Icon(
+                      CupertinoIcons.checkmark_circle,
+                      color: Colors.teal,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'x_stored'.tr(args: [widget.itemPayload['item_name']]),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 40),
+                    Row(
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              foregroundColor: Colors.grey),
+                          onPressed: () => context.pop(true),
+                          child: Text('add_more'.tr()),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              while (context.canPop()) {
+                                context.pop(true);
+                              }
+                            },
+                            child: Text('done'.tr()),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+      ),
+    );
   }
 }
