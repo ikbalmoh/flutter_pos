@@ -52,4 +52,18 @@ class ItemApi {
       rethrow;
     }
   }
+
+  Future updateItemVariants(
+      String idItem, List<Map<String, dynamic>> variants) async {
+    try {
+      Map<String, dynamic> payload = {'variants': variants};
+      final res =
+          await api.put('${ApiUrl.items}/$idItem/variants', data: payload);
+      return res.data;
+    } on DioException catch (e) {
+      throw e.response?.data['msg'] ?? e.message;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

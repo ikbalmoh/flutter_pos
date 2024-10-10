@@ -5,51 +5,47 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/data/models/item_attribute_variant.dart';
+import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/providers/item/item_provider.dart';
-import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 
 enum Status { loading, success, error }
 
-class StoreItem extends ConsumerStatefulWidget {
-  final Map<String, dynamic> itemPayload;
-  final List<AttributeVariant> attributes;
+class StoreManagedVariants extends ConsumerStatefulWidget {
+  final String idItem;
+  final List<ItemVariant> attributes;
 
-  const StoreItem(
-      {super.key, required this.itemPayload, required this.attributes});
+  const StoreManagedVariants(
+      {super.key, required this.idItem, required this.attributes});
 
   @override
-  ConsumerState<StoreItem> createState() => _StoreItemState();
+  ConsumerState<StoreManagedVariants> createState() =>
+      _StoreManagedVariantsState();
 }
 
-class _StoreItemState extends ConsumerState<StoreItem> {
+class _StoreManagedVariantsState extends ConsumerState<StoreManagedVariants> {
   Status status = Status.loading;
   String error = '';
 
   @override
   void initState() {
     super.initState();
-    submitItem();
+    submitVariants();
   }
 
-  void submitItem() async {
+  void submitVariants() async {
     setState(() {
       status = Status.loading;
     });
     try {
-      log('store item: ${widget.itemPayload}\n${widget.attributes}');
-      String idItem = await ref
+      log('update variants: ${widget.attributes}');
+      await ref
           .read(ItemsStreamProvider().notifier)
-          .storeItem(widget.itemPayload, widget.attributes);
+          .updateVariants(widget.idItem, widget.attributes);
       setState(() {
         status = Status.success;
       });
-      if (widget.attributes.isNotEmpty) {
-        context.pushNamed(Routes.manageVariant,
-            pathParameters: {"idItem": idItem});
-      }
     } on Exception catch (e) {
       setState(() {
         error = e.toString();
@@ -94,7 +90,7 @@ class _StoreItemState extends ConsumerState<StoreItem> {
                         ),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: submitItem,
+                            onPressed: submitVariants,
                             child: Text('retry'.tr()),
                           ),
                         ),
@@ -110,32 +106,17 @@ class _StoreItemState extends ConsumerState<StoreItem> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'x_stored'.tr(args: [widget.itemPayload['item_name']]),
+                      'x_stored'.tr(args: ['variants'.tr()]),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 40),
-                    Row(
-                      children: [
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              foregroundColor: Colors.grey),
-                          onPressed: () => context.pop(true),
-                          child: Text('add_more'.tr()),
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              while (context.canPop()) {
-                                context.pop(true);
-                              }
-                            },
-                            child: Text('done'.tr()),
-                          ),
-                        )
-                      ],
+                    ElevatedButton(
+                      onPressed: () {
+                        while (context.canPop()) {
+                          context.pop(true);
+                        }
+                      },
+                      child: Text('done'.tr()),
                     ),
                   ],
       ),

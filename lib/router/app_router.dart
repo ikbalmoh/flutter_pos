@@ -6,6 +6,7 @@ import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
 import 'package:selleri/ui/screens/holded/holded_screen.dart';
 import 'package:selleri/ui/screens/item/add_item_screen.dart';
+import 'package:selleri/ui/screens/item/manage_item_variants_screen.dart';
 import 'package:selleri/ui/screens/promotions/promotions_screen.dart';
 import 'package:selleri/ui/screens/settings/about_app_screen.dart';
 import 'package:selleri/ui/screens/settings/account_information_screen.dart';
@@ -142,6 +143,14 @@ GoRouter router(RouterRef ref) {
           name: Routes.addItem,
           path: Routes.addItem,
           builder: (context, state) => const AddItemScreen(),
+        ),
+        GoRoute(
+          name: Routes.manageVariant,
+          path: '${Routes.manageVariant}/:idItem',
+          builder: (context, state) {
+            final String idItem = state.pathParameters['idItem'] ?? '';
+            return ManageItemVariantsScreen(idItem: idItem);
+          },
         ),
       ],
       refreshListenable: appState,

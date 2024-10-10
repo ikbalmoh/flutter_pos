@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_attribute_variant.dart';
+import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/network/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/item_repository.dart';
@@ -132,12 +133,13 @@ class ItemsStream extends _$ItemsStream {
     return item?.stockItem ?? 0;
   }
 
-  Future<void> storeItem(
+  Future<String> storeItem(
       Map<String, dynamic> item, List<AttributeVariant> attributes) async {
     final api = ItemApi();
 
     try {
       final res = await api.storeItem(item);
+      String idItem = res['data']['id_item'];
 
       if (attributes.isNotEmpty) {
         List<Map<String, dynamic>> variants =
@@ -152,10 +154,28 @@ class ItemsStream extends _$ItemsStream {
             'is_primary': idx == 0 ? true : false,
           };
         }).toList();
-        String idItem = res['data']['id_item'];
         await api.storeItemAttributes(idItem, variants);
       }
 
+      return idItem;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<void> updateVariants(String idItem, List<ItemVariant> variants) async {
+    try {
+      final api = ItemApi();
+      List<Map<String, dynamic>> attributes =
+          variants.map<Map<String, dynamic>>((v) {
+        return {
+          "id_variant": v.idVariant,
+          "item_price": v.itemPrice,
+          "sku_number": v.skuNumber,
+          "barcode_number": v.barcodeNumber
+        };
+      }).toList();
+      final res = await api.updateItemVariants(idItem, attributes);
       return res;
     } catch (e) {
       throw Exception(e);
