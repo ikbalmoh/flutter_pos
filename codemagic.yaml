@@ -196,8 +196,40 @@ workflows:
             - dgti
       <<: *publishing_notifications
 
-  release-staging:
-    name: Release Staging
+  release-staging-android:
+    name: Release Staging Android
+    instance_type: mac_mini_m1
+    environment:
+      <<: *stage_env
+
+    scripts:
+      # - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *shorebird_android_release_stage
+
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: 1:957311922583:android:d61a59e4b45bfdd62794d2
+          groups:
+            - dgti
+          artifact_type: 'apk'
+      <<: *publishing_notifications
+
+  release-staging-ios:
+    name: Release Staging iOS
     instance_type: mac_mini_m1
     environment:
       <<: *stage_env
@@ -212,12 +244,9 @@ workflows:
       - *flutter_analyze
       - *setup_local_properties
       - *xcode_project_use_profiles
-      - *shorebird_android_release_stage
       - *shorebird_ios_release_stage
 
     artifacts:
-      - build/**/outputs/**/*.apk
-      - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
@@ -225,11 +254,6 @@ workflows:
     publishing:
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
-        android:
-          app_id: 1:957311922583:android:d61a59e4b45bfdd62794d2
-          groups:
-            - dgti
-          artifact_type: 'apk'
         ios:
           app_id: 1:957311922583:ios:487efa18122c20842794d2
           groups:
@@ -258,8 +282,28 @@ workflows:
     publishing:
       <<: *publishing_notifications
 
-  patch-staging:
-    name: Patch Staging
+  patch-staging-android:
+    name: Patch Staging Android
+    instance_type: mac_mini_m1
+    environment:
+      <<: *stage_env
+
+    scripts:
+      # - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *shorebird_android_patch_stage
+
+    publishing:
+      <<: *publishing_notifications
+
+  patch-staging-ios:
+    name: Patch Staging iOS
     instance_type: mac_mini_m1
     environment:
       <<: *stage_env
@@ -274,7 +318,6 @@ workflows:
       - *flutter_analyze
       - *setup_local_properties
       - *xcode_project_use_profiles
-      - *shorebird_android_patch_stage
       - *shorebird_ios_patch_stage
 
     publishing:
