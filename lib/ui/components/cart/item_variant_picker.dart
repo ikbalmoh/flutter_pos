@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
@@ -68,12 +69,18 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                   widget.item.itemName,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.grey.shade500,
-                    size: 16,
+                IconButton(
+                  padding: const EdgeInsets.all(5),
+                  constraints: const BoxConstraints(),
+                  onPressed: () => context.pushNamed(Routes.manageVariant,
+                      pathParameters: {"idItem": widget.item.idItem}),
+                  icon: Icon(
+                    Icons.edit_note_rounded,
+                    color: Colors.amber.shade800,
+                  ),
+                  iconSize: 26,
+                  style: const ButtonStyle(
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 ),
               ],

@@ -265,5 +265,7 @@
   "item_stored": "Barang Tersimpan",
   "x_stored": "{} Tersimpan",
   "done": "Selesai",
-  "chip_input_note": "Gunakan koma untuk menambahkan pilihan"
+  "chip_input_note": "Gunakan koma untuk menambahkan pilihan",
+  "add_more": "Input Lagi",
+  "manage_variants": "Atur Varian"
   }
