@@ -46,7 +46,8 @@ class _StoreItemState extends ConsumerState<StoreItem> {
       setState(() {
         status = Status.success;
       });
-      if (widget.attributes.isNotEmpty) {
+      if (widget.attributes.isNotEmpty && context.mounted) {
+        // ignore: use_build_context_synchronously
         context.pushNamed(Routes.manageVariant,
             pathParameters: {"idItem": idItem});
       }
