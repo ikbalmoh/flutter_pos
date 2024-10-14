@@ -204,9 +204,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     : [
                         IconButton(
                           tooltip: 'search'.tr(),
-                          onPressed: () => setState(() {
-                            searchVisible = true;
-                          }),
+                          onPressed: () {
+                            setState(() {
+                              searchVisible = true;
+                            });
+                            focusSearch.requestFocus();
+                          },
                           icon: const Icon(CupertinoIcons.search),
                         ),
                         IconButton(

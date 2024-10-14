@@ -33,7 +33,6 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: TextField(
         controller: controller,
         onChanged: onChanged,
-        autofocus: true,
         focusNode: focusNode,
         decoration: InputDecoration(
           hintText: placeholder ?? 'search'.tr(),
