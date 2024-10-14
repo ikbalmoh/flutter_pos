@@ -133,14 +133,11 @@ class ItemsStream extends _$ItemsStream {
     return item?.stockItem ?? 0;
   }
 
-  Future<String> storeItem(
-      Map<String, dynamic> item, List<AttributeVariant> attributes) async {
+  Future<Item> storeItem(Map<String, dynamic> itemPayload,
+      List<AttributeVariant> attributes) async {
     final api = ItemApi();
 
     try {
-      final res = await api.storeItem(item);
-      String idItem = res['data']['id_item'];
-
       if (attributes.isNotEmpty) {
         List<Map<String, dynamic>> variants =
             attributes.asMap().entries.map<Map<String, dynamic>>((attr) {
@@ -154,10 +151,14 @@ class ItemsStream extends _$ItemsStream {
             'is_primary': idx == 0 ? true : false,
           };
         }).toList();
-        await api.storeItemAttributes(idItem, variants);
+        itemPayload['variants'] = {'attributes': variants};
       }
 
-      return idItem;
+      Item item = await api.storeItem(itemPayload);
+
+      objectBox.putItems([item]);
+
+      return item;
     } catch (e) {
       throw Exception(e);
     }

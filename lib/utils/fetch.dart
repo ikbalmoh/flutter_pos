@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/data/constants/store_key.dart';
+import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/token.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -49,6 +50,13 @@ class CustomInterceptors extends Interceptor {
     if (tokenString != null) {
       final Token token = Token.fromJson(json.decode(tokenString));
       options.headers['Authorization'] = 'Bearer ${token.accessToken}';
+    }
+
+    String? outletString = await storage.read(key: StoreKey.outlet.name);
+    if (outletString != null) {
+      final jsonOutlet = json.decode(outletString);
+      final outlet = Outlet.fromJson(jsonOutlet);
+      options.headers['outlet'] = outlet.idOutlet;
     }
 
     if (kDebugMode) {

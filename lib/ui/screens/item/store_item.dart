@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_attribute_variant.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/router/routes.dart';
@@ -40,7 +41,7 @@ class _StoreItemState extends ConsumerState<StoreItem> {
     });
     try {
       log('store item: ${widget.itemPayload}\n${widget.attributes}');
-      String idItem = await ref
+      Item item = await ref
           .read(ItemsStreamProvider().notifier)
           .storeItem(widget.itemPayload, widget.attributes);
       setState(() {
@@ -49,7 +50,7 @@ class _StoreItemState extends ConsumerState<StoreItem> {
       if (widget.attributes.isNotEmpty && context.mounted) {
         // ignore: use_build_context_synchronously
         context.pushNamed(Routes.manageVariant,
-            pathParameters: {"idItem": idItem});
+            pathParameters: {"idItem": item.idItem});
       }
     } on Exception catch (e) {
       setState(() {
