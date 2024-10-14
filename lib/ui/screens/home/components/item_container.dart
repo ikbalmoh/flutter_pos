@@ -21,12 +21,14 @@ class ItemContainer extends ConsumerWidget {
   final String search;
   final FilterStock filterStock;
   final bool? allowEmptyStock;
+  final Function clearSearch;
 
   const ItemContainer({
     this.scrollController,
     required this.idCategory,
     required this.search,
     required this.filterStock,
+    required this.clearSearch,
     this.allowEmptyStock,
     super.key,
   });
@@ -39,6 +41,10 @@ class ItemContainer extends ConsumerWidget {
       return;
     }
     ref.read(cartProvider.notifier).addToCart(item, variant: variant);
+    print('added to chart: $item => $search');
+    if (search.isNotEmpty && [item.itemName.toLowerCase(), item.sku?.toLowerCase(), item.barcode?.toLowerCase()].contains(search.toLowerCase())) {
+      clearSearch();
+    }
   }
 
   void showVariants(BuildContext context, Item item, WidgetRef ref) {

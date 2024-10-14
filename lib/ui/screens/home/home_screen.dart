@@ -43,6 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   bool searchVisible = false;
   TextEditingController textEditingController = TextEditingController();
   ScrollController scrollController = ScrollController();
+  FocusNode focusSearch = FocusNode();
 
   void onChangeCategory(String id) {
     setState(() {
@@ -139,6 +140,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             idCategory: idCategory,
             search: search,
             filterStock: filterStock,
+            clearSearch: () {
+              setState(() {
+                search = '';
+                textEditingController.text = '';
+              });
+              focusSearch.requestFocus();
+            },
             allowEmptyStock: outlet.value is OutletSelected
                 ? (outlet.value as OutletSelected).config.stockMinus
                 : false,
@@ -162,6 +170,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   search = '';
                 },
               ),
+              focusNode: focusSearch,
               controller: textEditingController,
               onChanged: onSearchItems,
               actions: [

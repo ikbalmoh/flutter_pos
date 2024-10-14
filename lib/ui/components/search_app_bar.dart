@@ -7,6 +7,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TextEditingController controller;
   final String? placeholder;
   final List<Widget>? actions;
+  final FocusNode? focusNode;
 
   @override
   final Size preferredSize;
@@ -18,6 +19,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.controller,
     this.placeholder,
     this.actions,
+    this.focusNode,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   @override
@@ -32,6 +34,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         controller: controller,
         onChanged: onChanged,
         autofocus: true,
+        focusNode: focusNode,
         decoration: InputDecoration(
           hintText: placeholder ?? 'search'.tr(),
           hintStyle: const TextStyle(
