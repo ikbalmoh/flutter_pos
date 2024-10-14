@@ -37,6 +37,7 @@ class CustomInterceptors extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     String? deviceId = await storage.read(key: StoreKey.device.name);
     options.headers['device'] = deviceId;
+    options.headers['is-app'] = 1;
 
     final packageInfo = await PackageInfo.fromPlatform();
     options.headers['version'] = packageInfo.version;

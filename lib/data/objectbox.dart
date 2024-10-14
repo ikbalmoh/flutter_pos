@@ -231,8 +231,10 @@ class ObjectBox {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
     if (search != '') {
-      itemQuery =
-          itemQuery.and(Item_.itemName.contains(search, caseSensitive: false));
+      itemQuery = itemQuery.and(Item_.itemName
+          .contains(search, caseSensitive: false)
+          .or(Item_.barcode.equals(search, caseSensitive: false))
+          .or(Item_.sku.equals(search, caseSensitive: false)));
     }
     if (filterStock == FilterStock.available) {
       itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
