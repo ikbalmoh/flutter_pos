@@ -41,7 +41,6 @@ class ItemContainer extends ConsumerWidget {
       return;
     }
     ref.read(cartProvider.notifier).addToCart(item, variant: variant);
-    print('added to chart: $item => $search');
     if (search.isNotEmpty && [item.itemName.toLowerCase(), item.sku?.toLowerCase(), item.barcode?.toLowerCase()].contains(search.toLowerCase())) {
       clearSearch();
     }
