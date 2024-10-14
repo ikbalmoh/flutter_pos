@@ -49,6 +49,8 @@ class Printer {
       String? headers;
       String? footers;
 
+      bytes += generator.drawer();
+
       if (attributes != null) {
         if (attributes.imageBase64 != null && attributes.imageBase64 != '') {
           try {
