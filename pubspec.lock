@@ -590,6 +590,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_barcode_listener:
+    dependency: "direct main"
+    description:
+      name: flutter_barcode_listener
+      sha256: "095b04a29ddab58c623f3a78d88c641b870a6d4bc4bdf0c7a0d4bc58e337aed8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.4"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -1618,6 +1626,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  visibility_detector:
+    dependency: "direct main"
+    description:
+      name: visibility_detector
+      sha256: dd5cc11e13494f432d15939c3aa8ae76844c42b723398643ce9addb88a5ed420
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0+2"
   vm_service:
     dependency: transitive
     description:
