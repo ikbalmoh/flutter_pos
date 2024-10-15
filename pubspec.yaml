@@ -24,6 +24,7 @@ dependencies:
   firebase_messaging: ^15.0.1
   flutter:
     sdk: flutter
+  flutter_barcode_listener: ^0.1.4
   flutter_dotenv: ^5.1.0
   flutter_riverpod: ^2.5.1
   flutter_secure_storage: ^9.0.0
@@ -54,6 +55,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^26.1.40
   uuid: ^4.4.0
   validators: ^3.0.0
+  visibility_detector: ^0.4.0+2
   wakelock_plus: ^1.2.5
 
 dev_dependencies:
