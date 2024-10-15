@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/network/api.dart';
 import 'package:selleri/data/repository/item_repository.dart';
@@ -11,6 +11,7 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 part 'fcm_provider.g.dart';
 
@@ -65,8 +66,6 @@ class Fcm extends _$Fcm {
 
     if (message.notification != null) {
       log('FCM message contained a notification: ${message.notification?.toMap()}');
-      Fluttertoast.showToast(msg: message.notification?.body ?? '-');
-
       // Show local notification
       // Fetch Notification
     }
@@ -78,6 +77,7 @@ class Fcm extends _$Fcm {
       final jsonData = json.decode(data['data']);
       switch (data['type']) {
         case 'items':
+          AppAlert.toast('syncing_x'.tr(args: ['item'.tr()]));
           // sync items
           if (jsonData.isNotEmpty) {
             ref
@@ -89,6 +89,7 @@ class Fcm extends _$Fcm {
         case 'sync':
           final sources = List<String>.from(jsonData['sources'] ?? []);
           final config = List<String>.from(jsonData['config_only'] ?? []);
+          AppAlert.toast('syncing_x'.tr(args: ['data']));
           log('TRIGGER SYNC\n => source: $sources\n => config: $config');
           manualSync(sources, config);
           break;

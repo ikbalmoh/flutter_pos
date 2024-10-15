@@ -253,14 +253,16 @@ class ObjectBox {
   }
 
   ScanItemResult getItemByBarcode(String barcode) {
-    Item? item =
-        itemBox.query(Item_.barcode.equals(barcode)).build().findFirst();
+    Item? item = itemBox
+        .query(Item_.barcode.equals(barcode, caseSensitive: false))
+        .build()
+        .findFirst();
     ItemVariant? variant;
     if (item != null && item.variants.isNotEmpty) {
       item = null;
     } else if (item == null) {
       variant = itemVariantBox
-          .query(ItemVariant_.barcodeNumber.equals(barcode))
+          .query(ItemVariant_.barcodeNumber.equals(barcode, caseSensitive: false))
           .build()
           .findFirst();
       if (variant != null) {

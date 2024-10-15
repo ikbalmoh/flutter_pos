@@ -267,5 +267,6 @@
   "done": "Selesai",
   "chip_input_note": "Gunakan koma untuk menambahkan pilihan",
   "add_more": "Input Lagi",
-  "manage_variants": "Atur Varian"
+  "manage_variants": "Atur Varian",
+  "syncing_x": "Menyinkronkan {}"
   }

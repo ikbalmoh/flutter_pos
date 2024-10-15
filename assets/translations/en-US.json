@@ -266,5 +266,6 @@
   "done": "Done",
   "chip_input_note": "Use comma to add other options",
   "add_more": "Add More",
-  "manage_variants": "Manage Variants"
+  "manage_variants": "Manage Variants",
+  "syncing_x": "Syncroning {}"
 }
