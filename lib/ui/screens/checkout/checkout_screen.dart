@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart.dart' as model;
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
@@ -45,9 +46,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final model.Cart cart = ref.watch(cartProvider);
 
     OutletState? outletState = ref.watch(outletProvider).value;
-    bool isPartialEnabled = outletState is OutletSelected
-        ? (outletState.config.partialPayment ?? false)
-        : false;
+    OutletConfig? config =
+        outletState is OutletSelected ? outletState.config : null;
+
+    bool isPartialEnabled = config?.partialPayment ?? false;
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
     bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
@@ -142,6 +144,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           isTablet
               ? Expanded(
                   child: OrderSummary(
+                    taxable: config?.taxable ?? false,
                     cart: cart,
                     radius: const Radius.circular(10),
                     mainAxisSize:
@@ -151,6 +154,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   ),
                 )
               : OrderSummary(
+                  taxable: config?.taxable ?? false,
                   cart: cart,
                   radius: const Radius.circular(10),
                   mainAxisSize: MainAxisSize.min,

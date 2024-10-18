@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:selleri/data/models/cart.dart' as model;
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
@@ -95,6 +96,10 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(TABLET);
 
+    OutletState? outletState = ref.watch(outletProvider).value;
+    OutletConfig? config =
+        outletState is OutletSelected ? outletState.config : null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('transaction_receipt'.tr()),
@@ -134,6 +139,7 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
                   child: Screenshot(
                     controller: screenshotController,
                     child: OrderSummary(
+                      taxable: config?.taxable ?? false,
                       key: summaryContainerKey,
                       radius: const Radius.circular(5),
                       cart: widget.cart,
