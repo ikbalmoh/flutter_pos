@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/pdf.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart.dart' as model;
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
@@ -35,7 +36,6 @@ class TransactionDetailScreen extends ConsumerStatefulWidget {
 
 class _TransactionDetailScreenState
     extends ConsumerState<TransactionDetailScreen> {
-  
   final GlobalKey summaryContainerKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
 
@@ -136,6 +136,7 @@ class _TransactionDetailScreenState
 
     final OutletSelected outletState =
         ref.watch(outletProvider).value as OutletSelected;
+    OutletConfig? config = outletState.config;
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
@@ -270,6 +271,7 @@ class _TransactionDetailScreenState
                       child: Screenshot(
                         controller: screenshotController,
                         child: OrderSummary(
+                          taxable: config.taxable ?? false,
                           key: summaryContainerKey,
                           radius: const Radius.circular(5),
                           cart: transaction,

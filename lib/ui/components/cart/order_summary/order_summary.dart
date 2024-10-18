@@ -12,6 +12,7 @@ class OrderSummary extends StatelessWidget {
   final Radius? radius;
   final MainAxisSize? mainAxisSize;
   final bool? withAttribute;
+  final bool taxable;
   final OutletSelected outletState;
 
   const OrderSummary({
@@ -19,6 +20,7 @@ class OrderSummary extends StatelessWidget {
     this.radius,
     this.mainAxisSize,
     this.withAttribute,
+    required this.taxable,
     required this.outletState,
     super.key,
   });
@@ -118,11 +120,13 @@ class OrderSummary extends StatelessWidget {
                   value: cart.discPromotionsTotal,
                 )
               : Container(),
-          cart.ppnTotal > 0
-              ? TwoColumn(
-                  label: cart.taxName ?? 'tax'.tr(),
-                  value: cart.ppnTotal,
-                )
+          taxable
+              ? cart.ppnTotal > 0
+                  ? TwoColumn(
+                      label: cart.taxName ?? 'tax'.tr(),
+                      value: cart.ppnTotal,
+                    )
+                  : Container()
               : Container(),
           TwoColumn(
             label: 'Grand Total',

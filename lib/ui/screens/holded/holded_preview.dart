@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart_holded.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
@@ -19,6 +20,11 @@ class HoldedPreview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    OutletState? outletState = ref.watch(outletProvider).value;
+
+    OutletConfig? config =
+        outletState is OutletSelected ? outletState.config : null;
+
     void openHoldedTransaction() {
       ref.read(cartProvider.notifier).openHoldedCart(cartHolded);
       while (context.canPop()) {
@@ -133,6 +139,7 @@ class HoldedPreview extends ConsumerWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(10),
               child: OrderSummary(
+                taxable: config?.taxable ?? false,
                 cart: cartHolded.dataHold,
                 radius: const Radius.circular(5),
                 outletState: ref.watch(outletProvider).value as OutletSelected,
