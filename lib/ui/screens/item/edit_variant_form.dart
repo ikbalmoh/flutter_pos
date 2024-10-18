@@ -135,11 +135,11 @@ class _EditVariantFormState extends State<EditVariantForm> {
                           const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       label: Text(
-                        'SKU'.tr(),
+                        'SKU',
                         style: labelStyle,
                       ),
                       prefix: Text(
-                        'SKU'.tr(),
+                        'SKU',
                         style: labelStyle,
                       ),
                       alignLabelWithHint: true,
@@ -148,7 +148,7 @@ class _EditVariantFormState extends State<EditVariantForm> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'field_required'
-                            .tr(args: ['SKU'.tr().toLowerCase()]);
+                            .tr(args: ['SKU'.toLowerCase()]);
                       }
                       return null;
                     },
@@ -161,11 +161,11 @@ class _EditVariantFormState extends State<EditVariantForm> {
                           const EdgeInsets.only(left: 0, bottom: 15, right: 0),
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       label: Text(
-                        'Barcode'.tr(),
+                        'Barcode',
                         style: labelStyle,
                       ),
                       prefix: Text(
-                        'Barcode'.tr(),
+                        'Barcode',
                         style: labelStyle,
                       ),
                       alignLabelWithHint: true,
@@ -174,7 +174,7 @@ class _EditVariantFormState extends State<EditVariantForm> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'field_required'
-                            .tr(args: ['Barcode'.tr().toLowerCase()]);
+                            .tr(args: ['Barcode'.toLowerCase()]);
                       }
                       return null;
                     },

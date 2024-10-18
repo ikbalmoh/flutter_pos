@@ -251,7 +251,8 @@ class ObjectBox {
       item = null;
     } else if (item == null) {
       variant = itemVariantBox
-          .query(ItemVariant_.barcodeNumber.equals(barcode, caseSensitive: false))
+          .query(
+              ItemVariant_.barcodeNumber.equals(barcode, caseSensitive: false))
           .build()
           .findFirst();
       if (variant != null) {
@@ -282,8 +283,21 @@ class ObjectBox {
       .find();
 
   void putItems(List<Item> items) {
-    itemBox.putMany(items);
-    log('${items.length} ITEMS HAS BEEN STORED');
+    for (var item in items) {
+      if (item.variants.isNotEmpty) {
+        // itemVariantBox
+        //     .query(ItemVariant_.idItem.equals(item.idItem))
+        //     .build()
+        //     .remove();
+      }
+    }
+    List<int> ids = itemBox.putMany(items);
+    log('ITEMS HAS BEEN STORED: $ids');
+  }
+
+  void putVariants(List<ItemVariant> variants) {
+    List<int> ids = itemVariantBox.putMany(variants);
+    log('VARIANTS HAS BEEN STORED: $ids');
   }
 
   int getTotalItem({required String idCategory}) {

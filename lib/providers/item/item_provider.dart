@@ -164,7 +164,8 @@ class ItemsStream extends _$ItemsStream {
     }
   }
 
-  Future<void> updateVariants(String idItem, List<ItemVariant> variants) async {
+  Future<List<ItemVariant>> updateVariants(
+      String idItem, List<ItemVariant> variants) async {
     try {
       final api = ItemApi();
       List<Map<String, dynamic>> attributes =
@@ -176,8 +177,9 @@ class ItemsStream extends _$ItemsStream {
           "barcode_number": v.barcodeNumber
         };
       }).toList();
-      final res = await api.updateItemVariants(idItem, attributes);
-      return res;
+      final updatedVariants = await api.updateItemVariants(idItem, attributes);
+      objectBox.putVariants(updatedVariants);
+      return updatedVariants;
     } catch (e) {
       throw Exception(e);
     }

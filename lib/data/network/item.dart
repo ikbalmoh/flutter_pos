@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/objectbox.dart';
+import 'package:selleri/objectbox.g.dart';
 import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/models/item.dart';
@@ -54,13 +57,25 @@ class ItemApi {
     }
   }
 
-  Future updateItemVariants(
+  Future<List<ItemVariant>> updateItemVariants(
       String idItem, List<Map<String, dynamic>> variants) async {
     try {
       Map<String, dynamic> payload = {'variants': variants};
       final res =
           await api.put('${ApiUrl.items}/$idItem/variants', data: payload);
-      return res.data;
+      List<Map<String, dynamic>> listJson =
+          List<Map<String, dynamic>>.from(res.data['data']);
+      List<ItemVariant> listVariant = listJson.map((v) {
+        ItemVariant? existVariant = objectBox.itemVariantBox
+            .query(ItemVariant_.idVariant.equals(v['id_variant']))
+            .build()
+            .findFirst();
+        v['id_item'] = v['item_id'];
+        v['variant_name'] = existVariant?.variantName ?? '';
+        v['id'] = existVariant?.id ?? 0;
+        return ItemVariant.fromJson(v);
+      }).toList();
+      return listVariant;
     } on DioException catch (e) {
       throw e.response?.data['msg'] ?? e.message;
     } catch (e) {
