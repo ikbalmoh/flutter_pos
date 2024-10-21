@@ -95,6 +95,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
         isScrollControlled: true,
         isDismissible: false,
         enableDrag: false,
+        backgroundColor: Colors.white,
         builder: (context) {
           return const AddVariantForm();
         });
@@ -114,7 +115,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
         .bodyMedium
         ?.copyWith(color: Colors.blueGrey.shade600);
 
-    var variants = Card(
+    Card addVariants = Card(
       elevation: 0,
       color: Colors.white,
       child: Padding(
@@ -163,6 +164,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               .textTheme
                               .titleMedium
                               ?.copyWith(color: Colors.grey.shade500),
+                          textAlign: TextAlign.center,
                         )
                       ],
                     ),
@@ -250,166 +252,181 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
           children: [
             Expanded(
                 child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Card(
-                elevation: 0,
-                color: Colors.white,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'item_data'.tr(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      Divider(
-                        color: Colors.blueGrey.shade50,
-                      ),
-                      DropdownButton<Category>(
-                        items: ref
-                            .watch(categoriesStreamProvider)
-                            .value
-                            ?.map<DropdownMenuItem<Category>>(
-                                (Category category) {
-                          return DropdownMenuItem<Category>(
+              padding: const EdgeInsets.all(10).copyWith(bottom: 80),
+              child: Column(
+                children: [
+                  Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'item_data'.tr(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          Divider(
+                            color: Colors.blueGrey.shade50,
+                          ),
+                          DropdownButton<Category>(
+                            items: ref
+                                .watch(categoriesStreamProvider)
+                                .value
+                                ?.map<DropdownMenuItem<Category>>(
+                                    (Category category) {
+                              return DropdownMenuItem<Category>(
+                                value: category,
+                                child: Text(category.categoryName),
+                              );
+                            }).toList(),
+                            onChanged: (value) => setState(() {
+                              category = value;
+                            }),
                             value: category,
-                            child: Text(category.categoryName),
-                          );
-                        }).toList(),
-                        onChanged: (value) => setState(() {
-                          category = value;
-                        }),
-                        value: category,
-                        dropdownColor: Colors.white,
-                        hint: Text('select_x'.tr(args: ['category'.tr()])),
-                        underline: const SizedBox(),
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 0, bottom: 5, right: 0),
-                          label: Text(
-                            'item_name'.tr(),
-                            style: labelStyle,
+                            dropdownColor: Colors.white,
+                            hint: Text('select_x'.tr(args: ['category'.tr()])),
+                            underline: const SizedBox(),
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
-                          alignLabelWithHint: true,
-                        ),
-                        controller: _itemNameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'enter_x'.tr(args: ['item_name'.tr()]);
-                          }
-                          return null;
-                        },
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 0, top: 10, bottom: 5, right: 0),
-                          label: Text(
-                            'price'.tr(),
-                            style: labelStyle,
+                          TextFormField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 0, bottom: 5, right: 0),
+                              label: Text(
+                                'item_name'.tr(),
+                                style: labelStyle,
+                              ),
+                              alignLabelWithHint: true,
+                            ),
+                            controller: _itemNameController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'enter_x'.tr(args: ['item_name'.tr()]);
+                              }
+                              return null;
+                            },
                           ),
-                          alignLabelWithHint: true,
-                        ),
-                        onChanged: (value) => setState(() {
-                          itemPrice =
-                              _priceFormater.getUnformattedValue().toDouble();
-                        }),
-                        controller: _itemPriceController,
-                        inputFormatters: <TextInputFormatter>[_priceFormater],
-                        // initialValue: itemPrice != null
-                        //     ? _priceFormater.formatDouble(itemPrice!)
-                        //     : '',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'enter_x'.tr(args: ['price'.tr()]);
-                          }
-                          return null;
-                        },
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 0, top: 10, bottom: 5, right: 0),
-                          label: Text(
-                            'initial_stock'.tr(),
-                            style: labelStyle,
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 0, top: 10, bottom: 5, right: 0),
+                              label: Text(
+                                'price'.tr(),
+                                style: labelStyle,
+                              ),
+                              alignLabelWithHint: true,
+                            ),
+                            onChanged: (value) => setState(() {
+                              itemPrice = _priceFormater
+                                  .getUnformattedValue()
+                                  .toDouble();
+                            }),
+                            controller: _itemPriceController,
+                            inputFormatters: <TextInputFormatter>[
+                              _priceFormater
+                            ],
+                            // initialValue: itemPrice != null
+                            //     ? _priceFormater.formatDouble(itemPrice!)
+                            //     : '',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'enter_x'.tr(args: ['price'.tr()]);
+                              }
+                              return null;
+                            },
                           ),
-                          alignLabelWithHint: true,
-                        ),
-                        controller: _initialStockController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'enter_x'.tr(args: ['initial_stock'.tr()]);
-                          }
-                          return null;
-                        },
-                        inputFormatters: <TextInputFormatter>[_stockFormater],
-                        // initialValue: initialStock != null
-                        //     ? _stockFormater.formatDouble(initialStock!)
-                        //     : '',
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 0, top: 10, bottom: 5, right: 0),
-                          label: Text(
-                            'purchase_price'.tr(),
-                            style: labelStyle,
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 0, top: 10, bottom: 5, right: 0),
+                              label: Text(
+                                'initial_stock'.tr(),
+                                style: labelStyle,
+                              ),
+                              alignLabelWithHint: true,
+                            ),
+                            controller: _initialStockController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'enter_x'
+                                    .tr(args: ['initial_stock'.tr()]);
+                              }
+                              return null;
+                            },
+                            inputFormatters: <TextInputFormatter>[
+                              _stockFormater
+                            ],
+                            // initialValue: initialStock != null
+                            //     ? _stockFormater.formatDouble(initialStock!)
+                            //     : '',
                           ),
-                          alignLabelWithHint: true,
-                        ),
-                        onChanged: (value) => setState(() {
-                          hppItem =
-                              _hppFormater.getUnformattedValue().toDouble();
-                        }),
-                        inputFormatters: <TextInputFormatter>[_hppFormater],
-                        controller: _hppItemController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'enter_x'.tr(args: ['initial_stock'.tr()]);
-                          }
-                          return null;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 0, top: 10, bottom: 5, right: 0),
-                          label: Text(
-                            'SKU',
-                            style: labelStyle,
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 0, top: 10, bottom: 5, right: 0),
+                              label: Text(
+                                'purchase_price'.tr(),
+                                style: labelStyle,
+                              ),
+                              alignLabelWithHint: true,
+                            ),
+                            onChanged: (value) => setState(() {
+                              hppItem =
+                                  _hppFormater.getUnformattedValue().toDouble();
+                            }),
+                            inputFormatters: <TextInputFormatter>[_hppFormater],
+                            controller: _hppItemController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'enter_x'
+                                    .tr(args: ['initial_stock'.tr()]);
+                              }
+                              return null;
+                            },
                           ),
-                          alignLabelWithHint: true,
-                        ),
-                        controller: _skuController,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 0, top: 10, bottom: 5, right: 0),
-                          label: Text(
-                            'Barcode',
-                            style: labelStyle,
+                          TextFormField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 0, top: 10, bottom: 5, right: 0),
+                              label: Text(
+                                'SKU',
+                                style: labelStyle,
+                              ),
+                              alignLabelWithHint: true,
+                            ),
+                            controller: _skuController,
                           ),
-                          alignLabelWithHint: true,
-                        ),
-                        controller: _barcodeController,
+                          TextFormField(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 0, top: 10, bottom: 5, right: 0),
+                              label: Text(
+                                'Barcode',
+                                style: labelStyle,
+                              ),
+                              alignLabelWithHint: true,
+                            ),
+                            controller: _barcodeController,
+                          ),
+                          const SizedBox(height: 15),
+                        ],
                       ),
-                      const SizedBox(height: 15),
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  isTablet ? Container() : addVariants
+                ],
               ),
             )),
             isTablet
@@ -418,7 +435,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 10),
-                      child: variants,
+                      child: addVariants,
                     ),
                   )
                 : Container(),
