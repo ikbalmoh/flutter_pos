@@ -11,6 +11,10 @@
 
 - run `dart run build_runner build -d` or `dart run build_runner watch -d` once provider or model are changed
 
+### There is patch that needed to be applied
+
+- run `dart run patch_package apply`
+
 ### Build APK Stage
 
 add and fill following properties on android/key.properties
