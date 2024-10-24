@@ -141,9 +141,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      height: (MediaQuery.of(context).size.height * 0.7) +
-          MediaQuery.of(context).viewInsets.bottom +
-          15,
+      height: (MediaQuery.of(context).size.height *
+          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.7)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -215,6 +214,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
           ),
           Expanded(
             child: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Column(
                 children: [
                   TextFormField(

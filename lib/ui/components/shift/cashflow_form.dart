@@ -206,16 +206,15 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
       child: isLoading
           ? const LoadingPlaceholder()
           : SizedBox(
-              height: (widget.height ?? MediaQuery.of(context).size.height) +
-                  MediaQuery.of(context).viewInsets.bottom +
-                  15,
+              height: MediaQuery.of(context).size.height *
+                  (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.7),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     padding: const EdgeInsets.only(
-                        top: 20, left: 15, right: 15, bottom: 15),
+                        top: 20, left: 15, right: 15, bottom: 10),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
@@ -245,6 +244,8 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
