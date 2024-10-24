@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
@@ -39,6 +40,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
 
   @override
   Widget build(BuildContext context) {
+    List<ItemVariant> variants = objectBox.itemVariants(widget.item.idItem);
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       padding: EdgeInsets.only(
@@ -102,7 +104,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
           Expanded(
             child: ListView.builder(
               itemBuilder: (context, idx) {
-                ItemVariant variant = widget.item.variants[idx];
+                ItemVariant variant = variants[idx];
                 return VariantItem(
                     variant: variant,
                     stockControl: widget.item.stockControl,
@@ -113,7 +115,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                       });
                     });
               },
-              itemCount: widget.item.variants.length,
+              itemCount: variants.length,
               shrinkWrap: true,
             ),
           ),
