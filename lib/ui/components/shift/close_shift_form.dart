@@ -159,7 +159,8 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
           ? const LoadingPlaceholder()
           : Container(
               margin: const EdgeInsets.only(top: 10),
-              height: MediaQuery.of(context).size.height * (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.5),
+              height: MediaQuery.of(context).size.height *
+                  (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.5),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -195,6 +196,8 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
