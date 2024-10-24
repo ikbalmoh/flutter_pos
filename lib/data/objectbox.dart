@@ -241,23 +241,25 @@ class ObjectBox {
     categoryBox.putMany(categories);
   }
 
+  List<ItemVariant> itemVariants(String idItem) {
+    List<ItemVariant> variants =
+        itemVariantBox.query(ItemVariant_.idItem.equals(idItem)).build().find();
+    return variants;
+  }
+
   ScanItemResult getItemByBarcode(String barcode) {
-    Item? item = itemBox
-        .query(Item_.barcode.equals(barcode, caseSensitive: false))
+    Item? item;
+    ItemVariant? variant = itemVariantBox
+        .query(ItemVariant_.barcodeNumber.equals(barcode, caseSensitive: false))
         .build()
         .findFirst();
-    ItemVariant? variant;
-    if (item != null && item.variants.isNotEmpty) {
-      item = null;
-    } else if (item == null) {
-      variant = itemVariantBox
-          .query(
-              ItemVariant_.barcodeNumber.equals(barcode, caseSensitive: false))
+    if (variant != null) {
+      item = getItem(variant.idItem);
+    } else {
+      item = itemBox
+          .query(Item_.barcode.equals(barcode, caseSensitive: false))
           .build()
           .findFirst();
-      if (variant != null) {
-        item = getItem(variant.idItem);
-      }
     }
     return ScanItemResult(item: item, variant: variant);
   }
@@ -283,19 +285,22 @@ class ObjectBox {
       .find();
 
   void putItems(List<Item> items) {
-    for (var item in items) {
-      if (item.variants.isNotEmpty) {
-        // itemVariantBox
-        //     .query(ItemVariant_.idItem.equals(item.idItem))
-        //     .build()
-        //     .remove();
-      }
-    }
+    log('PUT ITEMS =>\n$items');
     List<int> ids = itemBox.putMany(items);
     log('ITEMS HAS BEEN STORED: $ids');
+    List<ItemVariant> itemVariants = [];
+    for (var item in items) {
+      if (item.variants.isNotEmpty) {
+        itemVariants.addAll(item.variants.toList());
+      }
+    }
+    if (itemVariants.isNotEmpty) {
+      putVariants(itemVariants);
+    }
   }
 
   void putVariants(List<ItemVariant> variants) {
+    log('PUT VARIANTS =>\n$variants');
     List<int> ids = itemVariantBox.putMany(variants);
     log('VARIANTS HAS BEEN STORED: $ids');
   }

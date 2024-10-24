@@ -70,9 +70,11 @@ class ItemApi {
             .query(ItemVariant_.idVariant.equals(v['id_variant']))
             .build()
             .findFirst();
+
         v['id_item'] = v['item_id'];
-        v['variant_name'] = existVariant?.variantName ?? '';
         v['id'] = existVariant?.id ?? 0;
+        v['variant_name'] = existVariant?.variantName ?? '';
+        v['stock_item'] = existVariant?.stockItem ?? 0;
         return ItemVariant.fromJson(v);
       }).toList();
       return listVariant;
