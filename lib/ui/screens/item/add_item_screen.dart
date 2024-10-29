@@ -48,7 +48,6 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     setState(() {
       category = null;
       itemPrice = null;
-      initialStock = null;
       hppItem = null;
       attributes = [];
     });
@@ -69,7 +68,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       'sku': _skuController.text,
       'barcode': _barcodeController.text,
       'min_stock': 0,
-      'initial_stock': initialStock ?? 0,
+      'initial_stock': _initialStockController.text,
     };
 
     final isStored = await showModalBottomSheet(
@@ -364,9 +363,6 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                             inputFormatters: <TextInputFormatter>[
                               _stockFormater
                             ],
-                            // initialValue: initialStock != null
-                            //     ? _stockFormater.formatDouble(initialStock!)
-                            //     : '',
                           ),
                           TextFormField(
                             keyboardType: TextInputType.number,
