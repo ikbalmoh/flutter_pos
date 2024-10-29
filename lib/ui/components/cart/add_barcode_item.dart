@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -52,18 +53,9 @@ class _AddBarcodeItemState extends ConsumerState<AddBarcodeItem> {
     ]));
   }
 
-  bool isAvailable() {
-    if (result.item != null) {
-      if (result.item!.stockControl == false) {
-        return false;
-      }
-      if (result.variant != null) {
-        return result.variant!.stockItem > 0;
-      }
-      return result.item!.stockItem > 0;
-    }
-    return false;
-  }
+  bool isAvailable() => ref
+      .read(itemsStreamProvider().notifier)
+      .isScannedItemStockAvailable(result);
 
   @override
   Widget build(BuildContext context) {

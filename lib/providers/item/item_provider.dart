@@ -184,4 +184,17 @@ class ItemsStream extends _$ItemsStream {
       throw Exception(e);
     }
   }
+
+  bool isScannedItemStockAvailable(ScanItemResult result) {
+    if (result.item != null) {
+      if (result.item!.stockControl == false) {
+        return false;
+      }
+      if (result.variant != null) {
+        return result.variant!.stockItem > 0;
+      }
+      return result.item!.stockItem > 0;
+    }
+    return false;
+  }
 }
