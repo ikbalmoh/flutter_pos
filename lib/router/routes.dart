@@ -19,4 +19,5 @@ class Routes {
   static const String about = '/about';
   static const String addItem = '/add-item';
   static const String manageVariant = '/manage-variant';
+  static const String adjustments = '/adjustments';
 }

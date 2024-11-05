@@ -267,5 +267,6 @@
   "chip_input_note": "Use comma to add other options",
   "add_more": "Add More",
   "manage_variants": "Manage Variants",
-  "syncing_x": "Syncroning {}"
+  "syncing_x": "Syncroning {}",
+  "stock_adjustments": "Stock Adjustments"
 }

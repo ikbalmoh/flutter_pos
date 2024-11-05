@@ -32,6 +32,11 @@ class AppDrawer extends StatelessWidget {
             route: Routes.shift,
           ),
           AppDrawerMenu(
+            icon: const Icon(CupertinoIcons.tray_2),
+            title: 'stock_adjustments'.tr(),
+            route: Routes.adjustments,
+          ),
+          AppDrawerMenu(
             icon: const Icon(CupertinoIcons.slider_horizontal_3),
             title: 'settings'.tr(),
             route: Routes.settings,

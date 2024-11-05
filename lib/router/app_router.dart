@@ -24,6 +24,7 @@ import 'package:selleri/ui/screens/checkout/checkout_screen.dart';
 import 'package:selleri/ui/screens/customer/customer_screen.dart';
 import 'package:selleri/ui/screens/settings/printer/printer_setting_screen.dart';
 import 'package:selleri/ui/screens/transaction_history/transaction_history_screen.dart';
+import 'package:selleri/ui/screens/adjustments/adjustment_screen.dart';
 
 import 'routes.dart';
 
@@ -150,6 +151,13 @@ GoRouter router(RouterRef ref) {
           builder: (context, state) {
             final String idItem = state.pathParameters['idItem'] ?? '';
             return ManageItemVariantsScreen(idItem: idItem);
+          },
+        ),
+        GoRoute(
+          name: Routes.adjustments,
+          path: Routes.adjustments,
+          builder: (context, state) {
+            return const AdjustmentScreen();
           },
         ),
       ],
