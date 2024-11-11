@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:selleri/data/models/item.dart';
-import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
+import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
-import 'package:selleri/utils/formater.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class ItemGrid extends StatelessWidget {
-  final Item item;
-  final Function(Item)? onLongPress;
-  final Function(Item) onAddToCart;
-  final Function(Item) showVariants;
+  final ItemAdjustment item;
+  final Function(ItemAdjustment)? onLongPress;
+  final Function(ItemAdjustment) onAddToCart;
+  final Function(ItemAdjustment) showVariants;
   final Function(String) addQty;
   final int qtyOnCart;
 
@@ -59,32 +56,17 @@ class ItemGrid extends StatelessWidget {
                     ),
                     child: Stack(
                       children: [
-                        item.image != null && item.image != ''
-                            ? ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(10)),
-                                child: CachedNetworkImage(
-                                  imageUrl: item.image!,
-                                  width: double.maxFinite,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(
-                                    child: CircularProgressIndicator(
-                                      backgroundColor: Colors.blueGrey.shade300,
-                                    ),
-                                  ),
+                        Center(
+                          child: Text(
+                            item.itemName.substring(0, 3).toUpperCase(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.copyWith(
+                                  color: Colors.grey.shade400,
                                 ),
-                              )
-                            : Center(
-                                child: Text(
-                                  item.itemName.substring(0, 3).toUpperCase(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall
-                                      ?.copyWith(
-                                        color: Colors.grey.shade400,
-                                      ),
-                                ),
-                              ),
+                          ),
+                        ),
                         Positioned(
                           bottom: 5,
                           left: 5,
@@ -95,12 +77,8 @@ class ItemGrid extends StatelessWidget {
                             children: [
                               StockBadge(
                                 stockItem: item.stockItem,
-                                stockControl: item.stockControl,
-                                packageItems: item.packageItems,
+                                stockControl: item.stockControl ?? false,
                               ),
-                              item.promotions.isNotEmpty
-                                  ? const PromotionBadge()
-                                  : Container(),
                             ],
                           ),
                         )
@@ -142,7 +120,10 @@ class ItemGrid extends StatelessWidget {
                                 Text('${item.variants.length} variants')
                               ],
                             )
-                          : Text(CurrencyFormat.currency(item.itemPrice)),
+                          : StockBadge(
+                              stockItem: item.stockItem,
+                              stockControl: item.stockControl ?? false,
+                            ),
                     ],
                   ),
                 )

@@ -12,17 +12,19 @@ class ItemAdjustment with _$ItemAdjustment {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ItemAdjustment({
     required String idItem,
+    int? variantId,
+    String? variantName,
     required String itemName,
     required String idCategory,
     required String categoryName,
-    required String note,
-    required bool stockControl,
-    required int isActive,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    required int stockItem,
-    required String qtySystem,
-    required String qtyActual,
+    String? note,
+    bool? stockControl,
+    int? isActive,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    required double stockItem,
+    required double qtySystem,
+    required double qtyActual,
     required int qtyDiff,
     @JsonKey(
       fromJson: DateTimeFormater.stringToDateTime,
@@ -31,6 +33,6 @@ class ItemAdjustment with _$ItemAdjustment {
     required List<ItemVariantAdjustment> variants,
   }) = _ItemAdjustment;
 
-  factory ItemAdjustment.fromJson(Map<String, dynamic> json) => _$ItemAdjustmentFromJson(json);
-
+  factory ItemAdjustment.fromJson(Map<String, dynamic> json) =>
+      _$ItemAdjustmentFromJson(json);
 }

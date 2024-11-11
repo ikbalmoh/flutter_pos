@@ -269,5 +269,8 @@
   "add_more": "Input Lagi",
   "manage_variants": "Atur Varian",
   "syncing_x": "Menyinkronkan {}",
-  "stock_adjustments": "Penyesuaian Stok"
-  }
+  "stock_adjustments": "Penyesuaian Stok",
+  "item_list": "Daftar Barang",
+  "select_items": "Pilih Barang",
+  "never_adjusted": "Stok tidak pernah disesuaikan"
+}

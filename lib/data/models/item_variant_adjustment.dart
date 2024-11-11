@@ -15,9 +15,9 @@ class ItemVariantAdjustment with _$ItemVariantAdjustment {
     required String barcodeNumber,
     ItemVariantImage? image,
     required String variantName,
-    required int stockItem,
-    required int qtyActual,
-    required int qtySystem,
+    required double stockItem,
+    required double qtyActual,
+    required double qtySystem,
     required int qtyDiff,
     @JsonKey(
       fromJson: DateTimeFormater.stringToDateTime,

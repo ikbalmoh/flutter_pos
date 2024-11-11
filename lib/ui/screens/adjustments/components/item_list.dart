@@ -1,12 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
+import 'package:selleri/utils/formater.dart';
 
 class ItemList extends StatelessWidget {
-  final Item item;
-  final Function(Item)? onLongPress;
-  final Function(Item) onAddToCart;
-  final Function(Item) showVariants;
+  final ItemAdjustment item;
+  final Function(ItemAdjustment) onAddToCart;
+  final Function(ItemAdjustment) showVariants;
   final Function(String) addQty;
   final int qtyOnCart;
 
@@ -14,7 +16,6 @@ class ItemList extends StatelessWidget {
     required this.item,
     required this.onAddToCart,
     required this.showVariants,
-    this.onLongPress,
     super.key,
     required this.addQty,
     required this.qtyOnCart,
@@ -25,7 +26,6 @@ class ItemList extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: InkWell(
-        onLongPress: onLongPress != null ? () => onLongPress!(item) : null,
         onTap: () => item.variants.isNotEmpty
             ? showVariants(item)
             : qtyOnCart > 0
@@ -83,6 +83,30 @@ class ItemList extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                             ),
                       ),
+                      Row(
+                        children: [
+                          const Icon(
+                            CupertinoIcons.time,
+                            size: 16,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                              item.lastAdjustment != null
+                                  ? DateTimeFormater.dateToString(
+                                      item.lastAdjustment!,
+                                      format: 'dd MMMM y')
+                                  : 'never_adjusted'.tr(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.grey.shade700,
+                                  ))
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -105,8 +129,7 @@ class ItemList extends StatelessWidget {
                       )
                     : StockBadge(
                         stockItem: item.stockItem,
-                        stockControl: item.stockControl,
-                        packageItems: item.packageItems,
+                        stockControl: item.stockControl ?? false,
                       ),
               ],
             ),

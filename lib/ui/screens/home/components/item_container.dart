@@ -7,11 +7,11 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/ui/components/cart/shop_item_list.dart';
+import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/item/item_info.dart';
 import 'package:selleri/ui/components/cart/item_variant_picker.dart';
 import 'package:selleri/ui/components/cart/shop_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class ItemContainer extends ConsumerWidget {
@@ -41,7 +41,12 @@ class ItemContainer extends ConsumerWidget {
       return;
     }
     ref.read(cartProvider.notifier).addToCart(item, variant: variant);
-    if (search.isNotEmpty && [item.itemName.toLowerCase(), item.sku?.toLowerCase(), item.barcode?.toLowerCase()].contains(search.toLowerCase())) {
+    if (search.isNotEmpty &&
+        [
+          item.itemName.toLowerCase(),
+          item.sku?.toLowerCase(),
+          item.barcode?.toLowerCase()
+        ].contains(search.toLowerCase())) {
       clearSearch();
     }
   }
@@ -179,7 +184,12 @@ class ItemContainer extends ConsumerWidget {
         AsyncError(:final error) => Center(
             child: Text(error.toString()),
           ),
-        _ => const LoadingIndicator(color: Colors.teal)
+        _ => ListView.builder(
+            itemBuilder: (context, idx) {
+              return const ItemListSkeleton();
+            },
+            itemCount: 6,
+          )
       };
     });
   }

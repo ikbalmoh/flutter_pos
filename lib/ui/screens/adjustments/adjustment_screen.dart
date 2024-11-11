@@ -8,11 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
+import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
+import 'package:selleri/ui/screens/adjustments/components/adjustment_cart.dart';
 import 'package:selleri/ui/screens/adjustments/components/item_container.dart';
 import 'package:selleri/ui/screens/home/components/item_categories.dart';
 import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/formater.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 
@@ -25,18 +28,56 @@ class AdjustmentScreen extends ConsumerStatefulWidget {
 }
 
 class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
-  ScrollController scrollController = ScrollController();
+  final _scrollController = ScrollController();
 
   bool searchVisible = false;
   bool itemLayoutGrid = false;
   String idCategory = '';
   String search = '';
+  DateTime date = DateTime.now();
 
   Timer? _debounce;
   bool canListenBarcode = false;
-  FilterStock filterStock = FilterStock.all;
   TextEditingController textSearchController = TextEditingController();
   FocusNode focusSearch = FocusNode();
+
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    super.initState();
+    _scrollController.addListener(loadMore);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(loadMore);
+    super.dispose();
+  }
+
+  void loadItems({int? page = 1}) {
+    ref.read(adjustmentItemsProvider.notifier).loadItems(
+          page: page ?? 1,
+          idCategory: idCategory,
+          search: textSearchController.text,
+          date: date,
+        );
+  }
+
+  void loadMore() {
+    final pagination = ref.read(adjustmentItemsProvider).asData?.value;
+    if (pagination == null ||
+        pagination.to == null ||
+        (pagination.to != null && pagination.currentPage >= pagination.to!)) {
+      return;
+    }
+
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !(pagination.loading ?? false)) {
+      log('Load adjustment items... ${pagination.currentPage}/${pagination.to}');
+      loadItems(page: pagination.currentPage + 1);
+    }
+  }
 
   void onSearchItems(String value) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
@@ -44,8 +85,12 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       setState(() {
         search = value;
       });
-      scrollController.animateTo(0,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+      loadItems(page: 1);
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut);
+      }
     });
   }
 
@@ -65,8 +110,24 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
     setState(() {
       idCategory = id;
     });
-    scrollController.animateTo(0,
+    loadItems(page: 1);
+    _scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  void pickAdjustmentDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      firstDate: date.subtract(const Duration(days: 180)),
+      lastDate: DateTime.now(),
+      initialDate: date,
+    );
+    if (pickedDate != null) {
+      setState(() {
+        date = pickedDate;
+      });
+      loadItems(page: 1);
+    }
   }
 
   @override
@@ -97,10 +158,9 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
             ),
             Expanded(
               child: ItemContainer(
-                scrollController: scrollController,
+                scrollController: _scrollController,
                 idCategory: idCategory,
                 search: search,
-                filterStock: filterStock,
                 clearSearch: () {
                   setState(() {
                     search = '';
@@ -134,10 +194,11 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
               elevation: 1,
               leading: Builder(builder: (context) {
                 return IconButton(
-                    onPressed: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                    icon: const Icon(Icons.menu));
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: const Icon(Icons.menu),
+                );
               }),
               actions: [
                 IconButton(
@@ -159,17 +220,11 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                           });
                     },
                     icon: const Icon(Icons.document_scanner_outlined)),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      itemLayoutGrid = !itemLayoutGrid;
-                    });
-                  },
-                  icon: Icon(
-                    itemLayoutGrid
-                        ? CupertinoIcons.rectangle_grid_1x2
-                        : CupertinoIcons.square_grid_2x2_fill,
-                  ),
+                TextButton.icon(
+                  onPressed: pickAdjustmentDate,
+                  label: Text(
+                      DateTimeFormater.dateToString(date, format: 'd MMM y')),
+                  icon: const Icon(CupertinoIcons.calendar),
                 )
               ],
             ),
@@ -196,7 +251,9 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                         borderRadius: BorderRadius.circular(20)),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Container(),
+                      child: const AdjustmentCart(
+                        asWidget: true,
+                      ),
                     ),
                   ),
                 )

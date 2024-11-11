@@ -268,5 +268,8 @@
   "add_more": "Add More",
   "manage_variants": "Manage Variants",
   "syncing_x": "Syncroning {}",
-  "stock_adjustments": "Stock Adjustments"
+  "stock_adjustments": "Stock Adjustments",
+  "item_list": "Item List",
+  "select_items": "Select Items",
+  "never_adjusted": "Stock is never adjusted"
 }

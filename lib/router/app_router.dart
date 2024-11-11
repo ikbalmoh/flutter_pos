@@ -116,6 +116,11 @@ GoRouter router(RouterRef ref) {
           },
         ),
         GoRoute(
+          name: Routes.adjustments,
+          path: Routes.adjustments,
+          builder: (context, state) => const AdjustmentScreen(),
+        ),
+        GoRoute(
           name: Routes.settings,
           path: Routes.settings,
           builder: (context, state) => const SettingScreen(),
@@ -151,13 +156,6 @@ GoRouter router(RouterRef ref) {
           builder: (context, state) {
             final String idItem = state.pathParameters['idItem'] ?? '';
             return ManageItemVariantsScreen(idItem: idItem);
-          },
-        ),
-        GoRoute(
-          name: Routes.adjustments,
-          path: Routes.adjustments,
-          builder: (context, state) {
-            return const AdjustmentScreen();
           },
         ),
       ],
