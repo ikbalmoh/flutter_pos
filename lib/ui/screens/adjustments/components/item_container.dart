@@ -5,6 +5,7 @@ import 'package:selleri/data/models/item_variant_adjustment.dart';
 import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
+import 'package:selleri/ui/screens/adjustments/components/adjustment_item_form.dart';
 import 'item_variant_adjustment_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/screens/adjustments/components/item_grid.dart';
@@ -35,6 +36,11 @@ class ItemContainer extends ConsumerWidget {
         ].contains(search.toLowerCase())) {
       clearSearch();
     }
+    showModalBottomSheet(
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) =>
+            AdjustmentItemForm(item: item, onDelete: () => {}));
   }
 
   void showVariants(BuildContext context, ItemAdjustment item, WidgetRef ref) {
@@ -141,8 +147,6 @@ class ItemContainer extends ConsumerWidget {
                           qtyOnCart: qtyOnCart,
                           onAddToCart: (item) =>
                               onAddToCart(context, ref, item: item),
-                          addQty: (idItem) =>
-                              ref.read(cartProvider.notifier).updateQty(idItem),
                           showVariants: (item) =>
                               showVariants(context, item, ref),
                         );

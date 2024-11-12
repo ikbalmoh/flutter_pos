@@ -9,6 +9,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
+import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_cart.dart';
@@ -177,6 +178,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
     );
 
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: searchVisible
           ? SearchAppBar(
               onBack: () => setState(

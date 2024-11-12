@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
@@ -9,7 +8,6 @@ class ItemList extends StatelessWidget {
   final ItemAdjustment item;
   final Function(ItemAdjustment) onAddToCart;
   final Function(ItemAdjustment) showVariants;
-  final Function(String) addQty;
   final int qtyOnCart;
 
   const ItemList({
@@ -17,7 +15,6 @@ class ItemList extends StatelessWidget {
     required this.onAddToCart,
     required this.showVariants,
     super.key,
-    required this.addQty,
     required this.qtyOnCart,
   });
 
@@ -28,9 +25,7 @@ class ItemList extends StatelessWidget {
       child: InkWell(
         onTap: () => item.variants.isNotEmpty
             ? showVariants(item)
-            : qtyOnCart > 0
-                ? addQty(item.idItem)
-                : onAddToCart(item),
+            : onAddToCart(item),
         child: Material(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -83,30 +78,30 @@ class ItemList extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                             ),
                       ),
-                      Row(
-                        children: [
-                          const Icon(
-                            CupertinoIcons.time,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                              item.lastAdjustment != null
-                                  ? DateTimeFormater.dateToString(
-                                      item.lastAdjustment!,
-                                      format: 'dd MMMM y')
-                                  : 'never_adjusted'.tr(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.grey.shade700,
-                                  ))
-                        ],
-                      )
+                      item.lastAdjustment != null
+                          ? Row(
+                              children: [
+                                const Icon(
+                                  CupertinoIcons.time,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                    DateTimeFormater.dateToString(
+                                        item.lastAdjustment!,
+                                        format: 'dd MMMM y'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Colors.grey.shade700,
+                                        ))
+                              ],
+                            )
+                          : Container()
                     ],
                   ),
                 ),

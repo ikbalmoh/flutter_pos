@@ -2,9 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/item_variant_adjustment.dart';
-import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
-import 'package:selleri/utils/formater.dart';
 import 'package:go_router/go_router.dart';
 
 class ItemVariantAdjustmentPicker extends StatefulWidget {
@@ -54,28 +52,9 @@ class _ItemVariantAdjustmentPickerState
                 ),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.item.itemName,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                IconButton(
-                  padding: const EdgeInsets.all(5),
-                  constraints: const BoxConstraints(),
-                  onPressed: () => context.pushNamed(Routes.manageVariant,
-                      pathParameters: {"idItem": widget.item.idItem}),
-                  icon: Icon(
-                    Icons.edit_note_rounded,
-                    color: Colors.amber.shade800,
-                  ),
-                  iconSize: 26,
-                  style: const ButtonStyle(
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                ),
-              ],
+            child: Text(
+              widget.item.itemName,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           const SizedBox(
@@ -97,7 +76,6 @@ class _ItemVariantAdjustmentPickerState
                 ItemVariantAdjustment variant = variants[idx];
                 return VariantItem(
                     variant: variant,
-                    stockControl: widget.item.stockControl ?? false,
                     selected: selected?.idVariant == variant.idVariant,
                     onSelect: (v) {
                       setState(() {
@@ -135,13 +113,11 @@ class VariantItem extends StatelessWidget {
     super.key,
     required this.variant,
     this.selected = false,
-    required this.stockControl,
     required this.onSelect,
   });
 
   final ItemVariantAdjustment variant;
   final bool selected;
-  final bool stockControl;
   final Function(ItemVariantAdjustment) onSelect;
 
   @override
@@ -167,40 +143,17 @@ class VariantItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        variant.variantName,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: textColor),
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      Wrap(
-                        spacing: 5,
-                        children: [
-                          StockBadge(
-                            stockItem: variant.stockItem,
-                            stockControl: stockControl,
-                          )
-                        ],
-                      ),
-                    ],
+                  child: Text(
+                    variant.variantName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: textColor),
                   ),
                 ),
-                Text(
-                  CurrencyFormat.currency(variant.itemPrice),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w600, color: textColor),
-                ),
-                const SizedBox(
-                  width: 10,
+                StockBadge(
+                  stockItem: variant.stockItem,
+                  stockControl: true,
                 ),
               ],
             ),

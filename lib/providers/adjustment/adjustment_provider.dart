@@ -1,11 +1,17 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/data/models/adjustment.dart' as model;
+import 'package:selleri/data/models/item_adjustment.dart';
 
 part 'adjustment_provider.g.dart';
 
 @riverpod
 class Adjustment extends _$Adjustment {
   @override
-  String build() {
-    return '';
+  model.Adjustment build() {
+    return model.Adjustment(date: DateTime.now(), items: [], note: '');
+  }
+
+  void addToCart(ItemAdjustment item) {
+    state = state.copyWith(items: state.items..add(item));
   }
 }
