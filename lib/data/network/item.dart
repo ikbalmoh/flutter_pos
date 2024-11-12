@@ -15,12 +15,16 @@ class ItemApi {
     return res.data;
   }
 
-  Future items(String idOutlet, {String? idCategory, int? lastUpdate}) async {
+  Future items(String idOutlet,
+      {String? idCategory, int? lastUpdate, bool? fullSync}) async {
     Map<String, dynamic> query = {
       'is_app': 1,
       'id_outlet': idOutlet,
       'last_update': lastUpdate,
     };
+    if (fullSync == true) {
+      query['full_sync'] = true;
+    }
     if (idCategory != null) {
       query['id_category'] = idCategory;
     }
