@@ -147,64 +147,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   @override
-  void initState() {
-    WidgetsFlutterBinding.ensureInitialized();
-    loadShift();
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      refreshItems();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
-  }
-
-  Future<void> refreshItems() async {
-    if (inSync) return;
-    setState(() {
-      inSync = true;
-    });
-    await ref.read(itemsStreamProvider().notifier).loadItems();
-    setState(() {
-      inSync = false;
-    });
-  }
-
-  Future<void> loadShift() async {
-    final currentShift = ref.read(shiftNotifierProvider).value;
-    if (currentShift == null) {
-      ref.read(shiftProvider.notifier).initShift();
-    }
-  }
-
-  void onFilterItems() async {
-    FilterStock? result = await showModalBottomSheet(
-        showDragHandle: true,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return FilterItemsSheet(selected: filterStock);
-        });
-
-    if (result != null && result != filterStock) {
-      setState(() {
-        filterStock = result;
-      });
-      scrollController.animateTo(0,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletProvider);
     final cart = ref.watch(cartProvider);
@@ -260,59 +202,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ],
         ),
       ),
-    );
-
-    final int itemsOnCart = ref.watch(cartNotiferProvider).items.length;
-
-    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
-
-    var itemContainer = Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        ref.watch(cartProvider).holdAt == null
-            ? Container()
-            : Container(
-                width: MediaQuery.of(context).size.width,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.amber.shade800,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(0)),
-                ),
-                child: Text(
-                  ref.watch(cartProvider).transactionNo,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
-          height: searchVisible ? 0 : 56,
-          child: ItemCategories(
-            active: idCategory,
-            onChange: onChangeCategory,
-          ),
-        ),
-        Expanded(
-          child: ItemContainer(
-            scrollController: scrollController,
-            idCategory: idCategory,
-            search: search,
-            filterStock: filterStock,
-            allowEmptyStock: outlet.value is OutletSelected
-                ? (outlet.value as OutletSelected).config.stockMinus
-                : false,
-          ),
-        ),
-        cart.items.isNotEmpty && !isTablet
-            ? BottomActions(
-                cart: cart,
-              )
-            : Container(),
-      ],
     );
 
     return Scaffold(
@@ -416,7 +305,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             child: const CartScreen(asWidget: true),
                           )),
                     )
-                  : Container(),
+                  : Container()
             ],
           ),
           const ShiftOverlay(),

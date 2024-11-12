@@ -45,72 +45,53 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
       });
     });
 
-    final currentPrinter = ref.watch(printerNotifierProvider).value;
-
-    void onSelectPrinter(BluetoothInfo device) {
-      showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          builder: (context) {
-            return ConnectPrinter(device: device);
-          });
-    }
-
-    ref.listen(printerNotifierProvider, (prev, next) {
-      next.when(data: (printer) {
-        if (printer != null) {
-          AppAlert.toast('printer_connected'.tr(args: [printer.name]));
-        }
-      }, error: (e, stack) {
-        AppAlert.toast('connect_printer_failed'.tr(args: [e.toString()]));
-      }, loading: () {
-        AppAlert.toast('printer_connecting'.tr());
-      });
-    });
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: ref.watch(printerListProvider).when(
-            data: (printers) => printers.isNotEmpty
-                ? ListView.builder(
-                    itemBuilder: (context, idx) {
-                      final d = printers[idx];
-                      return ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 0,
-                          vertical: 0,
-                        ),
-                        tileColor: Colors.white,
-                        title: Text(d.name),
-                        subtitle: Text(
-                          d.macAdress,
-                          style: TextStyle(color: Colors.grey.shade600),
-                        ),
-                        trailing:
-                            ref.watch(printerProvider).value?.macAddress ==
-                                    d.macAdress
-                                ? const Icon(
-                                    Icons.check_circle_rounded,
-                                    color: Colors.teal,
-                                  )
-                                : null,
-                        onTap: () => onSelectPrinter(d),
-                      );
-                    },
-                    itemCount: printers.length,
-                  )
-                : const DeviceEmpty(),
-            error: (e, trace) => DeviceEmpty(
-              message: e.toString(),
-            ),
-            loading: () => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-              child: Center(
-                child: LoadingIndicator(
-                  color: Colors.teal,
+    return RefreshIndicator(
+      onRefresh: () =>
+          ref.read(printerListProvider.notifier).startScanDevices(),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: ref.watch(printerListProvider).when(
+              data: (printers) => printers.isNotEmpty
+                  ? ListView.builder(
+                      itemBuilder: (context, idx) {
+                        final d = printers[idx];
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 0,
+                            vertical: 0,
+                          ),
+                          tileColor: Colors.white,
+                          title: Text(d.name),
+                          subtitle: Text(
+                            d.macAdress,
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                          trailing:
+                              ref.watch(printerProvider).value?.macAddress ==
+                                      d.macAdress
+                                  ? const Icon(
+                                      Icons.check_circle_rounded,
+                                      color: Colors.teal,
+                                    )
+                                  : null,
+                          onTap: () => onSelectPrinter(d),
+                        );
+                      },
+                      itemCount: printers.length,
+                    )
+                  : const DeviceEmpty(),
+              error: (e, trace) => DeviceEmpty(
+                message: e.toString(),
+              ),
+              loading: () => const Padding(
+                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+                child: Center(
+                  child: LoadingIndicator(
+                    color: Colors.teal,
+                  ),
                 ),
               ),
             ),

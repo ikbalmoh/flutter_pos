@@ -26,8 +26,6 @@ import 'package:selleri/utils/app_alert.dart';
 import 'dart:developer';
 import 'package:selleri/utils/printer.dart' as util;
 
-import 'package:selleri/utils/printer.dart';
-
 part 'cart_provider.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -44,64 +42,6 @@ class Cart extends _$Cart {
       }
 
       final outletState = ref.read(outletProvider).value as OutletSelected;
-
-      final authState =
-          await ref.read(authNotifierProvider.future) as Authenticated;
-
-      final shift = ref.read(shiftProvider).value;
-
-      if (shift == null) {
-        log('Shift is not started');
-        return;
-      }
-
-      String? transactionNo =
-          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
-
-      final tax = outletState.config.tax;
-      final taxable = outletState.config.taxable ?? false;
-
-      model.Cart cart = model.Cart.initial();
-
-      state = cart.copyWith(
-        idOutlet: outletState.outlet.idOutlet,
-        outletName: outletState.outlet.outletName,
-        createdBy: authState.user.user.idUser,
-        createdName: authState.user.user.name,
-        shiftId: shift.id,
-        transactionNo: transactionNo,
-        ppn: tax?.percentage ?? 0,
-        ppnIsInclude: tax?.isInclude ?? true,
-        taxName: taxable ? tax?.taxName : '',
-      );
-
-      log('Cart Initialized: ${state.toString()}');
-    } on Exception catch (e) {
-      log('Init Cart Failed: ${e.toString()}');
-    }
-  }
-
-  List<ItemPackage> getEmptyItemPackages(List<ItemPackage> packageItems) {
-    List<ItemPackage> emptyItems = [];
-    for (var pkg in packageItems) {
-      Item? itemPackage = objectBox.getItem(pkg.idItem);
-      log('package: ${itemPackage?.itemName} => ${itemPackage?.stockItem}');
-      if (itemPackage == null || itemPackage.stockItem < 1) {
-        emptyItems.add(pkg);
-      }
-    }
-
-    return emptyItems;
-  }
-
-  Future<void> initCart() async {
-    try {
-      if (ref.read(authNotifierProvider).value is! Authenticated) {
-        return;
-      }
-
-      final outletState =
-          ref.read(outletProvider).value as OutletSelected;
 
       final authState =
           await ref.read(authNotifierProvider.future) as Authenticated;

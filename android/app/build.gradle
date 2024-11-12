@@ -110,30 +110,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    flavorDimensions "mode"
-
-    productFlavors {
-        dev {
-            dimension "mode"
-            resValue "string", "app_name", "Selleri Dev"
-            applicationIdSuffix ".dev"
-            manifestPlaceholders = [applicationLabel: "Selleri Dev"]
-        }
-        stage {
-            dimension "mode"
-            resValue "string", "app_name", "Selleri Stage"
-            applicationIdSuffix ".stage"
-            manifestPlaceholders = [applicationLabel: "Selleri Stage"]
-            signingConfig signingConfigs.stage
-        }
-        prod {
-            resValue "string", "app_name", "Selleri"
-            manifestPlaceholders = [applicationLabel: "Selleri"]
-            applicationIdSuffix ".prod"
-            signingConfig signingConfigs.release
-        }
-    }
 }
 
 flutter {

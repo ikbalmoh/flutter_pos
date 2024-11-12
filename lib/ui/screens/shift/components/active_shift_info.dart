@@ -260,24 +260,6 @@ class ActiveShiftInfo extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.play_arrow,
-                            size: 16,
-                            color: Colors.green,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            DateTimeFormater.dateToString(shiftInfo.openShift,
-                                format: 'd MMM ' 'yy HH:mm'),
-                            style: textTheme.bodySmall
-                                ?.copyWith(color: Colors.black54),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),

@@ -29,16 +29,6 @@ Future initServices() async {
 
   await initObjectBox();
 
-  await EasyLocalization.ensureInitialized();
-
-  await initObjectBox();
-
-  FlutterError.onError = (details) {
-    FlutterError.presentError(details);
-    log('ERROR DETAILS: $details');
-    if (kReleaseMode) exit(1);
-  };
-
   PlatformDispatcher.instance.onError = (error, stack) {
     log('ERROR OCCURED:\n error => $error\n stack => $stack');
     return true;
@@ -77,16 +67,6 @@ Future initServices() async {
 
   if (deviceId != null && deviceId.isNotEmpty) {
     storage.write(key: StoreKey.device.name, value: deviceId);
-  }
-  storage.write(key: StoreKey.deviceName.name, value: deviceName);
-
-  var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
-  if (appFlavor == 'stage') {
-    firebaseOptions =
-        firebase_option_stage.DefaultFirebaseOptions.currentPlatform;
-  } else if (appFlavor == 'dev') {
-    firebaseOptions =
-        firebase_option_dev.DefaultFirebaseOptions.currentPlatform;
   }
   storage.write(key: StoreKey.deviceName.name, value: deviceName);
 

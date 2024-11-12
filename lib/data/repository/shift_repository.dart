@@ -134,37 +134,4 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   Future<void> clear() async {
     await storage.delete(key: StoreKey.shift.name);
   }
-
-  Future<ShiftInfo?> getShiftInfo(String shiftId) async {
-    try {
-      final shiftInfo = await api.shiftInfo(shiftId);
-      return shiftInfo;
-    } catch (e, stackTrack) {
-      log('SHIFT INFO ERROR: $e => $stackTrack');
-      rethrow;
-    }
-  }
-
-  Future<void> storeCashflow(Map<String, dynamic> data) async {
-    try {
-      final cashflow = await api.storeCashflow(data);
-      return cashflow;
-    } catch (e, stackTrack) {
-      log('STORE CASHFLOW ERROR: $e => $stackTrack');
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> saveShift(Shift shift) async {
-    const storage = FlutterSecureStorage();
-    final shiftJson = shift.toJson();
-    final stringShift = json.encode(shiftJson);
-    await storage.write(key: StoreKey.shift.toString(), value: stringShift);
-  }
-
-  @override
-  Future<void> clear() async {
-    await storage.delete(key: StoreKey.shift.name);
-  }
 }

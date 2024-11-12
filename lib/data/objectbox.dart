@@ -11,8 +11,6 @@ import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
 class ObjectBox {
   late final Store store;
 
@@ -67,9 +65,6 @@ class ObjectBox {
 
     // Disable promo A get B
     promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
-
-    // FILTER PROMO BY CODE
-    promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
     // FILTER PROMO BY CODE
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
@@ -187,12 +182,6 @@ class ObjectBox {
       );
     }
 
-    if (range != null) {
-      promotionQuery = promotionQuery.and(
-        Promotion_.allTime.equals(true).or(rangeQuery),
-      );
-    }
-
     if (needCode != null) {
       promotionQuery = promotionQuery.and(Promotion_.needCode.equals(needCode));
     }
@@ -295,11 +284,6 @@ class ObjectBox {
       .build()
       .find();
 
-  List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
-      .query(Promotion_.idPromotion.oneOf(idPromotions))
-      .build()
-      .find();
-
   void putItems(List<Item> items) {
     log('PUT ITEMS =>\n$items');
     List<int> ids = itemBox.putMany(items);
@@ -334,11 +318,6 @@ class ObjectBox {
       promotionBox.putMany(promotions);
     }
     log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
-  }
-
-  void putPromotions(List<Promotion> promotions) {
-    promotionBox.putMany(promotions);
-    log('${promotions.length} PROMOTIONS HAS BEEN STORED\n$promotions');
   }
 
   void clearAll() {

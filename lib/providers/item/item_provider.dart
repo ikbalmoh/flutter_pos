@@ -133,9 +133,56 @@ class ItemsStream extends _$ItemsStream {
     return item?.stockItem ?? 0;
   }
 
-  double getItemStock(String idItem) {
-    final item = objectBox.getItem(idItem);
-    return item?.stockItem ?? 0;
+  Future<Item> storeItem(Map<String, dynamic> itemPayload,
+      List<AttributeVariant> attributes) async {
+    final api = ItemApi();
+
+    try {
+      if (attributes.isNotEmpty) {
+        List<Map<String, dynamic>> variants =
+            attributes.asMap().entries.map<Map<String, dynamic>>((attr) {
+          var idx = attr.key;
+          var value = attr.value;
+          return {
+            'attr_name': value.attrName,
+            'options': value.options.map((opt) {
+              return {'option_name': opt};
+            }).toList(),
+            'is_primary': idx == 0 ? true : false,
+          };
+        }).toList();
+        itemPayload['variants'] = {'attributes': variants};
+      }
+
+      Item item = await api.storeItem(itemPayload);
+
+      objectBox.putItems([item]);
+
+      return item;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<List<ItemVariant>> updateVariants(
+      String idItem, List<ItemVariant> variants) async {
+    try {
+      final api = ItemApi();
+      List<Map<String, dynamic>> attributes =
+          variants.map<Map<String, dynamic>>((v) {
+        return {
+          "id_variant": v.idVariant,
+          "item_price": v.itemPrice,
+          "sku_number": v.skuNumber,
+          "barcode_number": v.barcodeNumber
+        };
+      }).toList();
+      final updatedVariants = await api.updateItemVariants(idItem, attributes);
+      objectBox.putVariants(updatedVariants);
+      return updatedVariants;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   bool isScannedItemStockAvailable(ScanItemResult result) {

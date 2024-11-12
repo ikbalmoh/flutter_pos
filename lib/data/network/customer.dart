@@ -36,16 +36,4 @@ class CustomerApi {
       throw Exception(e);
     }
   }
-
-  Future<Customer> storeCustomer(Map<String, dynamic> payload) async {
-    try {
-      final res = await api.post(ApiUrl.customers, data: payload);
-      final data = res.data['data'];
-      return Customer.fromJson(data);
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
 }

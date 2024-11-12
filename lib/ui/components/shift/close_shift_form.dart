@@ -67,10 +67,6 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     return (amount - widget.shift.summary.expectedCashEnd).abs();
   }
 
-  double diffAmount() {
-    return (amount - widget.shift.summary.expectedCashEnd).abs();
-  }
-
   Future pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
       final image = await ImagePicker().pickImage(source: source);
@@ -377,20 +373,6 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                       ),
                     ),
                   ),
-                  diffAmount() != 0
-                      ? Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, right: 15, left: 15),
-                          child: Text(
-                            '${'different'.tr()} ${CurrencyFormat.currency(diffAmount())}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.red),
-                            textAlign: TextAlign.end,
-                          ),
-                        )
-                      : Container(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20)
                         .copyWith(bottom: 15),

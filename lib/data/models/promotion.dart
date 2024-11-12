@@ -171,20 +171,3 @@ class PromotionType {
         // const PromotionType(id: 1, name: 'A get B'),
       ];
 }
-
-class PromotionType {
-  final int id;
-  final String name;
-
-  const PromotionType({
-    required this.id,
-    required this.name,
-  });
-
-  static List<PromotionType> filter() => [
-        PromotionType(id: 0, name: 'all_type'.tr()),
-        PromotionType(id: 2, name: 'transaction'.tr()),
-        PromotionType(id: 3, name: 'item'.tr()),
-        // const PromotionType(id: 1, name: 'A get B'),
-      ];
-}

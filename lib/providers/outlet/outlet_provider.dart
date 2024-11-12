@@ -85,32 +85,6 @@ class Outlet extends _$Outlet {
     }
   }
 
-  Future<void> refreshConfig({List<String>? only = const []}) async {
-    try {
-      log('SYNC CONFIG: $only');
-      if (state.value is OutletSelected) {
-        final outletState = state.value as OutletSelected;
-        state = AsyncData(OutletSelected(
-          outlet: outletState.outlet,
-          config: outletState.config,
-          isSyncing: true,
-        ));
-        final config = await _outletRepository.fetchOutletConfig(
-          outletState.outlet.idOutlet,
-          only: only,
-          current: outletState.config,
-        );
-        state = AsyncData(OutletSelected(
-          outlet: outletState.outlet,
-          config: config,
-          isSyncing: false,
-        ));
-      }
-    } catch (e) {
-      log('SYNC CONFIG ERROR: $e');
-    }
-  }
-
   Future<void> clearOutlet() async {
     await _outletRepository.remove();
     state = AsyncData(OutletNotSelected());

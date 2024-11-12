@@ -112,43 +112,4 @@ class OutletRepository implements OutletRepositoryProtocol {
       rethrow;
     }
   }
-
-  @override
-  Future<void> saveOutletConfig(OutletConfig config) async {
-    final configString = json.encode(config.toJson());
-    const storage = FlutterSecureStorage();
-    await storage.write(
-        key: StoreKey.outletConfig.name, value: configString);
-  }
-
-  @override
-  Future<void> fetchOutletInfo(String idOutlet) async {
-    final api = OutletApi();
-    try {
-      await api.info(idOutlet);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
-  Future<OutletConfig> fetchOutletConfig(String idOutlet,
-      {List<String>? only = const [], OutletConfig? current}) async {
-    final api = OutletApi();
-    try {
-      var configJson = await api.configs(idOutlet, only: only);
-
-      if (current != null) {
-        configJson = current.toJson()..addAll(configJson);
-      }
-
-      final OutletConfig config = OutletConfig.fromJson(configJson);
-
-      saveOutletConfig(config);
-
-      return config;
-    } catch (e) {
-      rethrow;
-    }
-  }
 }
