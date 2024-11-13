@@ -202,7 +202,6 @@ workflows:
       - *flutter_analyze
       - *setup_local_properties
       - *xcode_project_use_profiles
-      - *shorebird_android_release
       - *shorebird_ios_release
 
     artifacts:
