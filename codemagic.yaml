@@ -123,7 +123,7 @@ definitions:
 
     - &shorebird_ios_release
       name: Shorebird release iOS
-      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist
+      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist --verbose
 
     - &shorebird_android_patch
       name: Shorebird patch Android
