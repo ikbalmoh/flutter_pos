@@ -37,6 +37,7 @@ class ItemsStream extends _$ItemsStream {
 
   Future<void> loadItems({
     bool refresh = false,
+    bool fullSync = false,
     Function(String progress)? progressCallback,
   }) async {
     log('LOAD ITEMS: $refresh');
@@ -61,8 +62,10 @@ class ItemsStream extends _$ItemsStream {
         }
 
         final DateTime startLoad = DateTime.now();
-        List<Item> items =
-            await itemRepository.fetchItems(idCategory: category.idCategory, fullSync: true);
+        List<Item> items = await itemRepository.fetchItems(
+          idCategory: category.idCategory,
+          fullSync: fullSync,
+        );
         final DateTime startSave = DateTime.now();
         objectBox.putItems(items);
         final DateTime endSate = DateTime.now();

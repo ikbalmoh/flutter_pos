@@ -42,6 +42,7 @@ class Outlet extends _$Outlet {
 
       await ref.read(itemsStreamProvider().notifier).loadItems(
             refresh: true,
+            fullSync: false,
             progressCallback: (status) {
               state = AsyncData(OutletLoading(message: status));
             },

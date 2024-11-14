@@ -62,6 +62,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
       if (selected['items'] == true || selected['promotions'] == true) {
         await ref.read(itemsStreamProvider().notifier).loadItems(
               refresh: true,
+              fullSync: true,
               progressCallback: (progress) => setState(() {
                 syncStatus = progress;
               }),
@@ -116,7 +117,10 @@ class _SyncDataState extends ConsumerState<SyncData> {
               ? const SizedBox(
                   width: 14,
                   height: 14,
-                  child: CircularProgressIndicator(strokeWidth: 1, color: Colors.white,),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1,
+                    color: Colors.white,
+                  ),
                 )
               : const Icon(CupertinoIcons.refresh),
           onPressed: hasSelection && !inSync ? runSync : null,
