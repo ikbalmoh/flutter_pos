@@ -80,6 +80,7 @@ Future initServices() async {
   }
 
   await Firebase.initializeApp(
+    name: 'selleri-$appFlavor',
     options: firebaseOptions,
   );
 
