@@ -49,29 +49,28 @@ class Item {
   @PackageItemRelToManyConverter()
   final ToMany<ItemPackage> packageItems;
 
-  Item({
-    required this.id,
-    required this.idItem,
-    required this.itemName,
-    required this.itemPrice,
-    required this.isActive,
-    required this.obsolete,
-    required this.isPackage,
-    this.sku,
-    this.barcode,
-    required this.manualDiscount,
-    required this.isManualPrice,
-    required this.stockControl,
-    required this.idCategory,
-    this.categoryName,
-    required this.stockItem,
-    this.image,
-    this.lastAdjustment,
-    this.packageCategories,
-    required this.promotions,
-    required this.variants,
-    required this.packageItems
-  });
+  Item(
+      {required this.id,
+      required this.idItem,
+      required this.itemName,
+      required this.itemPrice,
+      required this.isActive,
+      required this.obsolete,
+      required this.isPackage,
+      this.sku,
+      this.barcode,
+      required this.manualDiscount,
+      required this.isManualPrice,
+      required this.stockControl,
+      required this.idCategory,
+      this.categoryName,
+      required this.stockItem,
+      this.image,
+      this.lastAdjustment,
+      this.packageCategories,
+      required this.promotions,
+      required this.variants,
+      required this.packageItems});
 
   factory Item.fromJson(Map<String, dynamic> json) {
     Item? existItem = objectBox.getItem(json['id_item']);
@@ -83,7 +82,7 @@ class Item {
       };
     }
     json['id'] = existItem?.id ?? 0;
-    json['item_name'] = existItem?.itemName ?? json['item_name'];
+    json['item_name'] = json['item_name'] ?? existItem?.itemName;
     json['variants'] = json['variants']?.map((variant) {
       ItemVariant? existVariant = objectBox.itemVariantBox
           .query(ItemVariant_.idVariant.equals(variant['id_variant']))

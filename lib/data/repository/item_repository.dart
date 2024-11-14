@@ -21,7 +21,8 @@ ItemRepository itemRepository(ItemRepositoryRef ref) => ItemRepository(ref);
 
 abstract class ItemRepositoryProtocol {
   Future<List<Category>> fetchCategoris();
-  Future<List<Item>> fetchItems({String? idCategory, bool? fromLastSync});
+  Future<List<Item>> fetchItems(
+      {String? idCategory, bool? fromLastSync, bool? fullSync});
 }
 
 class ItemRepository implements ItemRepositoryProtocol {
@@ -62,7 +63,7 @@ class ItemRepository implements ItemRepositoryProtocol {
 
   @override
   Future<List<Item>> fetchItems(
-      {String? idCategory, bool? fromLastSync, bool fullSync = false}) async {
+      {String? idCategory, bool? fromLastSync, bool? fullSync = false}) async {
     const storage = FlutterSecureStorage();
 
     int? lastUpdate;
