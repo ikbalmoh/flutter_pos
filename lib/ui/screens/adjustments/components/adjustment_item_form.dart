@@ -43,7 +43,8 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
   }
 
   void onSave(BuildContext context) async {
-    ItemAdjustment item = widget.item.copyWith();
+    ItemAdjustment item =
+        widget.item.copyWith(qtyActual: qty, note: noteController.text);
     // Update Item
     ref.read(adjustmentProvider.notifier).addToCart(item);
     context.pop();

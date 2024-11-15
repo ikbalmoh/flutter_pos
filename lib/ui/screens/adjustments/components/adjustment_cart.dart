@@ -2,11 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
-import 'package:selleri/ui/components/cart/cart_item.dart';
 import 'package:selleri/ui/components/cart/edit_cart_item_form.dart';
-import 'package:selleri/ui/screens/home/components/holded_baner.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +17,7 @@ class AdjustmentCart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cart = ref.watch(cartProvider);
+    final cart = ref.watch(adjustmentProvider);
 
     void onDeleteItem(ItemCart item) {
       if (context.canPop()) {
@@ -57,6 +57,7 @@ class AdjustmentCart extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        elevation: 1,
         automaticallyImplyLeading: asWidget != true,
         title: Text(
           'item_list'.tr(),
@@ -67,30 +68,22 @@ class AdjustmentCart extends ConsumerWidget {
             ? const Icon(CupertinoIcons.list_number_rtl)
             : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
-        actions: cart.holdAt != null
-            ? [
-                IconButton(
-                    onPressed: () => confirmDeleteTransaction(context),
-                    icon: const Icon(
-                      CupertinoIcons.trash,
-                      color: Colors.red,
-                    ))
-              ]
-            : [],
       ),
       body: cart.items.isNotEmpty
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.max,
               children: [
-                HoldedBaner(cart: cart),
                 Expanded(
                   child: ListView.builder(
                     itemBuilder: (context, idx) {
-                      ItemCart item = cart.items[idx];
-                      return CartItem(
-                        item: item,
-                        onPress: onPressItem,
+                      ItemAdjustment item = cart.items[idx];
+                      return ListTile(
+                        tileColor: Colors.white,
+                        title: Text(item.itemName),
+                        trailing: Text(item.qtyActual.toString()),
+                        subtitle: item.note != null ? Text(item.note!) : null,
+                        dense: true,
                       );
                     },
                     itemCount: cart.items.length,

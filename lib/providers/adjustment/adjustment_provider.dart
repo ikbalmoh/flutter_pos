@@ -12,6 +12,8 @@ class Adjustment extends _$Adjustment {
   }
 
   void addToCart(ItemAdjustment item) {
-    state = state.copyWith(items: state.items..add(item));
+    List<ItemAdjustment> items = List<ItemAdjustment>.from(state.items);
+    items.add(item);
+    state = state.copyWith(items: items);
   }
 }
