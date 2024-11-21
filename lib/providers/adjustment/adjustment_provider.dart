@@ -16,4 +16,8 @@ class Adjustment extends _$Adjustment {
     items.add(item);
     state = state.copyWith(items: items);
   }
+
+  void removeItem(String id) async {
+
+  }
 }

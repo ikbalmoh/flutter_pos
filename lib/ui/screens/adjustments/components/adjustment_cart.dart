@@ -7,6 +7,7 @@ import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/cart/edit_cart_item_form.dart';
+import 'package:selleri/ui/screens/adjustments/components/adjustment_item_form.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,7 +20,7 @@ class AdjustmentCart extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cart = ref.watch(adjustmentProvider);
 
-    void onDeleteItem(ItemCart item) {
+    void onDeleteItem(ItemAdjustment item) {
       if (context.canPop()) {
         context.pop();
       }
@@ -28,29 +29,19 @@ class AdjustmentCart extends ConsumerWidget {
           subtitle: 'are_you_sure'.tr(),
           confirmLabel: 'delete'.tr(),
           danger: true, onConfirm: () async {
-        await ref.read(cartProvider.notifier).removeItem(item.identifier!);
+        ref.read(adjustmentProvider.notifier).removeItem(item.idItem);
       });
     }
 
-    void onPressItem(ItemCart item) {
+    void onPressItem(ItemAdjustment item) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
-        builder: (BuildContext context) => EditCartItemForm(
+        builder: (BuildContext context) => AdjustmentItemForm(
           item: item,
           onDelete: () => onDeleteItem(item),
         ),
-      );
-    }
-
-    void confirmDeleteTransaction(BuildContext context) {
-      AppAlert.confirm(
-        context,
-        title: 'delete_transaction'.tr(),
-        subtitle: 'delete_transaction_confirmation'.tr(),
-        confirmLabel: 'delete'.tr(),
-        onConfirm: () => ref.read(cartProvider.notifier).removeHoldedCart(),
       );
     }
 
@@ -83,7 +74,8 @@ class AdjustmentCart extends ConsumerWidget {
                         title: Text(item.itemName),
                         trailing: Text(item.qtyActual.toString()),
                         subtitle: item.note != null ? Text(item.note!) : null,
-                        dense: true,
+                        dense: true,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                        onTap: () => onPressItem(item),
                       );
                     },
                     itemCount: cart.items.length,
