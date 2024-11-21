@@ -8,7 +8,8 @@ definitions:
         - selleri-stage
       vars:
         FLUTTER_VERSION: '3.22.3'
-        RELEASE_VERSION: $(grep '^version:' pubspec.yaml | sed 's/version: //')
+        RELEASE_VERSION: |
+          $(grep '^version:' pubspec.yaml | sed 's/version: //')
       android_signing:
         - selleri_stage_keystore
       ios_signing:
