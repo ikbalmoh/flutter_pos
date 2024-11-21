@@ -8,7 +8,6 @@ definitions:
         - selleri-stage
       vars:
         FLUTTER_VERSION: '3.22.3'
-        RELEASE_VERSION: $(./get_version.sh)
       android_signing:
         - selleri_stage_keystore
       ios_signing:
@@ -22,7 +21,6 @@ definitions:
         - selleri-prod
       vars:
         FLUTTER_VERSION: '3.22.3'
-        RELEASE_VERSION: '2.0.2+2'
       android_signing:
         - selleri_release_keystore
       ios_signing:
@@ -163,7 +161,7 @@ workflows:
       <<: *prod_env
 
     scripts:
-      # - *extract_version
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -194,7 +192,7 @@ workflows:
       <<: *prod_env
 
     scripts:
-      # - *extract_version
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -225,7 +223,7 @@ workflows:
       <<: *stage_env
 
     scripts:
-      # - *extract_version
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -257,7 +255,7 @@ workflows:
       <<: *stage_env
 
     scripts:
-      # - *extract_version
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -289,7 +287,7 @@ workflows:
       <<: *prod_env
 
     scripts:
-      # - *extract_version
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -311,7 +309,7 @@ workflows:
       <<: *stage_env
 
     scripts:
-      # - *extract_version
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
@@ -331,7 +329,7 @@ workflows:
       <<: *stage_env
 
     scripts:
-      # - *extract_version
+      - *extract_version
       - *shorebird_install
       - *create_env
       - *create_env_stage
