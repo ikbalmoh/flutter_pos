@@ -3,10 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
-import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
-import 'package:selleri/providers/cart/cart_provider.dart';
-import 'package:selleri/ui/components/cart/edit_cart_item_form.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_item_form.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,12 +66,19 @@ class AdjustmentCart extends ConsumerWidget {
                   child: ListView.builder(
                     itemBuilder: (context, idx) {
                       ItemAdjustment item = cart.items[idx];
+                      String itemName = item.itemName;
+                      if (item.variantName != null) {
+                        itemName += ' - ${item.variantName}';
+                      }
                       return ListTile(
                         tileColor: Colors.white,
-                        title: Text(item.itemName),
-                        trailing: Text(item.qtyActual.toString()),
-                        subtitle: item.note != null ? Text(item.note!) : null,
-                        dense: true,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                        title: Text(itemName),
+                        trailing: Text(
+                          item.qtyActual.toString(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        subtitle: item.note != '' ? Text(item.note!) : null,
+                        dense: true,
                         onTap: () => onPressItem(item),
                       );
                     },
@@ -84,16 +88,26 @@ class AdjustmentCart extends ConsumerWidget {
                 Container(
                   color: Colors.white,
                   padding: const EdgeInsets.all(15),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                  child: Row(
+                    children: [
+                      TextButton(
+                          onPressed: () => {}, child: const Text('Reset')),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                          ),
+                          onPressed: () => {},
+                          child: Text('save'.tr().toUpperCase()),
+                        ),
                       ),
-                    ),
-                    onPressed: () => {},
-                    child: Text('continue'.tr().toUpperCase()),
+                    ],
                   ),
-                )
+                ),
               ],
             )
           : Center(

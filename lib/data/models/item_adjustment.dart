@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/item_variant_adjustment.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:selleri/data/models/converters/generic.dart';
 
 part 'item_adjustment.freezed.dart';
 part 'item_adjustment.g.dart';
@@ -22,10 +23,14 @@ class ItemAdjustment with _$ItemAdjustment {
     int? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
-    required double stockItem,
-    required double qtySystem,
-    required double qtyActual,
-    required int qtyDiff,
+    @JsonKey(fromJson: Converters.dynamicToDouble)
+    required double? stockItem,
+    @JsonKey(fromJson: Converters.dynamicToDouble)
+    required double? qtySystem,
+    @JsonKey(fromJson: Converters.dynamicToDouble)
+    required double? qtyActual,
+    @JsonKey(fromJson: Converters.dynamicToInt)
+    required int? qtyDiff,
     @JsonKey(
       fromJson: DateTimeFormater.stringToDateTime,
     )

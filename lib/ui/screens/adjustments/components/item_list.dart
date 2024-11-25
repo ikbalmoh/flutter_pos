@@ -23,9 +23,8 @@ class ItemList extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: InkWell(
-        onTap: () => item.variants.isNotEmpty
-            ? showVariants(item)
-            : onAddToCart(item),
+        onTap: () =>
+            item.variants.isNotEmpty ? showVariants(item) : onAddToCart(item),
         child: Material(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -123,7 +122,7 @@ class ItemList extends StatelessWidget {
                         ],
                       )
                     : StockBadge(
-                        stockItem: item.stockItem,
+                        stockItem: item.stockItem ?? 0,
                         stockControl: item.stockControl ?? false,
                       ),
               ],

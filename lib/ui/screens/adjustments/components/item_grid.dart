@@ -76,7 +76,7 @@ class ItemGrid extends StatelessWidget {
                             direction: Axis.horizontal,
                             children: [
                               StockBadge(
-                                stockItem: item.stockItem,
+                                stockItem: item.stockItem ?? 0,
                                 stockControl: item.stockControl ?? false,
                               ),
                             ],
@@ -121,7 +121,7 @@ class ItemGrid extends StatelessWidget {
                               ],
                             )
                           : StockBadge(
-                              stockItem: item.stockItem,
+                              stockItem: item.stockItem ?? 0,
                               stockControl: item.stockControl ?? false,
                             ),
                     ],

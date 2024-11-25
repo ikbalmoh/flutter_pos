@@ -22,8 +22,8 @@ class _ItemVariantAdjustmentPickerState
   ItemVariantAdjustment? selected;
 
   void onAddToCart(BuildContext context, ItemVariantAdjustment variant) {
-    widget.onSelect(variant);
     context.pop();
+    widget.onSelect(variant);
   }
 
   @override
@@ -91,7 +91,7 @@ class _ItemVariantAdjustmentPickerState
             height: 15,
           ),
           ElevatedButton(
-            onPressed: () => onAddToCart(context, selected!),
+            onPressed: selected != null ? () => onAddToCart(context, selected!) : null,
             style: ElevatedButton.styleFrom(
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25)),

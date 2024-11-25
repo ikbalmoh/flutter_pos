@@ -9,10 +9,9 @@ import 'package:go_router/go_router.dart';
 
 class AdjustmentItemForm extends ConsumerStatefulWidget {
   final ItemAdjustment item;
-  final Function onDelete;
+  final Function? onDelete;
 
-  const AdjustmentItemForm(
-      {super.key, required this.item, required this.onDelete});
+  const AdjustmentItemForm({super.key, required this.item, this.onDelete});
 
   @override
   ConsumerState<AdjustmentItemForm> createState() => _AdjustmentItemFormState();
@@ -28,7 +27,7 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
     super.initState();
 
     setState(() {
-      qty = widget.item.qtyActual;
+      qty = widget.item.qtyActual ?? 0;
     });
 
     noteController.text = widget.item.note ?? '';
@@ -116,6 +115,30 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
                       ],
                     ),
                   ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                      width: 0.5,
+                      color: Colors.blueGrey.shade100,
+                    ))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'different'.tr(),
+                          style: labelStyle,
+                        ),
+                        Text(
+                          (qty - (widget.item.qtySystem ?? 0))
+                              .toInt()
+                              .abs()
+                              .toString(),
+                        ),
+                      ],
+                    ),
+                  ),
                   TextFormField(
                     controller: noteController,
                     decoration: InputDecoration(
@@ -138,17 +161,17 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              IconButton(
-                color: Colors.red,
-                onPressed: () => widget.onDelete(),
-                icon: const Icon(
-                  CupertinoIcons.trash,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+              widget.onDelete != null
+                  ? IconButton(
+                      color: Colors.red,
+                      onPressed: () => widget.onDelete!(),
+                      icon: const Icon(
+                        CupertinoIcons.trash,
+                        size: 20,
+                      ),
+                    )
+                  : Container(),
+              widget.onDelete != null ? const SizedBox(width: 10) : Container(),
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(

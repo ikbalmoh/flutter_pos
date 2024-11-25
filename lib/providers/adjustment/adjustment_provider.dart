@@ -13,11 +13,20 @@ class Adjustment extends _$Adjustment {
 
   void addToCart(ItemAdjustment item) {
     List<ItemAdjustment> items = List<ItemAdjustment>.from(state.items);
-    items.add(item);
+    int itemIdx = items.indexWhere((adj) =>
+        (adj.idItem == item.idItem && adj.variantId == item.variantId));
+    if (itemIdx >= 0) {
+      // Update
+      items[itemIdx] = item;
+    } else {
+      items = items..add(item);
+    }
     state = state.copyWith(items: items);
   }
 
   void removeItem(String id) async {
-
+    List<ItemAdjustment> items =
+        state.items.where((adj) => adj.idItem != id).toList();
+    state = state.copyWith(items: items);
   }
 }

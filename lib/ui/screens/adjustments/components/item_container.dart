@@ -36,11 +36,20 @@ class ItemContainer extends ConsumerWidget {
         ].contains(search.toLowerCase())) {
       clearSearch();
     }
+    if (variant != null) {
+      item = item.copyWith(
+        variantId: variant.idVariant,
+        variantName: variant.variantName,
+        qtyActual: variant.qtyActual,
+        qtySystem: variant.qtySystem,
+        qtyDiff: variant.qtyDiff,
+      );
+    }
     showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
-        builder: (context) =>
-            AdjustmentItemForm(item: item, onDelete: () => {}));
+        isScrollControlled: true,
+        builder: (context) => AdjustmentItemForm(item: item));
   }
 
   void showVariants(BuildContext context, ItemAdjustment item, WidgetRef ref) {
@@ -52,12 +61,14 @@ class ItemContainer extends ConsumerWidget {
         builder: (BuildContext context) {
           return ItemVariantAdjustmentPicker(
             item: item,
-            onSelect: (variant) => onAddToCart(
-              context,
-              ref,
-              item: item,
-              variant: variant,
-            ),
+            onSelect: (variant) {
+              onAddToCart(
+                context,
+                ref,
+                item: item,
+                variant: variant,
+              );
+            },
           );
         });
   }

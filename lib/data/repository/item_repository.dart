@@ -142,7 +142,7 @@ class ItemRepository implements ItemRepositoryProtocol {
           idCategory: idCategory);
       return items;
     } catch (e, trace) {
-      log('Load items adjustments Error: $e => $trace');
+      log('Fetch items adjustments Error: $e => $trace');
       rethrow;
     }
   }
