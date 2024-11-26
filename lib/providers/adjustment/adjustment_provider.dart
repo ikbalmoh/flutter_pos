@@ -24,9 +24,19 @@ class Adjustment extends _$Adjustment {
     state = state.copyWith(items: items);
   }
 
+  void setDate(DateTime date) {
+    state = state.copyWith(date: date);
+  }
+
   void removeItem(String id) async {
     List<ItemAdjustment> items =
         state.items.where((adj) => adj.idItem != id).toList();
     state = state.copyWith(items: items);
   }
+
+  void resetForm() {
+    state = state.copyWith(items: []);
+  }
+
+  void submitAdjustment({String? description}) {}
 }

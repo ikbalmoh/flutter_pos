@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_item_form.dart';
+import 'package:selleri/ui/screens/adjustments/components/submit_adjustment_sheet.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,6 +41,22 @@ class AdjustmentCart extends ConsumerWidget {
           onDelete: () => onDeleteItem(item),
         ),
       );
+    }
+
+    void onSubmit() {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        builder: (BuildContext context) => SubmitAdjustmentSheet(),
+      );
+    }
+
+    void onReset() {
+      AppAlert.confirm(context,
+          title: 'Reset',
+          subtitle: 'are_you_sure'.tr(),
+          onConfirm: () => ref.read(adjustmentProvider.notifier).resetForm());
     }
 
     return Scaffold(
@@ -90,10 +107,25 @@ class AdjustmentCart extends ConsumerWidget {
                   padding: const EdgeInsets.all(15),
                   child: Row(
                     children: [
-                      TextButton(
-                          onPressed: () => {}, child: const Text('Reset')),
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            foregroundColor: Colors.blue,
+                            side: const BorderSide(color: Colors.blue),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                            ),
+                          ),
+                          onPressed: onReset,
+                          child: const Text('Reset'),
+                        ),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
+                        flex: 2,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: const RoundedRectangleBorder(
@@ -101,7 +133,7 @@ class AdjustmentCart extends ConsumerWidget {
                                   BorderRadius.all(Radius.circular(30)),
                             ),
                           ),
-                          onPressed: () => {},
+                          onPressed: onSubmit,
                           child: Text('save'.tr().toUpperCase()),
                         ),
                       ),

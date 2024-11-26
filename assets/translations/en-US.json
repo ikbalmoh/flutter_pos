@@ -271,5 +271,6 @@
   "stock_adjustments": "Stock Adjustments",
   "item_list": "Item List",
   "select_items": "Select Items",
-  "never_adjusted": "Stock is never adjusted"
+  "never_adjusted": "Stock is never adjusted",
+  "submit_x": "Simpan {}"
 }

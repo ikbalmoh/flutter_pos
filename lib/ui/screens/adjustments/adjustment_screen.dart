@@ -9,6 +9,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
+import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
@@ -35,7 +36,6 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
   bool itemLayoutGrid = false;
   String idCategory = '';
   String search = '';
-  DateTime date = DateTime.now();
 
   Timer? _debounce;
   bool canListenBarcode = false;
@@ -56,11 +56,12 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
   }
 
   void loadItems({int? page = 1}) {
+    DateTime pickedDate = ref.read(adjustmentProvider).date;
     ref.read(adjustmentItemsProvider.notifier).loadItems(
           page: page ?? 1,
           idCategory: idCategory,
           search: textSearchController.text,
-          date: date,
+          date: pickedDate,
         );
   }
 
@@ -117,6 +118,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
   }
 
   void pickAdjustmentDate() async {
+    DateTime date = DateTime.now();
     DateTime? pickedDate = await showDatePicker(
       context: context,
       firstDate: date.subtract(const Duration(days: 180)),
@@ -124,9 +126,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       initialDate: date,
     );
     if (pickedDate != null) {
-      setState(() {
-        date = pickedDate;
-      });
+      ref.read(adjustmentProvider.notifier).setDate(pickedDate);
       loadItems(page: 1);
     }
   }
@@ -224,8 +224,9 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                     icon: const Icon(Icons.document_scanner_outlined)),
                 TextButton.icon(
                   onPressed: pickAdjustmentDate,
-                  label: Text(
-                      DateTimeFormater.dateToString(date, format: 'd MMM y')),
+                  label: Text(DateTimeFormater.dateToString(
+                      ref.watch(adjustmentProvider).date,
+                      format: 'd MMM y')),
                   icon: const Icon(CupertinoIcons.calendar),
                 )
               ],
