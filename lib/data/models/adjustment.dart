@@ -9,7 +9,7 @@ class Adjustment with _$Adjustment {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Adjustment({
     required DateTime date,
-    required String note,
+    required String description,
     required List<ItemAdjustment> items,
   }) = _Adjustment;
 

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:selleri/config/api_url.dart';
+import 'package:selleri/data/models/adjustment.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/utils/fetch.dart';
@@ -33,6 +34,32 @@ class AdjustmentApi {
         return ItemAdjustment.fromJson(item as Map<String, dynamic>);
       });
       return pagination;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> createAdjustment(String idOutlet, Adjustment data) async {
+    try {
+      final payload = {
+      'adjustment_date':
+          DateTimeFormater.dateToString(data.date, format: 'y-MM-dd'),
+      'locationable_id': idOutlet,
+      'location_type': 'outlet',
+      'description': data.description,
+      'details': data.items.map((item) {
+        return {
+          'note': item.note,
+          'id_item': item.idItem,
+          'variant_id': item.variantId,
+          'qty_actual': item.qtyActual,
+        };
+      }).toList()
+    };
+      final res = await api.post(ApiUrl.adjustment, data: payload);
+      return res.data['msg'];
     } on DioException catch (e) {
       throw Exception(e.response?.data['msg'] ?? e.message);
     } catch (e) {

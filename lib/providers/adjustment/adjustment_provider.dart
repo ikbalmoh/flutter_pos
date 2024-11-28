@@ -1,6 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/adjustment.dart' as model;
 import 'package:selleri/data/models/item_adjustment.dart';
+import 'package:selleri/data/network/adjustment.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 
 part 'adjustment_provider.g.dart';
 
@@ -8,7 +10,7 @@ part 'adjustment_provider.g.dart';
 class Adjustment extends _$Adjustment {
   @override
   model.Adjustment build() {
-    return model.Adjustment(date: DateTime.now(), items: [], note: '');
+    return model.Adjustment(date: DateTime.now(), items: [], description: '');
   }
 
   void addToCart(ItemAdjustment item) {
@@ -38,5 +40,17 @@ class Adjustment extends _$Adjustment {
     state = state.copyWith(items: []);
   }
 
-  void submitAdjustment({String? description}) {}
+  Future<String> submitAdjustment({String? description}) async {
+    try {
+      final outletState = ref.read(outletProvider).value as OutletSelected;
+      final api = AdjustmentApi();
+      final payload = state.copyWith(description: description ?? '');
+      final res =
+          await api.createAdjustment(outletState.outlet.idOutlet, payload);
+      resetForm();
+      return res;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

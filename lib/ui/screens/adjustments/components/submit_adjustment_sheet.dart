@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 class SubmitAdjustmentSheet extends ConsumerStatefulWidget {
   const SubmitAdjustmentSheet({super.key});
@@ -16,6 +17,8 @@ class SubmitAdjustmentSheet extends ConsumerStatefulWidget {
 class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
   final descriptionController = TextEditingController();
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -27,8 +30,28 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
     super.dispose();
   }
 
-  void onSubmit() {
-    ref.read(adjustmentProvider.notifier).submitAdjustment(description: descriptionController.text );
+  void onSubmit() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      String message = await ref
+          .read(adjustmentProvider.notifier)
+          .submitAdjustment(description: descriptionController.text);
+      setState(() {
+        isLoading = false;
+      });
+      AppAlert.toast(message);
+      if (context.mounted) {
+        // ignore: use_build_context_synchronously
+        context.pop();
+      }
+    } on Exception catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      AppAlert.toast(e.toString());
+    }
   }
 
   @override
@@ -101,7 +124,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
                     ),
-                    onPressed: () => context.pop(),
+                    onPressed: isLoading ? null : () => context.pop(),
                     child: Text('cancel'.tr())),
               ),
               const SizedBox(
@@ -117,8 +140,17 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
                       ),
                     ),
                   ),
-                  onPressed: onSubmit,
-                  icon: const Icon(CupertinoIcons.checkmark_alt),
+                  onPressed: isLoading ? null : onSubmit,
+                  icon: isLoading
+                      ? const SizedBox(
+                          height: 12,
+                          width: 12,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(CupertinoIcons.checkmark_alt),
                   label: Text('save'.tr()),
                 ),
               ),

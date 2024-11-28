@@ -21,4 +21,5 @@ class ApiUrl {
   static const String reportSales = '/report/sales';
   static const String promotions = '/promotions';
   static const String promotionByVoucher = '/promotions/voucher';
+  static const String adjustment = '/adjustments';
 }

@@ -48,7 +48,9 @@ class AdjustmentCart extends ConsumerWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
-        builder: (BuildContext context) => SubmitAdjustmentSheet(),
+        isDismissible: false,
+        enableDrag: false,
+        builder: (BuildContext context) => const SubmitAdjustmentSheet(),
       );
     }
 
