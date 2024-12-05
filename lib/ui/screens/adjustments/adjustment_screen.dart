@@ -14,6 +14,7 @@ import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_cart.dart';
+import 'package:selleri/ui/screens/adjustments/components/fast_moving_item_banner.dart';
 import 'package:selleri/ui/screens/adjustments/components/item_container.dart';
 import 'package:selleri/ui/screens/home/components/item_categories.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -113,8 +114,10 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       idCategory = id;
     });
     loadItems(page: 1);
-    _scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    }
   }
 
   void pickAdjustmentDate() async {
@@ -148,6 +151,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
+            const FastMovingItemBanner(),
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeInOut,
@@ -178,42 +182,20 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
     );
 
     return Scaffold(
-      drawer: const AppDrawer(),
-      appBar: searchVisible
-          ? SearchAppBar(
-              onBack: () => setState(
-                    () {
-                      searchVisible = false;
-                      textSearchController.text = '';
-                      search = '';
-                    },
-                  ),
-              onChanged: onSearchItems,
-              controller: textSearchController)
-          : AppBar(
-              title: Text('stock_adjustments'.tr()),
-              automaticallyImplyLeading: false,
-              elevation: 1,
-              leading: Builder(builder: (context) {
-                return IconButton(
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
+        drawer: const AppDrawer(),
+        appBar: searchVisible
+            ? SearchAppBar(
+                onBack: () => setState(
+                  () {
+                    searchVisible = false;
+                    textSearchController.text = '';
+                    search = '';
                   },
-                  icon: const Icon(Icons.menu),
-                );
-              }),
-              actions: [
-                IconButton(
-                  tooltip: 'search'.tr(),
-                  onPressed: () {
-                    setState(() {
-                      searchVisible = true;
-                    });
-                    focusSearch.requestFocus();
-                  },
-                  icon: const Icon(CupertinoIcons.search),
                 ),
-                IconButton(
+                onChanged: onSearchItems,
+                controller: textSearchController,
+                actions: [
+                  IconButton(
                     onPressed: () {
                       showCupertinoModalPopup(
                           context: context,
@@ -221,48 +203,80 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                             return const BarcodeScanner();
                           });
                     },
-                    icon: const Icon(Icons.document_scanner_outlined)),
-                TextButton.icon(
-                  onPressed: pickAdjustmentDate,
-                  label: Text(DateTimeFormater.dateToString(
-                      ref.watch(adjustmentProvider).date,
-                      format: 'd MMM y')),
-                  icon: const Icon(CupertinoIcons.calendar),
-                )
-              ],
-            ),
-      body: Row(
-        children: [
-          Expanded(child: itemContainer),
-          isTablet
-              ? Container(
-                  width: ResponsiveBreakpoints.of(context).largerThan(TABLET)
-                      ? 400
-                      : MediaQuery.of(context).size.width * 0.5,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    border: Border(
-                      left: BorderSide(
-                        width: 1,
-                        color: Colors.grey.shade200,
+                    icon: const Icon(Icons.document_scanner_outlined),
+                  ),
+                ],
+              )
+            : AppBar(
+                title: Text('stock_adjustments'.tr()),
+                automaticallyImplyLeading: false,
+                elevation: 1,
+                leading: Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: const Icon(Icons.menu),
+                  );
+                }),
+                actions: [
+                  IconButton(
+                    tooltip: 'search'.tr(),
+                    onPressed: () {
+                      setState(() {
+                        searchVisible = true;
+                      });
+                      focusSearch.requestFocus();
+                    },
+                    icon: const Icon(CupertinoIcons.search),
+                  ),
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                        backgroundColor: Colors.teal.shade50),
+                    onPressed: pickAdjustmentDate,
+                    label: Text(DateTimeFormater.dateToString(
+                        ref.watch(adjustmentProvider).date,
+                        format: 'd MMM y')),
+                    icon: const Icon(CupertinoIcons.calendar),
+                  ),
+                  IconButton(
+                    tooltip: 'Menu',
+                    onPressed: () {},
+                    icon: const Icon(Icons.more_vert),
+                  ),
+                ],
+              ),
+        body: Row(
+          children: [
+            Expanded(child: itemContainer),
+            isTablet
+                ? Container(
+                    width: ResponsiveBreakpoints.of(context).largerThan(TABLET)
+                        ? 400
+                        : MediaQuery.of(context).size.width * 0.5,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      border: Border(
+                        left: BorderSide(
+                          width: 1,
+                          color: Colors.grey.shade200,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: const AdjustmentCart(
-                        asWidget: true,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: const AdjustmentCart(
+                          asWidget: true,
+                        ),
                       ),
                     ),
-                  ),
-                )
-              : Container(),
-        ],
-      ),
-    );
+                  )
+                : Container(),
+          ],
+        ));
   }
 }

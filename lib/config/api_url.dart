@@ -8,6 +8,7 @@ class ApiUrl {
   static const String listCategory = '/lists/item-category';
   static const String listItems = '/lists/items';
   static const String listItemsForAdjustment = '$listItems/for-adjust';
+  static const String fastMovingItems = '$listItems/fast-moving';
   static const String items = '/items';
   static const String startShift = '/shifts/start';
   static const String closeShift = '/shifts/{id}/closing';

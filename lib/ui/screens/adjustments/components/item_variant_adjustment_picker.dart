@@ -28,7 +28,7 @@ class _ItemVariantAdjustmentPickerState
 
   @override
   Widget build(BuildContext context) {
-    List<ItemVariantAdjustment> variants = widget.item.variants;
+    List<ItemVariantAdjustment> variants = widget.item.variants ?? [];
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       padding: EdgeInsets.only(

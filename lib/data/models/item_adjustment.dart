@@ -35,7 +35,7 @@ class ItemAdjustment with _$ItemAdjustment {
       fromJson: DateTimeFormater.stringToDateTime,
     )
     DateTime? lastAdjustment,
-    required List<ItemVariantAdjustment> variants,
+    List<ItemVariantAdjustment>? variants,
   }) = _ItemAdjustment;
 
   factory ItemAdjustment.fromJson(Map<String, dynamic> json) =>

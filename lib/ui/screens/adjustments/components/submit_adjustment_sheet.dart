@@ -30,7 +30,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
     super.dispose();
   }
 
-  void onSubmit() async {
+  void onSubmit(BuildContext context) async {
     setState(() {
       isLoading = true;
     });
@@ -41,7 +41,9 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
       setState(() {
         isLoading = false;
       });
-      AppAlert.toast(message);
+      if (context.mounted) {
+        AppAlert.snackbar(context, message);
+      }
       if (context.mounted) {
         // ignore: use_build_context_synchronously
         context.pop();
@@ -64,7 +66,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       height: (MediaQuery.of(context).size.height *
-          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.7)),
+          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.7 : 0.4)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,24 +88,16 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: descriptionController,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(
-                          left: 0, top: 10, right: 0, bottom: 10),
-                      label: Text(
-                        'note'.tr(),
-                        style: labelStyle,
-                      ),
-                      alignLabelWithHint: true,
-                    ),
-                  ),
-                ],
+            child: TextFormField(
+              controller: descriptionController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(
+                    left: 0, top: 10, right: 0, bottom: 10),
+                label: Text(
+                  'note'.tr(),
+                  style: labelStyle,
+                ),
+                alignLabelWithHint: true,
               ),
             ),
           ),
@@ -140,7 +134,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
                       ),
                     ),
                   ),
-                  onPressed: isLoading ? null : onSubmit,
+                  onPressed: isLoading ? null : () => onSubmit(context),
                   icon: isLoading
                       ? const SizedBox(
                           height: 12,

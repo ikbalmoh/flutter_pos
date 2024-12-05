@@ -41,23 +41,39 @@ class AdjustmentApi {
     }
   }
 
+  Future<List<ItemAdjustment>> fastMovingItems(
+      {required String idOutlet}) async {
+    try {
+      final params = {"id_outlet": idOutlet};
+      final res = await api.get(ApiUrl.fastMovingItems, data: params);
+      List<Map<String, dynamic>> listJson = List.from(res.data['data']);
+      final List<ItemAdjustment> data =
+          listJson.map((json) => ItemAdjustment.fromJson(json)).toList();
+      return data;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> createAdjustment(String idOutlet, Adjustment data) async {
     try {
       final payload = {
-      'adjustment_date':
-          DateTimeFormater.dateToString(data.date, format: 'y-MM-dd'),
-      'locationable_id': idOutlet,
-      'location_type': 'outlet',
-      'description': data.description,
-      'details': data.items.map((item) {
-        return {
-          'note': item.note,
-          'id_item': item.idItem,
-          'variant_id': item.variantId,
-          'qty_actual': item.qtyActual,
-        };
-      }).toList()
-    };
+        'adjustment_date':
+            DateTimeFormater.dateToString(data.date, format: 'y-MM-dd'),
+        'locationable_id': idOutlet,
+        'location_type': 'outlet',
+        'description': data.description,
+        'details': data.items.map((item) {
+          return {
+            'note': item.note,
+            'id_item': item.idItem,
+            'variant_id': item.variantId,
+            'qty_actual': item.qtyActual,
+          };
+        }).toList()
+      };
       final res = await api.post(ApiUrl.adjustment, data: payload);
       return res.data['msg'];
     } on DioException catch (e) {

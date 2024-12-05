@@ -24,7 +24,7 @@ class ItemGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onLongPress: onLongPress != null ? () => onLongPress!(item) : null,
-      onTap: () => item.variants.isNotEmpty
+      onTap: () => item.variants != null && item.variants!.isNotEmpty
           ? showVariants(item)
           : qtyOnCart > 0
               ? addQty(item.idItem)
@@ -106,7 +106,7 @@ class ItemGrid extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                             ),
                       ),
-                      item.variants.isNotEmpty
+                      item.variants != null && item.variants!.isNotEmpty
                           ? Row(
                               children: [
                                 Icon(
@@ -117,7 +117,7 @@ class ItemGrid extends StatelessWidget {
                                 const SizedBox(
                                   width: 5,
                                 ),
-                                Text('${item.variants.length} variants')
+                                Text('${item.variants!.length} variants')
                               ],
                             )
                           : StockBadge(

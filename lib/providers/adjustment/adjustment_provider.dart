@@ -18,12 +18,19 @@ class Adjustment extends _$Adjustment {
     int itemIdx = items.indexWhere((adj) =>
         (adj.idItem == item.idItem && adj.variantId == item.variantId));
     if (itemIdx >= 0) {
-      // Update
       items[itemIdx] = item;
     } else {
       items = items..add(item);
     }
     state = state.copyWith(items: items);
+  }
+
+  void addItemsToCart(List<ItemAdjustment> items) {
+    List<String> ids = state.items.map((item) => item.idItem).toList();
+    List<ItemAdjustment> allItems = [];
+    allItems.addAll(state.items);
+    allItems.addAll(items.where((item) => !ids.contains(item.idItem)).toList());
+    state = state.copyWith(items: allItems);
   }
 
   void setDate(DateTime date) {
@@ -37,7 +44,7 @@ class Adjustment extends _$Adjustment {
   }
 
   void resetForm() {
-    state = state.copyWith(items: []);
+    state = state.copyWith(items: [], date: DateTime.now());
   }
 
   Future<String> submitAdjustment({String? description}) async {

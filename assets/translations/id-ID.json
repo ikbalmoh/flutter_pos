@@ -273,5 +273,8 @@
   "item_list": "Daftar Barang",
   "select_items": "Pilih Barang",
   "never_adjusted": "Stok tidak pernah disesuaikan",
-  "submit_x": "Simpan {}"
+  "adjustment": "Penyesuaian",
+  "submit_x": "Simpan {}",
+  "create_x": "Buat {}",
+  "x_fast_moving_items": "{} barang dari SO sebelumnya"
 }

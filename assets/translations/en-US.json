@@ -272,5 +272,8 @@
   "item_list": "Item List",
   "select_items": "Select Items",
   "never_adjusted": "Stock is never adjusted",
-  "submit_x": "Simpan {}"
+  "adjustment": "Adjustment",
+  "submit_x": "Submit {}",
+  "create_x": "Create {}",
+  "x_fast_moving_items": "{} items from last SO"
 }

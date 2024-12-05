@@ -24,7 +24,7 @@ class ItemList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: InkWell(
         onTap: () =>
-            item.variants.isNotEmpty ? showVariants(item) : onAddToCart(item),
+            item.variants != null && item.variants!.isNotEmpty ? showVariants(item) : onAddToCart(item),
         child: Material(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -107,7 +107,7 @@ class ItemList extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                item.variants.isNotEmpty
+                item.variants != null && item.variants!.isNotEmpty
                     ? Row(
                         children: [
                           Icon(
@@ -118,7 +118,7 @@ class ItemList extends StatelessWidget {
                           const SizedBox(
                             width: 5,
                           ),
-                          Text('${item.variants.length} variants')
+                          Text('${item.variants!.length} variants')
                         ],
                       )
                     : StockBadge(
