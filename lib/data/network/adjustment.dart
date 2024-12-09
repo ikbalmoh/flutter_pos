@@ -3,11 +3,33 @@ import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/models/adjustment.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/pagination.dart';
+import 'package:selleri/data/models/adjustment_history.dart' as model;
 import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/utils/formater.dart';
 
 class AdjustmentApi {
   final api = fetch();
+
+  Future<Pagination<model.AdjustmentHistory>> adjustmentHistory(
+      {int page = 1}) async {
+    try {
+      final Map<String, dynamic> queryParameters = {
+        'page': page,
+      };
+      final res =
+          await api.get(ApiUrl.adjustment, queryParameters: queryParameters);
+      final data = res.data['data'];
+      final pagination =
+          Pagination<model.AdjustmentHistory>.fromJson(data, (item) {
+        return model.AdjustmentHistory.fromJson(item as Map<String, dynamic>);
+      });
+      return pagination;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<Pagination<ItemAdjustment>> itemsForAdjustment({
     required String idOutlet,

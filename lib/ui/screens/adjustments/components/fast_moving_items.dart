@@ -7,9 +7,12 @@ import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/providers/item/fast_moving_item_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
+import 'package:selleri/utils/formater.dart';
 
 class FastMovingItems extends ConsumerWidget {
-  const FastMovingItems({super.key});
+  const FastMovingItems({super.key, required this.scrollController});
+
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,6 +45,7 @@ class FastMovingItems extends ConsumerWidget {
               ),
               Expanded(
                 child: ListView.builder(
+                  controller: scrollController,
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   itemBuilder: (context, index) {
                     final ItemAdjustment item = value[index];
@@ -65,7 +69,8 @@ class FastMovingItems extends ConsumerWidget {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           Text(
-                            item.qtyActual.toString(),
+                            CurrencyFormat.currency(item.qtyActual,
+                                symbol: false),
                             style: Theme.of(context).textTheme.bodyLarge,
                           )
                         ],
@@ -97,9 +102,6 @@ class FastMovingItems extends ConsumerWidget {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(
-                height: 20,
               ),
             ],
           ),

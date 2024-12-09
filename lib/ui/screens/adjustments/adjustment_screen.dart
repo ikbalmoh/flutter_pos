@@ -14,6 +14,7 @@ import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_cart.dart';
+import 'package:selleri/ui/screens/adjustments/components/adjustment_list_history.dart';
 import 'package:selleri/ui/screens/adjustments/components/fast_moving_item_banner.dart';
 import 'package:selleri/ui/screens/adjustments/components/item_container.dart';
 import 'package:selleri/ui/screens/home/components/item_categories.dart';
@@ -42,6 +43,8 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
   bool canListenBarcode = false;
   TextEditingController textSearchController = TextEditingController();
   FocusNode focusSearch = FocusNode();
+  final DraggableScrollableController sheetController =
+      DraggableScrollableController();
 
   @override
   void initState() {
@@ -118,6 +121,24 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       _scrollController.animateTo(0,
           duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     }
+  }
+
+  void showHistory() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.white,
+      showDragHandle: true,
+      builder: (context) => DraggableScrollableSheet(
+        controller: sheetController,
+        builder: (_, controller) => AdjustmentListHistory(
+          controller: controller,
+        ),
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
+        expand: false,
+      ),
+    );
   }
 
   void pickAdjustmentDate() async {
@@ -239,11 +260,29 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                         format: 'd MMM y')),
                     icon: const Icon(CupertinoIcons.calendar),
                   ),
-                  IconButton(
-                    tooltip: 'Menu',
-                    onPressed: () {},
-                    icon: const Icon(Icons.more_vert),
-                  ),
+                  MenuAnchor(
+                    builder: (BuildContext context, MenuController controller,
+                        Widget? child) {
+                      return IconButton(
+                        onPressed: () {
+                          if (controller.isOpen) {
+                            controller.close();
+                          } else {
+                            controller.open();
+                          }
+                        },
+                        icon: const Icon(Icons.more_vert),
+                        tooltip: 'show_menu'.tr(),
+                      );
+                    },
+                    menuChildren: [
+                      MenuItemButton(
+                        leadingIcon: const Icon(CupertinoIcons.square_list),
+                        onPressed: () => showHistory(),
+                        child: Text('adjustment_history'.tr()),
+                      )
+                    ],
+                  )
                 ],
               ),
         body: Row(

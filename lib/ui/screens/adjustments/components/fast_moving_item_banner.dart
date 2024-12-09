@@ -14,6 +14,22 @@ class FastMovingItemBanner extends ConsumerWidget {
     final AsyncValue<List<ItemAdjustment>> fastMovingItems =
         ref.watch(fastMovingItemsProvider);
 
+    void showItemList() {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => DraggableScrollableSheet(
+          builder: (context, controller) => FastMovingItems(
+            scrollController: controller,
+          ),
+          minChildSize: 0.3,
+          maxChildSize: 0.9,
+          expand: false,
+        ),
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+      );
+    }
+
     return switch (fastMovingItems) {
       AsyncData(:final value) => value.isNotEmpty
           ? Padding(
@@ -29,14 +45,7 @@ class FastMovingItemBanner extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10)),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
-                  onTap: () => {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => const FastMovingItems(),
-                      backgroundColor: Colors.white,
-                      isScrollControlled: true,
-                    )
-                  },
+                  onTap: showItemList,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 15,

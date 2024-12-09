@@ -275,5 +275,6 @@
   "adjustment": "Adjustment",
   "submit_x": "Submit {}",
   "create_x": "Create {}",
-  "x_fast_moving_items": "{} items from last SO"
+  "x_fast_moving_items": "{} items from last SO",
+  "adjustment_history": "Adjustment History"
 }

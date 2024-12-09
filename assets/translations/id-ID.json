@@ -276,5 +276,6 @@
   "adjustment": "Penyesuaian",
   "submit_x": "Simpan {}",
   "create_x": "Buat {}",
-  "x_fast_moving_items": "{} barang dari SO sebelumnya"
+  "x_fast_moving_items": "{} barang dari SO sebelumnya",
+  "adjustment_history": "Riwayat Penyesuaian"
 }
