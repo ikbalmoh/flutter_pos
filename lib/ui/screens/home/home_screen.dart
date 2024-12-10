@@ -126,6 +126,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     log('barcodes canned: $barcode');
     ScanItemResult result = objectBox.getItemByBarcode(barcode);
     if (result.item != null) {
+      final isStockAvailable =
+          ref.read(ItemsStreamProvider().notifier).isScannedItemStockAvailable(result);
+      if (isStockAvailable == false) {
+        AppAlert.confirm(
+          context,
+          title: result.item!.itemName,
+          subtitle: 'x_stock_empty'.tr(args: [result.item!.itemName]),
+        );
+        return;
+      }
       ref.read(cartProvider.notifier).addToCart(
             result.item!,
             variant: result.variant,

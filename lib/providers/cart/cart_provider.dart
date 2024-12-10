@@ -528,7 +528,7 @@ class Cart extends _$Cart {
 
         int requirementQty = cartPromo.requirementQuantity!;
         int eligibleQty = cartPromo.kelipatan == true
-            ? (itemCart.quantity ~/ requirementQty) * requirementQty
+            ? (itemCart.quantity ~/ requirementQty)
             : requirementQty;
 
         double finalDiscountTotal = discountTotal * eligibleQty;

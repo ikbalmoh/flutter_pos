@@ -71,7 +71,7 @@ class ItemRepository implements ItemRepositoryProtocol {
 
   @override
   Future<List<Item>> fetchItems(
-      {String? idCategory, bool? fromLastSync}) async {
+      {String? idCategory, bool? fromLastSync, bool? fullSync = false}) async {
     const storage = FlutterSecureStorage();
 
     int? lastUpdate;
@@ -93,7 +93,7 @@ class ItemRepository implements ItemRepositoryProtocol {
         return [];
       }
       final data = await api.items(outlet.idOutlet,
-          idCategory: idCategory, lastUpdate: lastUpdate);
+          idCategory: idCategory, lastUpdate: lastUpdate, fullSync: fullSync);
       List<Item> items = [];
       for (var i = 0; i < List.from(data['data']).length; i++) {
         var json = data['data'][i];

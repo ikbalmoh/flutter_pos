@@ -37,6 +37,7 @@ class ItemsStream extends _$ItemsStream {
 
   Future<void> loadItems({
     bool refresh = false,
+    bool fullSync = false,
     Function(String progress)? progressCallback,
   }) async {
     log('LOAD ITEMS: $refresh');
@@ -61,8 +62,10 @@ class ItemsStream extends _$ItemsStream {
         }
 
         final DateTime startLoad = DateTime.now();
-        List<Item> items =
-            await itemRepository.fetchItems(idCategory: category.idCategory);
+        List<Item> items = await itemRepository.fetchItems(
+          idCategory: category.idCategory,
+          fullSync: fullSync,
+        );
         final DateTime startSave = DateTime.now();
         objectBox.putItems(items);
         final DateTime endSate = DateTime.now();
@@ -183,5 +186,18 @@ class ItemsStream extends _$ItemsStream {
     } catch (e) {
       throw Exception(e);
     }
+  }
+
+  bool isScannedItemStockAvailable(ScanItemResult result) {
+    if (result.item != null) {
+      if (result.item!.stockControl == false) {
+        return false;
+      }
+      if (result.variant != null) {
+        return result.variant!.stockItem > 0;
+      }
+      return result.item!.stockItem > 0;
+    }
+    return false;
   }
 }

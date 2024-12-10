@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
@@ -10,7 +9,6 @@ import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/components/hold/hold_form.dart';
-import 'package:selleri/utils/app_alert.dart';
 
 class HomeMenu extends ConsumerWidget {
   const HomeMenu({super.key});
@@ -37,17 +35,6 @@ class HomeMenu extends ConsumerWidget {
       } else {
         ref.read(cartProvider.notifier).initCart();
       }
-    }
-
-    void onSignOut() {
-      AppAlert.confirm(
-        context,
-        title: 'logout_confirmation'.tr(),
-        onConfirm: () {
-          ref.read(authNotifierProvider.notifier).logout();
-        },
-        confirmLabel: 'logout'.tr(),
-      );
     }
 
     return MenuAnchor(
@@ -153,14 +140,6 @@ class HomeMenu extends ConsumerWidget {
           ),
           child:
               Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
-        ),
-        MenuItemButton(
-          onPressed: onSignOut,
-          leadingIcon: const Icon(
-            CupertinoIcons.square_arrow_left,
-            color: Colors.red,
-          ),
-          child: Text('logout'.tr()),
         ),
       ],
     );
