@@ -1,14 +1,20 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/config/api_url.dart';
 import 'package:selleri/providers/adjustment/adjustment_history_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:selleri/data/models/adjustment_history.dart' as model;
+import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/file_download.dart';
 import 'package:selleri/utils/formater.dart';
 
 class AdjustmentListHistory extends ConsumerStatefulWidget {
@@ -23,6 +29,8 @@ class AdjustmentListHistory extends ConsumerStatefulWidget {
 
 class _AdjustmentListHistoryState extends ConsumerState<AdjustmentListHistory> {
   late final ScrollController _scrollController;
+  FileDownload downloader = FileDownload();
+  String? downloading;
 
   @override
   void initState() {
@@ -46,6 +54,46 @@ class _AdjustmentListHistoryState extends ConsumerState<AdjustmentListHistory> {
       ref.read(adjustmentHistoryProvider.notifier).loadAdjustmentHistory(
             page: pagination.currentPage + 1,
           );
+    }
+  }
+
+  void download(model.AdjustmentHistory adjustment) async {
+    try {
+      AppAlert.toast('downloading'.tr());
+
+      log('download ${adjustment.idAdjustment}');
+      setState(() {
+        downloading = adjustment.idAdjustment;
+      });
+
+      String dateString = DateTimeFormater.dateToString(
+          adjustment.adjustmentDate,
+          format: 'y-MM-dd');
+
+      Map<String, dynamic> params = {
+        "date": dateString,
+        "type": "export",
+        "id_outlet": ref.read(outletProvider).value is OutletSelected
+            ? (ref.read(outletProvider).value as OutletSelected).outlet.idOutlet
+            : ''
+      };
+      String fileName = 'sales-report-$dateString.xlsx';
+
+      String path = await downloader.download(
+        ApiUrl.reportAdjustment,
+        openAfterDownload: true,
+        fileName: fileName,
+        params: params,
+        options: Options(method: 'POST'),
+      );
+
+      setState(() {
+        downloading = null;
+      });
+      AppAlert.toast('stored_at'.tr(args: [path]));
+    } on Exception catch (e) {
+      log('Download error: $e');
+      AppAlert.toast(e.toString(), backgroundColor: Colors.red);
     }
   }
 
@@ -90,11 +138,22 @@ class _AdjustmentListHistoryState extends ConsumerState<AdjustmentListHistory> {
                     Container(
                   width: double.maxFinite,
                   color: Colors.grey.shade100,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Text(DateTimeFormater.dateToString(
-                      header.adjustmentDate,
-                      format: 'dd MMM y')),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(DateTimeFormater.dateToString(header.adjustmentDate,
+                          format: 'dd MMM y')),
+                      TextButton.icon(
+                          icon: const Icon(
+                            CupertinoIcons.cloud_download,
+                            size: 16,
+                          ),
+                          onPressed: () => download(header),
+                          label: Text('download'.tr()))
+                    ],
+                  ),
                 ),
                 itemComparator: (element1, element2) =>
                     DateTimeFormater.stringToTimestamp(element1.adjustmentDate)

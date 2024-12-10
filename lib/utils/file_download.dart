@@ -18,14 +18,16 @@ class FileDownload {
       {required String fileName,
       Map<String, dynamic>? params,
       Function(double progress)? callback,
+      Options? options,
       bool? openAfterDownload}) async {
     try {
       String savePath = await _getFilePath(fileName);
 
       log('Download: url => $urlPath\n fileName => $savePath');
 
-      await fetch().download(urlPath, savePath, queryParameters: params,
-          onReceiveProgress: (receive, total) {
+      await fetch().download(urlPath, savePath,
+          queryParameters: params,
+          options: options, onReceiveProgress: (receive, total) {
         log('downloading: $receive/$total');
         if (callback != null) {
           callback((receive / total) * 100);
@@ -45,9 +47,7 @@ class FileDownload {
   Future<String> _getFilePath(String uniqueFileName) async {
     String path = '';
 
-    Directory? dir = await getDownloadsDirectory();
-
-    dir ??= await getApplicationCacheDirectory();
+    Directory? dir = await getApplicationDocumentsDirectory();
 
     path = '${dir.path}/$uniqueFileName';
 
