@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
+import 'package:selleri/ui/screens/adjustments/components/adjustment_list_history.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class SubmitAdjustmentSheet extends ConsumerStatefulWidget {
@@ -30,6 +31,23 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
     super.dispose();
   }
 
+  void showHistory() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.white,
+      showDragHandle: true,
+      builder: (context) => DraggableScrollableSheet(
+        builder: (_, controller) => AdjustmentListHistory(
+          controller: controller,
+        ),
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
+        expand: false,
+      ),
+    );
+  }
+
   void onSubmit(BuildContext context) async {
     setState(() {
       isLoading = true;
@@ -42,11 +60,11 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
         isLoading = false;
       });
       if (context.mounted) {
-        AppAlert.snackbar(context, message);
-      }
-      if (context.mounted) {
-        // ignore: use_build_context_synchronously
-        context.pop();
+        while (context.canPop()) {
+          context.pop();
+        }
+        AppAlert.toast(message);
+        showHistory();
       }
     } on Exception catch (e) {
       setState(() {
@@ -112,8 +130,9 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
                 child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      foregroundColor: Colors.blue,
-                      side: const BorderSide(color: Colors.blue),
+                      disabledForegroundColor: Colors.grey,
+                      // side: const BorderSide(color: Colors.blue),
+                      disabledBackgroundColor: Colors.grey.shade100,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),

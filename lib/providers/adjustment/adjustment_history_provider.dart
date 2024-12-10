@@ -9,15 +9,17 @@ part 'adjustment_history_provider.g.dart';
 class AdjustmentHistory extends _$AdjustmentHistory {
   @override
   FutureOr<Pagination<model.AdjustmentHistory>> build() async {
-    load(page: 1);
+    loadAdjustmentHistory(page: 1);
     return future;
   }
 
-  Future<void> load({int page = 1}) async {
+  Future<void> loadAdjustmentHistory({int page = 1}) async {
     try {
       final api = AdjustmentApi();
 
-      if (page == 1) {
+      final int nextPage = page;
+
+      if (nextPage == 1) {
         state = const AsyncLoading();
       } else {
         state = AsyncData(state.value!.copyWith(loading: true));
@@ -25,9 +27,9 @@ class AdjustmentHistory extends _$AdjustmentHistory {
 
       List<model.AdjustmentHistory> history = [];
 
-      var pagination = await api.adjustmentHistory(page: page);
+      var pagination = await api.adjustmentHistory(page: nextPage);
 
-      if (page > 1) {
+      if (nextPage > 1) {
         history =
             List.from(state.value?.data as Iterable<model.AdjustmentHistory>);
         history = history

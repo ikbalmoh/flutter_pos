@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,18 +11,47 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:selleri/data/models/adjustment_history.dart' as model;
 import 'package:selleri/utils/formater.dart';
 
-class AdjustmentListHistory extends ConsumerWidget {
+class AdjustmentListHistory extends ConsumerStatefulWidget {
   const AdjustmentListHistory({super.key, required this.controller});
 
   final ScrollController controller;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final history = ref.watch(adjustmentHistoryProvider);
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _AdjustmentListHistoryState();
+}
 
-    controller.addListener(() {
-      print(controller.position.extentAfter);
-    });
+class _AdjustmentListHistoryState extends ConsumerState<AdjustmentListHistory> {
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = widget.controller;
+    _scrollController.addListener(loadMore);
+  }
+
+  void loadMore() {
+    final pagination = ref.read(adjustmentHistoryProvider).asData?.value;
+    if (pagination == null ||
+        pagination.to == null ||
+        (pagination.to != null && pagination.currentPage >= pagination.to!)) {
+      return;
+    }
+
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !(pagination.loading ?? false)) {
+      log('Load adjustment... ${pagination.currentPage}/${pagination.to}');
+      ref.read(adjustmentHistoryProvider.notifier).loadAdjustmentHistory(
+            page: pagination.currentPage + 1,
+          );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final history = ref.watch(adjustmentHistoryProvider);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -46,12 +77,15 @@ class AdjustmentListHistory extends ConsumerWidget {
           child: switch (history) {
             AsyncData(:final value) =>
               GroupedListView<model.AdjustmentHistory, String>(
-                controller: controller,
+                controller: _scrollController,
                 elements: value.data ?? [],
                 padding: const EdgeInsets.symmetric(vertical: 7.5),
-                groupBy: (element) => DateTimeFormater.dateToString(
-                    element.adjustmentDate,
-                    format: 'dd MMM Y'),
+                groupBy: (model.AdjustmentHistory element) => DateTime(
+                  element.adjustmentDate.year,
+                  element.adjustmentDate.month,
+                  element.adjustmentDate.day,
+                ).toString(),
+                order: GroupedListOrder.DESC,
                 groupHeaderBuilder: (model.AdjustmentHistory header) =>
                     Container(
                   width: double.maxFinite,
@@ -63,14 +97,16 @@ class AdjustmentListHistory extends ConsumerWidget {
                       format: 'dd MMM y')),
                 ),
                 itemComparator: (element1, element2) =>
-                    element1.adjustmentDate.compareTo(element2.adjustmentDate),
+                    DateTimeFormater.stringToTimestamp(element1.adjustmentDate)
+                        .compareTo(
+                            DateTimeFormater.stringToTimestamp(element2)),
                 itemBuilder: (context, element) => Container(
                   decoration: BoxDecoration(
                       border: Border(
                           bottom: BorderSide(
                               width: 0.5, color: Colors.grey.shade200))),
                   padding:
-                      const EdgeInsets.symmetric(vertical: 7.5, horizontal: 15),
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -81,37 +117,40 @@ class AdjustmentListHistory extends ConsumerWidget {
                             .titleSmall
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
-                      Text(element.description,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.black87)),
+                      element.description != ''
+                          ? Text(element.description,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.black87))
+                          : Container(),
                     ],
                   ),
                 ),
                 useStickyGroupSeparators: true,
                 floatingHeader: true,
-                footer: value.loading == true
-                    ? const ItemListSkeleton(
-                        leading: false,
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Center(
-                          child: Text(
-                            'x_data_displayed'.tr(args: [
-                              CurrencyFormat.currency(
-                                value.total,
-                                symbol: false,
-                              )
-                            ]),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.grey.shade500),
+                footer:
+                    value.loading == true || value.currentPage < value.lastPage
+                        ? const ItemListSkeleton(
+                            leading: false,
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Center(
+                              child: Text(
+                                'x_data_displayed'.tr(args: [
+                                  CurrencyFormat.currency(
+                                    value.total,
+                                    symbol: false,
+                                  )
+                                ]),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: Colors.grey.shade500),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
               ),
             AsyncError(:final error, :final stackTrace) => ErrorHandler(
                 error: error.toString(),

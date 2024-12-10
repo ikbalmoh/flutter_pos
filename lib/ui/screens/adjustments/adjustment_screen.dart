@@ -43,8 +43,6 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
   bool canListenBarcode = false;
   TextEditingController textSearchController = TextEditingController();
   FocusNode focusSearch = FocusNode();
-  final DraggableScrollableController sheetController =
-      DraggableScrollableController();
 
   @override
   void initState() {
@@ -130,7 +128,6 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       backgroundColor: Colors.white,
       showDragHandle: true,
       builder: (context) => DraggableScrollableSheet(
-        controller: sheetController,
         builder: (_, controller) => AdjustmentListHistory(
           controller: controller,
         ),
@@ -203,119 +200,132 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
     );
 
     return Scaffold(
-        drawer: const AppDrawer(),
-        appBar: searchVisible
-            ? SearchAppBar(
-                onBack: () => setState(
-                  () {
-                    searchVisible = false;
-                    textSearchController.text = '';
-                    search = '';
-                  },
-                ),
-                onChanged: onSearchItems,
-                controller: textSearchController,
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) {
-                            return const BarcodeScanner();
-                          });
-                    },
-                    icon: const Icon(Icons.document_scanner_outlined),
-                  ),
-                ],
-              )
-            : AppBar(
-                title: Text('stock_adjustments'.tr()),
-                automaticallyImplyLeading: false,
-                elevation: 1,
-                leading: Builder(builder: (context) {
-                  return IconButton(
-                    onPressed: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                    icon: const Icon(Icons.menu),
-                  );
-                }),
-                actions: [
-                  IconButton(
-                    tooltip: 'search'.tr(),
-                    onPressed: () {
-                      setState(() {
-                        searchVisible = true;
-                      });
-                      focusSearch.requestFocus();
-                    },
-                    icon: const Icon(CupertinoIcons.search),
-                  ),
-                  TextButton.icon(
-                    style: TextButton.styleFrom(
-                        backgroundColor: Colors.teal.shade50),
-                    onPressed: pickAdjustmentDate,
-                    label: Text(DateTimeFormater.dateToString(
-                        ref.watch(adjustmentProvider).date,
-                        format: 'd MMM y')),
-                    icon: const Icon(CupertinoIcons.calendar),
-                  ),
-                  MenuAnchor(
-                    builder: (BuildContext context, MenuController controller,
-                        Widget? child) {
-                      return IconButton(
-                        onPressed: () {
-                          if (controller.isOpen) {
-                            controller.close();
-                          } else {
-                            controller.open();
-                          }
-                        },
-                        icon: const Icon(Icons.more_vert),
-                        tooltip: 'show_menu'.tr(),
-                      );
-                    },
-                    menuChildren: [
-                      MenuItemButton(
-                        leadingIcon: const Icon(CupertinoIcons.square_list),
-                        onPressed: () => showHistory(),
-                        child: Text('adjustment_history'.tr()),
-                      )
-                    ],
-                  )
-                ],
+      drawer: const AppDrawer(),
+      appBar: searchVisible
+          ? SearchAppBar(
+              onBack: () => setState(
+                () {
+                  searchVisible = false;
+                  textSearchController.text = '';
+                  search = '';
+                },
               ),
-        body: Row(
-          children: [
-            Expanded(child: itemContainer),
-            isTablet
-                ? Container(
-                    width: ResponsiveBreakpoints.of(context).largerThan(TABLET)
-                        ? 400
-                        : MediaQuery.of(context).size.width * 0.5,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
-                      border: Border(
-                        left: BorderSide(
-                          width: 1,
-                          color: Colors.grey.shade200,
-                        ),
+              onChanged: onSearchItems,
+              controller: textSearchController,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return const BarcodeScanner();
+                        });
+                  },
+                  icon: const Icon(Icons.document_scanner_outlined),
+                ),
+              ],
+            )
+          : AppBar(
+              title: Text('stock_adjustments'.tr()),
+              automaticallyImplyLeading: false,
+              elevation: 1,
+              leading: Builder(builder: (context) {
+                return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: const Icon(Icons.menu),
+                );
+              }),
+              actions: [
+                IconButton(
+                  tooltip: 'search'.tr(),
+                  onPressed: () {
+                    setState(() {
+                      searchVisible = true;
+                    });
+                    focusSearch.requestFocus();
+                  },
+                  icon: const Icon(CupertinoIcons.search),
+                ),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                      backgroundColor: Colors.teal.shade50),
+                  onPressed: pickAdjustmentDate,
+                  label: Text(DateTimeFormater.dateToString(
+                      ref.watch(adjustmentProvider).date,
+                      format: 'd MMM y')),
+                  icon: const Icon(CupertinoIcons.calendar),
+                ),
+                MenuAnchor(
+                  builder: (BuildContext context, MenuController controller,
+                      Widget? child) {
+                    return IconButton(
+                      onPressed: () {
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
+                      },
+                      icon: const Icon(Icons.more_vert),
+                      tooltip: 'show_menu'.tr(),
+                    );
+                  },
+                  menuChildren: [
+                    MenuItemButton(
+                      leadingIcon: const Icon(CupertinoIcons.square_list),
+                      onPressed: () => showHistory(),
+                      child: Text('adjustment_history'.tr()),
+                    )
+                  ],
+                )
+              ],
+            ),
+      body: Row(
+        children: [
+          Expanded(child: itemContainer),
+          isTablet
+              ? Container(
+                  width: ResponsiveBreakpoints.of(context).largerThan(TABLET)
+                      ? 400
+                      : MediaQuery.of(context).size.width * 0.5,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    border: Border(
+                      left: BorderSide(
+                        width: 1,
+                        color: Colors.grey.shade200,
                       ),
                     ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: const AdjustmentCart(
-                          asWidget: true,
-                        ),
+                  ),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: const AdjustmentCart(
+                        asWidget: true,
                       ),
                     ),
-                  )
-                : Container(),
-          ],
-        ));
+                  ),
+                )
+              : Container(),
+        ],
+      ),
+      floatingActionButton: !isTablet &&
+              ref.watch(adjustmentProvider).items.isNotEmpty
+          ? FloatingActionButton(
+              onPressed: () => showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) => const AdjustmentCart()),
+              child: Badge(
+                label:
+                    Text(ref.watch(adjustmentProvider).items.length.toString()),
+                child: const Icon(CupertinoIcons.cart_fill),
+              ))
+          : null,
+    );
   }
 }
