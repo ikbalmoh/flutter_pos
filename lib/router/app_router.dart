@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
+import 'package:selleri/ui/screens/adjustments/adjustment_history_screen.dart';
 import 'package:selleri/ui/screens/holded/holded_screen.dart';
 import 'package:selleri/ui/screens/item/add_item_screen.dart';
 import 'package:selleri/ui/screens/item/manage_item_variants_screen.dart';
@@ -119,6 +120,11 @@ GoRouter router(RouterRef ref) {
           name: Routes.adjustments,
           path: Routes.adjustments,
           builder: (context, state) => const AdjustmentScreen(),
+        ),
+        GoRoute(
+          name: Routes.adjustmentsHistory,
+          path: Routes.adjustmentsHistory,
+          builder: (context, state) => const AdjustmentHistoryScreen(),
         ),
         GoRoute(
           name: Routes.settings,

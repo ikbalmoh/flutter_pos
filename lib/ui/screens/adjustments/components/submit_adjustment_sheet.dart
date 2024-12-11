@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
-import 'package:selleri/ui/screens/adjustments/components/adjustment_list_history.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class SubmitAdjustmentSheet extends ConsumerStatefulWidget {
@@ -31,23 +31,6 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
     super.dispose();
   }
 
-  void showHistory() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      backgroundColor: Colors.white,
-      showDragHandle: true,
-      builder: (context) => DraggableScrollableSheet(
-        builder: (_, controller) => AdjustmentListHistory(
-          controller: controller,
-        ),
-        minChildSize: 0.3,
-        maxChildSize: 0.9,
-        expand: false,
-      ),
-    );
-  }
-
   void onSubmit(BuildContext context) async {
     setState(() {
       isLoading = true;
@@ -60,11 +43,9 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
         isLoading = false;
       });
       if (context.mounted) {
-        while (context.canPop()) {
-          context.pop();
-        }
-        AppAlert.toast(message);
-        showHistory();
+        context.pop();
+        context.push(Routes.adjustmentsHistory);
+        AppAlert.snackbar(context, message);
       }
     } on Exception catch (e) {
       setState(() {

@@ -5,16 +5,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_cart.dart';
-import 'package:selleri/ui/screens/adjustments/components/adjustment_list_history.dart';
 import 'package:selleri/ui/screens/adjustments/components/fast_moving_item_banner.dart';
 import 'package:selleri/ui/screens/adjustments/components/item_container.dart';
 import 'package:selleri/ui/screens/home/components/item_categories.dart';
@@ -119,23 +120,6 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       _scrollController.animateTo(0,
           duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     }
-  }
-
-  void showHistory() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      backgroundColor: Colors.white,
-      showDragHandle: true,
-      builder: (context) => DraggableScrollableSheet(
-        builder: (_, controller) => AdjustmentListHistory(
-          controller: controller,
-        ),
-        minChildSize: 0.3,
-        maxChildSize: 0.9,
-        expand: false,
-      ),
-    );
   }
 
   void pickAdjustmentDate() async {
@@ -275,7 +259,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                   menuChildren: [
                     MenuItemButton(
                       leadingIcon: const Icon(CupertinoIcons.square_list),
-                      onPressed: () => showHistory(),
+                      onPressed: () => context.push(Routes.adjustmentsHistory),
                       child: Text('adjustment_history'.tr()),
                     )
                   ],

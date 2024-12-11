@@ -10,13 +10,13 @@ class AdjustmentHistory with _$AdjustmentHistory {
     required String idAdjustment,
     required String adjustmentNo,
     required DateTime adjustmentDate,
-    required String description,
     required DateTime createdAt,
     required String createdBy,
     required bool needApproval,
-    required String approval,
+    String? approval,
+    String? createdName,
     String? approvalNotes,
-    required String createdName,
+    String? description,
   }) = _AdjustmentHistory;
 
   factory AdjustmentHistory.fromJson(Map<String, dynamic> json) =>
