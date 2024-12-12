@@ -179,13 +179,16 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       drawer: const AppDrawer(),
       appBar: searchVisible
           ? SearchAppBar(
-              onBack: () => setState(
-                () {
-                  searchVisible = false;
-                  textSearchController.text = '';
-                  search = '';
-                },
-              ),
+              onBack: () {
+                setState(
+                  () {
+                    searchVisible = false;
+                    textSearchController.text = '';
+                    search = '';
+                  },
+                );
+                onSearchItems('');
+              },
               onChanged: onSearchItems,
               controller: textSearchController,
               actions: [
