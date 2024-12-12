@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:selleri/data/models/item.dart';
-import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/router/routes.dart';
@@ -19,7 +17,6 @@ import 'package:selleri/ui/screens/adjustments/components/adjustment_cart.dart';
 import 'package:selleri/ui/screens/adjustments/components/fast_moving_item_banner.dart';
 import 'package:selleri/ui/screens/adjustments/components/item_container.dart';
 import 'package:selleri/ui/screens/home/components/item_categories.dart';
-import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
@@ -102,13 +99,8 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
   void onBarcodeScanned(barcode) {
     if (!canListenBarcode) return;
     log('barcodes canned: $barcode');
-    ScanItemResult result = objectBox.getItemByBarcode(barcode);
-    if (result.item != null) {
-      // ADD TO CART
-      AppAlert.toast('x_added'.tr(args: [result.item!.itemName]));
-    } else {
-      AppAlert.snackbar(context, 'x_not_found'.tr(args: [barcode]));
-    }
+    textSearchController.text = barcode;
+    onSearchItems(barcode);
   }
 
   void onChangeCategory(String id) {
@@ -202,7 +194,13 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                     showCupertinoModalPopup(
                         context: context,
                         builder: (context) {
-                          return const BarcodeScanner();
+                          return BarcodeScanner(
+                            onCaptured: (barcode, cb) {
+                              context.pop();
+                              textSearchController.text = barcode;
+                              onSearchItems(barcode);
+                            },
+                          );
                         });
                   },
                   icon: const Icon(Icons.document_scanner_outlined),

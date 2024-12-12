@@ -14,6 +14,7 @@ import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
+import 'package:selleri/ui/components/cart/add_barcode_item.dart';
 import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/ui/screens/cart/cart_screen.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
@@ -121,13 +122,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  void onBarcodeCaptured(barcode, cb) async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isDismissible: true,
+      builder: (context) {
+        return AddBarcodeItem(barcode: barcode);
+      },
+    );
+    cb();
+  }
+
   void onBarcodeScanned(barcode) {
     if (!canListenBarcode) return;
     log('barcodes canned: $barcode');
     ScanItemResult result = objectBox.getItemByBarcode(barcode);
     if (result.item != null) {
-      final isStockAvailable =
-          ref.read(ItemsStreamProvider().notifier).isScannedItemStockAvailable(result);
+      final isStockAvailable = ref
+          .read(ItemsStreamProvider().notifier)
+          .isScannedItemStockAvailable(result);
       if (isStockAvailable == false) {
         AppAlert.confirm(
           context,
@@ -223,7 +237,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       showCupertinoModalPopup(
                           context: context,
                           builder: (context) {
-                            return const BarcodeScanner();
+                            return BarcodeScanner(
+                              onCaptured: onBarcodeCaptured,
+                            );
                           });
                     },
                     icon: const Icon(Icons.document_scanner_outlined))

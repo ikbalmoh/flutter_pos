@@ -5,12 +5,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:selleri/ui/components/cart/add_barcode_item.dart';
 import 'scanner_button_widgets.dart';
 import 'scanner_error_widget.dart';
 
 class BarcodeScanner extends StatefulWidget {
-  const BarcodeScanner({super.key});
+  const BarcodeScanner({super.key, required this.onCaptured});
+
+  final Function(String, Function) onCaptured;
 
   @override
   State<BarcodeScanner> createState() => _BarcodeScannerState();
@@ -59,15 +60,7 @@ class _BarcodeScannerState extends State<BarcodeScanner>
       controller.start();
       return;
     }
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      isDismissible: true,
-      builder: (context) {
-        return AddBarcodeItem(barcode: barcode);
-      },
-    );
-    controller.start();
+    widget.onCaptured(barcode, () => controller.start());
   }
 
   @override
