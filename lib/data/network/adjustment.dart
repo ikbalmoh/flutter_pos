@@ -43,11 +43,10 @@ class AdjustmentApi {
       'page': page,
       'id_outlet': idOutlet,
       'per_page': 30,
-      'q': search,
-      'id_category': idCategory,
-      'date': date != null
-          ? DateTimeFormater.dateToString(date, format: 'y-MM-dd')
-          : ''
+      'q': search ?? '',
+      'id_category': idCategory ?? '',
+      'date': DateTimeFormater.dateToString(date ?? DateTime.now(),
+          format: 'y-MM-dd')
     };
     try {
       final res = await api.get(ApiUrl.listItemsForAdjustment,

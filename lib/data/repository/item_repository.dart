@@ -135,11 +135,12 @@ class ItemRepository implements ItemRepositoryProtocol {
     final api = AdjustmentApi();
     try {
       var items = await api.itemsForAdjustment(
-          idOutlet: outlet!.idOutlet,
-          page: page,
-          date: date,
-          search: search,
-          idCategory: idCategory);
+        idOutlet: outlet!.idOutlet,
+        page: page,
+        date: date,
+        search: search,
+        idCategory: idCategory,
+      );
       return items;
     } catch (e, trace) {
       log('Fetch items adjustments Error: $e => $trace');

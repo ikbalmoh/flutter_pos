@@ -17,7 +17,7 @@ class AdjustmentItems extends _$AdjustmentItems {
     int page = 1,
     DateTime? date,
     String? search,
-    String? idCategory,
+    String? idCategory = '',
   }) async {
     try {
       final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
@@ -29,7 +29,11 @@ class AdjustmentItems extends _$AdjustmentItems {
       }
 
       var items = await itemRepository.fetchAdjustmnetItems(
-          page: page, date: date, search: search, idCategory: idCategory);
+        page: page,
+        date: date,
+        search: search,
+        idCategory: idCategory,
+      );
 
       List<ItemAdjustment> data = [];
 
