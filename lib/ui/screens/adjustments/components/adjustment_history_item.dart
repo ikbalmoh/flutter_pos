@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/adjustment_history.dart';
+import 'package:selleri/ui/screens/adjustments/components/adjustment_status_badge.dart';
 
 class AdjustmentHistoryItem extends StatelessWidget {
   final AdjustmentHistory adjustment;
@@ -64,6 +65,7 @@ class AdjustmentHistoryItem extends StatelessWidget {
       ),
       onTap: () => onSelect(adjustment),
       tileColor: color,
+      trailing: AdjustmentStatusBadge(status: adjustment.approval),
     );
   }
 }

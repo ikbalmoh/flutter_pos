@@ -242,6 +242,11 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                   icon: const Icon(CupertinoIcons.calendar),
                 ),
                 MenuAnchor(
+                  style: MenuStyle(backgroundColor:
+                      WidgetStateProperty.resolveWith<Color?>(
+                          (Set<WidgetState> states) {
+                    return Colors.white;
+                  })),
                   builder: (BuildContext context, MenuController controller,
                       Widget? child) {
                     return IconButton(
@@ -261,6 +266,17 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                       leadingIcon: const Icon(CupertinoIcons.square_list),
                       onPressed: () => context.push(Routes.adjustmentsHistory),
                       child: Text('adjustment_history'.tr()),
+                    ),
+                    const PopupMenuDivider(),
+                    MenuItemButton(
+                      leadingIcon: Icon(itemLayoutGrid
+                          ? CupertinoIcons.rectangle_grid_1x2
+                          : CupertinoIcons.square_grid_2x2_fill),
+                      onPressed: () => setState(() {
+                        itemLayoutGrid = !itemLayoutGrid;
+                      }),
+                      child: Text(
+                          itemLayoutGrid ? 'list_view'.tr() : 'grid_view'.tr()),
                     )
                   ],
                 )

@@ -6,6 +6,7 @@ import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/ui/components/generic/qty_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/utils/formater.dart';
 
 class AdjustmentItemForm extends ConsumerStatefulWidget {
   final ItemAdjustment item;
@@ -21,6 +22,7 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
   final noteController = TextEditingController();
 
   late double qty;
+  double qtyDiff = 0;
 
   @override
   void initState() {
@@ -42,8 +44,8 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
   }
 
   void onSave(BuildContext context) async {
-    ItemAdjustment item =
-        widget.item.copyWith(qtyActual: qty, note: noteController.text);
+    ItemAdjustment item = widget.item.copyWith(
+        qtyActual: qty, note: noteController.text, qtyDiff: qtyDiff.toInt().abs());
     // Update Item
     ref.read(adjustmentProvider.notifier).addToCart(item);
     context.pop();
@@ -110,6 +112,8 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
                             onChange: (value) {
                               setState(() {
                                 qty = value.toDouble();
+                                qtyDiff =
+                                    (value - (widget.item.qtySystem ?? 0));
                               });
                             }),
                       ],
@@ -130,12 +134,8 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
                           'different'.tr(),
                           style: labelStyle,
                         ),
-                        Text(
-                          (qty - (widget.item.qtySystem ?? 0))
-                              .toInt()
-                              .abs()
-                              .toString(),
-                        ),
+                        Text(CurrencyFormat.currency(qtyDiff.abs(),
+                            symbol: false)),
                       ],
                     ),
                   ),

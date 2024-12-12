@@ -54,35 +54,14 @@ class ItemGrid extends StatelessWidget {
                           const BorderRadius.vertical(top: Radius.circular(10)),
                       color: Colors.grey.shade200,
                     ),
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Text(
-                            item.itemName.substring(0, 3).toUpperCase(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall
-                                ?.copyWith(
+                    child: Center(
+                      child: Text(
+                        item.itemName.substring(0, 3).toUpperCase(),
+                        style:
+                            Theme.of(context).textTheme.displaySmall?.copyWith(
                                   color: Colors.grey.shade400,
                                 ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 5,
-                          left: 5,
-                          child: Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: 5,
-                            direction: Axis.horizontal,
-                            children: [
-                              StockBadge(
-                                stockItem: item.stockItem ?? 0,
-                                stockControl: item.stockControl ?? false,
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   ),
                 ),

@@ -8,6 +8,7 @@ import 'package:selleri/ui/screens/adjustments/components/adjustment_item_form.d
 import 'package:selleri/ui/screens/adjustments/components/submit_adjustment_sheet.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/utils/formater.dart';
 
 class AdjustmentCart extends ConsumerWidget {
   const AdjustmentCart({super.key, this.asWidget});
@@ -89,16 +90,93 @@ class AdjustmentCart extends ConsumerWidget {
                       if (item.variantName != null) {
                         itemName += ' - ${item.variantName}';
                       }
-                      return ListTile(
-                        tileColor: Colors.white,
-                        title: Text(itemName),
-                        trailing: Text(
-                          item.qtyActual.toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        subtitle: item.note != '' ? Text(item.note!) : null,
-                        dense: true,
+                      return InkWell(
                         onTap: () => onPressItem(item),
+                        child: Material(
+                          shape: Border(
+                            bottom: BorderSide(
+                              color: Colors.blueGrey.shade50,
+                            ),
+                          ),
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 5,
+                              horizontal: 10,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            itemName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "${'system'.tr()}: ${CurrencyFormat.currency(item.qtySystem, symbol: false)}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall
+                                                    ?.copyWith(
+                                                      color: Colors.black54,
+                                                    ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Text(
+                                                "${'different'.tr()}: ${CurrencyFormat.currency(item.qtyDiff, symbol: false)}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall
+                                                    ?.copyWith(
+                                                      color: Colors.black54,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey.shade100,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 7.5, vertical: 5),
+                                      child: Text(
+                                        CurrencyFormat.currency(
+                                          item.qtyActual,
+                                          symbol: false,
+                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                item.note != null && item.note != ''
+                                    ? Text(item.note!)
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+                        ),
                       );
                     },
                     itemCount: cart.items.length,

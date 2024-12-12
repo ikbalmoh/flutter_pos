@@ -80,6 +80,23 @@ class AdjustmentApi {
     }
   }
 
+  Future<List<ItemAdjustment>> adjustmentDetailItems(
+      {required String id}) async {
+    try {
+      final params = {"per_page": 0};
+      final res = await api
+          .get(ApiUrl.adjustmentDetails.replaceFirst('{id}', id), data: params);
+      List<Map<String, dynamic>> listJson = List.from(res.data['data']);
+      final List<ItemAdjustment> data =
+          listJson.map((json) => ItemAdjustment.fromDetail(json)).toList();
+      return data;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['msg'] ?? e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> createAdjustment(String idOutlet, Adjustment data) async {
     try {
       final payload = {

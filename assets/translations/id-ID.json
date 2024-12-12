@@ -146,7 +146,8 @@
   "deleted": "Dihapus",
   "available_cash": "Uang Tunai yang Ada",
   "different": "Selisih",
-  "new": "{} Baru",
+  "new_x": "{} Baru",
+  "new": "Baru",
   "dob": "Tgl Lahir",
   "field_required": "{} harus diisi",
   "field_cannot_empty": "{} tidak boleh kosong",
@@ -277,5 +278,8 @@
   "submit_x": "Simpan {}",
   "create_x": "Buat {}",
   "x_fast_moving_items": "{} barang cepat terjual",
-  "adjustment_history": "Riwayat Penyesuaian"
+  "adjustment_history": "Riwayat Penyesuaian",
+  "duplicate_x": "Duplikasi {}",
+  "system": "Sistem",
+  "created_by": "Dibuat Oleh"
 }

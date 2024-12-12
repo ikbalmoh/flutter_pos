@@ -16,21 +16,17 @@ class ItemAdjustment with _$ItemAdjustment {
     int? variantId,
     String? variantName,
     required String itemName,
-    required String idCategory,
-    required String categoryName,
+    String? idCategory,
+    String? categoryName,
     String? note,
     bool? stockControl,
     int? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
-    @JsonKey(fromJson: Converters.dynamicToDouble)
-    required double? stockItem,
-    @JsonKey(fromJson: Converters.dynamicToDouble)
-    required double? qtySystem,
-    @JsonKey(fromJson: Converters.dynamicToDouble)
-    required double? qtyActual,
-    @JsonKey(fromJson: Converters.dynamicToInt)
-    required int? qtyDiff,
+    @JsonKey(fromJson: Converters.dynamicToDouble) required double? stockItem,
+    @JsonKey(fromJson: Converters.dynamicToDouble) required double? qtySystem,
+    @JsonKey(fromJson: Converters.dynamicToDouble) required double? qtyActual,
+    @JsonKey(fromJson: Converters.dynamicToInt) required int? qtyDiff,
     @JsonKey(
       fromJson: DateTimeFormater.stringToDateTime,
     )
@@ -40,4 +36,9 @@ class ItemAdjustment with _$ItemAdjustment {
 
   factory ItemAdjustment.fromJson(Map<String, dynamic> json) =>
       _$ItemAdjustmentFromJson(json);
+
+  factory ItemAdjustment.fromDetail(Map<String, dynamic> json) {
+    json['categpry_name'] = json['item_category'] ?? '';
+    return _$ItemAdjustmentFromJson(json);
+  }
 }

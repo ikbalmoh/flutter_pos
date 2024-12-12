@@ -102,7 +102,9 @@ class _AdjustmentHistoryScreenState
       showCupertinoModalPopup(
           context: context,
           builder: (context) {
-            return AdjustmentPreview();
+            return AdjustmentPreview(
+              adjustment: adjustment,
+            );
           });
     }
   }
@@ -180,7 +182,7 @@ class _AdjustmentHistoryScreenState
               onChanged: onSearchAdjustments,
             )
           : AppBar(
-              title: Text('stock_adjustments'.tr()),
+              title: Text('adjustment_history'.tr()),
               iconTheme: const IconThemeData(color: Colors.black87),
               titleTextStyle: const TextStyle(
                 color: Colors.black87,
@@ -249,7 +251,7 @@ class _AdjustmentHistoryScreenState
                                 DateTimeFormater.stringToTimestamp(element2)),
                     itemBuilder: (context, element) => AdjustmentHistoryItem(
                       adjustment: element,
-                      onSelect: (p0) => {},
+                      onSelect: onOpenAdjustment,
                       color:
                           viewAdjustment?.idAdjustment == element.idAdjustment
                               ? Colors.grey.shade100
@@ -296,7 +298,10 @@ class _AdjustmentHistoryScreenState
                   color: Colors.grey.shade50,
                   width: MediaQuery.of(context).size.width - 400,
                   child: viewAdjustment != null
-                      ? AdjustmentPreview()
+                      ? AdjustmentPreview(
+                          adjustment: viewAdjustment!,
+                          asWidget: true,
+                        )
                       : emptyPlaceholder,
                 )
               : Container(),

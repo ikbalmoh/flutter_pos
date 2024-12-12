@@ -13,7 +13,7 @@ class AdjustmentHistory with _$AdjustmentHistory {
     required DateTime createdAt,
     required String createdBy,
     required bool needApproval,
-    String? approval,
+    required String approval,
     String? createdName,
     String? approvalNotes,
     String? description,

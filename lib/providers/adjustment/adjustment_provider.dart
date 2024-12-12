@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/adjustment.dart' as model;
+import 'package:selleri/data/models/adjustment_history.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/network/adjustment.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
@@ -59,5 +60,14 @@ class Adjustment extends _$Adjustment {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void duplicateAdjustment(
+      {required AdjustmentHistory adjustment,
+      required List<ItemAdjustment> items}) {
+    state = model.Adjustment(
+        date: adjustment.adjustmentDate,
+        description: adjustment.description ?? '',
+        items: items);
   }
 }
