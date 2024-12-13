@@ -144,7 +144,38 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
         onBarcodeScanned: onBarcodeScanned,
         child: Column(
           mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            isTablet
+                ? Container()
+                : Material(
+                    color: Colors.teal.shade50,
+                    child: InkWell(
+                      onTap: pickAdjustmentDate,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Row(
+                          children: [
+                            Icon(CupertinoIcons.calendar,
+                                color: Colors.teal.shade600),
+                            const SizedBox(width: 10),
+                            Text(
+                              DateTimeFormater.dateToString(
+                                  ref.watch(adjustmentProvider).date,
+                                  format: 'd MMM y'),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.teal.shade600,
+                                  ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
             const FastMovingItemBanner(),
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),
@@ -233,7 +264,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                   },
                   icon: const Icon(CupertinoIcons.search),
                 ),
-                TextButton.icon(
+                isTablet ? TextButton.icon(
                   style: TextButton.styleFrom(
                       backgroundColor: Colors.teal.shade50),
                   onPressed: pickAdjustmentDate,
@@ -241,7 +272,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                       ref.watch(adjustmentProvider).date,
                       format: 'd MMM y')),
                   icon: const Icon(CupertinoIcons.calendar),
-                ),
+                ) : Container(),
                 MenuAnchor(
                   style: MenuStyle(backgroundColor:
                       WidgetStateProperty.resolveWith<Color?>(
