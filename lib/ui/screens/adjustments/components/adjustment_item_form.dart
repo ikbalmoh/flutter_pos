@@ -93,7 +93,7 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(
