@@ -7,9 +7,11 @@ import 'package:selleri/data/models/adjustment_history.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/providers/adjustment/adjustment_details_provider.dart';
 import 'package:selleri/providers/adjustment/adjustment_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_status_badge.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class AdjustmentPreview extends ConsumerWidget {
@@ -22,6 +24,27 @@ class AdjustmentPreview extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<List<ItemAdjustment>> items =
         ref.watch(AdjustmentDetailItemsProvider(adjustment.idAdjustment));
+
+    void onDuplicate(List<ItemAdjustment> items) {
+      while (GoRouter.of(context)
+              .routerDelegate
+              .currentConfiguration
+              .matches
+              .last
+              .matchedLocation !=
+          Routes.adjustments) {
+        if (!context.canPop()) {
+          return;
+        }
+        context.pop();
+      }
+      ref.read(adjustmentProvider.notifier).duplicateAdjustment(
+            adjustment: adjustment,
+            items: items,
+          );
+      AppAlert.snackbar(context, 'duplicate_x'.tr(args: ['adjustment'.tr()]));
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -243,13 +266,7 @@ class AdjustmentPreview extends ConsumerWidget {
                   ),
                   child: ElevatedButton.icon(
                     label: Text('duplicate_x'.tr(args: ['adjustment'.tr()])),
-                    onPressed: () {
-                      context.pop();
-                      ref.read(adjustmentProvider.notifier).duplicateAdjustment(
-                            adjustment: adjustment,
-                            items: value,
-                          );
-                    },
+                    onPressed: () => onDuplicate(value),
                     icon: const Icon(
                       Icons.copy,
                       size: 18,
