@@ -80,9 +80,12 @@ class AdjustmentApi {
   }
 
   Future<List<ItemAdjustment>> adjustmentDetailItems(
-      {required String id}) async {
+      {required String id, bool? isCopy}) async {
     try {
       final params = {"per_page": 0};
+      if (isCopy == true) {
+        params['copy'] = 1;
+      }
       final res = await api
           .get(ApiUrl.adjustmentDetails.replaceFirst('{id}', id), data: params);
       List<Map<String, dynamic>> listJson = List.from(res.data['data']);

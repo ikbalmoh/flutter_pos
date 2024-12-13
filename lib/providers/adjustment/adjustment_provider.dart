@@ -62,12 +62,20 @@ class Adjustment extends _$Adjustment {
     }
   }
 
-  void duplicateAdjustment(
-      {required AdjustmentHistory adjustment,
-      required List<ItemAdjustment> items}) {
-    state = model.Adjustment(
-        date: adjustment.adjustmentDate,
+  Future<void> duplicateAdjustment(
+      {required AdjustmentHistory adjustment}) async {
+    try {
+      final api = AdjustmentApi();
+      state = model.Adjustment(
+        date: DateTime.now(),
         description: adjustment.description ?? '',
-        items: items);
+        items: [],
+      );
+      List<ItemAdjustment> items = await api.adjustmentDetailItems(
+          id: adjustment.idAdjustment, isCopy: true);
+      state = state.copyWith(items: items);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

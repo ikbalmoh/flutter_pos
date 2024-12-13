@@ -23,26 +23,32 @@ class AdjustmentPreview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<List<ItemAdjustment>> items =
-        ref.watch(AdjustmentDetailItemsProvider(adjustment.idAdjustment));
+        ref.watch(adjustmentDetailItemsProvider(id: adjustment.idAdjustment));
 
-    void onDuplicate(List<ItemAdjustment> items) {
-      while (GoRouter.of(context)
-              .routerDelegate
-              .currentConfiguration
-              .matches
-              .last
-              .matchedLocation !=
-          Routes.adjustments) {
-        if (!context.canPop()) {
-          return;
+    void onDuplicate(List<ItemAdjustment> items) async {
+      try {
+        while (GoRouter.of(context)
+                .routerDelegate
+                .currentConfiguration
+                .matches
+                .last
+                .matchedLocation !=
+            Routes.adjustments) {
+          if (!context.canPop()) {
+            return;
+          }
+          context.pop();
         }
-        context.pop();
+        await ref.read(adjustmentProvider.notifier).duplicateAdjustment(
+              adjustment: adjustment,
+            );
+        if (context.mounted) {
+          AppAlert.snackbar(
+              context, 'duplicate_x'.tr(args: ['adjustment'.tr()]));
+        }
+      } on Exception catch (e) {
+        AppAlert.toast(e.toString());
       }
-      ref.read(adjustmentProvider.notifier).duplicateAdjustment(
-            adjustment: adjustment,
-            items: items,
-          );
-      AppAlert.snackbar(context, 'duplicate_x'.tr(args: ['adjustment'.tr()]));
     }
 
     return Scaffold(

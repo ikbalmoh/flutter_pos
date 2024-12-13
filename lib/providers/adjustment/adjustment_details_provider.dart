@@ -7,10 +7,21 @@ part 'adjustment_details_provider.g.dart';
 @riverpod
 class AdjustmentDetailItems extends _$AdjustmentDetailItems {
   @override
-  FutureOr<List<ItemAdjustment>> build(String id) async {
+  FutureOr<List<ItemAdjustment>> build({
+    required String id,
+    bool? isCopy,
+  }) async {
+    return items(id: id);
+  }
+
+  FutureOr<List<ItemAdjustment>> items({
+    required String id,
+    bool? isCopy,
+  }) async {
     try {
       final api = AdjustmentApi();
-      List<ItemAdjustment> items = await api.adjustmentDetailItems(id: id);
+      List<ItemAdjustment> items =
+          await api.adjustmentDetailItems(id: id, isCopy: isCopy);
       return items;
     } catch (e) {
       rethrow;
