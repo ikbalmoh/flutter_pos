@@ -90,15 +90,15 @@ class AdjustmentCart extends ConsumerWidget {
                       if (item.variantName != null) {
                         itemName += ' - ${item.variantName}';
                       }
-                      return InkWell(
-                        onTap: () => onPressItem(item),
-                        child: Material(
-                          shape: Border(
-                            bottom: BorderSide(
-                              color: Colors.blueGrey.shade50,
-                            ),
+                      return Material(
+                        shape: Border(
+                          bottom: BorderSide(
+                            color: Colors.blueGrey.shade50,
                           ),
-                          color: Colors.white,
+                        ),
+                        color: Colors.white,
+                        child: InkWell(
+                          onTap: () => onPressItem(item),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 5,
