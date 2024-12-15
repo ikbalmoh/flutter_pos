@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/item_variant_adjustment.dart';
 import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/ui/components/generic/item_grid_skeleton.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_item_form.dart';
 import 'item_variant_adjustment_picker.dart';
@@ -114,41 +116,66 @@ class ItemContainer extends ConsumerWidget {
                   ),
                 )
               : itemLayoutGrid
-                  ? GridView.count(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      crossAxisCount: gridColumn,
-                      childAspectRatio: 0.9,
-                      padding: const EdgeInsets.all(7.5),
-                      crossAxisSpacing: 7.5,
-                      mainAxisSpacing: 7.5,
-                      controller: scrollController,
-                      children: List.generate(
-                        data.data!.length,
-                        (index) {
-                          final ItemAdjustment item = data.data![index];
-                          int qtyOnCart = ref
-                              .read(cartProvider.notifier)
-                              .qtyOnCart(item.idItem);
-                          return ItemGrid(
-                            item: item,
-                            qtyOnCart: qtyOnCart,
-                            onAddToCart: (item) =>
-                                onAddToCart(context, ref, item: item),
-                            addQty: (idItem) => ref
-                                .read(cartProvider.notifier)
-                                .updateQty(idItem),
-                            showVariants: (item) =>
-                                showVariants(context, item, ref),
-                          );
-                        },
+                  ? GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: gridColumn,
+                        mainAxisSpacing: 7.5,
+                        crossAxisSpacing: 8,
                       ),
+                      controller: scrollController,
+                      padding: const EdgeInsets.all(10),
+                      itemCount: data.data!.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index + 1 > data.data!.length) {
+                          if (data.currentPage >= data.lastPage) {
+                            return Container();
+                          }
+                          return const ItemGridSkeleton();
+                        }
+                        final ItemAdjustment item = data.data![index];
+                        int qtyOnCart = ref
+                            .read(cartProvider.notifier)
+                            .qtyOnCart(item.idItem);
+                        return ItemGrid(
+                          item: item,
+                          qtyOnCart: qtyOnCart,
+                          onAddToCart: (item) =>
+                              onAddToCart(context, ref, item: item),
+                          addQty: (idItem) =>
+                              ref.read(cartProvider.notifier).updateQty(idItem),
+                          showVariants: (item) =>
+                              showVariants(context, item, ref),
+                        );
+                      },
                     )
                   : ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),
                       controller: scrollController,
                       shrinkWrap: true,
-                      itemCount: data.data!.length,
+                      itemCount: data.data!.length + 1,
                       itemBuilder: (context, index) {
+                        if (index + 1 > data.data!.length) {
+                          if (data.currentPage >= data.lastPage) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 10),
+                              child: Center(
+                                child: Text(
+                                  'x_data_displayed'.tr(
+                                    args: [data.total.toString()],
+                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                ),
+                              ),
+                            );
+                          }
+                          return const ItemListSkeleton(leading: false);
+                        }
                         final item = data.data![index];
                         int qtyOnCart = ref
                             .read(cartProvider.notifier)

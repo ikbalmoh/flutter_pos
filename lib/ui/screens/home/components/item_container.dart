@@ -129,34 +129,33 @@ class ItemContainer extends ConsumerWidget {
                 ),
               )
             : ref.watch(appSettingsProvider).itemLayoutGrid
-                ? GridView.count(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    crossAxisCount: gridColumn,
-                    childAspectRatio: 0.9,
-                    padding: const EdgeInsets.all(7.5),
-                    crossAxisSpacing: 7.5,
-                    mainAxisSpacing: 7.5,
-                    controller: scrollController,
-                    children: List.generate(
-                      value.length,
-                      (index) {
-                        final Item item = value[index];
-                        int qtyOnCart = ref
-                            .read(cartProvider.notifier)
-                            .qtyOnCart(item.idItem);
-                        return ShopItem(
-                          item: item,
-                          qtyOnCart: qtyOnCart,
-                          onAddToCart: (item) =>
-                              onAddToCart(context, ref, item: item),
-                          addQty: (idItem) =>
-                              ref.read(cartProvider.notifier).updateQty(idItem),
-                          showVariants: (item) =>
-                              showVariants(context, item, ref),
-                          onLongPress: (item) => onLongPress(context, item),
-                        );
-                      },
+                ? GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: gridColumn,
+                      mainAxisSpacing: 7.5,
+                      crossAxisSpacing: 8,
                     ),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(7.5),
+                    controller: scrollController,
+                    itemCount: value.length,
+                    itemBuilder: (context, index) {
+                      final Item item = value[index];
+                      int qtyOnCart = ref
+                          .read(cartProvider.notifier)
+                          .qtyOnCart(item.idItem);
+                      return ShopItem(
+                        item: item,
+                        qtyOnCart: qtyOnCart,
+                        onAddToCart: (item) =>
+                            onAddToCart(context, ref, item: item),
+                        addQty: (idItem) =>
+                            ref.read(cartProvider.notifier).updateQty(idItem),
+                        showVariants: (item) =>
+                            showVariants(context, item, ref),
+                        onLongPress: (item) => onLongPress(context, item),
+                      );
+                    },
                   )
                 : ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
