@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/item_variant_adjustment.dart';
 import 'package:selleri/providers/adjustment/adjustment_items_provider.dart';
+import 'package:selleri/providers/adjustment/adjustment_provider.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/item_grid_skeleton.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
@@ -31,27 +32,30 @@ class ItemContainer extends ConsumerWidget {
   });
 
   void onAddToCart(BuildContext context, WidgetRef ref,
-      {required ItemAdjustment item, ItemVariantAdjustment? variant}) {
+      {required ItemAdjustment item}) {
     if (search.isNotEmpty &&
         [
           item.itemName.toLowerCase(),
         ].contains(search.toLowerCase())) {
       clearSearch();
     }
-    if (variant != null) {
-      item = item.copyWith(
-        variantId: variant.idVariant,
-        variantName: variant.variantName,
-        qtyActual: variant.qtyActual,
-        qtySystem: variant.qtySystem,
-        qtyDiff: variant.qtyDiff,
-      );
-    }
     showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
         isScrollControlled: true,
         builder: (context) => AdjustmentItemForm(item: item));
+  }
+
+  void onAddVariantsToCart(BuildContext context, WidgetRef ref,
+      {required ItemAdjustment item,
+      required List<ItemVariantAdjustment> variants}) {
+    if (search.isNotEmpty &&
+        [
+          item.itemName.toLowerCase(),
+        ].contains(search.toLowerCase())) {
+      clearSearch();
+    }
+    ref.read(adjustmentProvider.notifier).addToCart(item, variants: variants);
   }
 
   void showVariants(BuildContext context, ItemAdjustment item, WidgetRef ref) {
@@ -63,14 +67,8 @@ class ItemContainer extends ConsumerWidget {
         builder: (BuildContext context) {
           return ItemVariantAdjustmentPicker(
             item: item,
-            onSelect: (variant) {
-              onAddToCart(
-                context,
-                ref,
-                item: item,
-                variant: variant,
-              );
-            },
+            onSelect: (variants) => onAddVariantsToCart(context, ref,
+                item: item, variants: variants),
           );
         });
   }

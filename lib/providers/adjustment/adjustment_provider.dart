@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/adjustment.dart' as model;
 import 'package:selleri/data/models/adjustment_history.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
+import 'package:selleri/data/models/item_variant_adjustment.dart';
 import 'package:selleri/data/network/adjustment.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 
@@ -14,14 +15,34 @@ class Adjustment extends _$Adjustment {
     return model.Adjustment(date: DateTime.now(), items: [], description: '');
   }
 
-  void addToCart(ItemAdjustment item) {
+  void addToCart(ItemAdjustment item, {List<ItemVariantAdjustment>? variants}) {
     List<ItemAdjustment> items = List<ItemAdjustment>.from(state.items);
-    int itemIdx = items.indexWhere((adj) =>
-        (adj.idItem == item.idItem && adj.variantId == item.variantId));
-    if (itemIdx >= 0) {
-      items[itemIdx] = item;
+    if (variants != null && variants.isNotEmpty) {
+      for (var i = 0; i < variants.length; i++) {
+        ItemVariantAdjustment variant = variants[i];
+        int itemIdx = items.indexWhere((adj) =>
+            (adj.idItem == item.idItem && adj.variantId == variant.idVariant));
+        ItemAdjustment itemVariant = item.copyWith(
+          variantId: variant.idVariant,
+          variantName: variant.variantName,
+          qtyActual: variant.qtyActual,
+          qtySystem: variant.qtySystem,
+          qtyDiff: variant.qtyDiff,
+        );
+        if (itemIdx >= 0) {
+          items[itemIdx] = itemVariant;
+        } else {
+          items = items..add(itemVariant);
+        }
+      }
     } else {
-      items = items..add(item);
+      int itemIdx = items.indexWhere((adj) =>
+          (adj.idItem == item.idItem && adj.variantId == item.variantId));
+      if (itemIdx >= 0) {
+        items[itemIdx] = item;
+      } else {
+        items = items..add(item);
+      }
     }
     state = state.copyWith(items: items);
   }
