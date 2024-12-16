@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:open_file/open_file.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/models/adjustment_history.dart' as model;
@@ -109,18 +110,21 @@ class _AdjustmentHistoryScreenState
     }
   }
 
-  void download(model.AdjustmentHistory adjustment) async {
+  void download(BuildContext context, DateTime adjustmentDate) async {
+    if (downloading != '') {
+      return;
+    }
     try {
       AppAlert.toast('downloading'.tr());
 
-      log('download ${adjustment.idAdjustment}');
-      setState(() {
-        downloading = adjustment.idAdjustment;
-      });
+      String dateString =
+          DateTimeFormater.dateToString(adjustmentDate, format: 'y-MM-dd');
 
-      String dateString = DateTimeFormater.dateToString(
-          adjustment.adjustmentDate,
-          format: 'y-MM-dd');
+      log('downloading: $dateString');
+
+      setState(() {
+        downloading = dateString;
+      });
 
       Map<String, dynamic> params = {
         "date": dateString,
@@ -133,7 +137,7 @@ class _AdjustmentHistoryScreenState
 
       String path = await downloader.download(
         ApiUrl.reportAdjustment,
-        openAfterDownload: true,
+        openAfterDownload: false,
         fileName: fileName,
         params: params,
         options: Options(method: 'POST'),
@@ -142,8 +146,17 @@ class _AdjustmentHistoryScreenState
       setState(() {
         downloading = '';
       });
-      AppAlert.toast('stored_at'.tr(args: [path]));
+
+      if (context.mounted) {
+        AppAlert.snackbar(
+            context, 'x_downloaded'.tr(args: ['sales_report'.tr()]),
+            action: SnackBarAction(
+                label: 'open'.tr(), onPressed: () => OpenFile.open(path)));
+      }
     } on Exception catch (e) {
+      setState(() {
+        downloading = '';
+      });
       log('Download error: $e');
       AppAlert.toast(e.toString(), backgroundColor: Colors.red);
     }
@@ -235,12 +248,33 @@ class _AdjustmentHistoryScreenState
                               header.adjustmentDate,
                               format: 'dd MMM y')),
                           TextButton.icon(
-                              icon: const Icon(
-                                CupertinoIcons.cloud_download,
-                                size: 16,
-                              ),
-                              onPressed: () => download(header),
-                              label: Text('download'.tr()))
+                            style: downloading == ''
+                                ? TextButton.styleFrom(
+                                    iconColor: Colors.teal,
+                                    foregroundColor: Colors.teal)
+                                : TextButton.styleFrom(
+                                    iconColor: Colors.grey,
+                                    foregroundColor: Colors.grey),
+                            icon: downloading ==
+                                    DateTimeFormater.dateToString(
+                                        header.adjustmentDate,
+                                        format: 'y-MM-dd')
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 1),
+                                  )
+                                : const Icon(
+                                    CupertinoIcons.cloud_download,
+                                    size: 16,
+                                  ),
+                            onPressed: () =>
+                                download(context, header.adjustmentDate),
+                            label: Text(
+                              'download'.tr(),
+                            ),
+                          )
                         ],
                       ),
                     ),

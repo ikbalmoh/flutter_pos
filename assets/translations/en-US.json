@@ -279,5 +279,6 @@
   "adjustment_history": "Adjustment History",
   "duplicate_x": "Duplicate {}",
   "system": "System",
-  "created_by": "Created By"
+  "created_by": "Created By",
+  "x_downloaded": "{} downloaded"
 }

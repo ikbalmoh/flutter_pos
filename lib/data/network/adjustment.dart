@@ -42,7 +42,7 @@ class AdjustmentApi {
     final Map<String, dynamic> queryParameters = {
       'page': page,
       'id_outlet': idOutlet,
-      'per_page': 30,
+      'per_page': 50,
       'q': search ?? '',
       'id_category': idCategory ?? '',
       'date': DateTimeFormater.dateToString(date ?? DateTime.now(),

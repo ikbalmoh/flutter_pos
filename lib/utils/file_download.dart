@@ -34,6 +34,7 @@ class FileDownload {
         }
       });
       if (openAfterDownload == true) {
+        log('opening fileL $savePath');
         OpenFile.open(savePath);
       }
       return savePath;
@@ -47,7 +48,11 @@ class FileDownload {
   Future<String> _getFilePath(String uniqueFileName) async {
     String path = '';
 
-    Directory? dir = await getApplicationDocumentsDirectory();
+    Directory? dir = Platform.isAndroid
+        ? await getDownloadsDirectory()
+        : await getApplicationDocumentsDirectory();
+
+    dir = dir ?? await getApplicationCacheDirectory();
 
     path = '${dir.path}/$uniqueFileName';
 

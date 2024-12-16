@@ -281,5 +281,6 @@
   "adjustment_history": "Riwayat Penyesuaian",
   "duplicate_x": "Duplikasi {}",
   "system": "Sistem",
-  "created_by": "Dibuat Oleh"
+  "created_by": "Dibuat Oleh",
+  "x_downloaded": "{} didownload"
 }
