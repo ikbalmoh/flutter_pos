@@ -20,6 +20,7 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
+import 'package:selleri/ui/screens/adjustments/components/adjustment_date_filter.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_preview.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/file_download.dart';
@@ -44,6 +45,10 @@ class _AdjustmentHistoryScreenState
   bool searchVisible = false;
   String query = '';
   Timer? _debounce;
+
+  DateTime? from;
+  DateTime? to;
+
   model.AdjustmentHistory? viewAdjustment;
   String downloading = '';
 
@@ -73,8 +78,7 @@ class _AdjustmentHistoryScreenState
         !(pagination.loading ?? false)) {
       log('Load adjustment... ${pagination.currentPage}/${pagination.to}');
       ref.read(adjustmentHistoryProvider.notifier).loadAdjustmentHistory(
-            page: pagination.currentPage + 1,
-          );
+          page: pagination.currentPage + 1, search: query, from: from, to: to);
     }
   }
 
@@ -83,8 +87,18 @@ class _AdjustmentHistoryScreenState
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref
           .read(adjustmentHistoryProvider.notifier)
-          .loadAdjustmentHistory(page: 1, search: query);
+          .loadAdjustmentHistory(page: 1, search: query, from: from, to: to);
     });
+  }
+
+  void onFilterAdjustmentDate(DateTime? f, DateTime? t) {
+    setState(() {
+      from = f;
+      to = t;
+    });
+    ref
+        .read(adjustmentHistoryProvider.notifier)
+        .loadAdjustmentHistory(page: 1, search: query, from: f, to: t);
   }
 
   void openHoldedTransaction(CartHolded holded) {
@@ -162,6 +176,17 @@ class _AdjustmentHistoryScreenState
     }
   }
 
+  void showAdjustmentDatePicked() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        builder: (context) {
+          return AdjustmentDateFilter(
+              from: from, to: to, onSelect: onFilterAdjustmentDate);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
@@ -210,7 +235,22 @@ class _AdjustmentHistoryScreenState
                     searchVisible = true;
                   }),
                   icon: const Icon(Icons.search),
-                )
+                ),
+                from == null
+                    ? IconButton(
+                        onPressed: showAdjustmentDatePicked,
+                        icon: const Icon(CupertinoIcons.calendar),
+                      )
+                    : TextButton.icon(
+                        onPressed: showAdjustmentDatePicked,
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.teal.shade50),
+                        icon: const Icon(CupertinoIcons.calendar),
+                        label: Text(
+                          '${DateTimeFormater.dateToString(from!, format: 'dd MMM')} ${to != null && to != from ? DateTimeFormater.dateToString(to!, format: ' - dd MMM') : ''}',
+                        ),
+                      ),
+                const SizedBox(width: 10)
               ],
             ),
       body: Row(
