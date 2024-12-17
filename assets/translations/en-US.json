@@ -280,5 +280,6 @@
   "duplicate_x": "Duplicate {}",
   "system": "System",
   "created_by": "Created By",
-  "x_downloaded": "{} downloaded"
+  "x_downloaded": "{} downloaded",
+  "filter_by_x": "Filter by {}"
 }

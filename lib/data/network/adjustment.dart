@@ -11,7 +11,11 @@ class AdjustmentApi {
   final api = fetch();
 
   Future<Pagination<model.AdjustmentHistory>> adjustmentHistory(
-      {int page = 1, String? search = '', DateTime? from, DateTime? to}) async {
+      {int page = 1,
+      String? search = '',
+      String? status = 'all',
+      DateTime? from,
+      DateTime? to}) async {
     try {
       final Map<String, dynamic> queryParameters = {
         'page': page,
@@ -22,7 +26,8 @@ class AdjustmentApi {
             : '',
         'to': to != null
             ? DateTimeFormater.dateToString(to, format: 'y-MM-dd')
-            : ''
+            : '',
+        'status': status ?? 'all'
       };
       final res =
           await api.get(ApiUrl.adjustment, queryParameters: queryParameters);

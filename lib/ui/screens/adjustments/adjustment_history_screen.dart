@@ -22,6 +22,7 @@ import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_date_filter.dart';
 import 'package:selleri/ui/screens/adjustments/components/adjustment_preview.dart';
+import 'package:selleri/ui/screens/adjustments/components/filter_status_sheet.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/file_download.dart';
 import 'package:selleri/utils/formater.dart';
@@ -48,6 +49,7 @@ class _AdjustmentHistoryScreenState
 
   DateTime? from;
   DateTime? to;
+  String status = 'all';
 
   model.AdjustmentHistory? viewAdjustment;
   String downloading = '';
@@ -78,16 +80,19 @@ class _AdjustmentHistoryScreenState
         !(pagination.loading ?? false)) {
       log('Load adjustment... ${pagination.currentPage}/${pagination.to}');
       ref.read(adjustmentHistoryProvider.notifier).loadAdjustmentHistory(
-          page: pagination.currentPage + 1, search: query, from: from, to: to);
+          page: pagination.currentPage + 1,
+          search: query,
+          from: from,
+          to: to,
+          status: status);
     }
   }
 
   void onSearchAdjustments(String query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      ref
-          .read(adjustmentHistoryProvider.notifier)
-          .loadAdjustmentHistory(page: 1, search: query, from: from, to: to);
+      ref.read(adjustmentHistoryProvider.notifier).loadAdjustmentHistory(
+          page: 1, search: query, from: from, to: to, status: status);
     });
   }
 
@@ -96,9 +101,8 @@ class _AdjustmentHistoryScreenState
       from = f;
       to = t;
     });
-    ref
-        .read(adjustmentHistoryProvider.notifier)
-        .loadAdjustmentHistory(page: 1, search: query, from: f, to: t);
+    ref.read(adjustmentHistoryProvider.notifier).loadAdjustmentHistory(
+        page: 1, search: query, from: f, to: t, status: status);
   }
 
   void openHoldedTransaction(CartHolded holded) {
@@ -187,6 +191,27 @@ class _AdjustmentHistoryScreenState
         });
   }
 
+  void onFilterStatus() async {
+    String? result = await showModalBottomSheet(
+        showDragHandle: true,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return FilterStatusSheet(selected: status);
+        });
+
+    if (result != null && result != status) {
+      setState(() {
+        status = result;
+      });
+      _scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+      ref.read(adjustmentHistoryProvider.notifier).loadAdjustmentHistory(
+          page: 1, search: query, from: from, to: to, status: result);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
@@ -235,6 +260,16 @@ class _AdjustmentHistoryScreenState
                     searchVisible = true;
                   }),
                   icon: const Icon(Icons.search),
+                ),
+                IconButton(
+                  tooltip: 'filter_items'.tr(),
+                  onPressed: onFilterStatus,
+                  icon: Badge(
+                    smallSize: 8,
+                    backgroundColor:
+                        status != 'all' ? Colors.teal : Colors.transparent,
+                    child: const Icon(Icons.filter_list_rounded),
+                  ),
                 ),
                 from == null
                     ? IconButton(

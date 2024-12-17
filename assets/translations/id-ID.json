@@ -282,5 +282,6 @@
   "duplicate_x": "Duplikasi {}",
   "system": "Sistem",
   "created_by": "Dibuat Oleh",
-  "x_downloaded": "{} didownload"
+  "x_downloaded": "{} didownload",
+  "filter_by_x": "Filter {}"
 }

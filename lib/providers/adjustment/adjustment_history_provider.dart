@@ -16,6 +16,7 @@ class AdjustmentHistory extends _$AdjustmentHistory {
   Future<void> loadAdjustmentHistory({
     int page = 1,
     String? search = '',
+    String? status = 'all',
     DateTime? from,
     DateTime? to,
   }) async {
@@ -33,7 +34,7 @@ class AdjustmentHistory extends _$AdjustmentHistory {
       List<model.AdjustmentHistory> history = [];
 
       var pagination = await api.adjustmentHistory(
-          page: nextPage, search: search, from: from, to: to);
+          page: nextPage, search: search, from: from, to: to, status: status);
 
       if (nextPage > 1) {
         history =
