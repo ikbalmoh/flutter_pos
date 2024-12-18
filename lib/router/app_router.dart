@@ -9,6 +9,7 @@ import 'package:selleri/ui/screens/holded/holded_screen.dart';
 import 'package:selleri/ui/screens/item/add_item_screen.dart';
 import 'package:selleri/ui/screens/item/manage_item_variants_screen.dart';
 import 'package:selleri/ui/screens/promotions/promotions_screen.dart';
+import 'package:selleri/ui/screens/receiving/receiving_screen.dart';
 import 'package:selleri/ui/screens/settings/about_app_screen.dart';
 import 'package:selleri/ui/screens/settings/account_information_screen.dart';
 import 'package:selleri/ui/screens/settings/auto_print_screen.dart';
@@ -163,6 +164,11 @@ GoRouter router(RouterRef ref) {
             final String idItem = state.pathParameters['idItem'] ?? '';
             return ManageItemVariantsScreen(idItem: idItem);
           },
+        ),
+        GoRoute(
+          name: Routes.receiving,
+          path: Routes.receiving,
+          builder: (context, state) => const ReceivingScreen(),
         ),
       ],
       refreshListenable: appState,

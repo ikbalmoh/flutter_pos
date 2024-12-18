@@ -283,5 +283,8 @@
   "system": "Sistem",
   "created_by": "Dibuat Oleh",
   "x_downloaded": "{} didownload",
-  "filter_by_x": "Filter {}"
+  "filter_by_x": "Filter {}",
+  "receiving": "Penerimaan",
+  "purchase": "Purchase",
+  "transfer": "Transfer"
 }

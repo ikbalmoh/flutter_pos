@@ -32,9 +32,14 @@ class AppDrawer extends StatelessWidget {
             route: Routes.shift,
           ),
           AppDrawerMenu(
-            icon: const Icon(CupertinoIcons.tray_2),
+            icon: const Icon(CupertinoIcons.slider_horizontal_below_rectangle),
             title: 'stock_adjustments'.tr(),
             route: Routes.adjustments,
+          ),
+          AppDrawerMenu(
+            icon: const Icon(CupertinoIcons.tray),
+            title: 'receiving'.tr(),
+            route: Routes.receiving,
           ),
           AppDrawerMenu(
             icon: const Icon(CupertinoIcons.slider_horizontal_3),

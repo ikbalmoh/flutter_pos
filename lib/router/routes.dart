@@ -21,4 +21,6 @@ class Routes {
   static const String manageVariant = '/manage-variant';
   static const String adjustments = '/adjustments';
   static const String adjustmentsHistory = '/adjustments-history';
+  static const String receiving = '/receiving';
+  static const String receivingHistory = '/receiving-history';
 }
