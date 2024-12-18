@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -101,7 +100,7 @@ class _AdjustmentDateFilterState extends ConsumerState<AdjustmentDateFilter> {
                   onPressed: from != null
                       ? () {
                           context.pop();
-                          widget.onSelect(from, to);
+                          widget.onSelect(from, to ?? from);
                         }
                       : null,
                   label: Text('apply'.tr()),
