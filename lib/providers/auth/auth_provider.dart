@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
@@ -22,14 +23,20 @@ class AuthNotifier extends _$AuthNotifier {
 
   @override
   FutureOr<AuthState> build() async {
-    final token = await _tokenRepository.fetchToken();
-    if (token != null) {
-      final user = await _authRepoistory.fetchUser();
-      if (user != null) {
-        return Authenticated(user: user, token: token);
+    try {
+      final token = await _tokenRepository.fetchToken();
+      if (token != null) {
+        final user = await _authRepoistory.fetchUser();
+        if (user != null) {
+          return Authenticated(user: user, token: token);
+        }
       }
+      return Initialized();
+    } on DioException {
+      return Initialized();
+    } catch (e) {
+      return Initialized();
     }
-    return Initialized();
   }
 
   Future<void> login(String username, String password) async {

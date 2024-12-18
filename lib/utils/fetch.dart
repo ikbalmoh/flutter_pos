@@ -92,15 +92,19 @@ class CustomInterceptors extends Interceptor {
     if (!json) {
       err.response?.data = {'msg': 'connection_error'};
     }
-    err.response?.data['msg'] = err.response?.data['msg'] ??
-        err.response?.data['message'] ??
-        err.message;
+
     if (kDebugMode) {
       log('ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> URI: ${err.requestOptions.uri}\n => DATA: $originalData');
     }
 
     if (err.response?.statusCode == 401) {
       // Sign out
+      log('Expired Session!');
+    } else {
+      String message = err.response?.data['msg'] ??
+          err.response?.data['message'] ??
+          err.message;
+      err.response?.data['msg'] = message;
     }
 
     super.onError(err, handler);

@@ -57,9 +57,8 @@ class AuthRepository implements AuthRepositoryProtocol {
     try {
       final json = await api.user();
       return User.fromJson(json);
-    } on DioException catch (e) {
-      String message = e.response?.data['msg'] ?? e.message;
-      throw message;
+    } on DioException catch (_) {
+      rethrow;
     } catch (e) {
       rethrow;
     }
