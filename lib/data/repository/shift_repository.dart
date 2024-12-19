@@ -34,11 +34,10 @@ class ShiftRepository implements ShiftRepositoryProtocol {
 
   final Ref _ref;
 
-  final api = ShiftApi();
-
   @override
   Future<void> changeOpenAmount(String shiftId, double amount) async {
     try {
+      final api = _ref.watch(shiftApiProvider);
       await api.changeOpenAmount(shiftId, amount);
     } catch (e, stackTrack) {
       log('CHANGE OPEN AMOUNT ERROR: $e => $stackTrack');
@@ -50,6 +49,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   Future<void> close(String id, Map<String, dynamic> payload) async {
     try {
       const storage = FlutterSecureStorage();
+      final api = _ref.watch(shiftApiProvider);
       await api.closeShift(id, payload);
       await storage.delete(key: StoreKey.shift.name);
     } catch (e, stackTrack) {
@@ -61,6 +61,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   @override
   Future<Shift?> retrieveShift() async {
     try {
+      final api = _ref.watch(shiftApiProvider);
       final outletRepository = _ref.read(outletRepositoryProvider);
       const storage = FlutterSecureStorage();
       final outlet = await outletRepository.retrieveOutlet();
@@ -89,6 +90,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   @override
   Future<Shift?> startShift(Shift shift) async {
     try {
+      final api = _ref.watch(shiftApiProvider);
       final storedShift = await api.startShift(shift);
       if (storedShift != null) {
         await saveShift(storedShift);
@@ -96,7 +98,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
       }
       return null;
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -104,6 +106,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
 
   Future<ShiftInfo?> getShiftInfo(String shiftId) async {
     try {
+      final api = _ref.watch(shiftApiProvider);
       final shiftInfo = await api.shiftInfo(shiftId);
       return shiftInfo;
     } catch (e, stackTrack) {
@@ -114,6 +117,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
 
   Future<void> storeCashflow(Map<String, dynamic> data) async {
     try {
+      final api = _ref.watch(shiftApiProvider);
       final cashflow = await api.storeCashflow(data);
       return cashflow;
     } catch (e, stackTrack) {

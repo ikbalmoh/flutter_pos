@@ -1,9 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/config/api_url.dart';
 
 class AuthApi {
-  final api = fetch();
+  final Dio api;
+
+  AuthApi({required this.api});
 
   Future<dynamic> login(
     String username,
@@ -30,3 +34,8 @@ class AuthApi {
     await api.post(ApiUrl.logout);
   }
 }
+
+final authApiProvider = Provider<AuthApi>((ref) {
+  final api = ref.watch(apiProvider);
+  return AuthApi(api: api);
+});

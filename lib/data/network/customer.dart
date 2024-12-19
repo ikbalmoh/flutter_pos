@@ -1,11 +1,14 @@
 import 'package:dio/dio.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/config/api_url.dart';
 
 class CustomerApi {
-  final api = fetch();
+  final Dio api;
+
+  CustomerApi({required this.api});
 
   Future<Pagination<Customer>> customers(
       {int page = 1, String search = ''}) async {
@@ -19,7 +22,7 @@ class CustomerApi {
       });
       return pagination;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       throw Exception(e);
     }
@@ -31,9 +34,14 @@ class CustomerApi {
       final data = res.data['data'];
       return Customer.fromJson(data);
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       throw Exception(e);
     }
   }
 }
+
+final customerApiProvider = Provider<CustomerApi>((ref) {
+  final api = ref.watch(apiProvider);
+  return CustomerApi(api: api);
+});

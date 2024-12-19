@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/models/shift.dart';
@@ -12,7 +13,7 @@ class ShiftListNotifier extends _$ShiftListNotifier {
   @override
   FutureOr<Pagination<Shift>> build() async {
     try {
-      final api = ShiftApi();
+      final api = ref.watch(shiftApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final shifts = api.shifts(idOutlet: outlet.outlet.idOutlet);
       return shifts;
@@ -29,8 +30,8 @@ class ShiftListNotifier extends _$ShiftListNotifier {
     } else {
       state = AsyncData(state.value!.copyWith(loading: true));
     }
-    final api = ShiftApi();
     try {
+      final api = ref.watch(shiftApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       var shifts = await api.shifts(
         page: page,

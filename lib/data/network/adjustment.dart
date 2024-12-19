@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/models/adjustment.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
@@ -8,7 +9,9 @@ import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/utils/formater.dart';
 
 class AdjustmentApi {
-  final api = fetch();
+  final Dio api;
+
+  AdjustmentApi({required this.api});
 
   Future<Pagination<model.AdjustmentHistory>> adjustmentHistory(
       {int page = 1,
@@ -38,7 +41,7 @@ class AdjustmentApi {
       });
       return pagination;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -69,7 +72,7 @@ class AdjustmentApi {
       });
       return pagination;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -85,7 +88,7 @@ class AdjustmentApi {
           listJson.map((json) => ItemAdjustment.fromJson(json)).toList();
       return data;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -105,7 +108,7 @@ class AdjustmentApi {
           listJson.map((json) => ItemAdjustment.fromDetail(json)).toList();
       return data;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -131,9 +134,14 @@ class AdjustmentApi {
       final res = await api.post(ApiUrl.adjustment, data: payload);
       return res.data['msg'];
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
   }
 }
+
+final adjustmentApiProvider = Provider<AdjustmentApi>((ref) {
+  final api = ref.watch(apiProvider);
+  return AdjustmentApi(api: api);
+});

@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -37,14 +38,13 @@ class Cart extends _$Cart {
 
   Future<void> initCart() async {
     try {
-      if (ref.read(authNotifierProvider).value is! Authenticated) {
+      if (ref.read(authProvider).value is! Authenticated) {
         return;
       }
 
       final outletState = ref.read(outletProvider).value as OutletSelected;
 
-      final authState =
-          await ref.read(authNotifierProvider.future) as Authenticated;
+      final authState = await ref.read(authProvider.future) as Authenticated;
 
       final shift = ref.read(shiftProvider).value;
 
@@ -260,7 +260,7 @@ class Cart extends _$Cart {
   }
 
   void addPayment(CartPayment payment) {
-    final auth = ref.read(authNotifierProvider).value as Authenticated;
+    final auth = ref.read(authProvider).value as Authenticated;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
@@ -300,7 +300,7 @@ class Cart extends _$Cart {
 
   Future<void> storeTransaction() async {
     try {
-      final api = TransactionApi();
+      final api = ref.watch(transactionApiProvider);
 
       final shift = ref.read(shiftProvider).value;
       if (shift == null) {
@@ -346,7 +346,7 @@ class Cart extends _$Cart {
   Future<void> holdCart({required String note, bool createNew = false}) async {
     model.Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
-    final api = TransactionApi();
+    final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
       await api.updateHoldTransaction(cart.idTransaction!, cart);
     } else {
@@ -394,7 +394,7 @@ class Cart extends _$Cart {
   }
 
   void removeHoldedCart() async {
-    final api = TransactionApi();
+    final api = ref.watch(transactionApiProvider);
     String idTransaction = state.idTransaction!;
     initCart();
     await api.deleteHoldedTransaction(idTransaction);

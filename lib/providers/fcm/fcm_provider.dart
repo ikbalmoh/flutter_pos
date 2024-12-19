@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -25,7 +26,7 @@ class Fcm extends _$Fcm {
   FutureOr<String?> build() async {
     FirebaseMessaging.onMessage.listen(handleFcmMessage);
 
-    final auth = ref.watch(authNotifierProvider);
+    final auth = ref.watch(authProvider);
     final outlet = ref.watch(outletProvider);
     if (auth.value is Authenticated && outlet.value is OutletSelected) {
       registerFcm(
@@ -105,7 +106,7 @@ class Fcm extends _$Fcm {
 
   Future<void> registerFcm(
       {required String idCompany, required String idOutlet}) async {
-    final api = OutletApi();
+    final api = ref.watch(outletApiProvider);
 
     try {
       String? token = await retrieveFcmToken();
@@ -116,8 +117,7 @@ class Fcm extends _$Fcm {
         state = AsyncValue.data(token);
         log("FCM TOKEN: $token");
 
-        final authenticated =
-            ref.read(authNotifierProvider).value is Authenticated;
+        final authenticated = ref.read(authProvider).value is Authenticated;
         if (!authenticated) return;
 
         final outletActive = ref.read(outletProvider).value is OutletSelected;

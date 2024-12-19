@@ -15,7 +15,7 @@ export 'auth_state.dart';
 part 'auth_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class AuthNotifier extends _$AuthNotifier {
+class Auth extends _$Auth {
   late final AuthRepository _authRepoistory = ref.read(authRepositoryProvider);
 
   late final TokenRepository _tokenRepository =
@@ -48,11 +48,15 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout({bool? skipLogout}) async {
     ref.read(shiftProvider.notifier).shiftLoading();
     try {
       log('API LOGOUT');
-      await _authRepoistory.logout();
+      if (skipLogout == true) {
+        await _tokenRepository.removeToken();
+      } else {
+        await _authRepoistory.logout();
+      }
       state = AsyncData(UnAuthenticated());
     } catch (e) {
       log('LOGOUT ERROR: $e');

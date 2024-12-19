@@ -25,7 +25,7 @@ class AdjustmentPreview extends ConsumerWidget {
     AsyncValue<List<ItemAdjustment>> items =
         ref.watch(adjustmentDetailItemsProvider(id: adjustment.idAdjustment));
 
-    void onDuplicate(List<ItemAdjustment> items) async {
+    void duplicateAdjustment(List<ItemAdjustment> items) async {
       try {
         while (GoRouter.of(context)
                 .routerDelegate
@@ -48,6 +48,21 @@ class AdjustmentPreview extends ConsumerWidget {
         }
       } on Exception catch (e) {
         AppAlert.toast(e.toString());
+      }
+    }
+
+    void onDuplicate(List<ItemAdjustment> items) async {
+      final current = ref.watch(adjustmentProvider);
+      if (current.items.isNotEmpty) {
+        AppAlert.confirm(
+          context,
+          shouldPop: false,
+          title: 'duplicate_x'.tr(args: ['adjustment'.tr()]),
+          subtitle: 'duplicate_adjustment_confirmation'.tr(),
+          onConfirm: () => duplicateAdjustment(items),
+        );
+      } else {
+        duplicateAdjustment(items);
       }
     }
 

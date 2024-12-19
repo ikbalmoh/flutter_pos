@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/adjustment.dart' as model;
 import 'package:selleri/data/models/adjustment_history.dart';
@@ -72,7 +73,7 @@ class Adjustment extends _$Adjustment {
   Future<String> submitAdjustment({String? description}) async {
     try {
       final outletState = ref.read(outletProvider).value as OutletSelected;
-      final api = AdjustmentApi();
+      final api = ref.watch(adjustmentApiProvider);
       final payload = state.copyWith(description: description ?? '');
       final res =
           await api.createAdjustment(outletState.outlet.idOutlet, payload);
@@ -86,7 +87,7 @@ class Adjustment extends _$Adjustment {
   Future<void> duplicateAdjustment(
       {required AdjustmentHistory adjustment}) async {
     try {
-      final api = AdjustmentApi();
+      final api = ref.watch(adjustmentApiProvider);
       state = model.Adjustment(
         date: DateTime.now(),
         description: adjustment.description ?? '',

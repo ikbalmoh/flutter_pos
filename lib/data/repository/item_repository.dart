@@ -11,9 +11,9 @@ import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/network/adjustment.dart';
+import 'package:selleri/data/network/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
-import 'package:selleri/data/network/api.dart' show ItemApi;
 
 part 'item_repository.g.dart';
 
@@ -38,13 +38,12 @@ class ItemRepository implements ItemRepositoryProtocol {
 
   final Ref ref;
 
-  final api = ItemApi();
-
   late final outletState = ref.read(outletRepositoryProvider);
 
   @override
   Future<List<Category>> fetchCategoris() async {
     try {
+      final api = ref.watch(itemApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return [];
@@ -63,7 +62,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       objectBox.putCategories(categories);
       return categories;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);
     }
@@ -88,6 +87,7 @@ class ItemRepository implements ItemRepositoryProtocol {
     }
 
     try {
+      final api = ref.watch(itemApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return [];
@@ -110,7 +110,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       }
       return items;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);
     } finally {
@@ -132,7 +132,7 @@ class ItemRepository implements ItemRepositoryProtocol {
 
     final outlet = await outletState.retrieveOutlet();
 
-    final api = AdjustmentApi();
+    final api = ref.watch(adjustmentApiProvider);
     try {
       var items = await api.itemsForAdjustment(
         idOutlet: outlet!.idOutlet,

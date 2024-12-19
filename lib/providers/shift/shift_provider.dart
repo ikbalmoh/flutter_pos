@@ -33,7 +33,7 @@ class Shift extends _$Shift {
     state = const AsyncLoading();
     final outletState = await ref.read(outletProvider.future) as OutletSelected;
     final authState =
-        await ref.read(authNotifierProvider.future) as Authenticated;
+        await ref.read(authProvider.future) as Authenticated;
 
     final userAccount = authState.user.user;
 
@@ -73,7 +73,7 @@ class Shift extends _$Shift {
     bool reopen = false,
   }) async {
     final user =
-        (ref.read(authNotifierProvider).value as Authenticated).user.user;
+        (ref.read(authProvider).value as Authenticated).user.user;
     final model.Shift currentShift = state.value!;
     try {
       state = const AsyncLoading();

@@ -275,8 +275,9 @@
   "adjustment": "Adjustment",
   "submit_x": "Submit {}",
   "create_x": "Create {}",
-  "x_fast_moving_items": "{} items from last SO",
+  "x_fast_moving_items": "{} best seller items",
   "adjustment_history": "Adjustment History",
+  "adjustment_date": "Adjustment Date",
   "duplicate_x": "Duplicate {}",
   "system": "System",
   "created_by": "Created By",
@@ -284,5 +285,6 @@
   "filter_by_x": "Filter by {}",
   "receiving": "Receiving",
   "purchase": "Pembelian",
-  "transfer": "Transfer"
+  "transfer": "Transfer",
+  "duplicate_adjustment_confirmation": "Are you sure to replace the previous selected items?"
 }
