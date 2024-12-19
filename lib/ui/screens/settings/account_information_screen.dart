@@ -30,13 +30,13 @@ class AccountInformation extends ConsumerWidget {
         context,
         title: 'logout_confirmation'.tr(),
         onConfirm: () {
-          ref.read(authNotifierProvider.notifier).logout();
+          ref.read(authProvider.notifier).logout();
         },
         confirmLabel: 'logout'.tr(),
       );
     }
 
-    final authState = ref.read(authNotifierProvider).value;
+    final authState = ref.read(authProvider).value;
     return Scaffold(
       body: ListView(
         children: authState is Authenticated

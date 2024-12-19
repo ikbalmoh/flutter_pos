@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/network/adjustment.dart';
@@ -21,7 +22,7 @@ class AdjustmentHistory extends _$AdjustmentHistory {
     DateTime? to,
   }) async {
     try {
-      final api = AdjustmentApi();
+    final api = ref.watch(adjustmentApiProvider);
 
       final int nextPage = page;
 

@@ -36,7 +36,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void _submitLogin() {
     if (_formKey.currentState!.validate()) {
       ref
-          .read(authNotifierProvider.notifier)
+          .read(authProvider.notifier)
           .login(_usernameController.text, _passwordController.text);
     }
   }
@@ -69,8 +69,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(authNotifierProvider);
-    ref.listen(authNotifierProvider, (prev, next) {
+    final state = ref.watch(authProvider);
+    ref.listen(authProvider, (prev, next) {
       if (next.value is AuthFailure) {
         AppAlert.snackbar(
           context,

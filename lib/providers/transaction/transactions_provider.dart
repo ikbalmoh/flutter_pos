@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,7 +19,7 @@ class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
     try {
-      final api = TransactionApi();
+      final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId = ref.watch(shiftProvider).value?.id;
       final transactions = await api.transactions(
@@ -37,7 +38,7 @@ class Transactions extends _$Transactions {
     } else {
       state = AsyncData(state.value!.copyWith(loading: true));
     }
-    final api = TransactionApi();
+    final api = ref.watch(transactionApiProvider);
     try {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId;
@@ -89,12 +90,9 @@ class Transactions extends _$Transactions {
   Future<Cart> cancelTransaction(Cart cart,
       {required String deleteReason}) async {
     try {
-      final api = TransactionApi();
-
-      final userId = (ref.read(authNotifierProvider).value as Authenticated)
-          .user
-          .user
-          .idUser;
+      final api = ref.watch(transactionApiProvider);
+      final userId =
+          (ref.read(authProvider).value as Authenticated).user.user.idUser;
 
       final transaction = cart.copyWith(
           deletedAt: DateTime.now(),

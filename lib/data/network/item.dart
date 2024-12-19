@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/objectbox.g.dart';
@@ -7,7 +8,9 @@ import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/models/item.dart';
 
 class ItemApi {
-  final api = fetch();
+  final Dio api;
+
+  ItemApi({required this.api});
 
   Future categories(String idOulet) async {
     Map<String, dynamic> query = {'is_app': 1, 'id_outlet': idOulet};
@@ -41,7 +44,7 @@ class ItemApi {
       final res = await api.post(ApiUrl.items, data: item);
       return Item.fromJson(res.data['data']);
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -55,7 +58,7 @@ class ItemApi {
           await api.post('${ApiUrl.items}/$idItem/attributes', data: payload);
       return res.data;
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -83,9 +86,14 @@ class ItemApi {
       }).toList();
       return listVariant;
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
   }
 }
+
+final itemApiProvider = Provider<ItemApi>((ref) {
+  final api = ref.watch(apiProvider);
+  return ItemApi(api: api);
+});

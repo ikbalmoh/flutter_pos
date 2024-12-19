@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/network/adjustment.dart';
@@ -19,7 +20,7 @@ class AdjustmentDetailItems extends _$AdjustmentDetailItems {
     bool? isCopy,
   }) async {
     try {
-      final api = AdjustmentApi();
+      final api = ref.watch(adjustmentApiProvider);
       List<ItemAdjustment> items =
           await api.adjustmentDetailItems(id: id, isCopy: isCopy);
       return items;

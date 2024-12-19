@@ -326,7 +326,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
           const ShiftOverlay(),
           const UpdatePatcher(),
-          ref.watch(authNotifierProvider).when(
+          ref.watch(authProvider).when(
                 data: (_) => Container(),
                 error: (_, stackTrace) => Container(),
                 loading: () => Positioned.fill(

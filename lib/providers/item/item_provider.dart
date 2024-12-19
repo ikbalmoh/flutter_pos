@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -138,7 +139,7 @@ class ItemsStream extends _$ItemsStream {
 
   Future<Item> storeItem(Map<String, dynamic> itemPayload,
       List<AttributeVariant> attributes) async {
-    final api = ItemApi();
+    final api = ref.watch(itemApiProvider);
 
     try {
       if (attributes.isNotEmpty) {
@@ -170,7 +171,7 @@ class ItemsStream extends _$ItemsStream {
   Future<List<ItemVariant>> updateVariants(
       String idItem, List<ItemVariant> variants) async {
     try {
-      final api = ItemApi();
+      final api = ref.watch(itemApiProvider);
       List<Map<String, dynamic>> attributes =
           variants.map<Map<String, dynamic>>((v) {
         return {

@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/utils/fetch.dart';
@@ -8,7 +10,9 @@ import 'package:selleri/config/api_url.dart';
 const storage = FlutterSecureStorage();
 
 class OutletApi {
-  final api = fetch();
+  final Dio api;
+
+  OutletApi({required this.api});
 
   Future<List<Outlet>> outlets() async {
     try {
@@ -17,7 +21,7 @@ class OutletApi {
           List<Outlet>.from(res.data['data'].map((o) => Outlet.fromJson(o)));
       return outlets;
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -33,7 +37,7 @@ class OutletApi {
           await api.get('${ApiUrl.outletConfig}/$id', queryParameters: params);
       return res.data['data'];
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -55,7 +59,7 @@ class OutletApi {
       );
       return res.data;
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -75,9 +79,14 @@ class OutletApi {
       final res = await api.post(ApiUrl.storeFcmToken, data: data);
       return res.data;
     } on DioException catch (e) {
-      throw Exception(e);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
   }
 }
+
+final outletApiProvider = Provider<OutletApi>((ref) {
+  final api = ref.watch(apiProvider);
+  return OutletApi(api: api);
+});

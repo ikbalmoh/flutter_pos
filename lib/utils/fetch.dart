@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/token.dart';
+import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer';
@@ -12,7 +14,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 const storage = FlutterSecureStorage();
 
-Dio fetch({bool ignoreBaseUrl = false}) {
+Dio fetch() {
   final baseOption = BaseOptions(
     baseUrl: dotenv.env['HOST']!,
     contentType: Headers.jsonContentType,
@@ -21,17 +23,19 @@ Dio fetch({bool ignoreBaseUrl = false}) {
 
   Dio dio = Dio(baseOption);
 
-  dio.interceptors
-      .add(CustomInterceptors(dio: dio, ignoreBaseUrl: ignoreBaseUrl));
+  dio.interceptors.add(CustomInterceptors(dio: dio));
 
   return dio;
 }
 
 class CustomInterceptors extends Interceptor {
-  Dio dio;
-  bool ignoreBaseUrl;
+  final Dio dio;
+  Function? onSessionExpired;
 
-  CustomInterceptors({required this.dio, required this.ignoreBaseUrl});
+  CustomInterceptors({
+    required this.dio,
+    this.onSessionExpired,
+  });
 
   @override
   void onRequest(
@@ -99,14 +103,34 @@ class CustomInterceptors extends Interceptor {
 
     if (err.response?.statusCode == 401) {
       // Sign out
+      storage.delete(key: StoreKey.token.name);
       log('Expired Session!');
-    } else {
-      String message = err.response?.data['msg'] ??
-          err.response?.data['message'] ??
-          err.message;
-      err.response?.data['msg'] = message;
+      if (onSessionExpired != null) {
+        onSessionExpired!();
+      }
     }
+
+    String message = err.message ?? 'Unexpected Error Occured!';
+    if (err.response?.data is String) {
+      message = err.response?.data;
+    } else if (err.response?.data['msg'] != null) {
+      message = err.response?.data?['msg'];
+    } else if (err.response?.data['message'] != null) {
+      message = err.response?.data?['message'];
+    }
+    err = err.copyWith(message: message);
 
     super.onError(err, handler);
   }
 }
+
+final apiProvider = Provider<Dio>((ref) {
+  final auth = ref.read(authProvider.notifier);
+  final Dio dio = fetch();
+  ref.onDispose(dio.close);
+  return dio
+    ..interceptors.addAll([
+      CustomInterceptors(
+          dio: dio, onSessionExpired: () => auth.logout(skipLogout: true)),
+    ]);
+});

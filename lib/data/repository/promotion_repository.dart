@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 import 'package:selleri/data/models/promotion.dart';
-import 'package:selleri/data/network/api.dart' show PromotionApi;
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/data/network/promotion.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
 
 part 'promotion_repository.g.dart';
@@ -24,13 +24,12 @@ class PromotionRepository implements PromotionRepositoryProtocol {
 
   final Ref ref;
 
-  final api = PromotionApi();
-
   late final outletState = ref.read(outletRepositoryProvider);
 
   @override
   Future<List<Promotion>> fetchPromotions() async {
     try {
+      final api = ref.watch(promotionApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return [];
@@ -48,7 +47,7 @@ class PromotionRepository implements PromotionRepositoryProtocol {
       }
       return promotions;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);
     }
@@ -57,6 +56,7 @@ class PromotionRepository implements PromotionRepositoryProtocol {
   @override
   Future<Promotion?> getPromoByCode(String code) async {
     try {
+      final api = ref.watch(promotionApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return null;
@@ -67,7 +67,7 @@ class PromotionRepository implements PromotionRepositoryProtocol {
       }
       throw Exception('Promotion Not Found!');
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } on Exception catch (_) {
       rethrow;
     }
