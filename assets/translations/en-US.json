@@ -275,12 +275,13 @@
   "adjustment": "Adjustment",
   "submit_x": "Submit {}",
   "create_x": "Create {}",
-  "x_fast_moving_items": "{} items from last SO",
+  "x_fast_moving_items": "{} best seller items",
   "adjustment_history": "Adjustment History",
   "adjustment_date": "Adjustment Date",
   "duplicate_x": "Duplicate {}",
   "system": "System",
   "created_by": "Created By",
   "x_downloaded": "{} downloaded",
-  "filter_by_x": "Filter by {}"
+  "filter_by_x": "Filter by {}",
+  "duplicate_adjustment_confirmation": "Are you sure to replace the previous selected items?"
 }

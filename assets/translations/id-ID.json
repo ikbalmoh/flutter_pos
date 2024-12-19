@@ -277,12 +277,13 @@
   "adjustment": "Penyesuaian",
   "submit_x": "Simpan {}",
   "create_x": "Buat {}",
-  "x_fast_moving_items": "{} barang cepat terjual",
+  "x_fast_moving_items": "{} barang paling laris",
   "adjustment_history": "Riwayat Penyesuaian",
   "adjustment_date": "Tanggal Penyesuaian",
   "duplicate_x": "Duplikasi {}",
   "system": "Sistem",
   "created_by": "Dibuat Oleh",
   "x_downloaded": "{} didownload",
-  "filter_by_x": "Filter {}"
+  "filter_by_x": "Filter {}",
+  "duplicate_adjustment_confirmation": "Apakah anda yakin mengganti item yang sudah dipilih?"
 }

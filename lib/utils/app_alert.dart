@@ -51,6 +51,7 @@ class AppAlert {
     void Function()? onConfirm,
     String? confirmLabel,
     bool? danger,
+    bool shouldPop = true,
   }) {
     final navigator = Navigator.of(context, rootNavigator: true);
     showModalBottomSheet(
@@ -101,12 +102,12 @@ class AppAlert {
                       onPressed: () {
                         if (onConfirm != null) {
                           onConfirm();
-                          if (navigator.canPop()) {
+                          if (shouldPop && navigator.canPop()) {
                             navigator.pop();
                           }
                         }
                       },
-                      child: Text(confirmLabel ?? 'Ok'),
+                      child: Text(confirmLabel ?? 'yes'.tr()),
                     ),
                   ],
                 )
