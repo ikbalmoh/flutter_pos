@@ -465,6 +465,23 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
               : Container()
         ],
       ),
+      floatingActionButton:
+          !isTablet && ref.watch(receivingProvider).items.isNotEmpty
+              ? FloatingActionButton.extended(
+                  onPressed: () => showCupertinoModalPopup(
+                      context: context,
+                      builder: (context) => const ReceivingCart()),
+                  label: Text('received_items'.tr()),
+                  icon: Badge(
+                    label: Text(ref
+                        .watch(receivingProvider)
+                        .items
+                        .map((item) => item.qtyReceive)
+                        .reduce((a, b) => a + b)
+                        .toString()),
+                    child: const Icon(CupertinoIcons.cart_fill),
+                  ))
+              : null,
     );
   }
 }

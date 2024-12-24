@@ -264,15 +264,17 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                   },
                   icon: const Icon(CupertinoIcons.search),
                 ),
-                isTablet ? TextButton.icon(
-                  style: TextButton.styleFrom(
-                      backgroundColor: Colors.teal.shade50),
-                  onPressed: pickAdjustmentDate,
-                  label: Text(DateTimeFormater.dateToString(
-                      ref.watch(adjustmentProvider).date,
-                      format: 'd MMM y')),
-                  icon: const Icon(CupertinoIcons.calendar),
-                ) : Container(),
+                isTablet
+                    ? TextButton.icon(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.teal.shade50),
+                        onPressed: pickAdjustmentDate,
+                        label: Text(DateTimeFormater.dateToString(
+                            ref.watch(adjustmentProvider).date,
+                            format: 'd MMM y')),
+                        icon: const Icon(CupertinoIcons.calendar),
+                      )
+                    : Container(),
                 MenuAnchor(
                   style: MenuStyle(backgroundColor:
                       WidgetStateProperty.resolveWith<Color?>(
@@ -348,11 +350,12 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
       ),
       floatingActionButton: !isTablet &&
               ref.watch(adjustmentProvider).items.isNotEmpty
-          ? FloatingActionButton(
+          ? FloatingActionButton.extended(
               onPressed: () => showCupertinoModalPopup(
                   context: context,
                   builder: (context) => const AdjustmentCart()),
-              child: Badge(
+              label: Text('cart'.tr()),
+              icon: Badge(
                 label:
                     Text(ref.watch(adjustmentProvider).items.length.toString()),
                 child: const Icon(CupertinoIcons.cart_fill),

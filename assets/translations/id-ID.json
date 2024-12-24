@@ -301,5 +301,8 @@
   "received": "diterima",
   "received_items": "Barang Diterima",
   "receiving_history": "Riwayat Penerimaan",
-  "scan_x": "Pindai {}"
+  "scan_x": "Pindai {}",
+  "sku_item_different": "SKU Tidak Sesuai",
+  "sku_item_different_note": "Apakah Anda ingin mengganti SKU barang?",
+  "repalce_sku": "Ganti SKU"
 }

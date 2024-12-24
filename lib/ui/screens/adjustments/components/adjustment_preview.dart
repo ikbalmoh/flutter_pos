@@ -105,22 +105,24 @@ class AdjustmentPreview extends ConsumerWidget {
                                       CupertinoIcons.calendar,
                                       size: 16,
                                     ),
-                                    const SizedBox(width: 5),
+                                    const SizedBox(width: 10),
                                     Text(DateTimeFormater.dateToString(
                                         adjustment.adjustmentDate,
                                         format: 'd MMM y')),
                                   ],
                                 ),
+                                const SizedBox(height: 4),
                                 Row(
                                   children: [
                                     const Icon(
                                       CupertinoIcons.person_crop_circle,
                                       size: 16,
                                     ),
-                                    const SizedBox(width: 5),
+                                    const SizedBox(width: 10),
                                     Text(adjustment.createdName!),
                                   ],
                                 ),
+                                const SizedBox(height: 4),
                                 adjustment.description != null &&
                                         adjustment.description != ''
                                     ? Row(
@@ -129,7 +131,7 @@ class AdjustmentPreview extends ConsumerWidget {
                                             CupertinoIcons.text_quote,
                                             size: 16,
                                           ),
-                                          const SizedBox(width: 5),
+                                          const SizedBox(width: 10),
                                           Text(
                                             adjustment.description!,
                                             style: Theme.of(context)

@@ -9,6 +9,7 @@ import 'package:selleri/ui/screens/holded/holded_screen.dart';
 import 'package:selleri/ui/screens/item/add_item_screen.dart';
 import 'package:selleri/ui/screens/item/manage_item_variants_screen.dart';
 import 'package:selleri/ui/screens/promotions/promotions_screen.dart';
+import 'package:selleri/ui/screens/receiving/receiving_history_screen.dart';
 import 'package:selleri/ui/screens/receiving/receiving_screen.dart';
 import 'package:selleri/ui/screens/settings/about_app_screen.dart';
 import 'package:selleri/ui/screens/settings/account_information_screen.dart';
@@ -169,6 +170,11 @@ GoRouter router(RouterRef ref) {
           name: Routes.receiving,
           path: Routes.receiving,
           builder: (context, state) => const ReceivingScreen(),
+        ),
+        GoRoute(
+          name: Routes.receivingHistory,
+          path: Routes.receivingHistory,
+          builder: (context, state) => const ReceivingHistoryScreen(),
         ),
       ],
       refreshListenable: appState,

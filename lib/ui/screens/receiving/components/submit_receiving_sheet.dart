@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/receiving/receiving_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class SubmitReceivingSheet extends ConsumerStatefulWidget {
@@ -43,6 +44,7 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
       });
       if (context.mounted) {
         context.pop();
+        context.pushNamed(Routes.receivingHistory);
         AppAlert.snackbar(context, message);
       }
     } catch (e) {
