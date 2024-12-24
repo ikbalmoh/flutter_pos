@@ -25,4 +25,8 @@ class ApiUrl {
   static const String promotionByVoucher = '/promotions/voucher';
   static const String adjustment = '/adjustments';
   static const String adjustmentDetails = '/adjustments/{id}/details';
+  static const String receiving = '/item-receiving';
+  static const String receivingDetails = '/item-receiving';
+  static const String transferInfo = '/info/item-transfer';
+  static const String purchaseInfo = '/info/purchase-order';
 }

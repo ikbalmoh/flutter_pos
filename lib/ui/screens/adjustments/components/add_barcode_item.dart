@@ -148,7 +148,7 @@ class _AddBarcodeItemState extends ConsumerState<AddBarcodeItem> {
                             : TextButton.icon(
                                 onPressed: () => context.pop(),
                                 icon:
-                                    const Icon(Icons.document_scanner_outlined),
+                                    const Icon(CupertinoIcons.barcode_viewfinder),
                                 label: Text('scan_another_item'.tr()),
                               )
                       ],
@@ -176,7 +176,7 @@ class Header extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Icon(
-          CupertinoIcons.barcode,
+          CupertinoIcons.barcode_viewfinder,
           size: 20,
         ),
         const SizedBox(
@@ -231,7 +231,7 @@ class ItemNotFound extends StatelessWidget {
         ),
         TextButton.icon(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.document_scanner_outlined),
+          icon: const Icon(CupertinoIcons.barcode_viewfinder),
           label: Text('scan_another_item'.tr()),
         ),
         const SizedBox(

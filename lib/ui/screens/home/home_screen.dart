@@ -242,7 +242,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             );
                           });
                     },
-                    icon: const Icon(Icons.document_scanner_outlined))
+                    icon: const Icon(CupertinoIcons.barcode_viewfinder))
               ],
             )
           : AppBar(

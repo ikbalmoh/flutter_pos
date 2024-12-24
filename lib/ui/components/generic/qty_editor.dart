@@ -5,9 +5,11 @@ import 'package:selleri/utils/formater.dart';
 
 class QtyEditor extends StatefulWidget {
   final int qty;
+  final int? max;
   final Function(int) onChange;
 
-  const QtyEditor({super.key, required this.qty, required this.onChange});
+  const QtyEditor(
+      {super.key, required this.qty, required this.onChange, this.max});
 
   @override
   State<QtyEditor> createState() => _QtyEditorState();
@@ -27,8 +29,22 @@ class _QtyEditorState extends State<QtyEditor> {
     qtyController.text = _qtyFormater.formatDouble(widget.qty.toDouble());
   }
 
+  void onChangeQty(value) {
+    double value = _qtyFormater.getUnformattedValue().toDouble();
+    if (widget.max != null && value > widget.max!) {
+      value = widget.max!.toDouble();
+    }
+    setState(() {
+      qty = value;
+    });
+    widget.onChange(value.toInt());
+  }
+
   void onIncreaseQty(bool increase) {
     double value = increase ? qty + 1 : qty - 1;
+    if (widget.max != null && value > widget.max!) {
+      return;
+    }
     setState(() {
       qty = value;
     });
@@ -71,12 +87,7 @@ class _QtyEditorState extends State<QtyEditor> {
               child: TextFormField(
                 inputFormatters: <TextInputFormatter>[_qtyFormater],
                 controller: qtyController,
-                onChanged: (value) {
-                  setState(() {
-                    qty = _qtyFormater.getUnformattedValue().toDouble();
-                  });
-                  widget.onChange(_qtyFormater.getUnformattedValue().toInt());
-                },
+                onChanged: onChangeQty,
                 onTap: () => qtyController.selection = TextSelection(
                   baseOffset: 0,
                   extentOffset: qtyController.value.text.length,

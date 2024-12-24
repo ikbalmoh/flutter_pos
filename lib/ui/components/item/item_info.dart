@@ -75,7 +75,7 @@ class ItemInfo extends ConsumerWidget {
                 item.barcode != null ? Row(
                   children: [
                     const Icon(
-                      CupertinoIcons.barcode,
+                      CupertinoIcons.barcode_viewfinder,
                       size: 16,
                       color: Colors.grey,
                     ),

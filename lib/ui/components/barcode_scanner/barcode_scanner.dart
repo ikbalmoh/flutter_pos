@@ -9,9 +9,10 @@ import 'scanner_button_widgets.dart';
 import 'scanner_error_widget.dart';
 
 class BarcodeScanner extends StatefulWidget {
-  const BarcodeScanner({super.key, required this.onCaptured});
+  const BarcodeScanner({super.key, this.title, required this.onCaptured});
 
   final Function(String, Function) onCaptured;
+  final String? title;
 
   @override
   State<BarcodeScanner> createState() => _BarcodeScannerState();
@@ -75,7 +76,7 @@ class _BarcodeScannerState extends State<BarcodeScanner>
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('scan_item_barcode'.tr()),
+        title: Text(widget.title ?? 'scan_item_barcode'.tr()),
       ),
       body: Stack(
         fit: StackFit.expand,

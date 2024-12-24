@@ -237,7 +237,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                           );
                         });
                   },
-                  icon: const Icon(Icons.document_scanner_outlined),
+                  icon: const Icon(CupertinoIcons.barcode_viewfinder),
                 ),
               ],
             )
