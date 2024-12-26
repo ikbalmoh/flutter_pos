@@ -40,7 +40,7 @@ class ItemCategories extends ConsumerWidget {
                   ),
                   backgroundColor: active == category.idCategory
                       ? Colors.teal.shade400
-                      : Colors.teal.shade50.withOpacity(0.5),
+                      : Colors.teal.shade50.withValues(alpha: 0.5),
                   labelStyle: TextStyle(
                     color: active == category.idCategory
                         ? Colors.white

@@ -112,15 +112,17 @@ class _UpdatePatcherState extends State<UpdatePatcher> {
     Future.delayed(
       Duration.zero,
       () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          builder: (context) {
-            return const UpdatePatch();
-          },
-          isDismissible: false,
-          enableDrag: false,
-        );
+        if (context.mounted) {
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.white,
+            builder: (context) {
+              return const UpdatePatch();
+            },
+            isDismissible: false,
+            enableDrag: false,
+          );
+        }
       },
     );
   }

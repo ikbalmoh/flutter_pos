@@ -2,7 +2,7 @@
 
 ## Requirement
 
-- Flutter 3.22.2
+- Flutter 3.27.1
 - Shorebird
 - Makefile
 - Firebase Tools

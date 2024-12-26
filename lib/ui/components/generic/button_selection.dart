@@ -22,7 +22,7 @@ class ButtonSelection extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: color,
           backgroundColor:
-              selected == true ?  color.withOpacity(0.15) : Colors.transparent,
+              selected == true ?  color.withValues(alpha: 0.15) : Colors.transparent,
           side: BorderSide(color: color),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(

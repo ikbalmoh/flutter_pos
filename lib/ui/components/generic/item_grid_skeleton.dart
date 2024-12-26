@@ -17,7 +17,7 @@ class ItemGridSkeleton extends StatelessWidget {
               width: double.maxFinite,
               height: double.maxFinite,
               decoration: BoxDecoration(
-                  color: Colors.blueGrey.shade50.withOpacity(0.5),
+                  color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(5)),
             ),
           ),
@@ -26,7 +26,7 @@ class ItemGridSkeleton extends StatelessWidget {
             width: 70,
             height: 20,
             decoration: BoxDecoration(
-                color: Colors.blueGrey.shade50.withOpacity(0.5),
+                color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(5)),
           ),
         ],

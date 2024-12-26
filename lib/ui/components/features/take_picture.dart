@@ -82,7 +82,7 @@ class _TakePictureState extends State<TakePicture> {
                       children: [
                         IconButton(
                           style: IconButton.styleFrom(
-                              backgroundColor: Colors.white.withOpacity(0.2)),
+                              backgroundColor: Colors.white.withValues(alpha: 0.2)),
                           padding: const EdgeInsets.all(10),
                           onPressed: onCancel,
                           icon: const Icon(
@@ -112,7 +112,7 @@ class _TakePictureState extends State<TakePicture> {
                             : IconButton(
                                 style: IconButton.styleFrom(
                                     backgroundColor:
-                                        Colors.white.withOpacity(0.2)),
+                                        Colors.white.withValues(alpha: 0.2)),
                                 padding: const EdgeInsets.all(10),
                                 onPressed: onSubmit,
                                 icon: const Icon(

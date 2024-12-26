@@ -29,7 +29,7 @@ ThemeData appTheme(BuildContext context) {
           statusBarBrightness: Brightness.dark,
         ),
         centerTitle: false,
-        shadowColor: Colors.blueGrey.shade50.withOpacity(0.5)),
+        shadowColor: Colors.blueGrey.shade50.withValues(alpha: 0.5)),
     searchBarTheme: SearchBarThemeData(
         elevation: WidgetStateProperty.resolveWith<double>(
       (Set<WidgetState> states) {
@@ -80,7 +80,7 @@ ThemeData appTheme(BuildContext context) {
         backgroundColor: WidgetStateProperty.resolveWith<Color>(
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.pressed)) {
-              return Colors.teal.shade400.withOpacity(0.7);
+              return Colors.teal.shade400.withValues(alpha: 0.7);
             } else if (states.contains(WidgetState.disabled)) {
               return Colors.grey.shade400;
             }

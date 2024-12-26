@@ -175,7 +175,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
             ),
             backgroundColor: type == '1'
                 ? Colors.teal.shade400
-                : Colors.teal.shade50.withOpacity(0.5),
+                : Colors.teal.shade50.withValues(alpha: 0.5),
             labelStyle: TextStyle(
               color: type == '1' ? Colors.white : Colors.teal,
             ),
@@ -192,7 +192,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
             ),
             backgroundColor: type == '2'
                 ? Colors.teal.shade400
-                : Colors.teal.shade50.withOpacity(0.5),
+                : Colors.teal.shade50.withValues(alpha: 0.5),
             labelStyle: TextStyle(
               color: type == '2' ? Colors.white : Colors.teal,
             ),

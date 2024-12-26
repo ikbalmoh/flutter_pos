@@ -38,7 +38,7 @@ class AppAlert {
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,
-      backgroundColor: backgroundColor ?? Colors.black.withOpacity(0.8),
+      backgroundColor: backgroundColor ?? Colors.black.withValues(alpha: 0.8),
       textColor: textColor ?? Colors.white,
       fontSize: 16.0,
     );

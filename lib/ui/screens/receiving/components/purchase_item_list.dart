@@ -114,7 +114,7 @@ class PurchaseItemList extends StatelessWidget {
                     : TextButton.icon(
                         style: TextButton.styleFrom(
                             backgroundColor:
-                                Colors.teal.shade50.withOpacity(0.7)),
+                                Colors.teal.shade50.withValues(alpha: 0.7)),
                         onPressed: () => onReceive(item),
                         icon: Icon(type == '1'
                             ? CupertinoIcons.barcode_viewfinder

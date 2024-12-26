@@ -21,7 +21,7 @@ class _CashBalanceState extends ConsumerState<CashBalance> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            backgroundColor: Colors.amber.shade50.withOpacity(0.5),
+            backgroundColor: Colors.amber.shade50.withValues(alpha: 0.5),
             labelStyle: const TextStyle(
               color: Colors.teal,
             ),

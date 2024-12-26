@@ -62,7 +62,7 @@ class PickedImage extends StatelessWidget {
               constraints: const BoxConstraints(),
               style: IconButton.styleFrom(
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  backgroundColor: Colors.white.withOpacity(0.4)),
+                  backgroundColor: Colors.white.withValues(alpha: 0.4)),
               padding: const EdgeInsets.all(3),
               onPressed: onDelete,
               icon: const Icon(
