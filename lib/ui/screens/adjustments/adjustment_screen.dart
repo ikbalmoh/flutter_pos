@@ -98,7 +98,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
 
   void onBarcodeScanned(barcode) {
     if (!canListenBarcode) return;
-    log('barcodes canned: $barcode');
+    log('barcode scanned: $barcode');
     textSearchController.text = barcode;
     onSearchItems(barcode);
   }
@@ -138,7 +138,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
           canListenBarcode = info.visibleFraction > 0;
         });
       },
-      key: const Key('visible-detector-key'),
+      key: const Key('adjustment-visible-detector-key'),
       child: BarcodeKeyboardListener(
         bufferDuration: const Duration(milliseconds: 200),
         onBarcodeScanned: onBarcodeScanned,

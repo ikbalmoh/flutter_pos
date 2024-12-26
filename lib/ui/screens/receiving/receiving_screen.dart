@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +21,7 @@ import 'package:selleri/ui/screens/receiving/components/purchase_item_list.dart'
 import 'package:selleri/ui/screens/receiving/components/receiving_cart.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ReceivingScreen extends ConsumerStatefulWidget {
   const ReceivingScreen({super.key});
@@ -31,6 +35,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
   String type = '1';
   TextEditingController codeController = TextEditingController();
   FocusNode codeFocus = FocusNode();
+  bool canListenBarcode = false;
 
   @override
   void initState() {
@@ -77,6 +82,13 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
     ref
         .read(purchaseInfoProvider.notifier)
         .loadInfo(search: codeController.text, type: int.parse(type));
+  }
+
+  void onBarcodeScanned(barcode) {
+    if (!canListenBarcode) return;
+    log('barcode scanned: $barcode');
+    codeController.text = barcode;
+    submitCode();
   }
 
   void onDeleteItem(ReceivingItem item) {
@@ -138,7 +150,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
     }
   }
 
-  void pickAdjustmentDate() async {
+  void pickReceiveDate() async {
     DateTime date = DateTime.now();
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -301,7 +313,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                 ? TextButton.icon(
                     style: TextButton.styleFrom(
                         backgroundColor: Colors.teal.shade50),
-                    onPressed: pickAdjustmentDate,
+                    onPressed: pickReceiveDate,
                     label: Text(DateTimeFormater.dateToString(
                         ref.watch(receivingProvider).receiveDate,
                         format: 'd MMM y')),
@@ -340,113 +352,160 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
       body: Row(
         children: [
           Expanded(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: typeSelector,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: [
-                      Expanded(child: codeSearchInput),
-                      const SizedBox(width: 5),
-                      IconButton(
-                        onPressed: () {
-                          showCupertinoModalPopup(
-                              context: context,
-                              builder: (context) {
-                                return BarcodeScanner(
-                                  onCaptured: onBarcodeCaptured,
-                                  title: 'scan_x'.tr(args: [
-                                    type == '1'
-                                        ? 'purchase_code'.tr()
-                                        : 'transfer_code'.tr()
-                                  ]),
-                                );
-                              });
-                        },
-                        icon: const Icon(CupertinoIcons.barcode_viewfinder),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: ref.watch(purchaseInfoProvider).when(
-                        data: (value) => value.items.isEmpty
-                            ? SingleChildScrollView(
-                                padding: const EdgeInsets.only(top: 200),
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        CupertinoIcons.doc_text_search,
-                                        size: 60,
-                                        color: Colors.grey,
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Text(
-                                        'enter_x'.tr(args: [
-                                          type == '1'
-                                              ? 'purchase_code'.tr()
-                                              : 'transfer_code'.tr()
-                                        ]),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                            ?.copyWith(color: Colors.grey),
-                                      )
-                                    ],
-                                  ),
+            child: VisibilityDetector(
+              onVisibilityChanged: (info) {
+                setState(() {
+                  canListenBarcode = info.visibleFraction > 0;
+                });
+              },
+              key: const Key('receiving-visible-detector-key'),
+              child: BarcodeKeyboardListener(
+                bufferDuration: const Duration(milliseconds: 200),
+                onBarcodeScanned: onBarcodeScanned,
+                child: Column(
+                  children: [
+                    isTablet
+                        ? Container()
+                        : Material(
+                            color: Colors.teal.shade50,
+                            child: InkWell(
+                              onTap: pickReceiveDate,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: Row(
+                                  children: [
+                                    Icon(CupertinoIcons.calendar,
+                                        color: Colors.teal.shade600),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      DateTimeFormater.dateToString(
+                                          ref
+                                              .watch(receivingProvider)
+                                              .receiveDate,
+                                          format: 'd MMM y'),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Colors.teal.shade600,
+                                          ),
+                                    )
+                                  ],
                                 ),
-                              )
-                            : ListView.builder(
-                                itemCount: value.items.length,
-                                itemBuilder: (context, index) {
-                                  PurchaseItem item = value.items[index];
-                                  int receiveQty = ref
-                                      .read(receivingProvider.notifier)
-                                      .itemQtyReceived(item.itemId);
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 3),
-                                    child: PurchaseItemList(
-                                      item: item,
-                                      onReceive: onReceiveItem,
-                                      receiveQty: receiveQty,
-                                      type: type,
-                                    ),
-                                  );
-                                },
                               ),
-                        error: (error, stackTrace) => Padding(
-                          padding: const EdgeInsets.only(top: 100),
-                          child: ErrorHandler(
-                            error: 'code_not_found'.tr(),
-                            stackTrace: 'please_scan_another_code'.tr(),
+                            ),
                           ),
-                        ),
-                        loading: () => ListView.builder(
-                          shrinkWrap: true,
-                          itemBuilder: (context, _) => const ItemListSkeleton(
-                            leading: false,
-                          ),
-                          itemCount: 10,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: typeSelector,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Expanded(child: codeSearchInput),
+                          const SizedBox(width: 5),
+                          IconButton(
+                            onPressed: () {
+                              showCupertinoModalPopup(
+                                  context: context,
+                                  builder: (context) {
+                                    return BarcodeScanner(
+                                      onCaptured: onBarcodeCaptured,
+                                      title: 'scan_x'.tr(args: [
+                                        type == '1'
+                                            ? 'purchase_code'.tr()
+                                            : 'transfer_code'.tr()
+                                      ]),
+                                    );
+                                  });
+                            },
+                            icon: const Icon(CupertinoIcons.barcode_viewfinder),
+                          )
+                        ],
                       ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Expanded(
+                      child: ref.watch(purchaseInfoProvider).when(
+                            data: (value) => value.items.isEmpty
+                                ? SingleChildScrollView(
+                                    padding: const EdgeInsets.only(top: 200),
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            CupertinoIcons.doc_text_search,
+                                            size: 60,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          Text(
+                                            'enter_x'.tr(args: [
+                                              type == '1'
+                                                  ? 'purchase_code'.tr()
+                                                  : 'transfer_code'.tr()
+                                            ]),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineSmall
+                                                ?.copyWith(color: Colors.grey),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    itemCount: value.items.length,
+                                    itemBuilder: (context, index) {
+                                      PurchaseItem item = value.items[index];
+                                      int receiveQty = ref
+                                          .read(receivingProvider.notifier)
+                                          .itemQtyReceived(item.itemId);
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3),
+                                        child: PurchaseItemList(
+                                          item: item,
+                                          onReceive: onReceiveItem,
+                                          receiveQty: receiveQty,
+                                          type: type,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                            error: (error, stackTrace) => Padding(
+                              padding: const EdgeInsets.only(top: 100),
+                              child: ErrorHandler(
+                                error: 'code_not_found'.tr(),
+                                stackTrace: 'please_scan_another_code'.tr(),
+                              ),
+                            ),
+                            loading: () => ListView.builder(
+                              shrinkWrap: true,
+                              itemBuilder: (context, _) =>
+                                  const ItemListSkeleton(
+                                leading: false,
+                              ),
+                              itemCount: 10,
+                            ),
+                          ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           isTablet
