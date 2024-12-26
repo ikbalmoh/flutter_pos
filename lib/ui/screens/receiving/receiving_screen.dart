@@ -32,6 +32,13 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
   TextEditingController codeController = TextEditingController();
   FocusNode codeFocus = FocusNode();
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => ref.read(purchaseInfoProvider.notifier).reset());
+    super.initState();
+  }
+
   void onChangeType(String value) {
     codeFocus.unfocus();
     final info = ref.watch(purchaseInfoProvider);
@@ -86,7 +93,6 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
   }
 
   void showReceiveItemForm(PurchaseItem item) {
-    context.pop();
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
