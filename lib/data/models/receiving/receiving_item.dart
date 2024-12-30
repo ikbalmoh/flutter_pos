@@ -25,6 +25,7 @@ class ReceivingItem with _$ReceivingItem {
   factory ReceivingItem.fromPurchaseItem(PurchaseItem item) {
     return ReceivingItem(
       itemId: item.itemId,
+      variantId: item.variantId,
       skuNumber: item.skuNumber,
       itemName: item.itemName,
       qtyRequest: item.qtyRequest,

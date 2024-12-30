@@ -10,6 +10,7 @@ class PurchaseItem with _$PurchaseItem {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PurchaseItem({
     required String itemId,
+    int? variantId,
     String? skuNumber,
     required String itemName,
     required int qtyRequest,

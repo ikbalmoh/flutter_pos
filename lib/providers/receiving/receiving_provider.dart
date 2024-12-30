@@ -30,16 +30,18 @@ class Receiving extends _$Receiving {
     );
   }
 
-  int itemQtyReceived(String idItem) {
-    int? receiveQty =
-        state.items.firstWhereOrNull((i) => i.itemId == idItem)?.qtyReceive;
+  int itemQtyReceived(String idItem, {int? variantId}) {
+    int? receiveQty = state.items
+        .firstWhereOrNull((i) => i.itemId == idItem && i.variantId == variantId)
+        ?.qtyReceive;
     return receiveQty ?? 0;
   }
 
   void receiveItem(PurchaseItem item,
       {required int qtyReceive, int? variantId}) {
-    int existItemIndex = state.items
-        .indexWhere((i) => i.itemId == item.itemId && i.variantId == variantId);
+    int existItemIndex = state.items.indexWhere((i) =>
+        i.itemId == item.itemId &&
+        i.variantId == (variantId ?? item.variantId));
     if (existItemIndex >= 0) {
       final receiveItem = state.items[existItemIndex].copyWith(
         qtyReceive: qtyReceive,
@@ -52,22 +54,23 @@ class Receiving extends _$Receiving {
         ],
       );
     } else {
-      final receiveItem = ReceivingItem.fromPurchaseItem(item)
-          .copyWith(qtyReceive: qtyReceive, variantId: variantId);
+      final receiveItem = ReceivingItem.fromPurchaseItem(item).copyWith(
+          qtyReceive: qtyReceive, variantId: (variantId ?? item.variantId));
       state = state.copyWith(
         items: [...state.items, receiveItem],
       );
     }
-    ref
-        .read(purchaseInfoProvider.notifier)
-        .receiveItem(item.itemId, qtyReceive);
+    ref.read(purchaseInfoProvider.notifier).receiveItem(item.itemId,
+        qtyReceive: qtyReceive, variantId: (variantId ?? item.variantId));
   }
 
-  void removeItem(String idItem) {
+  void removeItem(String idItem, {int? variantId}) {
     state = state.copyWith(
       items: state.items.where((i) => i.itemId != idItem).toList(),
     );
-    ref.read(purchaseInfoProvider.notifier).receiveItem(idItem, 0);
+    ref
+        .read(purchaseInfoProvider.notifier)
+        .receiveItem(idItem, qtyReceive: 0, variantId: variantId);
   }
 
   void setDate(DateTime date) {

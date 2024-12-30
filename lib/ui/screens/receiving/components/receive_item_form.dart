@@ -35,9 +35,10 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
   }
 
   void onSave(BuildContext context) async {
+    int? variantId = widget.item.variantId ?? widget.variantId;
     ref
         .read(receivingProvider.notifier)
-        .receiveItem(widget.item, variantId: widget.variantId, qtyReceive: qty);
+        .receiveItem(widget.item, variantId: variantId, qtyReceive: qty);
     context.pop();
   }
 

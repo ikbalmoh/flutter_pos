@@ -103,7 +103,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         subtitle: 'are_you_sure'.tr(),
         confirmLabel: 'delete'.tr(),
         danger: true, onConfirm: () async {
-      ref.read(receivingProvider.notifier).removeItem(item.itemId);
+      ref.read(receivingProvider.notifier).removeItem(item.itemId, variantId: item.variantId);
     });
   }
 
@@ -523,7 +523,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                                       PurchaseItem item = value.items[index];
                                       int receiveQty = ref
                                           .read(receivingProvider.notifier)
-                                          .itemQtyReceived(item.itemId);
+                                          .itemQtyReceived(item.itemId, variantId : item.variantId);
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 3),

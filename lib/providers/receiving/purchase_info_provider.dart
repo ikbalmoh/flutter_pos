@@ -38,11 +38,12 @@ class PurchaseInfo extends _$PurchaseInfo {
     }
   }
 
-  void receiveItem(String itemId, int qtyReceive) {
-    final item = state.value!.items.firstWhere((i) => i.itemId == itemId);
+  void receiveItem(String itemId, {required int qtyReceive, int? variantId}) {
+    final item = state.value!.items
+        .firstWhere((i) => i.itemId == itemId && i.variantId == variantId);
     final newItem = item.copyWith(qtyReceive: qtyReceive);
     final newItems = state.value!.items.map((i) {
-      if (i.itemId == itemId) {
+      if (i.itemId == itemId && i.variantId == variantId) {
         return newItem;
       }
       return i;

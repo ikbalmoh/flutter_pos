@@ -29,7 +29,9 @@ class ReceivingCart extends ConsumerWidget {
           subtitle: 'are_you_sure'.tr(),
           confirmLabel: 'delete'.tr(),
           danger: true, onConfirm: () async {
-        ref.read(receivingProvider.notifier).removeItem(item.itemId);
+        ref
+            .read(receivingProvider.notifier)
+            .removeItem(item.itemId, variantId: item.variantId);
       });
     }
 
