@@ -36,8 +36,10 @@ class Receiving extends _$Receiving {
     return receiveQty ?? 0;
   }
 
-  void receiveItem(PurchaseItem item, {required int qtyReceive}) {
-    int existItemIndex = state.items.indexWhere((i) => i.itemId == item.itemId);
+  void receiveItem(PurchaseItem item,
+      {required int qtyReceive, int? variantId}) {
+    int existItemIndex = state.items
+        .indexWhere((i) => i.itemId == item.itemId && i.variantId == variantId);
     if (existItemIndex >= 0) {
       final receiveItem = state.items[existItemIndex].copyWith(
         qtyReceive: qtyReceive,
@@ -50,9 +52,8 @@ class Receiving extends _$Receiving {
         ],
       );
     } else {
-      final receiveItem = ReceivingItem.fromPurchaseItem(item).copyWith(
-        qtyReceive: qtyReceive,
-      );
+      final receiveItem = ReceivingItem.fromPurchaseItem(item)
+          .copyWith(qtyReceive: qtyReceive, variantId: variantId);
       state = state.copyWith(
         items: [...state.items, receiveItem],
       );

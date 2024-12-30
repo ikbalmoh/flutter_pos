@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/receiving/purchase_item_variant.dart';
 import 'package:selleri/data/models/receiving/receiving_item.dart';
 
 part 'purchase_item.freezed.dart';
@@ -16,6 +17,7 @@ class PurchaseItem with _$PurchaseItem {
     int? qtyReceive,
     required int qtyResidual,
     required double price,
+    List<PurchaseItemVariant>? variants,
   }) = _PurchaseItem;
 
   factory PurchaseItem.fromJson(Map<String, dynamic> json) =>

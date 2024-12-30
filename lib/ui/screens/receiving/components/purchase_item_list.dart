@@ -19,6 +19,45 @@ class PurchaseItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget variants = item.variants != null && item.variants!.isNotEmpty
+        ? Container(
+            margin: const EdgeInsets.only(right: 15),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.list,
+                  size: 18,
+                  color: Colors.amber.shade600,
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text('${item.variants!.length} ${'variants'.tr()}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade700,
+                        ))
+              ],
+            ),
+          )
+        : Container();
+
+    Row qtyReceived = Row(
+      children: [
+        const Icon(
+          CupertinoIcons.checkmark_square,
+          size: 16,
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          width: 5,
+        ),
+        Text('${item.qtyReceived}/${item.qtyRequest} ${'received'.tr()}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey.shade700,
+                ))
+      ],
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: InkWell(
@@ -63,24 +102,7 @@ class PurchaseItemList extends StatelessWidget {
                         height: 5,
                       ),
                       Row(
-                        children: [
-                          const Icon(
-                            CupertinoIcons.checkmark_square,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                              '${item.qtyReceived}/${item.qtyRequest} ${'received'.tr()}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.grey.shade700,
-                                  ))
-                        ],
+                        children: [variants, qtyReceived],
                       )
                     ],
                   ),

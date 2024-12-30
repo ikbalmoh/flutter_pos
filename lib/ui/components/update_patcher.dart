@@ -114,6 +114,7 @@ class _UpdatePatcherState extends State<UpdatePatcher> {
       () {
         if (context.mounted) {
           showModalBottomSheet(
+            // ignore: use_build_context_synchronously
             context: context,
             backgroundColor: Colors.white,
             builder: (context) {
@@ -129,8 +130,8 @@ class _UpdatePatcherState extends State<UpdatePatcher> {
 
   @override
   void initState() {
-    checkUpdate();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkUpdate());
   }
 
   @override

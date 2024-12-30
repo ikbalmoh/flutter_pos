@@ -40,7 +40,15 @@ class ReceivingCart extends ConsumerWidget {
         backgroundColor: Colors.white,
         isDismissible: false,
         enableDrag: false,
-        builder: (BuildContext context) => const SubmitReceivingSheet(),
+        builder: (context) => DraggableScrollableSheet(
+          builder: (context, controller) => SubmitReceivingSheet(
+            scrollController: controller,
+          ),
+          minChildSize: 0.5,
+          initialChildSize: 0.7,
+          maxChildSize: 0.9,
+          expand: false,
+        ),
       );
     }
 
@@ -88,83 +96,9 @@ class ReceivingCart extends ConsumerWidget {
                   child: ListView.builder(
                     itemBuilder: (context, idx) {
                       ReceivingItem item = cart.items[idx];
-                      String itemName = item.itemName;
-                      return Material(
-                        shape: Border(
-                          bottom: BorderSide(
-                            color: Colors.blueGrey.shade50,
-                          ),
-                        ),
-                        color: Colors.white,
-                        child: InkWell(
-                          onTap: () => onReceiveItem(item),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 5,
-                              horizontal: 10,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            itemName,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          ),
-                                          Text(
-                                            item.skuNumber ?? '-',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium,
-                                          ),
-                                          Text(
-                                            "${'request'.tr()}: ${CurrencyFormat.currency(item.qtyRequest, symbol: false)}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall
-                                                ?.copyWith(
-                                                  color: Colors.black54,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey.shade100,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 7.5, vertical: 5),
-                                      child: Text(
-                                        CurrencyFormat.currency(
-                                          item.qtyReceive,
-                                          symbol: false,
-                                        ),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                      return ReceivedItemList(
+                        item: item,
+                        onTap: onReceiveItem,
                       );
                     },
                     itemCount: cart.items.length,
@@ -220,6 +154,86 @@ class ReceivingCart extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
             ),
+    );
+  }
+}
+
+class ReceivedItemList extends StatelessWidget {
+  const ReceivedItemList({
+    super.key,
+    required this.item,
+    required this.onTap,
+  });
+
+  final ReceivingItem item;
+  final Function(ReceivingItem) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      shape: Border(
+        bottom: BorderSide(
+          color: Colors.blueGrey.shade50,
+        ),
+      ),
+      color: Colors.white,
+      child: InkWell(
+        onTap: () => onTap(item),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 5,
+            horizontal: 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.itemName,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        Text(
+                          item.skuNumber ?? '-',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        Text(
+                          "${'request'.tr()}: ${CurrencyFormat.currency(item.qtyRequest, symbol: false)}",
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: Colors.black54,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(5)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 7.5, vertical: 5),
+                    child: Text(
+                      CurrencyFormat.currency(
+                        item.qtyReceive,
+                        symbol: false,
+                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

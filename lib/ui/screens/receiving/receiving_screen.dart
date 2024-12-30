@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/receiving/purchase_item.dart';
+import 'package:selleri/data/models/receiving/purchase_item_variant.dart';
 import 'package:selleri/data/models/receiving/receiving_item.dart';
 import 'package:selleri/providers/receiving/purchase_info_provider.dart';
 import 'package:selleri/providers/receiving/receiving_provider.dart';
@@ -16,6 +17,8 @@ import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
+import 'package:selleri/ui/screens/receiving/components/enter_purchase_item_code.dart';
+import 'package:selleri/ui/screens/receiving/components/purchase_item_variant_picker.dart';
 import 'package:selleri/ui/screens/receiving/components/receive_item_form.dart';
 import 'package:selleri/ui/screens/receiving/components/purchase_item_list.dart';
 import 'package:selleri/ui/screens/receiving/components/receiving_cart.dart';
@@ -104,7 +107,11 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
     });
   }
 
-  void showReceiveItemForm(PurchaseItem item) {
+  void showReceiveItemForm(PurchaseItem item, {PurchaseItemVariant? variant}) {
+    if (variant != null) {
+      item =
+          item.copyWith(itemName: '${item.itemName} - ${variant.variantName}');
+    }
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -112,41 +119,84 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         builder: (context) {
           return ReceiveItemForm(
             item: item,
+            variantId: variant?.variantId,
             onDelete: () => onDeleteItem(ReceivingItem.fromPurchaseItem(item)),
           );
         });
   }
 
-  void onItemScanned(PurchaseItem item, {required String barcode}) {
+  void onItemScanned(PurchaseItem item,
+      {PurchaseItemVariant? variant, required String barcode}) {
     context.pop();
-    if (item.skuNumber != null && item.skuNumber != barcode) {
+    if (variant != null) {
+      item = item.copyWith(skuNumber: variant.skuNumber);
+    }
+    if (item.skuNumber != barcode) {
       AppAlert.confirm(
         context,
         title: 'sku_item_different'.tr(),
         subtitle: 'sku_item_different_note'.tr(),
         onConfirm: () {
-          showReceiveItemForm(item.copyWith(skuNumber: barcode));
+          context.pop();
+          showReceiveItemForm(item.copyWith(skuNumber: barcode),
+              variant: variant);
         },
         confirmLabel: 'repalce_sku'.tr(),
         shouldPop: false,
       );
     } else {
-      showReceiveItemForm(item);
+      showReceiveItemForm(item, variant: variant);
     }
   }
 
-  void onReceiveItem(PurchaseItem item) {
-    if (type == '1') {
-      showCupertinoModalPopup(
+  void onItemNeedTobeScanned(PurchaseItem item,
+      {PurchaseItemVariant? variant}) {
+    String itemName = item.itemName;
+    if (variant != null) {
+      itemName += ' - ${variant.variantName}';
+    }
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        builder: (context) {
+          return EnterPurchaseItemCode(
+              itemName: itemName,
+              onSubmit: (code) {
+                onItemScanned(item, variant: variant, barcode: code);
+              });
+        });
+  }
+
+  void onReceiveItem(PurchaseItem item, {PurchaseItemVariant? variant}) {
+    if (variant == null && item.variants != null && item.variants!.isNotEmpty) {
+      showModalBottomSheet(
           context: context,
-          builder: (context) {
-            return BarcodeScanner(
-              onCaptured: (barcode, cb) =>
-                  onItemScanned(item, barcode: barcode),
+          backgroundColor: Colors.white,
+          isScrollControlled: true,
+          useSafeArea: true,
+          builder: (BuildContext context) {
+            return DraggableScrollableSheet(
+              builder: (context, controller) => PurchaseItemVariantPicker(
+                scrollController: controller,
+                item: item,
+                onSelect: (variant) {
+                  context.pop();
+                  onReceiveItem(item, variant: variant);
+                },
+                type: type,
+              ),
+              minChildSize: 0.3,
+              maxChildSize: 0.9,
+              expand: false,
             );
           });
+      return;
+    }
+    if (type == '1') {
+      onItemNeedTobeScanned(item, variant: variant);
     } else {
-      showReceiveItemForm(item);
+      showReceiveItemForm(item, variant: variant);
     }
   }
 

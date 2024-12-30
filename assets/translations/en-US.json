@@ -300,7 +300,8 @@
   "received_items": "Received Items",
   "receiving_history": "Receiving History",
   "scan_x": "Scan {}",
-  "sku_item_different": "SKU is Not Match",
+  "sku_item_different": "SKU Number is Not Match",
   "sku_item_different_note": "Do you want to replace the SKU number?",
-  "repalce_sku": "Replace SKU"
+  "repalce_sku": "Replace SKU Number",
+  "sku_number": "SKU Number"
 }

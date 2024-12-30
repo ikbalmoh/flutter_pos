@@ -11,8 +11,10 @@ import 'package:selleri/utils/formater.dart';
 class ReceiveItemForm extends ConsumerStatefulWidget {
   final PurchaseItem item;
   final Function? onDelete;
+  final int? variantId;
 
-  const ReceiveItemForm({super.key, required this.item, this.onDelete});
+  const ReceiveItemForm(
+      {super.key, required this.item, this.variantId, this.onDelete});
 
   @override
   ConsumerState<ReceiveItemForm> createState() => _ReceiveItemFormState();
@@ -26,7 +28,7 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
     super.initState();
 
     setState(() {
-      qty = widget.item.qtyReceive ?? widget.item.qtyReceived;
+      qty = widget.item.qtyRequest - widget.item.qtyReceived;
     });
 
     super.initState();
@@ -35,7 +37,7 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
   void onSave(BuildContext context) async {
     ref
         .read(receivingProvider.notifier)
-        .receiveItem(widget.item, qtyReceive: qty);
+        .receiveItem(widget.item, variantId: widget.variantId, qtyReceive: qty);
     context.pop();
   }
 
@@ -46,7 +48,6 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
         .bodyMedium
         ?.copyWith(color: Colors.blueGrey.shade600);
 
-    String itemName = widget.item.itemName;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       height: (MediaQuery.of(context).size.height *
@@ -67,7 +68,7 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
               ),
             ),
             child: Text(
-              itemName,
+              widget.item.itemName,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),

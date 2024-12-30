@@ -8,7 +8,9 @@ import 'package:selleri/router/routes.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class SubmitReceivingSheet extends ConsumerStatefulWidget {
-  const SubmitReceivingSheet({super.key});
+  const SubmitReceivingSheet({super.key, required this.scrollController});
+
+  final ScrollController scrollController;
 
   @override
   ConsumerState<SubmitReceivingSheet> createState() =>
@@ -64,8 +66,7 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      height: (MediaQuery.of(context).size.height *
-          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.7 : 0.4)),
+      height: (MediaQuery.of(context).size.height * 0.8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,16 +88,19 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
             ),
           ),
           Expanded(
-            child: TextFormField(
-              controller: descriptionController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.only(
-                    left: 0, top: 10, right: 0, bottom: 10),
-                label: Text(
-                  'note'.tr(),
-                  style: labelStyle,
+            child: SingleChildScrollView(
+              controller: widget.scrollController,
+              child: TextFormField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(
+                      left: 0, top: 10, right: 0, bottom: 10),
+                  label: Text(
+                    'note'.tr(),
+                    style: labelStyle,
+                  ),
+                  alignLabelWithHint: true,
                 ),
-                alignLabelWithHint: true,
               ),
             ),
           ),

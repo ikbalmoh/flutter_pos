@@ -9,6 +9,7 @@ class ReceivingItem with _$ReceivingItem {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ReceivingItem({
     required String itemId,
+    int? variantId,
     String? barcode,
     String? skuNumber,
     required String itemName,
