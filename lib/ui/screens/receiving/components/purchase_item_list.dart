@@ -51,7 +51,7 @@ class PurchaseItemList extends StatelessWidget {
         const SizedBox(
           width: 5,
         ),
-        Text('${item.qtyReceived}/${item.qtyRequest} ${'received'.tr()}',
+        Text('${item.qtyReceived}/${item.qtyRequest}',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.grey.shade700,
                 ))

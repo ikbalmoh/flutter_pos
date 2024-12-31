@@ -103,14 +103,18 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         subtitle: 'are_you_sure'.tr(),
         confirmLabel: 'delete'.tr(),
         danger: true, onConfirm: () async {
-      ref.read(receivingProvider.notifier).removeItem(item.itemId, variantId: item.variantId);
+      ref
+          .read(receivingProvider.notifier)
+          .removeItem(item.itemId, variantId: item.variantId);
     });
   }
 
   void showReceiveItemForm(PurchaseItem item, {PurchaseItemVariant? variant}) {
-    if (variant != null) {
-      item =
-          item.copyWith(itemName: '${item.itemName} - ${variant.variantName}');
+    if (item.variantId == null && variant != null) {
+      item = item.copyWith(
+        itemName: '${item.itemName} - ${variant.variantName}',
+        variantId: variant.variantId,
+      );
     }
     showModalBottomSheet(
         context: context,
@@ -119,7 +123,6 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         builder: (context) {
           return ReceiveItemForm(
             item: item,
-            variantId: variant?.variantId,
             onDelete: () => onDeleteItem(ReceivingItem.fromPurchaseItem(item)),
           );
         });
@@ -522,8 +525,9 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                                     itemBuilder: (context, index) {
                                       PurchaseItem item = value.items[index];
                                       int receiveQty = ref
-                                          .read(receivingProvider.notifier)
-                                          .itemQtyReceived(item.itemId, variantId : item.variantId);
+                                          .watch(receivingProvider.notifier)
+                                          .itemQtyReceived(item.itemId,
+                                              variantId: item.variantId);
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 3),

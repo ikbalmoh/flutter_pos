@@ -26,6 +26,7 @@ class PurchaseItem with _$PurchaseItem {
 
   factory PurchaseItem.fromReceivingItem(ReceivingItem item) => PurchaseItem(
         itemId: item.itemId,
+        variantId: item.variantId,
         skuNumber: item.skuNumber,
         itemName: item.itemName,
         qtyRequest: item.qtyRequest,

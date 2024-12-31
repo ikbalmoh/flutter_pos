@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/receiving/purchase_info.dart' as model;
@@ -39,16 +40,18 @@ class PurchaseInfo extends _$PurchaseInfo {
   }
 
   void receiveItem(String itemId, {required int qtyReceive, int? variantId}) {
-    final item = state.value!.items
-        .firstWhere((i) => i.itemId == itemId && i.variantId == variantId);
-    final newItem = item.copyWith(qtyReceive: qtyReceive);
-    final newItems = state.value!.items.map((i) {
-      if (i.itemId == itemId && i.variantId == variantId) {
-        return newItem;
-      }
-      return i;
-    }).toList();
-    state = AsyncData(state.value!.copyWith(items: newItems));
+    final item = state.value?.items.firstWhereOrNull(
+        (i) => i.itemId == itemId && i.variantId == variantId);
+    if (item != null) {
+      final newItem = item.copyWith(qtyReceive: qtyReceive);
+      final newItems = state.value!.items.map((i) {
+        if (i.itemId == itemId && i.variantId == variantId) {
+          return newItem;
+        }
+        return i;
+      }).toList();
+      state = AsyncData(state.value!.copyWith(items: newItems));
+    }
   }
 
   void resetReceiveItem() {

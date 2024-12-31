@@ -11,10 +11,9 @@ import 'package:selleri/utils/formater.dart';
 class ReceiveItemForm extends ConsumerStatefulWidget {
   final PurchaseItem item;
   final Function? onDelete;
-  final int? variantId;
 
   const ReceiveItemForm(
-      {super.key, required this.item, this.variantId, this.onDelete});
+      {super.key, required this.item, this.onDelete});
 
   @override
   ConsumerState<ReceiveItemForm> createState() => _ReceiveItemFormState();
@@ -35,10 +34,10 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
   }
 
   void onSave(BuildContext context) async {
-    int? variantId = widget.item.variantId ?? widget.variantId;
-    ref
-        .read(receivingProvider.notifier)
-        .receiveItem(widget.item, variantId: variantId, qtyReceive: qty);
+    ref.read(receivingProvider.notifier).receiveItem(
+          widget.item,
+          qtyReceive: qty,
+        );
     context.pop();
   }
 

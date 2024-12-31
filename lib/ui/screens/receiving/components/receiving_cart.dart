@@ -61,7 +61,7 @@ class ReceivingCart extends ConsumerWidget {
           onConfirm: () => ref.read(receivingProvider.notifier).reset());
     }
 
-    void onReceiveItem(ReceivingItem item) {
+    void onEditReceiveItem(ReceivingItem item) {
       showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -100,7 +100,7 @@ class ReceivingCart extends ConsumerWidget {
                       ReceivingItem item = cart.items[idx];
                       return ReceivedItemList(
                         item: item,
-                        onTap: onReceiveItem,
+                        onTap: onEditReceiveItem,
                       );
                     },
                     itemCount: cart.items.length,
