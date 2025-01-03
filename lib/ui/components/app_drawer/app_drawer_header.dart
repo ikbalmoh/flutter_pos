@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
+import 'package:selleri/providers/notification/notification_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:selleri/router/routes.dart';
 
 class AppDrawerHeader extends ConsumerWidget {
   const AppDrawerHeader({super.key});
@@ -10,6 +14,7 @@ class AppDrawerHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AuthState? authState = ref.watch(authProvider).value;
+
     return ref.watch(outletProvider).when(
         data: (data) {
           return DrawerHeader(
@@ -51,18 +56,45 @@ class AppDrawerHeader extends ConsumerWidget {
                       const SizedBox(
                         height: 20,
                       ),
-                      Text(
-                        authState is Authenticated
-                            ? authState.user.user.company.companyName
-                            : '',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      Text(
-                        data.outlet.outletName,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: Colors.grey.shade600),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  authState is Authenticated
+                                      ? authState.user.user.company.companyName
+                                      : '',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                ),
+                                Text(
+                                  data.outlet.outletName,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () =>
+                                context.pushNamed(Routes.notificaitons),
+                            icon: ref.watch(notificationProvider).when(
+                                  data: (notifications) => Badge.count(
+                                    count: notifications.length,
+                                    isLabelVisible: notifications.isNotEmpty,
+                                    child: const Icon(CupertinoIcons.bell),
+                                  ),
+                                  error: (e, _) =>
+                                      const Icon(CupertinoIcons.bell),
+                                  loading: () =>
+                                      const Icon(CupertinoIcons.bell),
+                                ),
+                          )
+                        ],
                       ),
                       const SizedBox(
                         height: 10,

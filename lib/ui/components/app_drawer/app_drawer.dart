@@ -40,6 +40,7 @@ class AppDrawer extends StatelessWidget {
             icon: const Icon(CupertinoIcons.tray),
             title: 'receiving'.tr(),
             route: Routes.receiving,
+            pathParameters: const {"type": '1', "code": " "},
           ),
           AppDrawerMenu(
             icon: const Icon(CupertinoIcons.slider_horizontal_3),

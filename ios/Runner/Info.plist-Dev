@@ -75,10 +75,10 @@
 		<dict>
 		<key>CFBundleURLSchemes</key>
 		<array>			
-			<string>selleri</string>
+			<string>dev-selleri</string>
 		</array>
 		<key>CFBundleURLName</key>
-		<string>selleri.co.id</string>		
+		<string>dev.selleri.co.id</string>		
 		</dict>
 	</array>
 </dict>
