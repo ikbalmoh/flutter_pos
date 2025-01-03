@@ -46,7 +46,6 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(purchaseInfoProvider.notifier).reset();
       String initialCode = widget.code?.trim() ?? '';
       setState(() {
         type = widget.type;
@@ -57,6 +56,13 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
       }
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    codeController.dispose();
+    codeFocus.dispose();
+    super.dispose();
   }
 
   void onChangeType(String value) {
@@ -419,9 +425,11 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
           Expanded(
             child: VisibilityDetector(
               onVisibilityChanged: (info) {
-                setState(() {
-                  canListenBarcode = info.visibleFraction > 0;
-                });
+                if (context.mounted) {
+                  setState(() {
+                    canListenBarcode = info.visibleFraction > 0;
+                  });
+                }
               },
               key: const Key('receiving-visible-detector-key'),
               child: BarcodeKeyboardListener(

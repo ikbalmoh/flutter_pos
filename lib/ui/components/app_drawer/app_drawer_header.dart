@@ -81,7 +81,7 @@ class AppDrawerHeader extends ConsumerWidget {
                           ),
                           IconButton(
                             onPressed: () =>
-                                context.pushNamed(Routes.notificaitons),
+                                context.goNamed(Routes.notificaitons),
                             icon: ref.watch(notificationProvider).when(
                                   data: (notifications) => Badge.count(
                                     count: notifications.length,

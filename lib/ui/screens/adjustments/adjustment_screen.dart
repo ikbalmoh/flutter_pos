@@ -134,9 +134,11 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
 
     var itemContainer = VisibilityDetector(
       onVisibilityChanged: (info) {
-        setState(() {
-          canListenBarcode = info.visibleFraction > 0;
-        });
+        if (context.mounted) {
+          setState(() {
+            canListenBarcode = info.visibleFraction > 0;
+          });
+        }
       },
       key: const Key('adjustment-visible-detector-key'),
       child: BarcodeKeyboardListener(

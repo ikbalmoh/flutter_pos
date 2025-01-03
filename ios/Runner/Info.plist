@@ -33,7 +33,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>selleri.co.id</string>
+			<string></string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>$(APP_URL_SCHEME)</string>

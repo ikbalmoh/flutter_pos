@@ -28,8 +28,7 @@ class AppDrawerMenu extends StatelessWidget {
         selected: GoRouterState.of(context).name == route,
         title: Text(title),
         onTap: () {
-          context.pop();
-          context.pushNamed(route, pathParameters: pathParameters ?? {});
+          context.goNamed(route, pathParameters: pathParameters ?? {});
         },
         leading: icon,
         shape: const RoundedRectangleBorder(

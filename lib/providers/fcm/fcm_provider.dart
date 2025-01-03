@@ -13,6 +13,7 @@ import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:selleri/utils/app_alert.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'fcm_provider.g.dart';
 
@@ -24,11 +25,14 @@ String outlet = '';
 class Fcm extends _$Fcm {
   @override
   FutureOr<String?> build() async {
+    RemoteMessage? initialMessage = await messaging.getInitialMessage();
+    if (initialMessage != null) {
+      handleFcmMessage(initialMessage);
+    }
+
     FirebaseMessaging.onMessage.listen(handleFcmMessage);
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log('FCM MESSAGE OPENED APP');
-    });
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
     final auth = ref.watch(authProvider);
     final outlet = ref.watch(outletProvider);
@@ -42,6 +46,17 @@ class Fcm extends _$Fcm {
   }
 
   Timer? _debounceSync;
+
+  void _handleMessage(RemoteMessage message) async {
+    log('FCM MESSAGE OPENED APP: $message');
+    if (message.data['link'] != null) {
+      String link = message.data['link']!;
+      final Uri url = Uri.parse(link.replaceFirst('://', ':/'));
+      if (!await launchUrl(url)) {
+        AppAlert.toast('Could not launch $url');
+      }
+    }
+  }
 
   void manualSync(List<String> sources, List<String>? configOnly) {
     if (_debounceSync?.isActive ?? false) _debounceSync?.cancel();
