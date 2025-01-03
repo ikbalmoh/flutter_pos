@@ -15,7 +15,7 @@ class NotificationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void openNotification(String link) async {
-      final Uri url = Uri.parse(link);
+      final Uri url = Uri.parse(link.replaceFirst('://', '://selleri.co.id/'));
       if (!await launchUrl(url)) {
         AppAlert.toast('Could not launch $url');
       }

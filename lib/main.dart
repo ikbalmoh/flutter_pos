@@ -119,7 +119,7 @@ Future initServices() async {
     provisional: false,
     sound: true,
   );
-
+  
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     log('FCM NOTIFICATION: User granted permission');
   } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {

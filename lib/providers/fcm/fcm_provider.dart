@@ -26,6 +26,10 @@ class Fcm extends _$Fcm {
   FutureOr<String?> build() async {
     FirebaseMessaging.onMessage.listen(handleFcmMessage);
 
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      log('FCM MESSAGE OPENED APP');
+    });
+
     final auth = ref.watch(authProvider);
     final outlet = ref.watch(outletProvider);
     if (auth.value is Authenticated && outlet.value is OutletSelected) {

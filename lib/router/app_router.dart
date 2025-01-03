@@ -51,6 +51,7 @@ GoRouter router(RouterRef ref) {
   return GoRouter(
       navigatorKey: key,
       initialLocation: Routes.root,
+      overridePlatformDefaultLocation: true,
       routes: [
         GoRoute(
           name: Routes.root,
@@ -186,11 +187,10 @@ GoRouter router(RouterRef ref) {
           builder: (context, state) => const NotificationScreen(),
         ),
       ],
+      debugLogDiagnostics: true,
       refreshListenable: appState,
       redirect: (context, state) {
         final currentRoute = state.topRoute?.path;
-
-        log('ROUTE STATE:\napp : ${appState.value.asData}\nroute: ${state.topRoute}');
 
         if (appState.value.isLoading) {
           return null;
@@ -217,8 +217,6 @@ GoRouter router(RouterRef ref) {
         final shouldRedirect = redirectRoute != null
             ? (currentRoute != null && currentRoute != redirectRoute)
             : false;
-
-        log('ROUTE: current = $currentRoute | redirect = $redirectRoute | should redirect = $shouldRedirect');
 
         if (shouldRedirect) {
           return redirectRoute;
