@@ -61,6 +61,7 @@ ThemeData appTheme(BuildContext context) {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(999)),
         ),
+        iconColor: Colors.white,
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(

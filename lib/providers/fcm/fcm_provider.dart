@@ -10,6 +10,7 @@ import 'package:selleri/data/network/api.dart';
 import 'package:selleri/data/repository/item_repository.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/providers/notification/notification_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -88,6 +89,7 @@ class Fcm extends _$Fcm {
       log('FCM message contained a notification: ${message.notification?.toMap()}');
       // Show local notification
       // Fetch Notification
+      ref.read(notificationProvider.notifier).loadNotifications();
     }
 
     final data = message.data;
