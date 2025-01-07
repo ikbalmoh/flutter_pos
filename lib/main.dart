@@ -9,16 +9,19 @@ import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:selleri/utils/firebase.dart';
 import 'dart:developer';
-import 'firebase_options.dart' as firebase_option;
-import 'firebase_options_dev.dart' as firebase_option_dev;
-import 'firebase_options_stage.dart' as firebase_option_stage;
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  log("Handling a background message: $message");
+  await FirebaseHelper().init();
+}
 
 Future initServices() async {
   log('INITIALIZING APP $appFlavor ...');
@@ -70,19 +73,7 @@ Future initServices() async {
   }
   storage.write(key: StoreKey.deviceName.name, value: deviceName);
 
-  var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
-  if (appFlavor == 'stage') {
-    firebaseOptions =
-        firebase_option_stage.DefaultFirebaseOptions.currentPlatform;
-  } else if (appFlavor == 'dev') {
-    firebaseOptions =
-        firebase_option_dev.DefaultFirebaseOptions.currentPlatform;
-  }
-
-  await Firebase.initializeApp(
-    name: 'selleri-$appFlavor',
-    options: firebaseOptions,
-  );
+  await FirebaseHelper().init();
 
   const fatalError = true;
   // Non-async exceptions
@@ -119,7 +110,9 @@ Future initServices() async {
     provisional: false,
     sound: true,
   );
-  
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     log('FCM NOTIFICATION: User granted permission');
   } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {

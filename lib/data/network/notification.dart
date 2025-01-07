@@ -12,7 +12,8 @@ class NotificationApi {
   Future<List<Notification>> notificationList(
       {required String idOutlet}) async {
     try {
-      final res = await api.get(ApiUrl.notifications);
+      final params = {"id_outlet": idOutlet};
+      final res = await api.get(ApiUrl.notifications, queryParameters: params);
       List<Map<String, dynamic>> listJson = List.from(res.data['data']);
       final List<Notification> data =
           listJson.map((json) => Notification.fromJson(json)).toList();

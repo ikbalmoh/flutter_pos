@@ -257,7 +257,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       color: Colors.white,
                                     ),
                                   )
-                                : const Icon(Icons.login),
+                                : const Icon(
+                                    Icons.login,
+                                    color: Colors.white,
+                                  ),
                           )
                         ],
                       ),

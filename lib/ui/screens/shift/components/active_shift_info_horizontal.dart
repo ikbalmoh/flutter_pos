@@ -162,7 +162,7 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
                                           backgroundColor: Colors.red),
                                       onPressed: onCloseShift,
                                       label: Text('close'.tr()),
-                                      icon: const Icon(Icons.stop),
+                                      icon: const Icon(Icons.stop, color: Colors.white,),
                                     )
                                   : shiftInfo.closeShift != null
                                       ? Column(

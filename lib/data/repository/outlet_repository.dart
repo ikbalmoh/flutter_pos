@@ -59,10 +59,8 @@ class OutletRepository implements OutletRepositoryProtocol {
       const storage = FlutterSecureStorage();
       String? outletConfigString =
           await storage.read(key: StoreKey.outletConfig.name);
-      log('RETRIEVE CONFIG: $outletConfigString');
       if (outletConfigString != null) {
         final jsonConfig = json.decode(outletConfigString);
-        log('JSON CONFIG: $jsonConfig');
         final config = OutletConfig.fromJson(jsonConfig);
         return config;
       }

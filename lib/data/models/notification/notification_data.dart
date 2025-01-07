@@ -7,9 +7,10 @@ part 'notification_data.g.dart';
 class NotificationData with _$NotificationData {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory NotificationData({
-    required int notificationId,
+    int? notificationId,
     String? link,
     String? transferNumber,
+    String? clickAction,
     String? purchaseNumber,
   }) = _NotificationData;
 
