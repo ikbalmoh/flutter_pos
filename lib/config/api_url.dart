@@ -29,4 +29,5 @@ class ApiUrl {
   static const String receivingDetails = '/item-receiving';
   static const String transferInfo = '/info/item-transfer';
   static const String purchaseInfo = '/info/purchase-order';
+  static const String notifications = '/notifications';
 }

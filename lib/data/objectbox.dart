@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/customer_group.dart';
@@ -10,9 +11,11 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:path/path.dart' as p;
 
 class ObjectBox {
   late final Store store;
+  static ObjectBox? _instance;
 
   late final Box<Category> categoryBox;
   late final Box<Item> itemBox;
@@ -31,8 +34,20 @@ class ObjectBox {
   }
 
   static Future<ObjectBox> create() async {
-    final store = await openStore();
-    return ObjectBox._create(store);
+    if (_instance != null) {
+      return _instance!;
+    } else {
+      final docsDir = await getApplicationDocumentsDirectory();
+      final storePath = p.join(docsDir.path, "obx");
+      late Store store;
+      if (Store.isOpen(storePath)) {
+        store = Store.attach(getObjectBoxModel(), storePath);
+      } else {
+        store = await openStore(directory: storePath);
+      }
+      _instance = ObjectBox._create(store);
+      return _instance!;
+    }
   }
 
   List<Category> categories() {

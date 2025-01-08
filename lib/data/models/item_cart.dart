@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
+import 'package:selleri/utils/formater.dart';
 import 'package:uuid/uuid.dart';
 
 part 'item_cart.freezed.dart';
@@ -67,5 +68,7 @@ class ItemCart with _$ItemCart {
         "details": isPackage && details.isNotEmpty
             ? details.map((itemPackage) => itemPackage.toJson()).toList()
             : [],
+        "added_at":
+            addedAt != null ? DateTimeFormater.dateToString(addedAt!) : null
       };
 }

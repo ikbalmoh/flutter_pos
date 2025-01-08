@@ -25,7 +25,7 @@ class OpenShiftButton extends StatelessWidget {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))),
       onPressed: showOpenShift,
       label: Text('open_shift'.tr()),
-      icon: const Icon(CupertinoIcons.list_bullet_below_rectangle),
+      icon: const Icon(CupertinoIcons.list_bullet_below_rectangle, color: Colors.white,),
     );
   }
 }

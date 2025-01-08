@@ -27,7 +27,10 @@ import 'package:selleri/utils/formater.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ReceivingScreen extends ConsumerStatefulWidget {
-  const ReceivingScreen({super.key});
+  const ReceivingScreen({super.key, required this.type, this.code});
+
+  final String type;
+  final String? code;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -42,9 +45,24 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => ref.read(purchaseInfoProvider.notifier).reset());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      String initialCode = widget.code?.trim() ?? '';
+      setState(() {
+        type = widget.type;
+        codeController.text = initialCode;
+      });
+      if (initialCode.isNotEmpty) {
+        submitCode();
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    codeController.dispose();
+    codeFocus.dispose();
+    super.dispose();
   }
 
   void onChangeType(String value) {
@@ -407,9 +425,11 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
           Expanded(
             child: VisibilityDetector(
               onVisibilityChanged: (info) {
-                setState(() {
-                  canListenBarcode = info.visibleFraction > 0;
-                });
+                if (context.mounted) {
+                  setState(() {
+                    canListenBarcode = info.visibleFraction > 0;
+                  });
+                }
               },
               key: const Key('receiving-visible-detector-key'),
               child: BarcodeKeyboardListener(

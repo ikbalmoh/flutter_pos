@@ -10,21 +10,54 @@ import 'package:selleri/data/network/api.dart';
 import 'package:selleri/data/repository/item_repository.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/providers/notification/notification_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:selleri/utils/app_alert.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:selleri/utils/local_notification_service.dart';
 
 part 'fcm_provider.g.dart';
 
 FirebaseMessaging messaging = FirebaseMessaging.instance;
-String company = '';
-String outlet = '';
+
+class FcmSubscribe {
+  final String companyTopic;
+  final String outletTopic;
+  final String token;
+
+  const FcmSubscribe({
+    required this.companyTopic,
+    required this.outletTopic,
+    required this.token,
+  });
+}
 
 @Riverpod(keepAlive: true)
 class Fcm extends _$Fcm {
   @override
-  FutureOr<String?> build() async {
+  FcmSubscribe build() {
+    init();
+    return const FcmSubscribe(companyTopic: '', outletTopic: '', token: '');
+  }
+
+  Timer? _debounceSync;
+
+  init() async {
+    LocalNotificationService.initialize();
+
+    await FirebaseMessaging.instance.setAutoInitEnabled(true);
+
+    RemoteMessage? initialMessage = await messaging.getInitialMessage();
+    if (initialMessage != null) {
+      handleFcmMessage(initialMessage);
+    }
+
     FirebaseMessaging.onMessage.listen(handleFcmMessage);
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
     final auth = ref.watch(authProvider);
     final outlet = ref.watch(outletProvider);
@@ -34,10 +67,23 @@ class Fcm extends _$Fcm {
         idOutlet: (outlet.value as OutletSelected).outlet.idOutlet,
       );
     }
-    return null;
   }
 
-  Timer? _debounceSync;
+  Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    log("Handling a background message: $message");
+  }
+
+  void _handleMessage(RemoteMessage message) async {
+    log('FCM MESSAGE OPENED APP: $message');
+    if (message.data['link'] != null) {
+      String link = message.data['link']!;
+      final Uri url = Uri.parse(link.replaceFirst('://', ':/'));
+      if (!await launchUrl(url)) {
+        AppAlert.toast('Could not launch $url');
+      }
+    }
+  }
 
   void manualSync(List<String> sources, List<String>? configOnly) {
     if (_debounceSync?.isActive ?? false) _debounceSync?.cancel();
@@ -69,6 +115,8 @@ class Fcm extends _$Fcm {
       log('FCM message contained a notification: ${message.notification?.toMap()}');
       // Show local notification
       // Fetch Notification
+      ref.read(notificationProvider.notifier).loadNotifications();
+      LocalNotificationService.display(message);
     }
 
     final data = message.data;
@@ -110,11 +158,7 @@ class Fcm extends _$Fcm {
 
     try {
       String? token = await retrieveFcmToken();
-      company = idCompany;
-      outlet = idOutlet;
-
-      if (state.value != token) {
-        state = AsyncValue.data(token);
+      if (state.token != token) {
         log("FCM TOKEN: $token");
 
         final authenticated = ref.read(authProvider).value is Authenticated;
@@ -135,10 +179,33 @@ class Fcm extends _$Fcm {
         await messaging.subscribeToTopic(companyTopic);
         await messaging.subscribeToTopic(outletTopic);
 
-        log('FCM SUBSCRIBED\n$companyTopic\n$outletTopic');
+        state = FcmSubscribe(
+          companyTopic: companyTopic,
+          outletTopic: outletTopic,
+          token: token!,
+        );
+
+        log('FCM SUBSCRIBED => $companyTopic | $outletTopic');
       }
     } catch (e) {
       log('FCM SUBSCRIPTION ERROR: $e');
+    }
+  }
+
+  Future<void> unsubscribe() async {
+    try {
+      log('UNSUBSCRIBING FCM ...');
+      if (state.companyTopic.isNotEmpty) {
+        await messaging.subscribeToTopic(state.companyTopic);
+        log('FCM UNSUBSCRIBED from ${state.companyTopic}');
+      }
+      if (state.outletTopic.isNotEmpty) {
+        await messaging.subscribeToTopic(state.outletTopic);
+        log('FCM UNSUBSCRIBED from ${state.outletTopic}');
+      }
+      state = const FcmSubscribe(companyTopic: '', outletTopic: '', token: '');
+    } catch (e) {
+      log('UNSUBSCRIBING FCM FAILED => $e');
     }
   }
 }

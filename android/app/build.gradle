@@ -38,6 +38,7 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -59,6 +60,7 @@ android {
         ndk {
             debugSymbolLevel 'FULL'
         }
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -97,18 +99,30 @@ android {
             dimension "mode"
             resValue "string", "app_name", "Selleri Dev"
             applicationIdSuffix ".dev"
-            manifestPlaceholders = [applicationLabel: "Selleri Dev"]
+            manifestPlaceholders = [
+                applicationLabel: "Selleri Dev",
+                applicationScheme: "dev-selleri",
+                applicationHost: "dev.selleri.co.id"
+            ]
         }
         stage {
             dimension "mode"
             resValue "string", "app_name", "Selleri Stage"
             applicationIdSuffix ".stage"
-            manifestPlaceholders = [applicationLabel: "Selleri Stage"]
+            manifestPlaceholders = [
+                applicationLabel: "Selleri Stage",
+                applicationScheme: "dev-selleri",
+                applicationHost: "dev.selleri.co.id"
+            ]
             signingConfig signingConfigs.stage
         }
         prod {
             resValue "string", "app_name", "Selleri"
-            manifestPlaceholders = [applicationLabel: "Selleri"]
+            manifestPlaceholders = [
+                applicationLabel: "Selleri",
+                applicationScheme: "selleri",
+                applicationHost: "selleri.co.id"
+            ]
             applicationIdSuffix ".prod"
             signingConfig signingConfigs.release
         }
@@ -119,4 +133,8 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+}

@@ -169,9 +169,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     var itemContainer = VisibilityDetector(
       onVisibilityChanged: (info) {
-        setState(() {
-          canListenBarcode = info.visibleFraction > 0;
-        });
+        if (context.mounted) {
+          setState(() {
+            canListenBarcode = info.visibleFraction > 0;
+          });
+        }
       },
       key: const Key('visible-detector-key'),
       child: BarcodeKeyboardListener(

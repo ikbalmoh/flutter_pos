@@ -5,6 +5,7 @@ import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/auth_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/fcm/fcm_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
@@ -49,6 +50,7 @@ class Auth extends _$Auth {
   }
 
   Future<void> logout({bool? skipLogout}) async {
+    ref.read(fcmProvider.notifier).unsubscribe();
     ref.read(shiftProvider.notifier).shiftLoading();
     try {
       log('API LOGOUT');
