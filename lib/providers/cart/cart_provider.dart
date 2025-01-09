@@ -164,6 +164,13 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
+  void addItemCart(ItemCart item) {
+    List<ItemCart> items = List<ItemCart>.from(state.items);
+    items.add(item);
+    state = state.copyWith(items: items);
+    calculateCart();
+  }
+
   void updateQty(String identifier, {bool increment = true}) {
     final index = state.items.indexWhere((i) => i.idItem == identifier);
     if (index > -1) {
