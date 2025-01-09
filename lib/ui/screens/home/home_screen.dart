@@ -82,6 +82,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      log('APP RESUMED');
+      ref.read(outletProvider.notifier).refreshConfig();
       refreshItems();
     }
   }
