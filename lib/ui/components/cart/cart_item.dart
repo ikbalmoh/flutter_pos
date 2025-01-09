@@ -113,7 +113,7 @@ class _CartItemState extends State<CartItem> {
                           : Container(),
                     ],
                   ),
-                  widget.item.note != ''
+                  widget.item.note != null && widget.item.note!.isNotEmpty
                       ? Text(
                           widget.item.note ?? '-',
                           style: textTheme.bodySmall,

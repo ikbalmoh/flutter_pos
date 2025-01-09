@@ -368,12 +368,21 @@ class Cart extends _$Cart {
 
   void openHoldedCart(CartHolded holded) {
     log('OPEN HOLDED CART $holded');
+    final outletState = ref.read(outletProvider).value as OutletSelected;
+
+    final tax = outletState.config.tax;
+    final taxable = outletState.config.taxable ?? false;
+
     model.Cart cart = holded.dataHold.copyWith(
-        idTransaction: holded.transactionId,
-        shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
-        holdAt: holded.dataHold.holdAt ?? DateTime.now(),
-        promotions: [],
-        items: []);
+      idTransaction: holded.transactionId,
+      ppn: tax?.percentage ?? 0,
+      ppnIsInclude: tax?.isInclude ?? true,
+      taxName: taxable ? tax?.taxName : '',
+      shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
+      holdAt: holded.dataHold.holdAt ?? DateTime.now(),
+      promotions: [],
+      items: [],
+    );
 
     List<ItemCart> items = [];
     for (ItemCart item in holded.dataHold.items) {
