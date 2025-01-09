@@ -9,6 +9,7 @@ import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/components/hold/hold_form.dart';
+import 'package:selleri/ui/screens/item/add_extra_item_form.dart';
 
 class HomeMenu extends ConsumerWidget {
   const HomeMenu({super.key});
@@ -19,7 +20,6 @@ class HomeMenu extends ConsumerWidget {
       if (ref.read(cartProvider).items.isNotEmpty) {
         showModalBottomSheet(
           context: context,
-          backgroundColor: Colors.white,
           isDismissible: false,
           enableDrag: false,
           isScrollControlled: true,
@@ -35,6 +35,14 @@ class HomeMenu extends ConsumerWidget {
       } else {
         ref.read(cartProvider.notifier).initCart();
       }
+    }
+
+    void showAddExtraItem() {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => const AddExtraItemForm(),
+      );
     }
 
     return MenuAnchor(
@@ -103,18 +111,25 @@ class HomeMenu extends ConsumerWidget {
                   child: Text('promotion_list'.tr()),
                 ),
                 MenuItemButton(
+                  onPressed: showAddExtraItem,
+                  leadingIcon: Icon(
+                    CupertinoIcons.cart_badge_plus,
+                    color: Colors.blue.shade700,
+                  ),
+                  child: Text('extra_item'.tr()),
+                ),
+                MenuItemButton(
                   onPressed: () => context.push(Routes.addItem),
                   leadingIcon: Icon(
-                    CupertinoIcons.plus_rectangle_on_rectangle,
+                    CupertinoIcons.plus_square_on_square,
                     color: Colors.teal.shade700,
                   ),
                   child: Text('add_item'.tr()),
                 ),
                 const PopupMenuDivider(),
                 MenuItemButton(
-                  onPressed: () => ref
-                      .read(appSettingsProvider.notifier)
-                      .changeItemLayout(),
+                  onPressed: () =>
+                      ref.read(appSettingsProvider.notifier).changeItemLayout(),
                   leadingIcon: Icon(
                       ref.watch(appSettingsProvider).itemLayoutGrid
                           ? CupertinoIcons.rectangle_grid_1x2
@@ -138,8 +153,7 @@ class HomeMenu extends ConsumerWidget {
               color: Colors.blueGrey.shade400,
             ),
           ),
-          child:
-              Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
+          child: Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
         ),
       ],
     );
