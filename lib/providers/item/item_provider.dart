@@ -1,9 +1,13 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_attribute_variant.dart';
+import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/network/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/item_repository.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
@@ -26,8 +30,15 @@ class ItemsStream extends _$ItemsStream {
     );
   }
 
+  Future<List<Category>> syncCategories() async {
+    final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
+    List<Category> categories = await itemRepository.fetchCategoris();
+    return categories;
+  }
+
   Future<void> loadItems({
     bool refresh = false,
+    bool fullSync = false,
     Function(String progress)? progressCallback,
   }) async {
     log('LOAD ITEMS: $refresh');
@@ -36,7 +47,7 @@ class ItemsStream extends _$ItemsStream {
     if (progressCallback != null) {
       progressCallback('loading_x'.tr(args: ['categories'.tr()]));
     }
-    List<Category> categories = await itemRepository.fetchCategoris();
+    List<Category> categories = await syncCategories();
 
     if (progressCallback != null) {
       progressCallback('loading_x'.tr(args: ['promotions'.tr()]));
@@ -52,8 +63,10 @@ class ItemsStream extends _$ItemsStream {
         }
 
         final DateTime startLoad = DateTime.now();
-        List<Item> items =
-            await itemRepository.fetchItems(idCategory: category.idCategory);
+        List<Item> items = await itemRepository.fetchItems(
+          idCategory: category.idCategory,
+          fullSync: fullSync,
+        );
         final DateTime startSave = DateTime.now();
         objectBox.putItems(items);
         final DateTime endSate = DateTime.now();
@@ -122,5 +135,70 @@ class ItemsStream extends _$ItemsStream {
   double getItemStock(String idItem) {
     final item = objectBox.getItem(idItem);
     return item?.stockItem ?? 0;
+  }
+
+  Future<Item> storeItem(Map<String, dynamic> itemPayload,
+      List<AttributeVariant> attributes) async {
+    final api = ref.watch(itemApiProvider);
+
+    try {
+      if (attributes.isNotEmpty) {
+        List<Map<String, dynamic>> variants =
+            attributes.asMap().entries.map<Map<String, dynamic>>((attr) {
+          var idx = attr.key;
+          var value = attr.value;
+          return {
+            'attr_name': value.attrName,
+            'options': value.options.map((opt) {
+              return {'option_name': opt};
+            }).toList(),
+            'is_primary': idx == 0 ? true : false,
+          };
+        }).toList();
+        itemPayload['variants'] = {'attributes': variants};
+      }
+
+      Item item = await api.storeItem(itemPayload);
+
+      objectBox.putItems([item]);
+
+      return item;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<List<ItemVariant>> updateVariants(
+      String idItem, List<ItemVariant> variants) async {
+    try {
+      final api = ref.watch(itemApiProvider);
+      List<Map<String, dynamic>> attributes =
+          variants.map<Map<String, dynamic>>((v) {
+        return {
+          "id_variant": v.idVariant,
+          "item_price": v.itemPrice,
+          "sku_number": v.skuNumber,
+          "barcode_number": v.barcodeNumber
+        };
+      }).toList();
+      final updatedVariants = await api.updateItemVariants(idItem, attributes);
+      objectBox.putVariants(updatedVariants);
+      return updatedVariants;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  bool isScannedItemStockAvailable(ScanItemResult result) {
+    if (result.item != null) {
+      if (result.item!.stockControl == false) {
+        return false;
+      }
+      if (result.variant != null) {
+        return result.variant!.stockItem > 0;
+      }
+      return result.item!.stockItem > 0;
+    }
+    return false;
   }
 }

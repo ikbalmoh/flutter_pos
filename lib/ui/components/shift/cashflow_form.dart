@@ -49,8 +49,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   @override
   void initState() {
     if (widget.cashflow != null) {
-      final config =
-          (ref.read(outletProvider).value as OutletSelected).config;
+      final config = (ref.read(outletProvider).value as OutletSelected).config;
       List<Akun> accounts = List<Akun>.from(config.akunBiaya ?? []);
       accounts.addAll(config.akunPendapatan ?? []);
       accounts.addAll(config.akunSetoran ?? []);
@@ -207,16 +206,15 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
       child: isLoading
           ? const LoadingPlaceholder()
           : SizedBox(
-              height: (widget.height ?? MediaQuery.of(context).size.height) +
-                  MediaQuery.of(context).viewInsets.bottom +
-                  15,
+              height: MediaQuery.of(context).size.height *
+                  (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.7),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     padding: const EdgeInsets.only(
-                        top: 20, left: 15, right: 15, bottom: 15),
+                        top: 20, left: 15, right: 15, bottom: 10),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
@@ -246,6 +244,8 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,45 +316,52 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                               ],
                             ),
                           ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 15),
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            decoration: BoxDecoration(
-                                border: Border(
-                              bottom: BorderSide(
-                                width: 1,
-                                color: Colors.blueGrey.shade100,
-                              ),
-                            )),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'account'.tr(),
-                                  style: labelStyle,
-                                ),
-                                DropdownButton<Akun>(
-                                  dropdownColor: Colors.white,
-                                  value: account,
-                                  hint: Text(
-                                      'select_x'.tr(args: ['account'.tr()])),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      account = value;
-                                    });
-                                  },
-                                  items: accountList
-                                      .map<DropdownMenuItem<Akun>>((Akun akun) {
-                                    return DropdownMenuItem<Akun>(
-                                      value: akun,
-                                      child: Text(akun.namaAkun),
-                                    );
-                                  }).toList(),
-                                  underline: const SizedBox(),
+                          outletConfig.addOns != null &&
+                                  outletConfig.addOns!.contains('accounting')
+                              ? Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 0),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                    bottom: BorderSide(
+                                      width: 1,
+                                      color: Colors.blueGrey.shade100,
+                                    ),
+                                  )),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'account'.tr(),
+                                        style: labelStyle,
+                                      ),
+                                      DropdownButton<Akun>(
+                                        dropdownColor: Colors.white,
+                                        value: account,
+                                        hint: Text('select_x'
+                                            .tr(args: ['account'.tr()])),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            account = value;
+                                          });
+                                        },
+                                        items: accountList
+                                            .map<DropdownMenuItem<Akun>>(
+                                                (Akun akun) {
+                                          return DropdownMenuItem<Akun>(
+                                            value: akun,
+                                            child: Text(akun.namaAkun),
+                                          );
+                                        }).toList(),
+                                        underline: const SizedBox(),
+                                      )
+                                    ],
+                                  ),
                                 )
-                              ],
-                            ),
-                          ),
+                              : Container(),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: TextFormField(
@@ -516,7 +523,6 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
                             onPressed: isLoading ||
                                     amount == 0 ||
                                     descriptions == '' ||
-                                    account == null ||
                                     (images.isEmpty && prevImages.isEmpty)
                                 ? null
                                 : submitCashflow,

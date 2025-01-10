@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -37,14 +38,13 @@ class Cart extends _$Cart {
 
   Future<void> initCart() async {
     try {
-      if (ref.read(authNotifierProvider).value is! Authenticated) {
+      if (ref.read(authProvider).value is! Authenticated) {
         return;
       }
 
       final outletState = ref.read(outletProvider).value as OutletSelected;
 
-      final authState =
-          await ref.read(authNotifierProvider.future) as Authenticated;
+      final authState = await ref.read(authProvider.future) as Authenticated;
 
       final shift = ref.read(shiftProvider).value;
 
@@ -164,6 +164,13 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
+  void addItemCart(ItemCart item) {
+    List<ItemCart> items = List<ItemCart>.from(state.items);
+    items.add(item);
+    state = state.copyWith(items: items);
+    calculateCart();
+  }
+
   void updateQty(String identifier, {bool increment = true}) {
     final index = state.items.indexWhere((i) => i.idItem == identifier);
     if (index > -1) {
@@ -254,8 +261,13 @@ class Cart extends _$Cart {
     state = state.copyWith(notes: notes, images: images);
   }
 
+  Future<void> setPic(PersonInCharge? pic) {
+    state = state.copyWith(personInCharge: pic?.id);
+    return Future.delayed(const Duration(milliseconds: 200));
+  }
+
   void addPayment(CartPayment payment) {
-    final auth = ref.read(authNotifierProvider).value as Authenticated;
+    final auth = ref.read(authProvider).value as Authenticated;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
@@ -295,7 +307,7 @@ class Cart extends _$Cart {
 
   Future<void> storeTransaction() async {
     try {
-      final api = TransactionApi();
+      final api = ref.watch(transactionApiProvider);
 
       final shift = ref.read(shiftProvider).value;
       if (shift == null) {
@@ -341,7 +353,7 @@ class Cart extends _$Cart {
   Future<void> holdCart({required String note, bool createNew = false}) async {
     model.Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
-    final api = TransactionApi();
+    final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
       await api.updateHoldTransaction(cart.idTransaction!, cart);
     } else {
@@ -356,12 +368,21 @@ class Cart extends _$Cart {
 
   void openHoldedCart(CartHolded holded) {
     log('OPEN HOLDED CART $holded');
+    final outletState = ref.read(outletProvider).value as OutletSelected;
+
+    final tax = outletState.config.tax;
+    final taxable = outletState.config.taxable ?? false;
+
     model.Cart cart = holded.dataHold.copyWith(
-        idTransaction: holded.transactionId,
-        shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
-        holdAt: holded.dataHold.holdAt ?? DateTime.now(),
-        promotions: [],
-        items: []);
+      idTransaction: holded.transactionId,
+      ppn: tax?.percentage ?? 0,
+      ppnIsInclude: tax?.isInclude ?? true,
+      taxName: taxable ? tax?.taxName : '',
+      shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
+      holdAt: holded.dataHold.holdAt ?? DateTime.now(),
+      promotions: [],
+      items: [],
+    );
 
     List<ItemCart> items = [];
     for (ItemCart item in holded.dataHold.items) {
@@ -389,7 +410,7 @@ class Cart extends _$Cart {
   }
 
   void removeHoldedCart() async {
-    final api = TransactionApi();
+    final api = ref.watch(transactionApiProvider);
     String idTransaction = state.idTransaction!;
     initCart();
     await api.deleteHoldedTransaction(idTransaction);
@@ -523,7 +544,7 @@ class Cart extends _$Cart {
 
         int requirementQty = cartPromo.requirementQuantity!;
         int eligibleQty = cartPromo.kelipatan == true
-            ? (itemCart.quantity ~/ requirementQty) * requirementQty
+            ? (itemCart.quantity ~/ requirementQty)
             : requirementQty;
 
         double finalDiscountTotal = discountTotal * eligibleQty;

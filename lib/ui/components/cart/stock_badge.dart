@@ -24,7 +24,7 @@ class StockBadge extends ConsumerWidget {
         : stockItem <= 0
             ? Container(
                 decoration: BoxDecoration(
-                    color: Colors.red.shade100.withOpacity(0.5),
+                    color: Colors.red.shade100.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(3)),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 5,
@@ -40,8 +40,8 @@ class StockBadge extends ConsumerWidget {
             : Container(
                 decoration: BoxDecoration(
                     color: stockItem <= 10
-                        ? Colors.amber.shade100.withOpacity(0.5)
-                        : Colors.blue.shade100.withOpacity(0.5),
+                        ? Colors.amber.shade100.withValues(alpha: 0.5)
+                        : Colors.blue.shade100.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(3)),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 5,

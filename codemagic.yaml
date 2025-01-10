@@ -1,0 +1,344 @@
+definitions:
+  environment:
+    stage_env: &stage_env
+      flutter: fvm
+      groups:
+        - shorebird
+        - firebase_credentials
+        - selleri-stage
+      vars:
+        FLUTTER_VERSION: '3.27.1'
+      android_signing:
+        - selleri_stage_keystore
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.dgti.selleri.stage
+    prod_env: &prod_env
+      flutter: fvm
+      groups:
+        - shorebird
+        - firebase_credentials_prod
+        - selleri-prod
+      vars:
+        FLUTTER_VERSION: '3.22.3'
+      android_signing:
+        - selleri_release_keystore
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.dgti.selleri
+  scripts:
+    - &get_flavor
+      name: Get flavor
+      script: |
+        CURRENT_BRANCH=${CM_BRANCH}
+        if [[ "$CURRENT_BRANCH" == "main" ]]; then
+          FLAVOR="prod"
+        elif [[ "$CURRENT_BRANCH" == "dev" ]]; then
+          FLAVOR="stage"
+        else
+          FLAVOR="dev"
+        fi
+        echo "FLAVOR=$FLAVOR" >> $CM_ENV
+
+    - &extract_version
+      name: Extract version
+      script: |
+        #!/bin/sh
+        # Extract the version line from pubspec.yaml
+        RELEASE_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+
+        echo "RELEASE_VERSION=$RELEASE_VERSION"
+
+        if [ -z "$RELEASE_VERSION" ]; then
+          echo "Error: Version not found in pubspec.yaml"
+          exit 1
+        fi
+
+        # Write variables to CM_ENV
+        echo "RELEASE_VERSION=$RELEASE_VERSION" >> $CM_ENV
+
+    - &create_env
+      name: Create .env
+      script: |
+        touch "$CM_BUILD_DIR/.env"
+          cat >> "$CM_BUILD_DIR/.env" <<EOF
+          GRANT_TYPE=password
+          CLIENT_ID=2
+          HOST=https://selleri.co.id/api
+          CLIENT_SECRET=7lJC833F5COjxMfFGS9xcLoPFEmKTIXnf6gYClKR
+          APP_ID=selleri
+          EOF
+
+    - &create_env_stage
+      name: Create .env.stage
+      script: |
+        touch "$CM_BUILD_DIR/.env.stage"
+          cat >> "$CM_BUILD_DIR/.env.stage" <<EOF
+          GRANT_TYPE=password
+          CLIENT_ID=2
+          HOST=https://dev.selleri.co.id/api
+          CLIENT_SECRET=7lJC833F5COjxMfFGS9xcLoPFEmKTIXnf6gYClKR
+          APP_ID=dev-selleri
+          EOF
+
+    - &get_flutter_packages
+      name: Get Flutter packages
+      script: |
+        flutter packages pub get
+        echo "Flutter packages get done"
+
+    - &build_runner
+      name: Run build runner
+      script: |
+        dart run build_runner build -d
+        echo "build runner done"
+
+    - &flutter_analyze
+      name: Run static code analysis
+      script: flutter analyze
+      ignore_failure: true
+
+    - &setup_local_properties
+      name: Set up local.properties
+      script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+
+    - &xcode_project_use_profiles
+      name: Use Xcode profiles
+      script: xcode-project use-profiles
+
+    - &shorebird_install
+      name: Install Shorebird
+      script: |
+        # Install Shorebird
+        curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+
+        # Add Shorebird to PATH
+        echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
+
+    - &shorebird_android_release
+      name: Shorebird release Android
+      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
+
+    - &shorebird_ios_release
+      name: Shorebird release iOS
+      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --export-options-plist=/Users/builder/export_options.plist --verbose
+
+    - &shorebird_android_patch
+      name: Shorebird patch Android
+      script: shorebird patch android --release-version=$RELEASE_VERSION --flavor=prod --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
+
+    - &shorebird_ios_patch
+      name: Shorebird patch Android iOS
+      script: shorebird patch ios --release-version=$RELEASE_VERSION --flavor=prod --allow-asset-diffs -- --export-options-plist=/Users/builder/export_options.plist
+
+    - &shorebird_android_release_stage
+      name: Shorebird release Android
+      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=stage -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+
+    - &shorebird_ios_release_stage
+      name: Shorebird release iOS
+      script: shorebird release ios --flutter-version="$FLUTTER_VERSION" --flavor=stage -- --export-options-plist=/Users/builder/export_options.plist
+
+    - &shorebird_android_patch_stage
+      name: Shorebird patch Android
+      script: shorebird patch android --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+
+    - &shorebird_ios_patch_stage
+      name: Shorebird patch Android iOS
+      script: shorebird patch ios --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --export-options-plist=/Users/builder/export_options.plist
+
+  publishing_notifications: &publishing_notifications
+    email:
+      recipients:
+        - dgti.developer@gmail.com
+        - hikmat.iqbal@gmail.com
+
+workflows:
+  release-prod-android:
+    name: Release Production Android
+    instance_type: mac_mini_m1
+    environment:
+      <<: *prod_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *shorebird_android_release
+
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: 1:107680786292:android:33ce365eb80fcee83cee21
+          groups:
+            - dgti
+          artifact_type: 'apk'
+      <<: *publishing_notifications
+
+  release-prod-ios:
+    name: Release Production iOS
+    instance_type: mac_mini_m1
+    environment:
+      <<: *prod_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *xcode_project_use_profiles
+      - *shorebird_ios_release
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        ios:
+          app_id: 1:107680786292:ios:25e36a95642325833cee21
+          groups:
+            - dgti
+      <<: *publishing_notifications
+
+  release-staging-android:
+    name: Release Staging Android
+    instance_type: mac_mini_m1
+    environment:
+      <<: *stage_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *shorebird_android_release_stage
+
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: 1:957311922583:android:d61a59e4b45bfdd62794d2
+          groups:
+            - dgti
+          artifact_type: 'apk'
+      <<: *publishing_notifications
+
+  release-staging-ios:
+    name: Release Staging iOS
+    instance_type: mac_mini_m1
+    environment:
+      <<: *stage_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *xcode_project_use_profiles
+      - *shorebird_ios_release_stage
+
+    artifacts:
+      - build/**/outputs/**/mapping.txt
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        ios:
+          app_id: 1:957311922583:ios:487efa18122c20842794d2
+          groups:
+            - dgti
+      <<: *publishing_notifications
+
+  patch-prod:
+    name: Patch Production
+    instance_type: mac_mini_m1
+    environment:
+      <<: *prod_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *xcode_project_use_profiles
+      - *shorebird_android_patch
+      - *shorebird_ios_patch
+
+    publishing:
+      <<: *publishing_notifications
+
+  patch-staging-android:
+    name: Patch Staging Android
+    instance_type: mac_mini_m1
+    environment:
+      <<: *stage_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *shorebird_android_patch_stage
+
+    publishing:
+      <<: *publishing_notifications
+
+  patch-staging-ios:
+    name: Patch Staging iOS
+    instance_type: mac_mini_m1
+    environment:
+      <<: *stage_env
+
+    scripts:
+      - *extract_version
+      - *shorebird_install
+      - *create_env
+      - *create_env_stage
+      - *get_flutter_packages
+      - *build_runner
+      - *flutter_analyze
+      - *setup_local_properties
+      - *xcode_project_use_profiles
+      - *shorebird_ios_patch_stage
+
+    publishing:
+      <<: *publishing_notifications

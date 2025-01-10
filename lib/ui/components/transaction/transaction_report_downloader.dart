@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_file/open_file.dart';
 import 'package:selleri/config/api_url.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
@@ -37,7 +38,7 @@ class _TransactionReportDownloaderState
     });
   }
 
-  void onDownload() async {
+  void onDownload(BuildContext context) async {
     if (from == null) {
       return;
     }
@@ -55,14 +56,12 @@ class _TransactionReportDownloaderState
         "to": toDate,
         "type": "export",
         "id_outlet[]": ref.read(outletProvider).value is OutletSelected
-            ? (ref.read(outletProvider).value as OutletSelected)
-                .outlet
-                .idOutlet
+            ? (ref.read(outletProvider).value as OutletSelected).outlet.idOutlet
             : ''
       };
       String path = await downloader.download(
         ApiUrl.reportSales,
-        openAfterDownload: true,
+        openAfterDownload: false,
         fileName: fileName,
         params: params,
         callback: (received) {
@@ -74,7 +73,12 @@ class _TransactionReportDownloaderState
       setState(() {
         downloading = false;
       });
-      AppAlert.toast('stored_at'.tr(args: [path]));
+      if (context.mounted) {
+        AppAlert.snackbar(
+            context, 'x_downloaded'.tr(args: ['adjustment_history'.tr()]),
+            action: SnackBarAction(
+                label: 'open'.tr(), onPressed: () => OpenFile.open(path)));
+      }
       // ignore: use_build_context_synchronously
       context.pop();
     } on Exception catch (e) {
@@ -143,7 +147,9 @@ class _TransactionReportDownloaderState
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: from != null && !downloading ? onDownload : null,
+              onPressed: from != null && !downloading
+                  ? () => onDownload(context)
+                  : null,
               label: Text(downloading ? '$progress %' : 'download'.tr()),
               icon: downloading
                   ? const SizedBox(

@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/customer_group.dart';
@@ -10,9 +11,11 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:path/path.dart' as p;
 
 class ObjectBox {
   late final Store store;
+  static ObjectBox? _instance;
 
   late final Box<Category> categoryBox;
   late final Box<Item> itemBox;
@@ -31,8 +34,20 @@ class ObjectBox {
   }
 
   static Future<ObjectBox> create() async {
-    final store = await openStore();
-    return ObjectBox._create(store);
+    if (_instance != null) {
+      return _instance!;
+    } else {
+      final docsDir = await getApplicationDocumentsDirectory();
+      final storePath = p.join(docsDir.path, "obx");
+      late Store store;
+      if (Store.isOpen(storePath)) {
+        store = Store.attach(getObjectBoxModel(), storePath);
+      } else {
+        store = await openStore(directory: storePath);
+      }
+      _instance = ObjectBox._create(store);
+      return _instance!;
+    }
   }
 
   List<Category> categories() {
@@ -216,8 +231,10 @@ class ObjectBox {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
     if (search != '') {
-      itemQuery =
-          itemQuery.and(Item_.itemName.contains(search, caseSensitive: false));
+      itemQuery = itemQuery.and(Item_.itemName
+          .contains(search, caseSensitive: false)
+          .or(Item_.barcode.equals(search, caseSensitive: false))
+          .or(Item_.sku.equals(search, caseSensitive: false)));
     }
     if (filterStock == FilterStock.available) {
       itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
@@ -235,20 +252,25 @@ class ObjectBox {
     categoryBox.putMany(categories);
   }
 
+  List<ItemVariant> itemVariants(String idItem) {
+    List<ItemVariant> variants =
+        itemVariantBox.query(ItemVariant_.idItem.equals(idItem)).build().find();
+    return variants;
+  }
+
   ScanItemResult getItemByBarcode(String barcode) {
-    Item? item =
-        itemBox.query(Item_.barcode.equals(barcode)).build().findFirst();
-    ItemVariant? variant;
-    if (item != null && item.variants.isNotEmpty) {
-      item = null;
-    } else if (item == null) {
-      variant = itemVariantBox
-          .query(ItemVariant_.barcodeNumber.equals(barcode))
+    Item? item;
+    ItemVariant? variant = itemVariantBox
+        .query(ItemVariant_.barcodeNumber.equals(barcode, caseSensitive: false))
+        .build()
+        .findFirst();
+    if (variant != null) {
+      item = getItem(variant.idItem);
+    } else {
+      item = itemBox
+          .query(Item_.barcode.equals(barcode, caseSensitive: false))
           .build()
           .findFirst();
-      if (variant != null) {
-        item = getItem(variant.idItem);
-      }
     }
     return ScanItemResult(item: item, variant: variant);
   }
@@ -272,8 +294,24 @@ class ObjectBox {
       .find();
 
   void putItems(List<Item> items) {
-    itemBox.putMany(items);
-    log('${items.length} ITEMS HAS BEEN STORED');
+    log('PUT ITEMS =>\n$items');
+    List<int> ids = itemBox.putMany(items);
+    log('ITEMS HAS BEEN STORED: $ids');
+    List<ItemVariant> itemVariants = [];
+    for (var item in items) {
+      if (item.variants.isNotEmpty) {
+        itemVariants.addAll(item.variants.toList());
+      }
+    }
+    if (itemVariants.isNotEmpty) {
+      putVariants(itemVariants);
+    }
+  }
+
+  void putVariants(List<ItemVariant> variants) {
+    log('PUT VARIANTS =>\n$variants');
+    List<int> ids = itemVariantBox.putMany(variants);
+    log('VARIANTS HAS BEEN STORED: $ids');
   }
 
   int getTotalItem({required String idCategory}) {

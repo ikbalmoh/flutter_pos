@@ -202,7 +202,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                                     onPressed: onCreateNewCustomer,
                                     icon: const Icon(Icons.add),
                                     label:
-                                        Text('new'.tr(args: ['customer'.tr()])))
+                                        Text('new_x'.tr(args: ['customer'.tr()])))
                                 : Container()
                           ],
                         ),

@@ -7,10 +7,18 @@ part 'app_settings_provider.g.dart';
 class AppSettings extends _$AppSettings {
   @override
   model.AppSettings build() {
-    return const model.AppSettings(itemLayoutGrid: false);
+    return model.AppSettings.init();
   }
 
   void changeItemLayout() {
     state = state.copyWith(itemLayoutGrid: !state.itemLayoutGrid);
+  }
+
+  void toggleAutoPrintReceipt(bool value) {
+    state = state.copyWith(autoPrintReceipt: value);
+  }
+
+  void toggleAutoPrintShiftReport(bool value) {
+    state = state.copyWith(autoPrintShiftReport: value);
   }
 }

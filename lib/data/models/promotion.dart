@@ -35,7 +35,9 @@ class Promotion {
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool allOutlet;
 
+  @Property(type: PropertyType.date)
   DateTime? startDate;
+  @Property(type: PropertyType.date)
   DateTime? endDate;
 
   @JsonKey(fromJson: Converters.dynamicToBool)

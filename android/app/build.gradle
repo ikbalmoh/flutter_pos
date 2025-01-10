@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     // START: FlutterFire Configuration
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
     // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
@@ -37,6 +38,7 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -55,20 +57,38 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        ndk {
+            debugSymbolLevel 'FULL'
+        }
+        multiDexEnabled true
     }
 
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            if (System.getenv()["CI"]) { // CI=true is exported by Codemagic
+                storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
+                storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
+                keyAlias System.getenv()["CM_KEY_ALIAS"]
+                keyPassword System.getenv()["CM_KEY_PASSWORD"]
+            } else {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
         }
         stage {
-            keyAlias keystoreProperties['keyAliasStage']
-            keyPassword keystoreProperties['keyPasswordStage']
-            storeFile keystoreProperties['storeFileStage'] ? file(keystoreProperties['storeFileStage']) : null
-            storePassword keystoreProperties['storePasswordStage']
+            if (System.getenv()["CI"]) { // CI=true is exported by Codemagic
+                storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
+                storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
+                keyAlias System.getenv()["CM_KEY_ALIAS"]
+                keyPassword System.getenv()["CM_KEY_PASSWORD"]
+            } else {
+                keyAlias keystoreProperties['keyAliasStage']
+                keyPassword keystoreProperties['keyPasswordStage']
+                storeFile keystoreProperties['storeFileStage'] ? file(keystoreProperties['storeFileStage']) : null
+                storePassword keystoreProperties['storePasswordStage']
+            }
         }
     }
 
@@ -79,18 +99,30 @@ android {
             dimension "mode"
             resValue "string", "app_name", "Selleri Dev"
             applicationIdSuffix ".dev"
-            manifestPlaceholders = [applicationLabel: "Selleri Dev"]
+            manifestPlaceholders = [
+                applicationLabel: "Selleri Dev",
+                applicationScheme: "dev-selleri",
+                applicationHost: "dev.selleri.co.id"
+            ]
         }
         stage {
             dimension "mode"
             resValue "string", "app_name", "Selleri Stage"
             applicationIdSuffix ".stage"
-            manifestPlaceholders = [applicationLabel: "Selleri Stage"]
+            manifestPlaceholders = [
+                applicationLabel: "Selleri Stage",
+                applicationScheme: "dev-selleri",
+                applicationHost: "dev.selleri.co.id"
+            ]
             signingConfig signingConfigs.stage
         }
         prod {
             resValue "string", "app_name", "Selleri"
-            manifestPlaceholders = [applicationLabel: "Selleri"]
+            manifestPlaceholders = [
+                applicationLabel: "Selleri",
+                applicationScheme: "selleri",
+                applicationHost: "selleri.co.id"
+            ]
             applicationIdSuffix ".prod"
             signingConfig signingConfigs.release
         }
@@ -101,4 +133,8 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+}

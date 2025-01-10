@@ -79,8 +79,10 @@ class Promotions extends _$Promotions {
     // Check date
     if (!promo.allTime) {
       int now = DateTime.now().millisecondsSinceEpoch;
-      int start = DateTimeFormater.stringToTimestamp(promo.startDate!);
-      int end = DateTimeFormater.stringToTimestamp(promo.endDate!);
+      int start = promo.startDate!.millisecondsSinceEpoch;
+      DateTime endDate = DateTime(promo.endDate!.year,
+          promo.endDate!.month, promo.endDate!.day + 1, 0, 0, -1);
+      int end = endDate.millisecondsSinceEpoch;
 
       bool dateIsValid = now >= start && now <= end;
 

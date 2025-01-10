@@ -10,7 +10,7 @@ class ShiftInactive extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    final authState = ref.watch(authNotifierProvider).value;
+    final authState = ref.watch(authProvider).value;
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       color: Colors.white,

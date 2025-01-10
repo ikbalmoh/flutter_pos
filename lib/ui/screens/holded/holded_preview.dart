@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/cart_holded.dart';
+import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
@@ -19,6 +20,11 @@ class HoldedPreview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    OutletState? outletState = ref.watch(outletProvider).value;
+
+    OutletConfig? config =
+        outletState is OutletSelected ? outletState.config : null;
+
     void openHoldedTransaction() {
       ref.read(cartProvider.notifier).openHoldedCart(cartHolded);
       while (context.canPop()) {
@@ -46,16 +52,71 @@ class HoldedPreview extends ConsumerWidget {
       }
     }
 
-    void onPrintReceipt() async {
+    void printReceipt({bool withPrice = true}) async {
       try {
         await ref.read(transactionsProvider.notifier).printReceipt(
               cartHolded.dataHold,
               isHold: true,
+              withPrice: withPrice,
             );
       } catch (e) {
-        // ignore: use_build_context_synchronously
-        AppAlert.snackbar(context, e.toString());
+        AppAlert.toast(e.toString());
       }
+    }
+
+    void onPrintReceipt() async {
+      showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          builder: (context) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(
+                        top: 2, left: 15, right: 10, bottom: 5),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 0.5,
+                          color: Colors.blueGrey.shade100,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'print_receipt'.tr(),
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        IconButton(
+                          onPressed: () => context.pop(),
+                          icon: const Icon(Icons.close),
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ListTile(
+                    leading: const Icon(Icons.receipt_long),
+                    title: Text('with_price'.tr()),
+                    onTap: () => printReceipt(withPrice: true),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.receipt),
+                    title: Text('without_price'.tr()),
+                    onTap: () => printReceipt(withPrice: false),
+                  ),
+                ],
+              ),
+            );
+          });
     }
 
     return Scaffold(
@@ -78,6 +139,7 @@ class HoldedPreview extends ConsumerWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(10),
               child: OrderSummary(
+                taxable: config?.taxable ?? false,
                 cart: cartHolded.dataHold,
                 radius: const Radius.circular(5),
                 outletState: ref.watch(outletProvider).value as OutletSelected,

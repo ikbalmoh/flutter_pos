@@ -13,6 +13,7 @@ import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/data/models/shift_cashflow_image.dart';
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/providers/shift/current_shift_info_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/generic/button_selection.dart';
@@ -49,12 +50,14 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
+    bool isAutoPrint = ref.read(appSettingsProvider).autoPrintShiftReport;
     OutletState? outletState = ref.read(outletProvider).value;
     if (outletState is OutletSelected) {
       setState(() {
         isAttachmentRequired =
             outletState.config.attachmentShiftMandatory ?? false;
         isAutoShift = outletState.config.autoShift ?? false;
+        printReport = isAutoPrint;
       });
     }
     super.initState();
@@ -86,8 +89,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
 
   void onSubmit(BuildContext context) {
     if (images.isEmpty && isAttachmentRequired) {
-      AppAlert.snackbar(
-          context, 'field_required'.tr(args: ['attachments'.tr()]));
+      AppAlert.toast('field_required'.tr(args: ['attachments'.tr()]));
       return;
     }
     if (diffAmount() != 0) {
@@ -157,9 +159,8 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
           ? const LoadingPlaceholder()
           : Container(
               margin: const EdgeInsets.only(top: 10),
-              height:
-                  (widget.height ?? MediaQuery.of(context).size.height * 0.6) +
-                      MediaQuery.of(context).viewInsets.bottom,
+              height: MediaQuery.of(context).size.height *
+                  (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.5),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -195,6 +196,8 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

@@ -21,7 +21,7 @@ class ItemListSkeleton extends StatelessWidget {
                       height: 40,
                       margin: const EdgeInsets.only(right: 15),
                       decoration: BoxDecoration(
-                          color: Colors.blueGrey.shade50.withOpacity(0.5),
+                          color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(25)),
                     ),
               Expanded(
@@ -32,7 +32,7 @@ class ItemListSkeleton extends StatelessWidget {
                       width: 70,
                       height: 20,
                       decoration: BoxDecoration(
-                          color: Colors.blueGrey.shade50.withOpacity(0.5),
+                          color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(5)),
                     ),
                     const SizedBox(height: 5),
@@ -40,7 +40,7 @@ class ItemListSkeleton extends StatelessWidget {
                       width: 120,
                       height: 15,
                       decoration: BoxDecoration(
-                          color: Colors.blueGrey.shade50.withOpacity(0.5),
+                          color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(5)),
                     ),
                   ],
@@ -51,7 +51,7 @@ class ItemListSkeleton extends StatelessWidget {
                 width: 70,
                 height: 20,
                 decoration: BoxDecoration(
-                    color: Colors.blueGrey.shade50.withOpacity(0.5),
+                    color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(5)),
               ),
             ],

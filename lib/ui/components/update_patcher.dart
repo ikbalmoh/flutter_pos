@@ -112,23 +112,26 @@ class _UpdatePatcherState extends State<UpdatePatcher> {
     Future.delayed(
       Duration.zero,
       () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          builder: (context) {
-            return const UpdatePatch();
-          },
-          isDismissible: false,
-          enableDrag: false,
-        );
+        if (context.mounted) {
+          showModalBottomSheet(
+            // ignore: use_build_context_synchronously
+            context: context,
+            backgroundColor: Colors.white,
+            builder: (context) {
+              return const UpdatePatch();
+            },
+            isDismissible: false,
+            enableDrag: false,
+          );
+        }
       },
     );
   }
 
   @override
   void initState() {
-    checkUpdate();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkUpdate());
   }
 
   @override

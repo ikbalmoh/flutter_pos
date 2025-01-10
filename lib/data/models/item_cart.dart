@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
+import 'package:selleri/utils/formater.dart';
 import 'package:uuid/uuid.dart';
 
 part 'item_cart.freezed.dart';
@@ -21,9 +22,12 @@ class ItemCart with _$ItemCart {
     required String idItem,
     required String? idCategory,
     required String itemName,
+    bool? isExtraItem,
+    String? extraName,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isPackage,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isManualPrice,
     required double price,
+    double? purchasePrice,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool manualDiscount,
     required int quantity,
     required double discount,
@@ -61,10 +65,13 @@ class ItemCart with _$ItemCart {
         "promotion_id": promotion?.promotionId,
         "total": total,
         "note": note,
-        "item_name": itemName,
+        "item_name":
+            idVariant != null ? [itemName, variantName].join(' - ') : itemName,
         "pic_detail_id": picDetailId,
         "details": isPackage && details.isNotEmpty
             ? details.map((itemPackage) => itemPackage.toJson()).toList()
             : [],
+        "added_at":
+            addedAt != null ? DateTimeFormater.dateToString(addedAt!) : null
       };
 }

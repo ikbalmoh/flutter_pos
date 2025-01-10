@@ -7,6 +7,9 @@ class ApiUrl {
   static const String outletConfig = '/info/outlets-config';
   static const String listCategory = '/lists/item-category';
   static const String listItems = '/lists/items';
+  static const String listItemsForAdjustment = '$listItems/for-adjust';
+  static const String fastMovingItems = '$listItems/fast-moving';
+  static const String items = '/items';
   static const String startShift = '/shifts/start';
   static const String closeShift = '/shifts/{id}/closing';
   static const String changeOpenAmount = '/shifts/{id}/change-open-amount';
@@ -17,6 +20,14 @@ class ApiUrl {
   static const String shifts = '/shifts';
   static const String cashFlows = '/cash-flows';
   static const String reportSales = '/report/sales';
+  static const String reportAdjustment = '/report/adjustments';
   static const String promotions = '/promotions';
   static const String promotionByVoucher = '/promotions/voucher';
+  static const String adjustment = '/adjustments';
+  static const String adjustmentDetails = '/adjustments/{id}/details';
+  static const String receiving = '/item-receiving';
+  static const String receivingDetails = '/item-receiving';
+  static const String transferInfo = '/info/item-transfer';
+  static const String purchaseInfo = '/info/purchase-order';
+  static const String notifications = '/notifications';
 }

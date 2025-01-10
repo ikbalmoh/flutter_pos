@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/pagination.dart';
@@ -12,7 +13,7 @@ part 'customer_list_provider.g.dart';
 class CustomerList extends _$CustomerList {
   @override
   FutureOr<Pagination<Customer>> build() async {
-    final api = CustomerApi();
+    final api = ref.watch(customerApiProvider);
     try {
       final name = ref.read(cartProvider).customerName;
       final customers = await api.customers(page: 1, search: name ?? '');
@@ -36,7 +37,7 @@ class CustomerList extends _$CustomerList {
     } else {
       state = AsyncData(state.value!.copyWith(loading: true));
     }
-    final api = CustomerApi();
+    final api = ref.watch(customerApiProvider);
     try {
       var customers = await api.customers(page: page, search: search);
       List<Customer> data = List.from(state.value?.data as Iterable<Customer>);
@@ -54,7 +55,7 @@ class CustomerList extends _$CustomerList {
   }
 
   Future<void> submitNewCustomer(Map<String, dynamic> payload) async {
-    final api = CustomerApi();
+    final api = ref.watch(customerApiProvider);
     final Customer customer = await api.storeCustomer(payload);
     ref.read(cartProvider.notifier).selectCustomer(customer);
     loadCustomers(page: 1, search: customer.customerName);

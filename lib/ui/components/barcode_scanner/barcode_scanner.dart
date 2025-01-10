@@ -1,27 +1,56 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:selleri/ui/components/cart/add_barcode_item.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'scanner_button_widgets.dart';
 import 'scanner_error_widget.dart';
 
 class BarcodeScanner extends StatefulWidget {
-  const BarcodeScanner({super.key});
+  const BarcodeScanner({super.key, this.title, required this.onCaptured});
+
+  final Function(String, Function) onCaptured;
+  final String? title;
 
   @override
   State<BarcodeScanner> createState() => _BarcodeScannerState();
 }
 
-class _BarcodeScannerState extends State<BarcodeScanner> {
+class _BarcodeScannerState extends State<BarcodeScanner>
+    with WidgetsBindingObserver {
   final MobileScannerController controller = MobileScannerController(
-    formats: const [BarcodeFormat.all],
-  );
+      formats: const [BarcodeFormat.all],
+      autoStart: false,
+      useNewCameraSelector: true);
+  StreamSubscription<Object?>? _subscription;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _subscription = controller.barcodes.listen(onDetect);
+    unawaited(controller.start());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+        return;
+      case AppLifecycleState.resumed:
+        _subscription = controller.barcodes.listen(onDetect);
+
+        unawaited(controller.start());
+      case AppLifecycleState.inactive:
+        unawaited(_subscription?.cancel());
+        _subscription = null;
+        unawaited(controller.stop());
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   void onDetect(BarcodeCapture capture) async {
@@ -32,29 +61,22 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
       controller.start();
       return;
     }
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      isDismissible: true,
-      builder: (context) {
-        return AddBarcodeItem(barcode: barcode);
-      },
-    );
-    controller.start();
+    widget.onCaptured(barcode, () => controller.start());
   }
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
     final scanWindow = Rect.fromCenter(
       center: MediaQuery.sizeOf(context).center(const Offset(0, -50)),
-      width: 220,
-      height: 110,
+      width: isTablet ? 300 : 220,
+      height: isTablet ? 150 : 110,
     );
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('scan_item_barcode'.tr()),
+        title: Text(widget.title ?? 'scan_item_barcode'.tr()),
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -66,11 +88,10 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
                 child: MobileScanner(
                   fit: BoxFit.contain,
                   controller: controller,
-                  scanWindow: scanWindow,
+                  scanWindow: isTablet ? null : scanWindow,
                   errorBuilder: (context, error, child) {
                     return ScannerErrorWidget(error: error);
                   },
-                  onDetect: onDetect,
                 ),
               ),
             ),
@@ -109,7 +130,10 @@ class _BarcodeScannerState extends State<BarcodeScanner> {
 
   @override
   Future<void> dispose() async {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+    unawaited(_subscription?.cancel());
+    _subscription = null;
     await controller.dispose();
   }
 }
@@ -139,7 +163,7 @@ class ScannerOverlay extends CustomPainter {
       );
 
     final backgroundPaint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
+      ..color = Colors.black.withValues(alpha: 0.5)
       ..style = PaintingStyle.fill
       ..blendMode = BlendMode.dstOut;
 

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item.dart';
@@ -51,21 +52,42 @@ class ItemInfo extends ConsumerWidget {
                 ),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.itemName,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      item.itemName,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey.shade500,
+                        size: 16,
+                      ),
+                    ),
+                  ],
                 ),
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.grey.shade500,
-                    size: 16,
-                  ),
-                ),
+                item.barcode != null ? Row(
+                  children: [
+                    const Icon(
+                      CupertinoIcons.barcode_viewfinder,
+                      size: 16,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      item.barcode!,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.grey.shade700),
+                    )
+                  ],
+                ) : Container()
               ],
             ),
           ),
@@ -101,7 +123,8 @@ class ItemInfo extends ConsumerWidget {
                                   .read(promotionsProvider.notifier)
                                   .isPromotionEligible(promo);
                               return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
                                 child: CartPromotionItem(
                                   promo: promo,
                                   onSelect: null,

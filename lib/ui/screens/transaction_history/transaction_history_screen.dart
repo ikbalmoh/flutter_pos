@@ -129,7 +129,7 @@ class _TransactionHistoryScreenState
             margin: const EdgeInsets.all(0),
             elevation: 1,
             color: Colors.white,
-            shadowColor: Colors.blueGrey.shade50.withOpacity(0.5),
+            shadowColor: Colors.blueGrey.shade50.withValues(alpha: 0.5),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
             child: Padding(

@@ -2,7 +2,7 @@
 
 ## Requirement
 
-- Flutter 3.22.2
+- Flutter 3.27.1
 - Shorebird
 - Makefile
 - Firebase Tools
@@ -10,6 +10,10 @@
 ### Generate Provider or Model
 
 - run `dart run build_runner build -d` or `dart run build_runner watch -d` once provider or model are changed
+
+### There is patch that needed to be applied
+
+- run `dart run patch_package apply`
 
 ### Build APK Stage
 

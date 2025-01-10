@@ -12,4 +12,16 @@ class Routes {
   static const String shift = '/shift';
   static const String shiftDetail = '/shift-detail';
   static const String promotions = '/promotions';
+  static const String settings = '/settings';
+  static const String syncData = '/sync';
+  static const String autoPrint = '/auto-print';
+  static const String account = '/account';
+  static const String about = '/about';
+  static const String addItem = '/add-item';
+  static const String manageVariant = '/manage-variant';
+  static const String adjustments = '/adjustments';
+  static const String adjustmentsHistory = '/adjustments-history';
+  static const String receiving = '/receiving/form';
+  static const String receivingHistory = '/receiving-history';
+  static const String notificaitons = '/notificaitons';
 }

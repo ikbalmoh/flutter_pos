@@ -7,11 +7,11 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/ui/components/cart/shop_item_list.dart';
+import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/item/item_info.dart';
 import 'package:selleri/ui/components/cart/item_variant_picker.dart';
 import 'package:selleri/ui/components/cart/shop_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class ItemContainer extends ConsumerWidget {
@@ -21,12 +21,14 @@ class ItemContainer extends ConsumerWidget {
   final String search;
   final FilterStock filterStock;
   final bool? allowEmptyStock;
+  final Function clearSearch;
 
   const ItemContainer({
     this.scrollController,
     required this.idCategory,
     required this.search,
     required this.filterStock,
+    required this.clearSearch,
     this.allowEmptyStock,
     super.key,
   });
@@ -39,6 +41,14 @@ class ItemContainer extends ConsumerWidget {
       return;
     }
     ref.read(cartProvider.notifier).addToCart(item, variant: variant);
+    if (search.isNotEmpty &&
+        [
+          item.itemName.toLowerCase(),
+          item.sku?.toLowerCase(),
+          item.barcode?.toLowerCase()
+        ].contains(search.toLowerCase())) {
+      clearSearch();
+    }
   }
 
   void showVariants(BuildContext context, Item item, WidgetRef ref) {
@@ -119,34 +129,33 @@ class ItemContainer extends ConsumerWidget {
                 ),
               )
             : ref.watch(appSettingsProvider).itemLayoutGrid
-                ? GridView.count(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    crossAxisCount: gridColumn,
-                    childAspectRatio: 0.9,
-                    padding: const EdgeInsets.all(7.5),
-                    crossAxisSpacing: 7.5,
-                    mainAxisSpacing: 7.5,
-                    controller: scrollController,
-                    children: List.generate(
-                      value.length,
-                      (index) {
-                        final Item item = value[index];
-                        int qtyOnCart = ref
-                            .read(cartProvider.notifier)
-                            .qtyOnCart(item.idItem);
-                        return ShopItem(
-                          item: item,
-                          qtyOnCart: qtyOnCart,
-                          onAddToCart: (item) =>
-                              onAddToCart(context, ref, item: item),
-                          addQty: (idItem) =>
-                              ref.read(cartProvider.notifier).updateQty(idItem),
-                          showVariants: (item) =>
-                              showVariants(context, item, ref),
-                          onLongPress: (item) => onLongPress(context, item),
-                        );
-                      },
+                ? GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: gridColumn,
+                      mainAxisSpacing: 7.5,
+                      crossAxisSpacing: 8,
                     ),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(7.5),
+                    controller: scrollController,
+                    itemCount: value.length,
+                    itemBuilder: (context, index) {
+                      final Item item = value[index];
+                      int qtyOnCart = ref
+                          .read(cartProvider.notifier)
+                          .qtyOnCart(item.idItem);
+                      return ShopItem(
+                        item: item,
+                        qtyOnCart: qtyOnCart,
+                        onAddToCart: (item) =>
+                            onAddToCart(context, ref, item: item),
+                        addQty: (idItem) =>
+                            ref.read(cartProvider.notifier).updateQty(idItem),
+                        showVariants: (item) =>
+                            showVariants(context, item, ref),
+                        onLongPress: (item) => onLongPress(context, item),
+                      );
+                    },
                   )
                 : ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -174,7 +183,12 @@ class ItemContainer extends ConsumerWidget {
         AsyncError(:final error) => Center(
             child: Text(error.toString()),
           ),
-        _ => const LoadingIndicator(color: Colors.teal)
+        _ => ListView.builder(
+            itemBuilder: (context, idx) {
+              return const ItemListSkeleton();
+            },
+            itemCount: 6,
+          )
       };
     });
   }

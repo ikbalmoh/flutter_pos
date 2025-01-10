@@ -7,7 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'token_repository.g.dart';
 
 abstract class TokenRepositoryProtocol {
-  Future<void> remove();
+  Future<void> removeToken();
 
   Future<void> saveToken(Token token);
 
@@ -19,7 +19,7 @@ TokenRepository tokenRepository(TokenRepositoryRef ref) => TokenRepository();
 
 class TokenRepository implements TokenRepositoryProtocol {
   @override
-  Future<void> remove() async {
+  Future<void> removeToken() async {
     const storage = FlutterSecureStorage();
     await storage.delete(key: StoreKey.token.name);
   }

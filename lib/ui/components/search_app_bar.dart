@@ -7,6 +7,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TextEditingController controller;
   final String? placeholder;
   final List<Widget>? actions;
+  final FocusNode? focusNode;
 
   @override
   final Size preferredSize;
@@ -18,6 +19,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.controller,
     this.placeholder,
     this.actions,
+    this.focusNode,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   @override
@@ -27,11 +29,20 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       foregroundColor: Colors.grey.shade500,
       automaticallyImplyLeading: false,
-      titleSpacing: 5,
+      leading: IconButton(
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          size: 20,
+          color: Colors.black87,
+        ),
+        onPressed: onBack,
+        padding: const EdgeInsets.all(0),
+      ),
+      titleSpacing: 0,
       title: TextField(
         controller: controller,
         onChanged: onChanged,
-        autofocus: true,
+        focusNode: focusNode,
         decoration: InputDecoration(
           hintText: placeholder ?? 'search'.tr(),
           hintStyle: const TextStyle(
@@ -42,13 +53,6 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
           focusedBorder: InputBorder.none,
           disabledBorder: InputBorder.none,
           enabledBorder: InputBorder.none,
-          prefixIcon: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              size: 20,
-            ),
-            onPressed: onBack,
-          ),
           suffixIcon: controller.text.isNotEmpty
               ? IconButton(
                   color: Colors.grey.shade400,
@@ -64,6 +68,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: actions,
+      elevation: 3,
     );
   }
 }
