@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/models/token.dart';
@@ -15,7 +16,7 @@ abstract class TokenRepositoryProtocol {
 }
 
 @riverpod
-TokenRepository tokenRepository(TokenRepositoryRef ref) => TokenRepository();
+TokenRepository tokenRepository(Ref ref) => TokenRepository();
 
 class TokenRepository implements TokenRepositoryProtocol {
   @override

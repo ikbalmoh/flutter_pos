@@ -12,7 +12,7 @@ import 'package:selleri/data/network/outlet.dart';
 part 'outlet_repository.g.dart';
 
 @Riverpod(keepAlive: true)
-OutletRepository outletRepository(OutletRepositoryRef ref) =>
+OutletRepository outletRepository(Ref ref) =>
     OutletRepository(ref);
 
 abstract class OutletRepositoryProtocol {
