@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +26,6 @@ class CartPromotions extends ConsumerWidget {
           });
 
       if (promotions != null) {
-        List<Promotion> freeGiftPromotions =
-            promotions.where((p) => p.type == 1).toList();
-        log('FREE GIFT $freeGiftPromotions');
         ref.read(cartProvider.notifier).applyPromotions(promotions);
       }
     }

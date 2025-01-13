@@ -80,8 +80,8 @@ class Promotions extends _$Promotions {
     if (!promo.allTime) {
       int now = DateTime.now().millisecondsSinceEpoch;
       int start = promo.startDate!.millisecondsSinceEpoch;
-      DateTime endDate = DateTime(promo.endDate!.year,
-          promo.endDate!.month, promo.endDate!.day + 1, 0, 0, -1);
+      DateTime endDate = DateTime(promo.endDate!.year, promo.endDate!.month,
+          promo.endDate!.day + 1, 0, 0, -1);
       int end = endDate.millisecondsSinceEpoch;
 
       bool dateIsValid = now >= start && now <= end;
@@ -168,7 +168,7 @@ class Promotions extends _$Promotions {
           break;
       }
 
-      log('eligibleItems: $eligibleItems');
+      log('ELIGIBLE ITEMS FOR PROMOR 1 & 3: $eligibleItems');
 
       if (eligibleItems.isEmpty) {
         return false;
@@ -178,5 +178,36 @@ class Promotions extends _$Promotions {
     }
 
     return true;
+  }
+
+  List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
+    List<ItemCart> eligibleItems = [];
+
+    if (promo.requirementProductType == 1) {
+      // require product id
+      eligibleItems = items
+          .where((item) =>
+              (item.idVariant != null && promo.requirementVariantId.isNotEmpty
+                  ? promo.requirementVariantId
+                      .contains(item.idVariant.toString())
+                  : promo.requirementProductId.contains(item.idItem)) &&
+              item.quantity >= promo.requirementQuantity!.toInt())
+          .toList();
+    } else if (promo.requirementProductType == 2) {
+      // require package id
+      eligibleItems = items
+          .where((item) =>
+              promo.requirementProductId.contains(item.idItem) &&
+              item.quantity >= promo.requirementQuantity!.toInt())
+          .toList();
+    } else if (promo.requirementProductType == 3) {
+      // require category id
+      eligibleItems = items
+          .where((item) =>
+              promo.requirementProductId.contains(item.idCategory) &&
+              item.quantity >= promo.requirementQuantity!.toInt())
+          .toList();
+    }
+    return eligibleItems;
   }
 }

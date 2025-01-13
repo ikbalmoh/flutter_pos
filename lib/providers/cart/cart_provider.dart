@@ -489,10 +489,17 @@ class Cart extends _$Cart {
                 total: item.price * item.quantity,
               ))
         .toList();
-    List<Promotion> promotionByProducts =
-        promotions.where((promo) => promo.type == 3).toList();
+
+    List<Promotion> freeGiftpromotions =
+        promotions.where((promo) => promo.type == 1).toList();
+
     Promotion? promotionByOrder =
         promotions.firstWhereOrNull((promo) => promo.type == 2);
+
+    List<Promotion> promotionByProducts =
+        promotions.where((promo) => promo.type == 3).toList();
+
+    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT\n$freeGiftpromotions\n2 => BY ORDER\n$promotionByOrder\n3 => BY PRODUCTS\n$promotionByProducts');
 
     List<CartPromotion> cartPromotions = [];
 
@@ -502,33 +509,8 @@ class Cart extends _$Cart {
 
       CartPromotion cartPromo = CartPromotion.fromData(promo);
 
-      List<ItemCart> eligibleItems = [];
-
-      if (promo.requirementProductType == 1) {
-        // require product id
-        eligibleItems = items
-            .where((item) =>
-                (item.idVariant != null && promo.requirementVariantId.isNotEmpty
-                    ? promo.requirementVariantId
-                        .contains(item.idVariant.toString())
-                    : promo.requirementProductId.contains(item.idItem)) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      } else if (promo.requirementProductType == 2) {
-        // require package id
-        eligibleItems = items
-            .where((item) =>
-                promo.requirementProductId.contains(item.idItem) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      } else if (promo.requirementProductType == 3) {
-        // require category id
-        eligibleItems = items
-            .where((item) =>
-                promo.requirementProductId.contains(item.idCategory) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      }
+      List<ItemCart> eligibleItems =
+          ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
 
       if (eligibleItems.isEmpty) {
         continue;
