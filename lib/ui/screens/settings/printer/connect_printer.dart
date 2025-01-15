@@ -147,8 +147,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
                             },
                           ),
                         ),
-                      )
-                      .toList(),
+                      ),
                 ],
               ),
             ),

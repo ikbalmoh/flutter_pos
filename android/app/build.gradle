@@ -33,8 +33,9 @@ if (flutterVersionName == null) {
    }
 
 android {
+    compileSdk = 35
     namespace "com.dgti.selleri"
-    compileSdkVersion 34
+    compileSdkVersion 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -53,7 +54,7 @@ android {
 
     defaultConfig {
         applicationId "com.dgti.selleri"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

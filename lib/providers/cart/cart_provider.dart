@@ -38,13 +38,18 @@ class Cart extends _$Cart {
 
   Future<void> initCart() async {
     try {
-      if (ref.read(authProvider).value is! Authenticated) {
+      if (ref.watch(authProvider).value is! Authenticated) {
         return;
       }
 
-      final outletState = ref.read(outletProvider).value as OutletSelected;
-
       final authState = await ref.read(authProvider.future) as Authenticated;
+
+      final outletState = ref.watch(outletProvider).value;
+
+      if (outletState is! OutletSelected) {
+        log('Outlet is not selected');
+        return;
+      }
 
       final shift = ref.read(shiftProvider).value;
 
@@ -58,6 +63,8 @@ class Cart extends _$Cart {
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
+
+      log('INIT CART $transactionNo => tax: ${tax.toString()}');
 
       model.Cart cart = model.Cart.initial();
 
@@ -77,6 +84,16 @@ class Cart extends _$Cart {
     } on Exception catch (e) {
       log('Init Cart Failed: ${e.toString()}');
     }
+  }
+
+  void applyTaxConfig({required Tax? tax, required bool taxable}) {
+    log('APPLY TAX CONFIG: $tax');
+    state = state.copyWith(
+      taxName: taxable && tax != null ? tax.taxName : '',
+      ppn: taxable && tax != null ? tax.percentage : 0,
+      ppnIsInclude: taxable && tax != null ? tax.isInclude : true,
+    );
+    calculateCart();
   }
 
   List<ItemPackage> getEmptyItemPackages(List<ItemPackage> packageItems) {

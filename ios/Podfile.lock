@@ -331,7 +331,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   camera_avfoundation: 04b44aeb14070126c6529e5ab82cc7c9fca107cf
-  device_info_plus: 335f3ce08d2e174b9fdc3db3db0f4e3b1f66bd89
+  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Firebase: cec914dab6fd7b1bd8ab56ea07ce4e03dd251c2d
   firebase_analytics: 3aa64ea37378ce522794edbf3907614d165c6aaa
   firebase_core: 4871db372b273d210fdcb91998f62edf1e10930e
