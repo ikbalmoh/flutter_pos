@@ -82,7 +82,7 @@ class ItemsStream extends _$ItemsStream {
     List<Item> items = [];
     for (var json in jsonItems) {
       try {
-        Item item = Item.fromJson(json);
+        Item item = Item.fromJsonData(json);
         items.add(item);
       } catch (e) {
         log('parse item failed: $e');

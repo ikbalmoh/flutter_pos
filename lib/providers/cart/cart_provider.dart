@@ -11,7 +11,6 @@ import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
-import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
@@ -96,9 +95,8 @@ class Cart extends _$Cart {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
       await initCart();
     }
-    String identifier = item.idItem;
-    String itemName = item.itemName;
-    double itemPrice = item.itemPrice;
+
+    ItemCart itemCart = ItemCart.fromItem(item, variant: variant);
 
     if (item.isPackage) {
       final emptyItems = getEmptyItemPackages(item.packageItems);
@@ -106,54 +104,15 @@ class Cart extends _$Cart {
         AppAlert.toast('x_stock_empty'.tr(args: [emptyItems.first.itemName]));
         return;
       }
-      identifier += (DateTime.now().millisecondsSinceEpoch).toString();
-    } else if (variant != null) {
-      identifier += '-v${variant.idVariant.toString()}';
-      itemPrice = variant.itemPrice;
     }
 
     final int cartIndex =
-        state.items.indexWhere((i) => i.identifier == identifier);
+        state.items.indexWhere((i) => i.identifier == itemCart.identifier);
 
     if (cartIndex > -1) {
       final ItemCart existItem = state.items[cartIndex];
       return updateItem(existItem.copyWith(quantity: existItem.quantity + 1));
     }
-
-    if (item.promotions.isNotEmpty) {
-      // check promo by order = 3
-    }
-
-    ItemCart itemCart = ItemCart(
-      identifier: identifier,
-      idItem: item.idItem,
-      idCategory: item.idCategory,
-      itemName: itemName,
-      price: itemPrice,
-      isPackage: item.isPackage,
-      manualDiscount: item.manualDiscount,
-      isManualPrice: item.isManualPrice,
-      quantity: 1,
-      discount: 0,
-      discountIsPercent: true,
-      discountTotal: 0,
-      note: '',
-      total: itemPrice,
-      addedAt: DateTime.now(),
-      idVariant: variant?.idVariant,
-      variantName: variant?.variantName ?? '',
-      details: item.packageItems
-          .map(
-            (pkg) => ItemCartDetail(
-              itemId: pkg.idItem,
-              name: pkg.itemName,
-              variantId: pkg.variantId,
-              quantity: pkg.quantityItem,
-              itemPrice: pkg.itemPrice,
-            ),
-          )
-          .toList(),
-    );
 
     if (kDebugMode) {
       log('ADD TO CART: $itemCart');
@@ -580,6 +539,18 @@ class Cart extends _$Cart {
       cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
     }
 
+    // PROMO A GET B
+    for (var i = 0; i < freeGiftpromotions.length; i++) {
+      // Rewards
+      Promotion promo = freeGiftpromotions[i];
+      ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
+      log('REWARD\n ITEM=>${reward.item.toString()}\n Variant=>${reward.variant.toString()}');
+      if (reward.item != null) {
+        items.add(ItemCart.fromItem(reward.item!,
+            variant: reward.variant, promotion: promo));
+      }
+    }
+
     // PROMO BY CODE
     Promotion? promoByCode = promotions.firstWhereOrNull((p) => p.needCode);
 
@@ -589,6 +560,7 @@ class Cart extends _$Cart {
       subtotal: subtotal,
       promoCode: promoByCode?.promoCode,
     );
+
     calculateCart();
   }
 

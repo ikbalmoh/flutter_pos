@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:json_annotation/json_annotation.dart';
 import 'package:selleri/data/objectbox.dart' show objectBox;
 // ignore: unnecessary_import
 import 'package:objectbox/objectbox.dart';
@@ -8,71 +5,44 @@ import 'package:selleri/objectbox.g.dart';
 import 'item_variant.dart';
 import 'item_package.dart';
 import 'converters/generic.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'item.freezed.dart';
 part 'item.g.dart';
 
-@Entity(uid: 1396131410230828223)
-@JsonSerializable(fieldRename: FieldRename.snake)
-class Item {
-  int id;
+@Freezed(addImplicitFinal: false)
+class Item with _$Item {
+  const Item._();
 
-  @Index()
-  final String idItem;
+  @Entity(uid: 1396131410230828223, realClass: Item)
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  factory Item({
+    @Default(0) @Id() int id,
+    @Index() required String idItem,
+    required String itemName,
+    required double itemPrice,
+    required bool isActive,
+    required bool obsolete,
+    required bool isPackage,
+    required bool manualDiscount,
+    required bool isManualPrice,
+    required bool stockControl,
+    required String idCategory,
+    @JsonKey(fromJson: Converters.dynamicToDouble) required double stockItem,
+    String? sku,
+    String? barcode,
+    String? categoryName,
+    String? image,
+    @Property(type: PropertyType.dateNano) DateTime? lastAdjustment,
+    required List<String> promotions,
+    List<String>? packageCategories,
+    @VariantRelToManyConverter() required ToMany<ItemVariant> variants,
+    @PackageItemRelToManyConverter() required ToMany<ItemPackage> packageItems,
+  }) = _Item;
 
-  final String itemName;
-  final double itemPrice;
-  final bool isActive;
-  final bool obsolete;
-  final bool isPackage;
-  final bool manualDiscount;
-  final bool isManualPrice;
-  final bool stockControl;
-  final String idCategory;
+  factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 
-  @JsonKey(fromJson: Converters.dynamicToDouble)
-  final double stockItem;
-
-  String? sku;
-  String? barcode;
-  String? categoryName;
-  String? image;
-
-  @Property(type: PropertyType.dateNano)
-  DateTime? lastAdjustment;
-
-  final List<String> promotions;
-  List<String>? packageCategories;
-
-  @VariantRelToManyConverter()
-  final ToMany<ItemVariant> variants;
-
-  @PackageItemRelToManyConverter()
-  final ToMany<ItemPackage> packageItems;
-
-  Item(
-      {required this.id,
-      required this.idItem,
-      required this.itemName,
-      required this.itemPrice,
-      required this.isActive,
-      required this.obsolete,
-      required this.isPackage,
-      this.sku,
-      this.barcode,
-      required this.manualDiscount,
-      required this.isManualPrice,
-      required this.stockControl,
-      required this.idCategory,
-      this.categoryName,
-      required this.stockItem,
-      this.image,
-      this.lastAdjustment,
-      this.packageCategories,
-      required this.promotions,
-      required this.variants,
-      required this.packageItems});
-
-  factory Item.fromJson(Map<String, dynamic> json) {
+  factory Item.fromJsonData(Map<String, dynamic> json) {
     Item? existItem = objectBox.getItem(json['id_item']);
     if (existItem != null) {
       final Map<String, dynamic> itemJson = existItem.toJson();
@@ -102,13 +72,6 @@ class Item {
     }).toList();
     return _$ItemFromJson(json);
   }
-
-  Map<String, dynamic> toJson() => _$ItemToJson(this);
-
-  @override
-  String toString() {
-    return json.encode(toJson());
-  }
 }
 
 class VariantRelToManyConverter
@@ -137,14 +100,12 @@ class PackageItemRelToManyConverter
       rel.map((ItemPackage obj) => obj.toJson()).toList();
 }
 
-class ScanItemResult {
-  final Item? item;
-  final ItemVariant? variant;
-
-  const ScanItemResult({
-    this.item,
-    this.variant,
-  });
+@freezed
+class ScanItemResult with _$ScanItemResult {
+  const factory ScanItemResult({
+    Item? item,
+    ItemVariant? variant,
+  }) = _ScanItemResult;
 }
 
 enum FilterStock { all, available, empty }

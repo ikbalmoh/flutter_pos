@@ -88,10 +88,12 @@ class ObjectBox {
     if (cart.items.isNotEmpty) {
       List<ItemCart> items = List<ItemCart>.from(cart.items.toList());
 
-      Condition<Promotion> requirementProductIds = (Promotion_
-          .requirementProductId
-          .containsElement(items[0].idItem)
-          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity)));
+      Condition<Promotion> requirementProductIds = (items[0].idVariant != null
+              ? Promotion_.requirementVariantId
+                  .containsElement(items[0].idVariant!.toString())
+              : Promotion_.requirementProductId
+                  .containsElement(items[0].idItem))
+          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity));
 
       Condition<Promotion> requirementCategoryIds = (Promotion_
           .requirementProductId
@@ -219,6 +221,38 @@ class ObjectBox {
       ..order(Promotion_.priority)
       ..order(Promotion_.endDate);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
+  }
+
+  ScanItemResult getPromotionReward({required Promotion promotion}) {
+    Condition<Item> itemQuery = Item_.isActive.equals(true);
+    ScanItemResult result = const ScanItemResult(item: null, variant: null);
+    Item? item;
+    ItemVariant? variant;
+    if (promotion.rewardProductId == null) {
+      return result;
+    }
+    if (promotion.rewardProductType == 1) {
+      itemQuery =
+          itemQuery.and(Item_.idItem.equals(promotion.rewardProductId!));
+
+      item = itemBox.query(itemQuery).build().findFirst();
+
+      if (item == null) {
+        return result;
+      }
+
+      if (promotion.rewardVariantId != null) {
+        variant = itemVariantBox
+            .query(ItemVariant_.idItem
+                .equals(promotion.rewardProductId!)
+                .and(ItemVariant_.idVariant.equals(promotion.rewardVariantId!)))
+            .build()
+            .findFirst();
+      }
+
+      result = ScanItemResult(item: item, variant: variant);
+    }
+    return result;
   }
 
   Stream<List<Item>> itemsStream({

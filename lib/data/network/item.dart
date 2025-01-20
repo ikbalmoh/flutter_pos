@@ -42,7 +42,7 @@ class ItemApi {
       item['is_all_supplier'] = 1;
       item['outlet_ids'] = [];
       final res = await api.post(ApiUrl.items, data: item);
-      return Item.fromJson(res.data['data']);
+      return Item.fromJsonData(res.data['data']);
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {

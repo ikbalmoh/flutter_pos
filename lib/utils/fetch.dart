@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
@@ -62,19 +62,11 @@ class CustomInterceptors extends Interceptor {
       final outlet = Outlet.fromJson(jsonOutlet);
       options.headers['outlet'] = outlet.idOutlet;
     }
-
-    if (kDebugMode) {
-      log('REQUEST[${options.method}]\n => URI: ${options.uri}\n => DATA: ${options.data}\n => DEVICE: ${options.headers['device']}');
-    }
-
     return super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (kDebugMode) {
-      log('RESPONSE[${response.statusCode}]\n => URI: ${response.requestOptions.uri}\n => DATA: ${response.data}');
-    }
     final status = response.statusCode;
     final isValid = status != null && status >= 200 && status < 300;
     if (!isValid) {
@@ -89,16 +81,11 @@ class CustomInterceptors extends Interceptor {
 
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
-    dynamic originalData = err.response?.data;
     bool json = err.response?.data != null
         ? isJSON(jsonEncode(err.response?.data))
         : false;
     if (!json) {
-      err.response?.data = {'msg': 'connection_error'};
-    }
-
-    if (kDebugMode) {
-      log('ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> URI: ${err.requestOptions.uri}\n => DATA: $originalData');
+      err.response?.data = {'msg': 'connection_error'.tr()};
     }
 
     if (err.response?.statusCode == 401) {
