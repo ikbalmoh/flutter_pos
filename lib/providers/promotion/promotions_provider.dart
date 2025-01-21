@@ -181,11 +181,12 @@ class Promotions extends _$Promotions {
   }
 
   List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
-    List<ItemCart> eligibleItems = [];
+    List<ItemCart> eligibleItems =
+        items.where((item) => item.isReward != true).toList();
 
     if (promo.requirementProductType == 1) {
       // require product id
-      eligibleItems = items
+      eligibleItems = eligibleItems
           .where((item) =>
               (item.idVariant != null && promo.requirementVariantId.isNotEmpty
                   ? promo.requirementVariantId
@@ -195,14 +196,14 @@ class Promotions extends _$Promotions {
           .toList();
     } else if (promo.requirementProductType == 2) {
       // require package id
-      eligibleItems = items
+      eligibleItems = eligibleItems
           .where((item) =>
               promo.requirementProductId.contains(item.idItem) &&
               item.quantity >= promo.requirementQuantity!.toInt())
           .toList();
     } else if (promo.requirementProductType == 3) {
       // require category id
-      eligibleItems = items
+      eligibleItems = eligibleItems
           .where((item) =>
               promo.requirementProductId.contains(item.idCategory) &&
               item.quantity >= promo.requirementQuantity!.toInt())

@@ -117,7 +117,9 @@ class Cart extends _$Cart {
     if (kDebugMode) {
       log('ADD TO CART: $itemCart');
     }
-    List<ItemCart> items = List<ItemCart>.from(state.items);
+    List<ItemCart> items = List<ItemCart>.from(state.items)
+        .where((item) => item.isReward != true)
+        .toList();
     items.add(itemCart);
     state = state.copyWith(items: items);
     calculateCart();
@@ -439,6 +441,7 @@ class Cart extends _$Cart {
     }
 
     List<ItemCart> items = List<ItemCart>.from(state.items)
+        .where((item) => item.isReward != true)
         .map((item) => item.promotion == null
             ? item
             : item.copyWith(
@@ -548,6 +551,7 @@ class Cart extends _$Cart {
       if (reward.item != null) {
         items.add(ItemCart.fromItem(reward.item!,
             variant: reward.variant, promotion: promo));
+        cartPromotions.add(CartPromotion.fromData(promo));
       }
     }
 

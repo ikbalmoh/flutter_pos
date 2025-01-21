@@ -225,8 +225,10 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                         price = _priceFormater.getUnformattedValue().toDouble();
                       });
                     },
-                    readOnly: !widget.item.isManualPrice,
+                    readOnly: !widget.item.isManualPrice ||
+                        widget.item.isReward == true,
                     textAlign: TextAlign.right,
+                    enabled: widget.item.isReward != true,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       enabled: widget.item.isManualPrice,
@@ -264,13 +266,27 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                           'quantity'.tr(),
                           style: labelStyle,
                         ),
-                        QtyEditor(
-                            qty: qty,
-                            onChange: (value) {
-                              setState(() {
-                                qty = value;
-                              });
-                            }),
+                        widget.item.isReward == true
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 5,
+                                  horizontal: 5,
+                                ),
+                                child: Text(
+                                  qty.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(color: Colors.grey.shade500),
+                                ),
+                              )
+                            : QtyEditor(
+                                qty: qty,
+                                onChange: (value) {
+                                  setState(() {
+                                    qty = value;
+                                  });
+                                }),
                       ],
                     ),
                   ),
@@ -282,6 +298,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                     readOnly: !widget.item.manualDiscount,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
+                    enabled: widget.item.isReward != true,
                     decoration: InputDecoration(
                       enabled: widget.item.manualDiscount &&
                           widget.item.promotion == null,
@@ -300,6 +317,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                       suffix: Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: DiscountTypeToggle(
+                          disabled: widget.item.isReward == true,
                           isPercent: discountIsPercent,
                           onChange: widget.item.promotion == null
                               ? onChangeDiscountType
@@ -353,7 +371,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                   onPressed: () => onUpdateItem(context),
                   icon: const Icon(CupertinoIcons.checkmark_alt),
                   label: Text(
-                    CurrencyFormat.currency(total()),
+                    widget.item.isReward == true ? 'save'.tr() : CurrencyFormat.currency(total()),
                   ),
                 ),
               ),

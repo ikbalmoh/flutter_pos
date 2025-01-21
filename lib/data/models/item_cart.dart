@@ -67,7 +67,8 @@ class ItemCart with _$ItemCart {
     double discountTotal = 0;
     double total = itemPrice * quantity;
 
-    CartPromotion? itemCartPromotion;
+    CartPromotion? itemCartPromotion =
+        promotion != null ? CartPromotion.fromData(promotion) : null;
 
     if (item.isPackage) {
       identifier += (DateTime.now().millisecondsSinceEpoch).toString();
@@ -77,7 +78,7 @@ class ItemCart with _$ItemCart {
     }
 
     if (promotion != null) {
-      identifier = 'reward-$identifier';
+      identifier = 'reward-${promotion.idPromotion}';
       quantity = promotion.rewardQty ?? 1;
       if (promotion.rewardType == 1) {
         itemPrice = 0;
@@ -120,6 +121,7 @@ class ItemCart with _$ItemCart {
           )
           .toList(),
       promotion: itemCartPromotion,
+      isReward: promotion != null,
     );
 
     return itemCart;
