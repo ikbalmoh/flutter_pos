@@ -122,7 +122,9 @@ class _CartItemState extends State<CartItem> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.amber.shade50,
+                            color: widget.item.isReward == true
+                                ? Colors.red.shade50
+                                : Colors.amber.shade50,
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Row(
@@ -131,7 +133,9 @@ class _CartItemState extends State<CartItem> {
                               Icon(
                                 CupertinoIcons.ticket_fill,
                                 size: 16,
-                                color: Colors.amber.shade600,
+                                color: widget.item.isReward == true
+                                    ? Colors.red.shade600
+                                    : Colors.amber.shade600,
                               ),
                               const SizedBox(width: 5),
                               Text(
@@ -143,7 +147,9 @@ class _CartItemState extends State<CartItem> {
                                     : widget.item.promotion!.promotionName
                                         .toString(),
                                 style: textTheme.bodySmall?.copyWith(
-                                  color: Colors.amber.shade700,
+                                  color: widget.item.isReward == true
+                                      ? Colors.red.shade700
+                                      : Colors.amber.shade700,
                                 ),
                               ),
                             ],

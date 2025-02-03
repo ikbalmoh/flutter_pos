@@ -102,14 +102,17 @@ class ObjectBox {
 
       for (var i = 1; i < items.length; i++) {
         ItemCart itemCart = items[i];
-        requirementProductIds = requirementProductIds.or((itemCart.idVariant !=
-                    null
-                ? Promotion_.requirementVariantId
-                    .containsElement(itemCart.idVariant!.toString())
-                : Promotion_.requirementProductId
-                    .containsElement(itemCart.idItem))
-            .and(
-                Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity)));
+        requirementProductIds = requirementProductIds.or(
+          (itemCart.idVariant != null
+                  ? Promotion_.requirementVariantId
+                      .containsElement(itemCart.idVariant!.toString())
+                  : Promotion_.requirementProductId
+                      .containsElement(itemCart.idItem))
+              .and(
+            Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity),
+          ),
+        );
+
         requirementCategoryIds = requirementCategoryIds.or((Promotion_
                 .requirementProductId
                 .containsElement(itemCart.idCategory ?? ''))
@@ -150,13 +153,17 @@ class ObjectBox {
 
     promotionQuery = promotionQuery.and(promotionTermsQuery);
 
-    QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
+    QueryBuilder<Promotion> builder = promotionBox.query(promotionTermsQuery)
       ..order(Promotion_.needCode)
       ..order(Promotion_.priority)
       ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)
       ..order(Promotion_.allTime);
 
-    return builder.build().find();
+    List<Promotion> promotions = builder.build().find();
+
+    log('active promotions: ${promotions.map((p) => p.name)}');
+
+    return promotions;
   }
 
   Stream<List<Promotion>> promotionsStream(

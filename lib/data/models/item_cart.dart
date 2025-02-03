@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
@@ -53,10 +54,51 @@ class ItemCart with _$ItemCart {
   factory ItemCart.fromJson(Map<String, dynamic> json) =>
       _$ItemCartFromJson(json);
 
+  factory ItemCart.copyWithPromotion(ItemCart itemCart,
+      {Promotion? promotion, bool isReward = false}) {
+    String identifier = itemCart.idItem;
+    bool discountIsPercent = true;
+    double discount = 0;
+    double discountTotal = 0;
+    int quantity = itemCart.quantity;
+    double itemPrice = itemCart.price;
+    double total = itemPrice * quantity;
+
+    if (promotion != null) {
+      if (isReward) {
+        identifier = 'reward-${promotion.idPromotion}';
+      }
+      discountIsPercent = promotion.discountType == true;
+      discount = promotion.rewardNominal;
+      discountTotal =
+          discountIsPercent ? itemPrice * (discount / 100) : discount;
+      if (promotion.rewardMaximumAmount != null &&
+          promotion.rewardMaximumAmount! > 0 &&
+          discountTotal > promotion.rewardMaximumAmount!) {
+        discountTotal = promotion.rewardMaximumAmount!;
+      }
+
+      log('Promotion Discount: $discount => $discountTotal');
+    }
+
+    return itemCart.copyWith(
+      identifier: identifier,
+      price: itemPrice,
+      quantity: quantity,
+      discount: discount,
+      discountIsPercent: discountIsPercent,
+      discountTotal: discountTotal,
+      total: total - discountTotal,
+      promotion: promotion != null ? CartPromotion.fromData(promotion) : null,
+      isReward: isReward,
+    );
+  }
+
   factory ItemCart.fromItem(
     Item item, {
     ItemVariant? variant,
     Promotion? promotion,
+    bool isReward = false,
   }) {
     String identifier = item.idItem;
     String itemName = item.itemName;
@@ -78,15 +120,22 @@ class ItemCart with _$ItemCart {
     }
 
     if (promotion != null) {
-      identifier = 'reward-${promotion.idPromotion}';
-      quantity = promotion.rewardQty ?? 1;
+      if (isReward) {
+        identifier = 'reward-${promotion.idPromotion}';
+        quantity = promotion.rewardQty ?? 1;
+      }
       if (promotion.rewardType == 1) {
         itemPrice = 0;
       } else {
-        discountIsPercent = promotion.rewardType == 2;
+        discountIsPercent = promotion.discountType == true;
         discount = promotion.rewardNominal;
         discountTotal =
             discountIsPercent ? itemPrice * (discount / 100) : discount;
+      }
+      if (promotion.rewardMaximumAmount != null &&
+          promotion.rewardMaximumAmount! > 0 &&
+          discountTotal > promotion.rewardMaximumAmount!) {
+        discountTotal = promotion.rewardMaximumAmount!;
       }
       total = itemPrice * quantity;
     }

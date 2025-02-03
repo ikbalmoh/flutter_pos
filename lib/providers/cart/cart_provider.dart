@@ -174,7 +174,10 @@ class Cart extends _$Cart {
     List<ItemCart> items = [...state.items];
     List<CartPromotion> promotions = [...state.promotions];
     ItemCart item = items.firstWhere((item) => item.identifier == identifier);
-    items.removeWhere((i) => i.identifier == identifier);
+    items.removeWhere((i) =>
+        i.identifier == item.identifier ||
+        (i.isReward == true &&
+            i.promotion?.promotionId == item.promotion?.promotionId));
     promotions.removeWhere(
       (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
     );
@@ -482,39 +485,9 @@ class Cart extends _$Cart {
         int itemIdx = items.indexWhere(
           (item) => item.identifier == itemCart.identifier,
         );
-        double discountTotal = cartPromo.discountIsPercent
-            ? itemCart.price * (promo.rewardNominal / 100)
-            : promo.rewardNominal;
+        itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
 
-        int requirementQty = cartPromo.requirementQuantity!;
-        int eligibleQty = cartPromo.kelipatan == true
-            ? (itemCart.quantity ~/ requirementQty)
-            : requirementQty;
-
-        double finalDiscountTotal = discountTotal * eligibleQty;
-        if (promo.rewardMaximumAmount != null &&
-            promo.rewardMaximumAmount! > 0 &&
-            finalDiscountTotal > promo.rewardMaximumAmount!) {
-          finalDiscountTotal = promo.rewardMaximumAmount!;
-        }
-
-        cartPromo = cartPromo.copyWith(
-          discountValue: finalDiscountTotal,
-          idItem: itemCart.idItem,
-          variantId: itemCart.idVariant,
-        );
-
-        double finalPrice = itemCart.price * itemCart.quantity;
-
-        itemCart = itemCart.copyWith(
-          discountIsPercent: cartPromo.discountIsPercent,
-          discountTotal: finalDiscountTotal,
-          discount: promo.rewardNominal,
-          total: finalPrice - finalDiscountTotal,
-          promotion: cartPromo,
-        );
-
-        log('ITEM GET PROMO: $discountTotal => $eligibleQty \n $itemCart');
+        log('ITEM GET PROMO: $itemCart');
 
         cartPromotions.add(cartPromo);
         items[itemIdx] = itemCart;
@@ -544,13 +517,34 @@ class Cart extends _$Cart {
 
     // PROMO A GET B
     for (var i = 0; i < freeGiftpromotions.length; i++) {
-      // Rewards
+      List<ItemCart> eligibleItems = ref
+          .read(promotionsProvider.notifier)
+          .eligibleItems(freeGiftpromotions[i], items);
+      log('A GET B eligible items: $eligibleItems');
+      if (eligibleItems.isEmpty) {
+        continue;
+      }
+      // Apply Rewards
       Promotion promo = freeGiftpromotions[i];
       ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
       log('REWARD\n ITEM=>${reward.item.toString()}\n Variant=>${reward.variant.toString()}');
       if (reward.item != null) {
-        items.add(ItemCart.fromItem(reward.item!,
-            variant: reward.variant, promotion: promo));
+        for (ItemCart itemCart in eligibleItems) {
+          int itemIdx = items.indexWhere(
+            (item) => item.identifier == itemCart.identifier,
+          );
+          itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
+
+          log('ITEM GET PROMO AB: $itemCart');
+
+          items[itemIdx] = itemCart;
+        }
+        items.add(ItemCart.fromItem(
+          reward.item!,
+          variant: reward.variant,
+          promotion: promo,
+          isReward: true,
+        ));
         cartPromotions.add(CartPromotion.fromData(promo));
       }
     }

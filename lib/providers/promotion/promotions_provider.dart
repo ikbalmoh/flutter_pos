@@ -65,6 +65,8 @@ class Promotions extends _$Promotions {
       return false;
     }
 
+    log('CHECK PROMO ELIGIBILITY: $promo');
+
     final now = DateTime.now().millisecondsSinceEpoch;
     final today =
         DateTimeFormater.dateToString(DateTime.now(), format: 'y-MM-dd');
@@ -168,7 +170,7 @@ class Promotions extends _$Promotions {
           break;
       }
 
-      log('ELIGIBLE ITEMS FOR PROMOR 1 & 3: $eligibleItems');
+      log('ELIGIBLE ITEMS FOR PROMO 1 & 3: $eligibleItems');
 
       if (eligibleItems.isEmpty) {
         return false;
@@ -182,7 +184,7 @@ class Promotions extends _$Promotions {
 
   List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
     List<ItemCart> eligibleItems =
-        items.where((item) => item.isReward != true).toList();
+        items.where((item) => item.isReward != true && item.promotion == null).toList();
 
     if (promo.requirementProductType == 1) {
       // require product id
