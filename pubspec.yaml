@@ -2,7 +2,7 @@ name: selleri
 description: "Selleri POS"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 2.2.1+7
+version: 2.2.2+8
 
 environment:
   sdk: ">=3.2.1 <4.0.0"
