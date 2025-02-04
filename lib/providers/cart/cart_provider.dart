@@ -96,7 +96,8 @@ class Cart extends _$Cart {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
       await initCart();
     }
-    String identifier = item.idItem;
+    String identifier =
+        '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
     String itemName = item.itemName;
     double itemPrice = item.itemPrice;
 

@@ -13,7 +13,7 @@ import 'dart:developer';
 part 'shift_repository.g.dart';
 
 @Riverpod(keepAlive: true)
-ShiftRepository shiftRepository(Ref ref) => ShiftRepository(ref);
+ShiftRepository shiftRepository(ShiftRepositoryRef ref) => ShiftRepository(ref);
 
 abstract class ShiftRepositoryProtocol {
   Future<void> close(String id, Map<String, dynamic> data);

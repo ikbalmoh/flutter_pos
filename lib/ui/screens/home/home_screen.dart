@@ -83,8 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       log('APP RESUMED');
-      ref.read(outletProvider.notifier).refreshConfig();
-      refreshItems();
+      refreshData();
     }
   }
 
@@ -94,7 +93,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  Future<void> refreshItems() async {
+  Future<void> refreshData() async {
+    await ref.read(outletProvider.notifier).refreshConfig();
     return ref.read(itemsStreamProvider().notifier).syncItems();
   }
 
@@ -297,7 +297,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             children: [
               Expanded(
                 child: RefreshIndicator(
-                  onRefresh: refreshItems,
+                  onRefresh: refreshData,
                   child: itemContainer,
                 ),
               ),

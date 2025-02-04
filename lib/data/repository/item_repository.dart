@@ -20,7 +20,7 @@ part 'item_repository.g.dart';
 String syncKey = 'LAST_UPDATE/ITEMS';
 
 @riverpod
-ItemRepository itemRepository(Ref ref) => ItemRepository(ref);
+ItemRepository itemRepository(ItemRepositoryRef ref) => ItemRepository(ref);
 
 abstract class ItemRepositoryProtocol {
   Future<List<Category>> fetchCategoris();

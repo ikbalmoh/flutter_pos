@@ -16,7 +16,7 @@ abstract class PromotionRepositoryProtocol {
 }
 
 @riverpod
-PromotionRepository promotionRepository(Ref ref) =>
+PromotionRepository promotionRepository(PromotionRepositoryRef ref) =>
     PromotionRepository(ref);
 
 class PromotionRepository implements PromotionRepositoryProtocol {

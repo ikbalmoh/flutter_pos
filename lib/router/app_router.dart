@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
@@ -36,7 +35,7 @@ import 'routes.dart';
 part 'app_router.g.dart';
 
 @riverpod
-GoRouter router(Ref ref) {
+GoRouter router(RouterRef ref) {
   final key = GlobalKey<NavigatorState>();
 
   final appState =

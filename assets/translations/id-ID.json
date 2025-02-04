@@ -309,5 +309,6 @@
   "sku_item_different_note": "Apakah Anda ingin mengganti SKU barang?",
   "repalce_sku": "Ganti SKU",
   "sku_number": "Nomor SKU",
-  "notification": "Pemberitahuan"
+  "notification": "Pemberitahuan",
+  "outlet_config": "Pengaturan Toko"
 }

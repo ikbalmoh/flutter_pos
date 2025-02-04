@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/item/item_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class SyncScreen extends StatelessWidget {
@@ -31,6 +32,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
   String syncStatus = '';
 
   Map<String, bool> selected = {
+    'config': false,
     'categories': false,
     'items': false,
     'promotions': false,
@@ -59,6 +61,9 @@ class _SyncDataState extends ConsumerState<SyncData> {
     //       ));
     //     });
     try {
+      if (selected['config'] == true) {
+        await ref.read(outletProvider.notifier).refreshConfig();
+      }
       if (selected['items'] == true || selected['promotions'] == true) {
         await ref.read(itemsStreamProvider().notifier).loadItems(
               refresh: true,
@@ -84,12 +89,19 @@ class _SyncDataState extends ConsumerState<SyncData> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasSelection = selected['categories'] == true ||
+    bool hasSelection = selected['config'] == true ||
+        selected['categories'] == true ||
         selected['items'] == true ||
         selected['promotions'] == true;
     return Scaffold(
       body: ListView(
         children: [
+          ListTile(
+            title: Text('outlet_config'.tr()),
+            trailing: Switch(
+                value: selected['config'] ?? false,
+                onChanged: (bool value) => onSelectItem('config', value)),
+          ),
           ListTile(
             title: Text('categories'.tr()),
             trailing: Switch(

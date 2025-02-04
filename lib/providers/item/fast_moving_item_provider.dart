@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/network/adjustment.dart';
@@ -8,7 +7,7 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 part 'fast_moving_item_provider.g.dart';
 
 @riverpod
-Future<List<ItemAdjustment>> fastMovingItems(Ref ref) async {
+Future<List<ItemAdjustment>> fastMovingItems(FastMovingItemsRef ref) async {
   try {
     final outletState = ref.watch(outletProvider).value as OutletSelected;
 

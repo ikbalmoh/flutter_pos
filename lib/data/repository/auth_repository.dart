@@ -13,7 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'auth_repository.g.dart';
 
 @riverpod
-AuthRepository authRepository(Ref ref) => AuthRepository(ref);
+AuthRepository authRepository(AuthRepositoryRef ref) => AuthRepository(ref);
 
 abstract class AuthRepositoryProtocol {
   Future<AuthState> login(String username, String password);

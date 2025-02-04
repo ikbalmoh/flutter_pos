@@ -307,5 +307,6 @@
   "sku_item_different_note": "Do you want to replace the SKU number?",
   "repalce_sku": "Replace SKU Number",
   "sku_number": "SKU Number",
-  "notification": "Notification"
+  "notification": "Notification",
+  "outlet_config": "Outlet Config"
 }
