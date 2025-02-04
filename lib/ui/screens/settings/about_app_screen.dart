@@ -26,7 +26,7 @@ class AboutApp extends StatefulWidget {
 }
 
 class _AboutAppState extends State<AboutApp> {
-  final shorebirdCodePush = ShorebirdCodePush();
+  final shorebirdCodePush = ShorebirdUpdater();
 
   String appVersion = '0';
   String buildNumber = '0';
@@ -45,10 +45,10 @@ class _AboutAppState extends State<AboutApp> {
         buildNumber = packageInfo.buildNumber;
       });
     });
-    shorebirdCodePush.currentPatchNumber().then((value) {
+    shorebirdCodePush.readCurrentPatch().then((value) {
       if (value != null) {
         setState(() {
-          patchVersion = value;
+          patchVersion = value.number;
         });
       }
     });

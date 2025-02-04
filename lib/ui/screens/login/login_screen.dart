@@ -19,7 +19,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final shorebirdCodePush = ShorebirdCodePush();
+  final shorebirdCodePush = ShorebirdUpdater();
 
   final TextEditingController _usernameController =
       TextEditingController(text: kDebugMode ? 'admin.staging@dgti.com' : '');
@@ -49,10 +49,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         buildNumber = packageInfo.version;
       });
     });
-    shorebirdCodePush.currentPatchNumber().then((value) {
-      if (value != null) {
+    shorebirdCodePush.readCurrentPatch().then((currentPatch) {
+      if (currentPatch != null) {
         setState(() {
-          patch = value;
+          patch = currentPatch.number;
         });
       }
     });
