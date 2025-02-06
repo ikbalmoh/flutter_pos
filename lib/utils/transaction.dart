@@ -21,7 +21,11 @@ class ShiftUtil {
         value: totalCash,
         isTotal: true,
       ),
-      SummaryItem(label: 'starting_cash'.tr(), value: summary.startingCash),
+      SummaryItem(
+        label: 'starting_cash'.tr(),
+        value: summary.startingCash,
+        isStartingCash: true,
+      ),
       SummaryItem(label: 'cash_sales'.tr(), value: summary.cashSales),
       SummaryItem(label: 'expense'.tr(), value: summary.expense),
       SummaryItem(label: 'income'.tr(), value: summary.income),

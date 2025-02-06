@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
@@ -16,8 +15,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ItemInfo extends ConsumerWidget {
   final Item item;
+  final Function() onSelect;
 
-  const ItemInfo({required this.item, super.key});
+  const ItemInfo({required this.item, required this.onSelect, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,42 +52,49 @@ class ItemInfo extends ConsumerWidget {
                 ),
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       item.itemName,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.grey.shade500,
-                        size: 16,
-                      ),
-                    ),
+                    item.barcode != null
+                        ? Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.barcode_viewfinder,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                item.barcode!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(color: Colors.grey.shade700),
+                              )
+                            ],
+                          )
+                        : Container()
                   ],
                 ),
-                item.barcode != null ? Row(
-                  children: [
-                    const Icon(
-                      CupertinoIcons.barcode_viewfinder,
-                      size: 16,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      item.barcode!,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.grey.shade700),
-                    )
-                  ],
-                ) : Container()
+                TextButton.icon(
+                  style: TextButton.styleFrom(backgroundColor: Colors.teal.shade50),
+                  onPressed: onSelect,
+                  icon: Icon(
+                    CupertinoIcons.cart_badge_plus,
+                  ),
+                  label: Text(
+                    'add_to_cart'.tr(),
+                  ),
+                ),
               ],
             ),
           ),

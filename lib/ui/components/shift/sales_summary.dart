@@ -1,14 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/shift_summary.dart';
+import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/ui/components/shift/edit_open_amount.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:selleri/utils/transaction.dart';
 
 class SalesSummary extends StatelessWidget {
   final ShiftSummary summary;
+  final bool? openCashEditable;
 
-  const SalesSummary({required this.summary, super.key});
+  const SalesSummary({required this.summary, this.openCashEditable, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +55,10 @@ class SalesSummary extends StatelessWidget {
             ),
             Expanded(
               child: SalesSummaryList(
-                  summary: summary, scrollController: scrollController),
+                summary: summary,
+                scrollController: scrollController,
+                openCashEditable: openCashEditable,
+              ),
             )
           ],
         );
@@ -59,18 +67,36 @@ class SalesSummary extends StatelessWidget {
   }
 }
 
-class SalesSummaryList extends StatelessWidget {
+class SalesSummaryList extends ConsumerWidget {
   const SalesSummaryList({
     super.key,
     required this.summary,
     this.scrollController,
+    this.openCashEditable,
   });
 
   final ShiftSummary summary;
+  final bool? openCashEditable;
   final ScrollController? scrollController;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    void onEditOpenAmount(double openAmount) async {
+      final newAmount = await showDialog(
+          context: context,
+          builder: (context) {
+            return EditOpenAmount(
+              openAmount: openAmount,
+            );
+          });
+
+      if (newAmount != openAmount) {
+        ref.read(shiftProvider.notifier).updateOpenAmount(newAmount);
+        AppAlert.toast('open_amount_updated_x'
+            .tr(args: [CurrencyFormat.currency(newAmount)]));
+      }
+    }
+
     final summaries = ShiftUtil.paymentList(summary);
     TextTheme textTheme = Theme.of(context).textTheme;
 
@@ -93,18 +119,33 @@ class SalesSummaryList extends StatelessWidget {
                 item.isTotal != null ? FontWeight.bold : FontWeight.w400,
           ),
           minTileHeight: 0,
-          trailing: item.value != null
-              ? Text(
-                  CurrencyFormat.currency(
-                    item.value,
-                    symbol: false,
-                  ),
-                  style: item.isTotal != null
-                      ? textTheme.bodyLarge
-                          ?.copyWith(fontWeight: FontWeight.bold)
-                      : textTheme.bodyLarge,
-                )
-              : null,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              item.isStartingCash == true && openCashEditable == true
+                  ? IconButton(
+                      onPressed: () => onEditOpenAmount(item.value ?? 0),
+                      icon: Icon(
+                        Icons.edit,
+                        size: 16,
+                        color: Colors.blue.shade600,
+                      ),
+                      tooltip: 'edit_open_amount'.tr(),
+                    )
+                  : Container(),
+              Text(
+                item.value != null
+                    ? CurrencyFormat.currency(
+                        item.value,
+                        symbol: false,
+                      )
+                    : '',
+                style: item.isTotal != null
+                    ? textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)
+                    : textTheme.bodyLarge,
+              )
+            ],
+          ),
         );
       },
       separatorBuilder: (context, index) {

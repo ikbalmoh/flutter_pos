@@ -121,6 +121,9 @@ class Promotion {
     if (json['assign_groups'] == null) {
       json['assign_groups'] = [];
     }
+    if (json['days'] != null && (json['days'] as List).isEmpty) {
+      json['days'] = null;
+    }
     json['times'] = json['times'] == null
         ? []
         : List.from(json['times']).map((time) {

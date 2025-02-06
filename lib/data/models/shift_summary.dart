@@ -30,10 +30,12 @@ class SummaryItem {
   final String label;
   final double? value;
   final bool? isTotal;
+  final bool? isStartingCash;
 
   const SummaryItem({
     required this.label,
     this.value,
     this.isTotal,
+    this.isStartingCash,
   });
 }

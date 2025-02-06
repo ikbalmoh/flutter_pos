@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -69,9 +68,7 @@ class Printer extends _$Printer {
 
       await storage.write(key: 'printer', value: printer.toString());
       state = AsyncData(printer);
-      if (!kDebugMode) {
-        await printTest();
-      }
+      await printTest();
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
       log('CONNECT PRINTER FAILED: ${e.toString()}');
@@ -123,16 +120,21 @@ class Printer extends _$Printer {
   }
 
   Future<List<int>> generateTestTicket() async {
+    final printer = ref.read(printerProvider).value;
+    if (printer == null) {
+      throw 'printer_not_connected'.tr();
+    }
     // Using default profile
     final profile = await CapabilityProfile.load();
-    final generator = Generator(PaperSize.mm58, profile);
+    final generator = Generator(printer.size, profile, spaceBetweenRows: 2);
     List<int> bytes = [];
 
     final ByteData data = await rootBundle.load('assets/images/icon-print.jpg');
     final Uint8List imgBytes = data.buffer.asUint8List();
     final Image? img = decodeImage(imgBytes);
     if (img != null) {
-      bytes += generator.imageRaster(img, align: PosAlign.center);
+      log('Print Image  $img');
+      bytes += generator.image(img, align: PosAlign.center);
     }
     bytes += generator.text(
       'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ',

@@ -194,16 +194,17 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                             const SizedBox(
                               height: 20,
                             ),
-                            _searchController.text.length >= 3
-                                ? TextButton.icon(
-                                    style: TextButton.styleFrom(
-                                        backgroundColor: Colors.teal,
-                                        foregroundColor: Colors.white),
-                                    onPressed: onCreateNewCustomer,
-                                    icon: const Icon(Icons.add),
-                                    label:
-                                        Text('new_x'.tr(args: ['customer'.tr()])))
-                                : Container()
+                            TextButton.icon(
+                                style: TextButton.styleFrom(
+                                    backgroundColor: Colors.teal,
+                                    foregroundColor: Colors.white),
+                                onPressed: onCreateNewCustomer,
+                                icon: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                                label:
+                                    Text('new_x'.tr(args: ['customer'.tr()])))
                           ],
                         ),
                       ),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
@@ -19,6 +18,8 @@ Dio fetch() {
     baseUrl: dotenv.env['HOST']!,
     contentType: Headers.jsonContentType,
     validateStatus: (int? status) => status != null,
+    connectTimeout: Duration(seconds: 60),
+    receiveTimeout: Duration(seconds: 60),
   );
 
   Dio dio = Dio(baseOption);
@@ -63,18 +64,11 @@ class CustomInterceptors extends Interceptor {
       options.headers['outlet'] = outlet.idOutlet;
     }
 
-    if (kDebugMode) {
-      log('REQUEST[${options.method}]\n => URI: ${options.uri}\n => DATA: ${options.data}\n => DEVICE: ${options.headers['device']}');
-    }
-
     return super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (kDebugMode) {
-      log('RESPONSE[${response.statusCode}]\n => URI: ${response.requestOptions.uri}\n => DATA: ${response.data}');
-    }
     final status = response.statusCode;
     final isValid = status != null && status >= 200 && status < 300;
     if (!isValid) {
@@ -89,16 +83,11 @@ class CustomInterceptors extends Interceptor {
 
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
-    dynamic originalData = err.response?.data;
     bool json = err.response?.data != null
         ? isJSON(jsonEncode(err.response?.data))
         : false;
     if (!json) {
       err.response?.data = {'msg': 'connection_error'};
-    }
-
-    if (kDebugMode) {
-      log('ERROR[${err.response?.statusCode}] \n => JSON: $json\n=> URI: ${err.requestOptions.uri}\n => DATA: $originalData');
     }
 
     if (err.response?.statusCode == 401) {
@@ -117,6 +106,10 @@ class CustomInterceptors extends Interceptor {
       message = err.response?.data?['msg'];
     } else if (err.response?.data['message'] != null) {
       message = err.response?.data?['message'];
+    } else if (err.response?.statusCode == 422) {
+      message = 'Invalid data. Please check your input and try again.';
+    } else {
+      message = 'Unexpected Error Occured!';
     }
     err = err.copyWith(message: message);
 

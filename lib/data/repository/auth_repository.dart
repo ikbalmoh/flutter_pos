@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/token.dart';
 import 'package:selleri/data/models/user.dart';
 import 'package:selleri/data/network/auth.dart';
+import 'package:selleri/data/repository/outlet_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,8 @@ class AuthRepository implements AuthRepositoryProtocol {
   @override
   Future<AuthState> login(String username, String password) async {
     final TokenRepository tokenRepository = _ref.read(tokenRepositoryProvider);
+    final OutletRepository outletRepository =
+        _ref.read(outletRepositoryProvider);
 
     final api = _ref.watch(authApiProvider);
 
@@ -37,6 +40,7 @@ class AuthRepository implements AuthRepositoryProtocol {
       final Token token = Token.fromJson(response);
 
       await tokenRepository.saveToken(token);
+      await outletRepository.remove();
 
       User? user = await fetchUser();
       if (user != null) {

@@ -96,6 +96,11 @@ class Cart extends _$Cart {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
       await initCart();
     }
+    int onCart = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
+    if (onCart > 0) {
+      updateQty(item.idItem, idVariant: variant?.idVariant);
+      return;
+    }
     String identifier =
         '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
     String itemName = item.itemName;
@@ -172,8 +177,9 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void updateQty(String identifier, {bool increment = true}) {
-    final index = state.items.indexWhere((i) => i.idItem == identifier);
+  void updateQty(String idItem, {int? idVariant, bool increment = true}) {
+    final index = state.items
+        .indexWhere((i) => i.idItem == idItem && i.idVariant == idVariant);
     if (index > -1) {
       List<ItemCart> items = [...state.items];
       ItemCart item = items[index];
@@ -223,9 +229,9 @@ class Cart extends _$Cart {
     return true;
   }
 
-  int qtyOnCart(String idItem) {
+  int qtyOnCart(String idItem, {int? idVariant}) {
     List<int> qtyItems = state.items
-        .where((i) => i.idItem == idItem)
+        .where((i) => i.idItem == idItem && i.idVariant == idVariant)
         .map((i) => i.quantity)
         .toList();
     return qtyItems.isNotEmpty

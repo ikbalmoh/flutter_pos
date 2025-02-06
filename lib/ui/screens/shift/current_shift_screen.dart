@@ -110,7 +110,6 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                             ActiveShiftInfoHorizontal(
                               shiftInfo: data!,
                               onCloseShift: () => onCloseShift(data),
-                              onEditOpenAmount: () => onEditOpenAmount(data),
                             ),
                             const SizedBox(
                               height: 15,
@@ -155,6 +154,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                                             : viewSummary == 'summary'
                                                 ? SalesSummaryList(
                                                     summary: data.summary,
+                                                    openCashEditable: true,
                                                   )
                                                 : Container(
                                                     padding: const EdgeInsets
@@ -199,12 +199,12 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                               child: ActiveShiftInfo(
                                 shiftInfo: data!,
                                 onCloseShift: () => onCloseShift(data),
-                                onEditOpenAmount: () => onEditOpenAmount(data),
                               ),
                             ),
                           ),
                           ShiftSummaryCards(
                             shiftInfo: data,
+                            openCashEditable: true,
                           ),
                           const SizedBox(height: 15),
                           ShiftCashflows(

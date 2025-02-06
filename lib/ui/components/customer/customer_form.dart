@@ -76,18 +76,17 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
         'dob': DateTimeFormater.dateToString(dob, format: 'y-MM-dd'),
         'email': email,
         'barcode': barcode,
-        'phoneNumber': phoneNumber,
+        'phone_number': phoneNumber,
         'address': address,
       };
-      await ref
-          .read(customerListProvider.notifier)
-          .submitNewCustomer(data);
+      await ref.read(customerListProvider.notifier).submitNewCustomer(data);
       // ignore: use_build_context_synchronously
       context.pop();
       AppAlert.toast('saved'.tr());
-    } on Exception catch (e, stackTrace) {
-      log('submit cashflow error: $e => $stackTrace');
+    } catch (e) {
+      log('submit cashflow error: $e');
       AppAlert.toast(e.toString());
+    } finally {
       setState(() {
         isLoading = false;
       });

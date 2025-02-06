@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
@@ -70,16 +71,27 @@ class ItemContainer extends ConsumerWidget {
         });
   }
 
-  void onLongPress(BuildContext context, Item item) {
+  void onLongPress(BuildContext context, Item item, WidgetRef ref) {
     showModalBottomSheet(
-        context: context,
-        isDismissible: true,
-        isScrollControlled: true,
-        backgroundColor: Colors.white,
-        useSafeArea: true,
-        builder: (context) {
-          return ItemInfo(item: item);
-        });
+      context: context,
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      useSafeArea: true,
+      builder: (context) {
+        return ItemInfo(
+          item: item,
+          onSelect: () {
+            context.pop();
+            if (item.variants.isNotEmpty) {
+              showVariants(context, item, ref);
+            } else {
+              onAddToCart(context, ref, item: item);
+            }
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -153,7 +165,7 @@ class ItemContainer extends ConsumerWidget {
                             ref.read(cartProvider.notifier).updateQty(idItem),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
-                        onLongPress: (item) => onLongPress(context, item),
+                        onLongPress: (item) => onLongPress(context, item, ref),
                       );
                     },
                   )
@@ -172,11 +184,9 @@ class ItemContainer extends ConsumerWidget {
                         qtyOnCart: qtyOnCart,
                         onAddToCart: (item) =>
                             onAddToCart(context, ref, item: item),
-                        addQty: (idItem) =>
-                            ref.read(cartProvider.notifier).updateQty(idItem),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
-                        onLongPress: (item) => onLongPress(context, item),
+                        onLongPress: (item) => onLongPress(context, item, ref),
                       );
                     },
                   ),

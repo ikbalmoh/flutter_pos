@@ -24,7 +24,7 @@ class CustomerApi {
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {
-      throw Exception(e);
+      rethrow;
     }
   }
 
@@ -36,7 +36,7 @@ class CustomerApi {
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {
-      throw Exception(e);
+      rethrow;
     }
   }
 }

@@ -146,6 +146,7 @@
   "deleted": "Deleted",
   "available_cash": "Available Cash",
   "different": "Different",
+  "new_x": "{} Baru",
   "new": "New {}",
   "dob": "Date of Birth",
   "field_required": "{} is required",
@@ -308,5 +309,6 @@
   "repalce_sku": "Replace SKU Number",
   "sku_number": "SKU Number",
   "notification": "Notification",
-  "outlet_config": "Outlet Config"
+  "outlet_config": "Outlet Config",
+  "or": "or"
 }

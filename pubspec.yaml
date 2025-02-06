@@ -2,7 +2,7 @@ name: selleri
 description: "Selleri POS"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 2.2.2+8
+version: 2.2.3+9
 
 environment:
   sdk: ">=3.2.1 <4.0.0"
@@ -17,7 +17,7 @@ dependencies:
   dio: ^5.4.0
   easy_localization: ^3.0.6
   equatable: ^2.0.5
-  esc_pos_utils_plus: ^2.0.3
+  esc_pos_utils_plus: ^2.0.4
   firebase_analytics: ^11.3.6
   firebase_core: ^3.10.1
   firebase_crashlytics: ^4.3.1
@@ -55,6 +55,7 @@ dependencies:
   screenshot: ^3.0.0
   share_plus: ^10.0.0
   shorebird_code_push: ^2.0.2
+  super_tooltip: ^2.0.9
   syncfusion_flutter_datepicker: ^28.2.4
   url_launcher: ^6.3.1
   uuid: ^4.4.0
@@ -77,7 +78,6 @@ dev_dependencies:
 
 # dependency_overrides:
 #   rxdart: ^0.27.7
-
 flutter:
   uses-material-design: true
   assets:

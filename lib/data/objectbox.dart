@@ -62,8 +62,10 @@ class ObjectBox {
   List<Promotion> transactionPromotions({required Cart cart}) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
+
     Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
 
+    // Filter Promo by day
     promotionQuery = promotionQuery.and(Promotion_.days.isNull().or(
         Promotion_.days.containsElement(
             DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
@@ -78,24 +80,22 @@ class ObjectBox {
             .equalsDate(today)
             .or(Promotion_.endDate.equalsDate(today))));
 
-    // Disable promo A get B
-    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
-
     // FILTER PROMO BY CODE
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
-    Condition<Promotion> promotionTermsQuery = Promotion_.type
-        .equals(2)
+    Condition<Promotion> promotionTermsQuery = (Promotion_.type.equals(2))
         .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
     // Filter promotions by product
     if (cart.items.isNotEmpty) {
       List<ItemCart> items = List<ItemCart>.from(cart.items.toList());
 
-      Condition<Promotion> requirementProductIds = (Promotion_
-          .requirementProductId
-          .containsElement(items[0].idItem)
-          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity)));
+      Condition<Promotion> requirementProductIds = (items[0].idVariant != null
+              ? Promotion_.requirementVariantId
+                  .containsElement(items[0].idVariant!.toString())
+              : Promotion_.requirementProductId
+                  .containsElement(items[0].idItem))
+          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity));
 
       Condition<Promotion> requirementCategoryIds = (Promotion_
           .requirementProductId
@@ -104,14 +104,17 @@ class ObjectBox {
 
       for (var i = 1; i < items.length; i++) {
         ItemCart itemCart = items[i];
-        requirementProductIds = requirementProductIds.or((itemCart.idVariant !=
-                    null
-                ? Promotion_.requirementVariantId
-                    .containsElement(itemCart.idVariant!.toString())
-                : Promotion_.requirementProductId
-                    .containsElement(itemCart.idItem))
-            .and(
-                Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity)));
+        requirementProductIds = requirementProductIds.or(
+          (itemCart.idVariant != null
+                  ? Promotion_.requirementVariantId
+                      .containsElement(itemCart.idVariant!.toString())
+                  : Promotion_.requirementProductId
+                      .containsElement(itemCart.idItem))
+              .and(
+            Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity),
+          ),
+        );
+
         requirementCategoryIds = requirementCategoryIds.or((Promotion_
                 .requirementProductId
                 .containsElement(itemCart.idCategory ?? ''))
@@ -147,7 +150,7 @@ class ObjectBox {
       }
 
       promotionTermsQuery = promotionTermsQuery
-          .or(Promotion_.type.equals(3).and(requirementProductQuery));
+          .or(Promotion_.type.oneOf([3]).and(requirementProductQuery));
     }
 
     promotionQuery = promotionQuery.and(promotionTermsQuery);
@@ -158,7 +161,11 @@ class ObjectBox {
       ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)
       ..order(Promotion_.allTime);
 
-    return builder.build().find();
+    List<Promotion> promotions = builder.build().find();
+
+    log('active promotions: ${promotions.map((p) => p.name)}');
+
+    return promotions;
   }
 
   Stream<List<Promotion>> promotionsStream(

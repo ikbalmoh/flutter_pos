@@ -42,7 +42,8 @@ class Printer {
       log('PRINTER SIZE: ${size?.value.toString()}');
       log('BUILD RECEIPT: $cart\n$attributes');
       final profile = await CapabilityProfile.load();
-      final generator = Generator(size ?? PaperSize.mm58, profile);
+      final generator =
+          Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 2);
       List<int> bytes = [];
 
       Image? img;
@@ -68,7 +69,7 @@ class Printer {
 
       if (img != null) {
         img = copyResize(img, height: 120);
-        bytes += generator.imageRaster(img, align: PosAlign.center);
+        bytes += generator.image(img, align: PosAlign.center);
       }
 
       bytes += generator.text(cart.outletName ?? '',
@@ -272,7 +273,8 @@ class Printer {
       bool isCopy = false}) async {
     log('BUILD SHIFT RERORT: $shift');
     final profile = await CapabilityProfile.load();
-    final generator = Generator(size ?? PaperSize.mm58, profile);
+    final generator =
+        Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 2);
     List<int> bytes = [];
 
     Image? img;
@@ -289,7 +291,7 @@ class Printer {
 
     if (img != null) {
       img = copyResize(img, height: 120);
-      bytes += generator.imageRaster(img, align: PosAlign.center);
+      bytes += generator.image(img, align: PosAlign.center);
     }
 
     bytes += generator.text(shift.outletName ?? '',
