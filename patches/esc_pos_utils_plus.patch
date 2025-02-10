@@ -1,12 +1,11 @@
-diff -ruN /var/folders/8z/lkkn_g9511v4tt369y_564180000gn/T/esc_pos_utils_plus/lib/src/generator.dart /Users/ikbalmoh/.pub-cache/hosted/pub.dev/esc_pos_utils_plus-2.0.3/lib/src/generator.dart
---- /var/folders/8z/lkkn_g9511v4tt369y_564180000gn/T/esc_pos_utils_plus/lib/src/generator.dart	2024-10-24 10:19:59
-+++ /Users/ikbalmoh/.pub-cache/hosted/pub.dev/esc_pos_utils_plus-2.0.3/lib/src/generator.dart	2024-10-24 10:22:22
-@@ -393,7 +393,7 @@
-   /// [mode] is used to define the full or partial cut (if supported by the priner)
+diff -ruN /var/folders/ry/fwbrlv8s0vj2h28gvf8w39hr0000gn/T/esc_pos_utils_plus/lib/src/generator.dart /Users/ikbalmoh/.pub-cache/hosted/pub.dev/esc_pos_utils_plus-2.0.4/lib/src/generator.dart
+--- /var/folders/ry/fwbrlv8s0vj2h28gvf8w39hr0000gn/T/esc_pos_utils_plus/lib/src/generator.dart	2025-02-04 15:09:52
++++ /Users/ikbalmoh/.pub-cache/hosted/pub.dev/esc_pos_utils_plus-2.0.4/lib/src/generator.dart	2025-02-10 10:54:11
+@@ -413,7 +413,7 @@
+   /// [mode] is used to define the full or partial cut (if supported by the printer)
    List<int> cut({PosCutMode mode = PosCutMode.full}) {
      List<int> bytes = [];
 -    bytes += emptyLines(5);
-+    bytes += emptyLines(2);
      if (mode == PosCutMode.partial) {
        bytes += cCutPart.codeUnits;
      } else {

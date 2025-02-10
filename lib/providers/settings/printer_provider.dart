@@ -120,7 +120,7 @@ class Printer extends _$Printer {
   }
 
   Future<List<int>> generateTestTicket() async {
-    final printer = ref.read(printerProvider).value;
+    final printer = state.value;
     if (printer == null) {
       throw 'printer_not_connected'.tr();
     }

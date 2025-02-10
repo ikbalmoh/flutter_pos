@@ -14,22 +14,6 @@ import 'package:selleri/utils/formater.dart';
 import 'package:selleri/utils/transaction.dart';
 
 class Printer {
-  static String divider({PaperSize size = PaperSize.mm58}) {
-    String divider = '================================================';
-    if (size == PaperSize.mm58) {
-      divider = divider.substring(0, 32);
-    }
-    return divider;
-  }
-
-  static String subdivider({PaperSize size = PaperSize.mm58}) {
-    String divider = '------------------------------------------------';
-    if (size == PaperSize.mm58) {
-      divider = divider.substring(0, 32);
-    }
-    return divider;
-  }
-
   static Future<List<int>> buildReceiptBytes(
     Cart cart, {
     AttributeReceipts? attributes,
@@ -87,7 +71,8 @@ class Printer {
       bytes += generator.text(
           'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
       bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
-      bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+
+      bytes += generator.hr();
 
       // items
       for (ItemCart item in cart.items) {
@@ -135,8 +120,8 @@ class Printer {
       }
 
       if (withPrice) {
-        bytes +=
-            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.hr();
+
         // subtotal
         bytes += generator.row([
           PosColumn(
@@ -194,8 +179,7 @@ class Printer {
           ),
         ]);
         // Payments
-        bytes +=
-            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.hr();
         bytes += generator.text('payments'.tr());
         for (var payment in cart.payments) {
           bytes += generator.row([
@@ -213,8 +197,7 @@ class Printer {
           ]);
         }
         // Change
-        bytes +=
-            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.hr();
         bytes += generator.row([
           PosColumn(
             text: 'change'.tr(),
@@ -229,8 +212,7 @@ class Printer {
         ]);
       }
 
-      bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58),
-          linesAfter: 1);
+      bytes += generator.hr();
 
       if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),
@@ -312,7 +294,7 @@ class Printer {
         'Open: ${DateTimeFormater.dateToString(shift.openShift, format: 'dd/MM/y HH:mm')}');
     bytes += generator.text(
         'Close: ${shift.closeShift != null ? DateTimeFormater.dateToString(shift.closeShift!, format: 'dd/MM/y HH:mm') : '-'}');
-    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+    bytes += generator.hr();
 
     final List<SummaryItem> summaries = ShiftUtil.paymentList(shift.summary);
     for (var summary in summaries) {
@@ -335,7 +317,7 @@ class Printer {
       }
     }
 
-    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+    bytes += generator.hr();
     bytes += generator.row([
       PosColumn(
         text: 'item_sold'.tr(),
@@ -369,7 +351,7 @@ class Printer {
         ),
       ]);
     }
-    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+    bytes += generator.hr();
 
     bytes += generator.cut();
 
