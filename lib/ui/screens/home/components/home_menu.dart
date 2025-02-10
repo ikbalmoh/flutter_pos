@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
@@ -16,6 +17,8 @@ class HomeMenu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final outlet = ref.watch(outletProvider).value as OutletSelected;
+
     void onNewTransaction() {
       if (ref.read(cartProvider).items.isNotEmpty) {
         showModalBottomSheet(
@@ -110,14 +113,16 @@ class HomeMenu extends ConsumerWidget {
                   ),
                   child: Text('promotion_list'.tr()),
                 ),
-                MenuItemButton(
-                  onPressed: showAddExtraItem,
-                  leadingIcon: Icon(
-                    CupertinoIcons.cart_badge_plus,
-                    color: Colors.blue.shade700,
-                  ),
-                  child: Text('extra_item'.tr()),
-                ),
+                outlet.config.extraItem == true
+                    ? MenuItemButton(
+                        onPressed: showAddExtraItem,
+                        leadingIcon: Icon(
+                          CupertinoIcons.cart_badge_plus,
+                          color: Colors.blue.shade700,
+                        ),
+                        child: Text('extra_item'.tr()),
+                      )
+                    : Container(),
                 MenuItemButton(
                   onPressed: () => context.push(Routes.addItem),
                   leadingIcon: Icon(
