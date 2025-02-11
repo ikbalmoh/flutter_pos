@@ -72,33 +72,35 @@ ThemeData appTheme(BuildContext context) {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: WidgetStateProperty.resolveWith<Size>(
-            (states) => const Size.fromHeight(50)),
-        foregroundColor: WidgetStateProperty.resolveWith<Color>(
-          (states) => Colors.white,
-        ),
-        backgroundColor: WidgetStateProperty.resolveWith<Color>(
-          (Set<WidgetState> states) {
-            if (states.contains(WidgetState.pressed)) {
-              return Colors.teal.shade400.withValues(alpha: 0.7);
-            } else if (states.contains(WidgetState.disabled)) {
-              return Colors.grey.shade400;
-            }
-            return Colors.teal.shade400;
-          },
-        ),
-        shape: WidgetStateProperty.resolveWith<RoundedRectangleBorder>(
-          (state) => RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+          minimumSize: WidgetStateProperty.resolveWith<Size>(
+              (states) => const Size.fromHeight(50)),
+          foregroundColor: WidgetStateProperty.resolveWith<Color>(
+            (states) => Colors.white,
           ),
-        ),
-        textStyle: WidgetStateProperty.resolveWith<TextStyle>(
-          (states) => const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
+          backgroundColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.pressed)) {
+                return Colors.teal.shade400.withValues(alpha: 0.7);
+              } else if (states.contains(WidgetState.disabled)) {
+                return Colors.grey.shade400;
+              }
+              return Colors.teal.shade400;
+            },
           ),
-        ),
-      ),
+          shape: WidgetStateProperty.resolveWith<RoundedRectangleBorder>(
+            (state) => RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          textStyle: WidgetStateProperty.resolveWith<TextStyle>(
+            (states) => const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
+          ),
+          iconColor: WidgetStateProperty.resolveWith<Color>(
+            (state) => Colors.white,
+          )),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(

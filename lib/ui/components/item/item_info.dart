@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
@@ -85,14 +86,12 @@ class ItemInfo extends ConsumerWidget {
                         : Container()
                   ],
                 ),
-                TextButton.icon(
-                  style: TextButton.styleFrom(backgroundColor: Colors.teal.shade50),
-                  onPressed: onSelect,
-                  icon: Icon(
-                    CupertinoIcons.cart_badge_plus,
-                  ),
-                  label: Text(
-                    'add_to_cart'.tr(),
+                GestureDetector(
+                  onTap: () => context.pop(),
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.grey.shade500,
+                    size: 16,
                   ),
                 ),
               ],
@@ -145,6 +144,16 @@ class ItemInfo extends ConsumerWidget {
                       )
                     : Container()
               ],
+            ),
+          ),
+          TextButton.icon(
+            style: TextButton.styleFrom(backgroundColor: Colors.teal.shade50),
+            onPressed: onSelect,
+            icon: Icon(
+              CupertinoIcons.cart_badge_plus,
+            ),
+            label: Text(
+              'add_to_cart'.tr(),
             ),
           ),
         ],

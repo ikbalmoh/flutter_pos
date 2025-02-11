@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/shift_summary.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/shift/edit_open_amount.dart';
@@ -81,7 +82,9 @@ class SalesSummaryList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void onEditOpenAmount(double openAmount) async {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
+    void onEditOpenAmount(BuildContext context, double openAmount) async {
       final newAmount = await showDialog(
           context: context,
           builder: (context) {
@@ -91,6 +94,9 @@ class SalesSummaryList extends ConsumerWidget {
           });
 
       if (newAmount != openAmount) {
+        if (!isTablet && context.mounted) {
+          context.pop();
+        }
         ref.read(shiftProvider.notifier).updateOpenAmount(newAmount);
         AppAlert.toast('open_amount_updated_x'
             .tr(args: [CurrencyFormat.currency(newAmount)]));
@@ -123,15 +129,18 @@ class SalesSummaryList extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               item.isStartingCash == true && openCashEditable == true
-                  ? IconButton(
-                      onPressed: () => onEditOpenAmount(item.value ?? 0),
-                      icon: Icon(
-                        Icons.edit,
-                        size: 16,
-                        color: Colors.blue.shade600,
-                      ),
-                      tooltip: 'edit_open_amount'.tr(),
-                    )
+                  ? Builder(builder: (context) {
+                      return IconButton(
+                        onPressed: () =>
+                            onEditOpenAmount(context, item.value ?? 0),
+                        icon: Icon(
+                          Icons.edit,
+                          size: 16,
+                          color: Colors.blue.shade600,
+                        ),
+                        tooltip: 'edit_open_amount'.tr(),
+                      );
+                    })
                   : Container(),
               Text(
                 item.value != null

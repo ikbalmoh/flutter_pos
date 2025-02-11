@@ -225,7 +225,7 @@ class Printer {
         // footer
         if (footers != null) {
           bytes += generator.text(footers,
-              linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
+              linesAfter: 1, styles: const PosStyles(align: PosAlign.center));
         }
       }
 

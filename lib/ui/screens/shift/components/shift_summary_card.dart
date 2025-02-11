@@ -9,7 +9,12 @@ import 'package:selleri/utils/formater.dart';
 import 'package:selleri/data/models/shift_summary.dart';
 
 class ShiftSummaryCards extends StatelessWidget {
-  const ShiftSummaryCards({required this.shiftInfo, this.isColumn, this.openCashEditable, super.key});
+  const ShiftSummaryCards({
+    required this.shiftInfo,
+    this.isColumn,
+    this.openCashEditable,
+    super.key,
+  });
 
   final ShiftInfo shiftInfo;
   final bool? isColumn;
@@ -26,6 +31,7 @@ class ShiftSummaryCards extends StatelessWidget {
           builder: (context) {
             return SalesSummary(
               summary: summary,
+              openCashEditable: openCashEditable,
             );
           });
     }
