@@ -27,7 +27,7 @@ class Printer {
       log('BUILD RECEIPT: $cart\n$attributes');
       final profile = await CapabilityProfile.load();
       final generator =
-          Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 2);
+          Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
       List<int> bytes = [];
 
       Image? img;
@@ -256,7 +256,7 @@ class Printer {
     log('BUILD SHIFT RERORT: $shift');
     final profile = await CapabilityProfile.load();
     final generator =
-        Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 2);
+        Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
     List<int> bytes = [];
 
     Image? img;
