@@ -327,11 +327,21 @@ class ObjectBox {
     log('VARIANTS HAS BEEN STORED: $ids');
   }
 
-  int getTotalItem({required String idCategory}) {
+  int getTotalItem(
+      {String idCategory = '', FilterStock? filterStock = FilterStock.all}) {
+    Condition<Item> itemQuery = Item_.isActive.equals(true);
+
     if (idCategory != '') {
-      return itemBox.query(Item_.idCategory.equals(idCategory)).build().count();
+      itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
-    return itemBox.count();
+    if (filterStock == FilterStock.available) {
+      itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
+    } else if (filterStock == FilterStock.empty) {
+      itemQuery = itemQuery.and(Item_.stockItem.lessOrEqual(0));
+    }
+    final result = itemBox.query(itemQuery).build().count();
+
+    return result;
   }
 
   void putPromotions(List<Promotion> promotions) {

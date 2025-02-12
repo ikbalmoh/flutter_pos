@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/category.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/item/category_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,10 +9,15 @@ import 'package:selleri/utils/formater.dart';
 
 class ItemCategories extends ConsumerWidget {
   final String active;
+  final FilterStock? filterStock;
   final void Function(String idCategory) onChange;
 
-  const ItemCategories(
-      {required this.active, required this.onChange, super.key});
+  const ItemCategories({
+    required this.active,
+    this.filterStock,
+    required this.onChange,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,7 +70,8 @@ class ItemCategories extends ConsumerWidget {
                         child: Text(
                           CurrencyFormat.currency(
                             objectBox.getTotalItem(
-                                idCategory: category.idCategory),
+                                idCategory: category.idCategory,
+                                filterStock: filterStock),
                             symbol: false,
                           ),
                           style: Theme.of(context)

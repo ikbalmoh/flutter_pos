@@ -90,7 +90,8 @@ definitions:
     - &build_runner
       name: Run build runner
       script: |
-        dart run patch_package apply && dart run build_runner build -d
+        dart run patch_package apply
+        dart run build_runner build -d
         echo "build runner done"
 
     - &flutter_analyze

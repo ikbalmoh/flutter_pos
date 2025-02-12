@@ -191,6 +191,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               height: searchVisible ? 0 : 56,
               child: ItemCategories(
                 active: idCategory,
+                filterStock: filterStock,
                 onChange: onChangeCategory,
               ),
             ),
