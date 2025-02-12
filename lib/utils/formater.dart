@@ -9,17 +9,21 @@ class CurrencyFormat {
     bool symbol = true,
     bool minus = false,
   }) {
-    NumberFormat currencyFormatter = NumberFormat.currency(
-      locale: 'id',
-      symbol: symbol ? 'Rp' : '',
-      decimalDigits: decimalDigit,
-    );
     if (number is num) {
       if (number <= 0) {
         number = 0;
       }
+      if (number % 1 == 0 && decimalDigit != 0) {
+        decimalDigit = 0;
+      }
+      NumberFormat currencyFormatter = NumberFormat.currency(
+        locale: 'id',
+        symbol: symbol ? 'Rp' : '',
+        decimalDigits: decimalDigit,
+      );
       return '${minus == true && number > 0 ? '-' : ''}${currencyFormatter.format(number)}';
     }
+
     return number;
   }
 
