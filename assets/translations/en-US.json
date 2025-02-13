@@ -160,6 +160,7 @@
   "current_shift": "Current Shift",
   "shift_closed": "Shift Closed",
   "out_of_stock": "Out of Stock",
+  "insufficient_stock": "Insufficient Stock",
   "low_stock": "Low Stock",
   "available_cash_different": "Entered Available Cash is Different with Expected Ending Cash",
   "autoshift_note": "A new shift will be automatically opened once this shift closed",
@@ -310,5 +311,6 @@
   "sku_number": "SKU Number",
   "notification": "Notification",
   "outlet_config": "Outlet Config",
-  "or": "or"
+  "or": "or",
+  "max_qty_x": "max Qty x"
 }

@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -35,20 +34,21 @@ class ItemContainer extends ConsumerWidget {
   });
 
   void onAddToCart(BuildContext context, WidgetRef ref,
-      {required Item item, ItemVariant? variant}) {
-    double stock = variant?.stockItem ?? item.stockItem;
-    if (stock <= 0 && item.stockControl) {
-      AppAlert.snackbar(context, 'out_of_stock'.tr());
-      return;
-    }
-    ref.read(cartProvider.notifier).addToCart(item, variant: variant);
-    if (search.isNotEmpty &&
-        [
-          item.itemName.toLowerCase(),
-          item.sku?.toLowerCase(),
-          item.barcode?.toLowerCase()
-        ].contains(search.toLowerCase())) {
-      clearSearch();
+      {required Item item, ItemVariant? variant}) async {
+    try {
+      await ref.read(cartProvider.notifier).addToCart(item, variant: variant);
+      if (search.isNotEmpty &&
+          [
+            item.itemName.toLowerCase(),
+            item.sku?.toLowerCase(),
+            item.barcode?.toLowerCase()
+          ].contains(search.toLowerCase())) {
+        clearSearch();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        AppAlert.snackbar(context, e.toString());
+      }
     }
   }
 
@@ -78,8 +78,9 @@ class ItemContainer extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: Colors.white,
       useSafeArea: true,
-      builder: (context) {
-        return ItemInfo(
+      builder: (context) => DraggableScrollableSheet(
+        builder: (context, controller) => ItemInfo(
+          scrollController: controller,
           item: item,
           onSelect: () {
             context.pop();
@@ -89,8 +90,11 @@ class ItemContainer extends ConsumerWidget {
               onAddToCart(context, ref, item: item);
             }
           },
-        );
-      },
+        ),
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        expand: false,
+      ),
     );
   }
 
@@ -161,8 +165,6 @@ class ItemContainer extends ConsumerWidget {
                         qtyOnCart: qtyOnCart,
                         onAddToCart: (item) =>
                             onAddToCart(context, ref, item: item),
-                        addQty: (idItem) =>
-                            ref.read(cartProvider.notifier).updateQty(idItem),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
                         onLongPress: (item) => onLongPress(context, item, ref),

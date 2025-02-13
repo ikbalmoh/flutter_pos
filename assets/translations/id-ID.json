@@ -160,7 +160,8 @@
   "please_open_shift": "Silahkan Buka Shift untuk Memulai Transaksi",
   "current_shift": "Shift Berjalan",
   "shift_closed": "Shift Ditutup",
-  "out_of_stock": "Kosong",
+  "out_of_stock": "Stok Kosong",
+  "insufficient_stock": "Stok tidak mencukupi",
   "low_stock": "Stok Menipis",
   "available_cash_different": "Ada Selisih Antara Uang Tunai yang Anda Masukkan dengan Uang Kas Seharusnya",
   "autoshift_note": "Shift baru akan dibuka secara otomotis setelah shift ini ditutup",
@@ -311,5 +312,6 @@
   "sku_number": "Nomor SKU",
   "notification": "Pemberitahuan",
   "outlet_config": "Pengaturan Toko",
-  "or": "atau"
+  "or": "atau",
+  "max_qty_x": "Maksimal {}"
 }

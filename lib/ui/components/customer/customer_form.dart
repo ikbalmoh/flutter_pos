@@ -41,6 +41,8 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
 
   bool isLoading = false;
 
+  String error = '';
+
   @override
   void initState() {
     setState(() {
@@ -68,6 +70,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       return;
     }
     setState(() {
+      error = '';
       isLoading = true;
     });
     try {
@@ -84,8 +87,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       context.pop();
       AppAlert.toast('saved'.tr());
     } catch (e) {
-      log('submit cashflow error: $e');
-      AppAlert.toast(e.toString());
+      log('submit customer error: $e');
+      setState(() {
+        error = e.toString();
+      });
     } finally {
       setState(() {
         isLoading = false;
@@ -143,6 +148,28 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                         ],
                       ),
                     ),
+                    error.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border:
+                                    Border.all(color: Colors.red, width: 0.5),
+                                color: Colors.red.shade100,
+                              ),
+                              child: Text(
+                                error,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge
+                                    ?.copyWith(color: Colors.red.shade700),
+                              ),
+                            ),
+                          )
+                        : Container(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: TextFormField(

@@ -8,6 +8,7 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
 import 'package:selleri/ui/components/generic/qty_editor.dart';
 import 'package:selleri/ui/components/pic_picker.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -104,8 +105,14 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
       picName: picName,
     );
     // Update Item
-    ref.read(cartProvider.notifier).updateItem(item);
     context.pop();
+    try {
+      await ref.read(cartProvider.notifier).updateItem(item);
+    } catch (e) {
+      if (context.mounted) {
+        AppAlert.snackbar(context, e.toString());
+      }
+    }
   }
 
   void onSelectPic() async {

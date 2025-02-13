@@ -289,6 +289,15 @@ class ObjectBox {
   Item? getItem(String idItem) =>
       itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 
+  ItemVariant? getItemVariant(
+          {required String idItem, required int variantId}) =>
+      itemVariantBox
+          .query(ItemVariant_.idItem
+              .equals(idItem)
+              .and(ItemVariant_.idVariant.equals(variantId)))
+          .build()
+          .findFirst();
+
   CustomerGroup? getCustomerGroup(int groupId) => customerGroupBox
       .query(CustomerGroup_.groupId.equals(groupId))
       .build()

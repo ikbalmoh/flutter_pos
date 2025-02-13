@@ -23,7 +23,7 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/formater.dart';
 import 'dart:developer';
 import 'package:selleri/utils/printer.dart' as util;
 
@@ -92,14 +92,17 @@ class Cart extends _$Cart {
     return emptyItems;
   }
 
-  void addToCart(Item item, {ItemVariant? variant}) async {
+  Future<void> addToCart(Item item, {ItemVariant? variant}) async {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
       await initCart();
     }
-    int onCart = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
-    if (onCart > 0) {
-      updateQty(item.idItem, idVariant: variant?.idVariant);
-      return;
+    double itemStock = variant?.stockItem ?? item.stockItem;
+    int onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
+    if (onCartQty > 0) {
+      return updateQty(item.idItem, idVariant: variant?.idVariant);
+    }
+    if (itemStock < 1 && item.stockControl) {
+      throw 'out_of_stock'.tr();
     }
     String identifier =
         '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
@@ -109,8 +112,7 @@ class Cart extends _$Cart {
     if (item.isPackage) {
       final emptyItems = getEmptyItemPackages(item.packageItems);
       if (emptyItems.isNotEmpty) {
-        AppAlert.toast('x_stock_empty'.tr(args: [emptyItems.first.itemName]));
-        return;
+        throw 'x_stock_empty'.tr(args: [emptyItems.first.itemName]);
       }
       identifier += (DateTime.now().millisecondsSinceEpoch).toString();
     } else if (variant != null) {
@@ -124,10 +126,6 @@ class Cart extends _$Cart {
     if (cartIndex > -1) {
       final ItemCart existItem = state.items[cartIndex];
       return updateItem(existItem.copyWith(quantity: existItem.quantity + 1));
-    }
-
-    if (item.promotions.isNotEmpty) {
-      // check promo by order = 3
     }
 
     ItemCart itemCart = ItemCart(
@@ -177,35 +175,84 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void updateQty(String idItem, {int? idVariant, bool increment = true}) {
+  Future<void> updateQty(String idItem,
+      {int? idVariant, bool increment = true}) async {
     final index = state.items
         .indexWhere((i) => i.idItem == idItem && i.idVariant == idVariant);
+
     if (index > -1) {
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+
       List<ItemCart> items = [...state.items];
-      ItemCart item = items[index];
-      int quantity = increment ? item.quantity + 1 : item.quantity - 1;
-      double finalPrice = item.price - item.discountTotal;
+      ItemCart itemCart = items[index];
+
+      Item? item = objectBox.getItem(idItem);
+
+      if (item == null) {
+        throw 'x_not_found'.tr(args: ['item'.tr()]);
+      }
+
+      ItemVariant? itemVariant = idVariant == null
+          ? null
+          : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
+
+      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+
+      if (item.stockControl &&
+          outlet.config.stockMinus == false &&
+          itemCart.quantity + 1 > itemStock) {
+        throw 'max_qty_x'.tr(args: [
+          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
+        ]);
+      }
+
+      int quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
+      double finalPrice = itemCart.price - itemCart.discountTotal;
       items[index] =
-          item.copyWith(quantity: quantity, total: quantity * finalPrice);
+          itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
       state = state.copyWith(items: items);
       calculateCart();
     }
   }
 
-  void updateItem(ItemCart item) {
+  Future<void> updateItem(ItemCart itemCart) async {
+    final outlet = ref.read(outletProvider).value as OutletSelected;
+
     final index =
-        state.items.indexWhere((i) => i.identifier == item.identifier);
+        state.items.indexWhere((i) => i.identifier == itemCart.identifier);
     if (index > -1) {
       List<ItemCart> items = [...state.items];
-      double discount = item.discount;
-      double discountTotal = item.discountTotal;
-      if (item.promotion != null) {
+
+      Item? item = objectBox.getItem(itemCart.idItem);
+
+      if (item == null) {
+        throw 'x_not_found'.tr(args: ['item'.tr()]);
+      }
+
+      ItemVariant? itemVariant = itemCart.idVariant == null
+          ? null
+          : objectBox.getItemVariant(
+              idItem: itemCart.idItem, variantId: itemCart.idVariant!);
+
+      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+
+      if (item.stockControl &&
+          outlet.config.stockMinus == false &&
+          itemCart.quantity + 1 > itemStock) {
+        throw 'max_qty_x'.tr(args: [
+          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
+        ]);
+      }
+
+      double discount = itemCart.discount;
+      double discountTotal = itemCart.discountTotal;
+      if (itemCart.promotion != null) {
         discount = 0;
         discountTotal = 0;
       }
-      double finalPrice = item.price - discountTotal;
-      double total = item.quantity * finalPrice;
-      items[index] = item.copyWith(
+      double finalPrice = itemCart.price - discountTotal;
+      double total = itemCart.quantity * finalPrice;
+      items[index] = itemCart.copyWith(
         total: total,
         discount: discount,
         discountTotal: discountTotal,
