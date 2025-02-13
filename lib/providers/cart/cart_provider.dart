@@ -168,7 +168,10 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void addItemCart(ItemCart item) {
+  void addItemCart(ItemCart item) async {
+    if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
+      await initCart();
+    }
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(item);
     state = state.copyWith(items: items);

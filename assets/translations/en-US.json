@@ -312,5 +312,5 @@
   "notification": "Notification",
   "outlet_config": "Outlet Config",
   "or": "or",
-  "max_qty_x": "max Qty x"
+  "max_qty_x": "max Qty {}"
 }
