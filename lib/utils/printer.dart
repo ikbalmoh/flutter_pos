@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
@@ -253,7 +253,11 @@ class Printer {
             styles: const PosStyles(align: PosAlign.center));
       }
 
-      bytes += generator.feed(2);
+      if (kDebugMode) {
+        bytes += generator.cut();
+      } else {
+        bytes += generator.feed(3);
+      }
 
       return bytes;
     } catch (e, stackTrace) {
@@ -381,7 +385,11 @@ class Printer {
     }
     bytes += generator.hr();
 
-    bytes += generator.feed(2);
+    if (kDebugMode) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(3);
+    }
 
     return bytes;
   }
