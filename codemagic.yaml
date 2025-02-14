@@ -20,7 +20,7 @@ definitions:
         - firebase_credentials_prod
         - selleri-prod
       vars:
-        FLUTTER_VERSION: '3.22.3'
+        FLUTTER_VERSION: '3.27.1'
       android_signing:
         - selleri_release_keystore
       ios_signing:
