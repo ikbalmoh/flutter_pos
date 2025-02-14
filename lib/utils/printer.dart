@@ -13,7 +13,6 @@ import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/models/shift_summary.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:selleri/utils/transaction.dart';
-import 'package:validators/validators.dart';
 
 class Printer {
   static Future<List<int>> buildReceiptBytes(
@@ -40,8 +39,7 @@ class Printer {
       bytes += generator.drawer();
 
       if (attributes != null) {
-        if (attributes.imageBase64 != null &&
-            isBase64(attributes.imageBase64!)) {
+        if (isValidBase64(attributes.imageBase64!)) {
           try {
             final Uint8List imgBytes =
                 const Base64Decoder().convert(attributes.imageBase64!);
@@ -282,7 +280,7 @@ class Printer {
     String? headers;
 
     if (attributes != null) {
-      if (attributes.imageBase64 != null && isBase64(attributes.imageBase64!)) {
+      if (isValidBase64(attributes.imageBase64)) {
         final Uint8List imgBytes =
             const Base64Decoder().convert(attributes.imageBase64!);
         img = decodeImage(imgBytes);
@@ -392,5 +390,17 @@ class Printer {
     }
 
     return bytes;
+  }
+
+  static bool isValidBase64(String? str) {
+    if (str == null) {
+      return false;
+    }
+    try {
+      base64.decode(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
