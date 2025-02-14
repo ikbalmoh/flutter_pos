@@ -391,12 +391,12 @@ class Cart extends _$Cart {
       if (printer == null) {
         throw 'printer_not_connected'.tr();
       }
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletProvider).value as OutletSelected)
-              .config
-              .attributeReceipts;
+          outlet.config.attributeReceipts;
       final receipt = await util.Printer.buildReceiptBytes(
         state,
+        outlet: outlet.outlet,
         attributes: attributeReceipts,
         size: printer.size,
         isCopy: printCounter > 1,

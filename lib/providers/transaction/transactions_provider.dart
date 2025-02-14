@@ -73,8 +73,11 @@ class Transactions extends _$Transactions {
           (ref.read(outletProvider).value as OutletSelected)
               .config
               .attributeReceipts;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+
       final receipt = await util.Printer.buildReceiptBytes(
         cart,
+        outlet: outlet.outlet,
         attributes: attributeReceipts,
         size: printer.size,
         isCopy: true,

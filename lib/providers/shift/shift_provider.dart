@@ -117,11 +117,12 @@ class Shift extends _$Shift {
       if (printer == null) {
         throw 'printer_not_connected'.tr();
       }
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletProvider).value as OutletSelected)
-              .config
+          outlet.config
               .attributeReceipts;
       final receipt = await util.Printer.buildShiftReportBytes(
+        outlet: outlet.outlet,
         info,
         attributes: attributeReceipts,
         size: printer.size,

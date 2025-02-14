@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/models/shift_summary.dart';
@@ -17,6 +18,7 @@ import 'package:validators/validators.dart';
 class Printer {
   static Future<List<int>> buildReceiptBytes(
     Cart cart, {
+    required Outlet outlet,
     AttributeReceipts? attributes,
     PaperSize? size = PaperSize.mm58,
     bool isCopy = false,
@@ -25,7 +27,7 @@ class Printer {
   }) async {
     try {
       log('PRINTER SIZE: ${size?.value.toString()}');
-      log('BUILD RECEIPT: $cart\n$attributes');
+      log('BUILD RECEIPT: $cart\n$outlet\n$attributes');
       final profile = await CapabilityProfile.load();
       final generator =
           Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
@@ -59,8 +61,17 @@ class Printer {
       }
 
       bytes += generator.text(cart.outletName ?? '',
-          styles: const PosStyles(align: PosAlign.center, bold: true),
-          linesAfter: 1);
+          styles: const PosStyles(align: PosAlign.center, bold: true));
+      if (outlet.outletAddress != null && outlet.outletAddress != '') {
+        bytes += generator.text(outlet.outletAddress!,
+            styles: const PosStyles(align: PosAlign.center, bold: false),
+            linesAfter: 0);
+      }
+      if (outlet.outletPhone != null && outlet.outletPhone != '') {
+        bytes += generator.text(outlet.outletPhone!,
+            styles: const PosStyles(align: PosAlign.center, bold: false),
+            linesAfter: 1);
+      }
 
       if (headers != null) {
         bytes += generator.text(headers,
@@ -253,9 +264,11 @@ class Printer {
 
   static Future<List<int>> buildShiftReportBytes(ShiftInfo shift,
       {AttributeReceipts? attributes,
+      required Outlet outlet,
       PaperSize? size = PaperSize.mm58,
       bool isCopy = false}) async {
     log('BUILD SHIFT RERORT: $shift');
+    log('OUTLET: $outlet');
     final profile = await CapabilityProfile.load();
     final generator =
         Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
@@ -278,9 +291,20 @@ class Printer {
       bytes += generator.image(img, align: PosAlign.center);
     }
 
-    bytes += generator.text(shift.outletName ?? '',
-        styles: const PosStyles(align: PosAlign.center, bold: true),
-        linesAfter: 1);
+    bytes += generator.text(
+      shift.outletName ?? '',
+      styles: const PosStyles(align: PosAlign.center, bold: true),
+    );
+    if (outlet.outletAddress != null && outlet.outletAddress != '') {
+      bytes += generator.text(outlet.outletAddress!,
+          styles: const PosStyles(align: PosAlign.center, bold: false),
+          linesAfter: 0);
+    }
+    if (outlet.outletPhone != null && outlet.outletPhone != '') {
+      bytes += generator.text(outlet.outletPhone!,
+          styles: const PosStyles(align: PosAlign.center, bold: false),
+          linesAfter: 1);
+    }
 
     if (headers != null) {
       bytes += generator.text(headers,

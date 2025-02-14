@@ -85,8 +85,12 @@ class Printer extends _$Printer {
   }
 
   void disconnect() async {
+    const storage = FlutterSecureStorage();
+
     bool disconnect = await PrintBluetoothThermal.disconnect;
+
     if (disconnect) {
+      await storage.delete(key: 'printer');
       state = const AsyncData(null);
     }
   }
@@ -105,7 +109,10 @@ class Printer extends _$Printer {
   Future<void> print(List<int> bytes, {bool isCopy = false}) async {
     try {
       final isConnected = await PrintBluetoothThermal.connectionStatus;
+      const storage = FlutterSecureStorage();
+
       if (!isConnected) {
+        await storage.delete(key: 'printer');
         state = const AsyncData(null);
         throw Exception('printer_not_connected'.tr());
       }
