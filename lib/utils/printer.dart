@@ -12,6 +12,7 @@ import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/models/shift_summary.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:selleri/utils/transaction.dart';
+import 'package:validators/validators.dart';
 
 class Printer {
   static Future<List<int>> buildReceiptBytes(
@@ -37,7 +38,8 @@ class Printer {
       bytes += generator.drawer();
 
       if (attributes != null) {
-        if (attributes.imageBase64 != null && attributes.imageBase64 != '') {
+        if (attributes.imageBase64 != null &&
+            isBase64(attributes.imageBase64!)) {
           try {
             final Uint8List imgBytes =
                 const Base64Decoder().convert(attributes.imageBase64!);
@@ -240,7 +242,7 @@ class Printer {
             styles: const PosStyles(align: PosAlign.center));
       }
 
-      bytes += generator.cut();
+      bytes += generator.feed(2);
 
       return bytes;
     } catch (e, stackTrace) {
@@ -263,7 +265,7 @@ class Printer {
     String? headers;
 
     if (attributes != null) {
-      if (attributes.imageBase64 != null && attributes.imageBase64 != '') {
+      if (attributes.imageBase64 != null && isBase64(attributes.imageBase64!)) {
         final Uint8List imgBytes =
             const Base64Decoder().convert(attributes.imageBase64!);
         img = decodeImage(imgBytes);
@@ -318,42 +320,44 @@ class Printer {
     }
 
     bytes += generator.hr();
-    bytes += generator.row([
-      PosColumn(
-        text: 'item_sold'.tr(),
-        width: 8,
-        styles: const PosStyles(bold: true),
-      ),
-      PosColumn(
-        text: CurrencyFormat.currency(
-            shift.soldItems.isNotEmpty
-                ? shift.soldItems
-                    .map((sold) => sold.sold)
-                    .reduce((a, b) => a + b)
-                : 0,
-            symbol: false),
-        width: 4,
-        styles: const PosStyles(align: PosAlign.right, bold: true),
-      ),
-    ]);
-    for (var i = 0; i < shift.soldItems.length; i++) {
-      final item = shift.soldItems[i];
+    if (shift.soldItems.isNotEmpty) {
       bytes += generator.row([
         PosColumn(
-          text: ' ${item.name}',
-          width: 10,
-          styles: const PosStyles(align: PosAlign.left),
+          text: 'item_sold'.tr(),
+          width: 8,
+          styles: const PosStyles(bold: true),
         ),
         PosColumn(
-          text: CurrencyFormat.currency(item.sold, symbol: false),
-          width: 2,
-          styles: const PosStyles(align: PosAlign.right),
+          text: CurrencyFormat.currency(
+              shift.soldItems.isNotEmpty
+                  ? shift.soldItems
+                      .map((sold) => sold.sold)
+                      .reduce((a, b) => a + b)
+                  : 0,
+              symbol: false),
+          width: 4,
+          styles: const PosStyles(align: PosAlign.right, bold: true),
         ),
       ]);
+      for (var i = 0; i < shift.soldItems.length; i++) {
+        final item = shift.soldItems[i];
+        bytes += generator.row([
+          PosColumn(
+            text: ' ${item.name}',
+            width: 10,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: CurrencyFormat.currency(item.sold, symbol: false),
+            width: 2,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
     }
     bytes += generator.hr();
 
-    bytes += generator.cut();
+    bytes += generator.feed(2);
 
     return bytes;
   }

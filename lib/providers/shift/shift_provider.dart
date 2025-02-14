@@ -32,8 +32,7 @@ class Shift extends _$Shift {
   Future<void> openShift(double openAmount) async {
     state = const AsyncLoading();
     final outletState = await ref.read(outletProvider.future) as OutletSelected;
-    final authState =
-        await ref.read(authProvider.future) as Authenticated;
+    final authState = await ref.read(authProvider.future) as Authenticated;
 
     final userAccount = authState.user.user;
 
@@ -72,8 +71,7 @@ class Shift extends _$Shift {
     bool printReport = true,
     bool reopen = false,
   }) async {
-    final user =
-        (ref.read(authProvider).value as Authenticated).user.user;
+    final user = (ref.read(authProvider).value as Authenticated).user.user;
     final model.Shift currentShift = state.value!;
     try {
       state = const AsyncLoading();
@@ -123,10 +121,14 @@ class Shift extends _$Shift {
           (ref.read(outletProvider).value as OutletSelected)
               .config
               .attributeReceipts;
-      final receipt = await util.Printer.buildShiftReportBytes(info,
-          attributes: attributeReceipts, size: printer.size);
+      final receipt = await util.Printer.buildShiftReportBytes(
+        info,
+        attributes: attributeReceipts,
+        size: printer.size,
+      );
       ref.read(printerProvider.notifier).print(receipt);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('PRINT SHIFT ERROR: $e => $stackTrace');
       if (throwError == true) {
         rethrow;
       }
