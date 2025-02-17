@@ -65,7 +65,7 @@
   "scan_again": "Pindai Lagi",
   "connect_printer": "Hubungkan Printer",
   "disconnect_printer": "Putuskan",
-  "paper_size": "Ukuran Kertas",
+  "paper_size": "Ukuran Kertas (mm)",
   "print_test": "Tes Printer",
   "printer_connected": "Printer {} terhubung",
   "printer_not_connected": "Printer tidak terhubung",
@@ -313,5 +313,6 @@
   "notification": "Pemberitahuan",
   "outlet_config": "Pengaturan Toko",
   "or": "atau",
-  "max_qty_x": "Maksimal {}"
+  "max_qty_x": "Maksimal {}",
+  "support_auto_cut": "Support Potong Otomatis"
 }

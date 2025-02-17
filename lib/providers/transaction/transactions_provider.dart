@@ -83,6 +83,7 @@ class Transactions extends _$Transactions {
         isCopy: true,
         isHold: isHold,
         withPrice: withPrice,
+        cut: printer.cut,
       );
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {

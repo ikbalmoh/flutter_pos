@@ -65,7 +65,7 @@
   "scan_again": "Scan Again",
   "connect_printer": "Connect Printer",
   "disconnect_printer": "Disconnect",
-  "paper_size": "Paper Size",
+  "paper_size": "Paper Size (mm)",
   "print_test": "Print Test",
   "printer_connected": "Connected to {}",
   "printer_not_connected": "Printer is not connected",
@@ -312,5 +312,6 @@
   "notification": "Notification",
   "outlet_config": "Outlet Config",
   "or": "or",
-  "max_qty_x": "max Qty {}"
+  "max_qty_x": "max Qty {}",
+  "support_auto_cut": "Auto Cut Support"
 }

@@ -20,6 +20,7 @@ class Printer {
     required Outlet outlet,
     AttributeReceipts? attributes,
     PaperSize? size = PaperSize.mm58,
+    bool? cut = false,
     bool isCopy = false,
     bool isHold = false,
     bool withPrice = true,
@@ -250,7 +251,7 @@ class Printer {
             styles: const PosStyles(align: PosAlign.center));
       }
 
-      if (kDebugMode) {
+      if (cut == true) {
         bytes += generator.cut();
       } else {
         bytes += generator.feed(3);
@@ -267,6 +268,7 @@ class Printer {
       {AttributeReceipts? attributes,
       required Outlet outlet,
       PaperSize? size = PaperSize.mm58,
+      bool? cut = false,
       bool isCopy = false}) async {
     log('BUILD SHIFT RERORT: $shift');
     log('OUTLET: $outlet');
@@ -381,7 +383,7 @@ class Printer {
     }
     bytes += generator.hr();
 
-    if (kDebugMode) {
+    if (cut == true) {
       bytes += generator.cut();
     } else {
       bytes += generator.feed(3);

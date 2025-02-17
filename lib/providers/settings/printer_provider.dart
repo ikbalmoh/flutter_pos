@@ -41,7 +41,7 @@ class Printer extends _$Printer {
   }
 
   Future<void> connectPrinter(BluetoothInfo device,
-      {required PaperSize size, bool print = true}) async {
+      {required PaperSize size, bool cut = false, bool print = true}) async {
     state = const AsyncLoading();
     try {
       const storage = FlutterSecureStorage();
@@ -64,6 +64,7 @@ class Printer extends _$Printer {
         macAddress: device.macAdress,
         name: device.name,
         size: size,
+        cut: cut,
       );
 
       await storage.write(key: 'printer', value: printer.toString());
@@ -75,12 +76,17 @@ class Printer extends _$Printer {
     }
   }
 
-  void updatePrinter(BluetoothInfo device, {required PaperSize size}) {
+  void updatePrinter(BluetoothInfo device,
+      {required PaperSize size, bool cut = false}) async {
+    const storage = FlutterSecureStorage();
+
     final printer = model.Printer(
       macAddress: device.macAdress,
       name: device.name,
       size: size,
+      cut: cut,
     );
+    await storage.write(key: 'printer', value: printer.toString());
     state = AsyncData(printer);
   }
 
@@ -194,8 +200,11 @@ class Printer extends _$Printer {
 
     bytes += generator.qrcode('selleri.co.id');
 
-    // bytes += generator.feed(1);
-    bytes += generator.cut();
+    if (printer.cut) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(3);
+    }
     return bytes;
   }
 

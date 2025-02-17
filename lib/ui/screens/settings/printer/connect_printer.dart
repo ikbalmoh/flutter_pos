@@ -23,6 +23,7 @@ List<PaperSizeSetting> paperSizeSettings = [
 
 class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
   PaperSize? size;
+  bool cut = true;
 
   @override
   void initState() {
@@ -31,6 +32,9 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
       size = currentPrinter?.macAddress == widget.device.macAdress
           ? currentPrinter?.size
           : PaperSize.mm58;
+      cut = currentPrinter?.macAddress == widget.device.macAdress
+          ? currentPrinter!.cut
+          : false;
     });
     super.initState();
   }
@@ -40,6 +44,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
     ref.read(printerProvider.notifier).connectPrinter(
           widget.device,
           size: size ?? PaperSize.mm58,
+          cut: cut,
         );
   }
 
@@ -48,6 +53,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
     ref.read(printerProvider.notifier).updatePrinter(
           widget.device,
           size: size ?? PaperSize.mm58,
+          cut: cut,
         );
   }
 
@@ -125,30 +131,54 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
                   const SizedBox(
                     height: 5,
                   ),
-                  ...paperSizeSettings
-                      .map(
-                        (paper) => ListTile(
-                          minLeadingWidth: 0,
-                          dense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 0),
-                          visualDensity:
-                              const VisualDensity(horizontal: 0, vertical: -4),
-                          horizontalTitleGap: -7,
-                          title: Text('${paper.width} mm'),
-                          leading: Radio<PaperSize>(
-                            visualDensity: const VisualDensity(horizontal: 0),
-                            value: paper.size,
-                            groupValue: size,
-                            onChanged: (PaperSize? value) {
-                              setState(() {
-                                size = value;
-                              });
-                            },
-                          ),
+                  Wrap(
+                    spacing: 7.5,
+                    children: List<PaperSizeSetting>.from(paperSizeSettings)
+                        .map((paper) => TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: size == paper.size
+                                  ? Colors.teal.shade50
+                                  : Colors.grey.shade100,
+                              foregroundColor: size == paper.size
+                                  ? Colors.teal.shade700
+                                  : Colors.grey.shade700,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7.5),
+                                  side: BorderSide(
+                                    width: 1,
+                                    color: size == paper.size
+                                        ? Colors.teal
+                                        : Colors.grey.shade100,
+                                  )),
+                            ),
+                            onPressed: () => setState(() {
+                                  size = paper.size;
+                                }),
+                            child: Text('${paper.width}')))
+                        .toList(),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'support_auto_cut'.tr(),
+                        style: textTheme.bodySmall?.copyWith(
+                          color: Colors.grey,
                         ),
-                      )
-                      ,
+                      ),
+                      Switch(
+                          value: cut,
+                          onChanged: (value) {
+                            setState(() {
+                              cut = value;
+                            });
+                          })
+                    ],
+                  )
                 ],
               ),
             ),

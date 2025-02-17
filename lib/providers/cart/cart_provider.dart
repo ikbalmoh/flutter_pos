@@ -400,6 +400,7 @@ class Cart extends _$Cart {
         attributes: attributeReceipts,
         size: printer.size,
         isCopy: printCounter > 1,
+        cut: printer.cut
       );
       ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {

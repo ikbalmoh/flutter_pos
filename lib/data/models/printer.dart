@@ -6,19 +6,22 @@ class Printer {
   final String name;
   final String macAddress;
   final PaperSize size;
+  final bool cut;
 
   const Printer({
     required this.name,
     required this.macAddress,
     required this.size,
+    required this.cut,
   });
 
   Map<String, dynamic> toJson() =>
-      {"name": name, "mac_address": macAddress, "size": size.width};
+      {"name": name, "mac_address": macAddress, "size": size.width, "cut": cut};
 
   Printer.fromJson(Map<dynamic, dynamic> json)
       : name = json['name'],
         macAddress = json['mac_address'],
+        cut = json['cut'] ?? false,
         size = json['size'] == 384
             ? PaperSize.mm58
             : json['size'] == 512
