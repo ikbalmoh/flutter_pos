@@ -62,13 +62,13 @@ class Printer {
           styles: const PosStyles(align: PosAlign.center, bold: true));
       if (outlet.outletAddress != null && outlet.outletAddress != '') {
         bytes += generator.text(outlet.outletAddress!,
-            styles: const PosStyles(align: PosAlign.center, bold: false),
-            linesAfter: 0);
+            styles: const PosStyles(align: PosAlign.center, bold: false));
       }
       if (outlet.outletPhone != null && outlet.outletPhone != '') {
-        bytes += generator.text(outlet.outletPhone!,
-            styles: const PosStyles(align: PosAlign.center, bold: false),
-            linesAfter: 1);
+        bytes += generator.text(
+          outlet.outletPhone!,
+          styles: const PosStyles(align: PosAlign.center, bold: false),
+        );
       }
 
       if (headers != null) {
@@ -227,7 +227,6 @@ class Printer {
 
       if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),
-            linesAfter: 1,
             styles: const PosStyles(
               align: PosAlign.center,
               bold: true,
@@ -236,7 +235,7 @@ class Printer {
         // footer
         if (footers != null) {
           bytes += generator.text(footers,
-              linesAfter: 1, styles: const PosStyles(align: PosAlign.center));
+              styles: const PosStyles(align: PosAlign.center));
         }
       }
 
@@ -304,8 +303,7 @@ class Printer {
     }
     if (outlet.outletPhone != null && outlet.outletPhone != '') {
       bytes += generator.text(outlet.outletPhone!,
-          styles: const PosStyles(align: PosAlign.center, bold: false),
-          linesAfter: 1);
+          styles: const PosStyles(align: PosAlign.center, bold: false));
     }
 
     if (headers != null) {
