@@ -314,5 +314,6 @@
   "outlet_config": "Pengaturan Toko",
   "or": "atau",
   "max_qty_x": "Maksimal {}",
-  "support_auto_cut": "Support Potong Otomatis"
+  "support_auto_cut": "Support Potong Otomatis",
+  "x_copied": "{} telah disalin"
 }

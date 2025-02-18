@@ -313,5 +313,6 @@
   "outlet_config": "Outlet Config",
   "or": "or",
   "max_qty_x": "max Qty {}",
-  "support_auto_cut": "Auto Cut Support"
+  "support_auto_cut": "Auto Cut Support",
+  "x_copied": "{} has been copied"
 }
