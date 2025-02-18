@@ -1,9 +1,15 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/cart/promotions/cart_promotions.dart';
+import 'package:selleri/ui/components/cart/promotions/cart_promotions_list.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
@@ -25,6 +31,39 @@ class CartActions extends ConsumerStatefulWidget {
 class _CartActionsState extends ConsumerState<CartActions> {
   bool isLoading = false;
 
+  void continueToPayment(BuildContext context) async {
+    setState(() {
+      isLoading = true;
+    });
+    final promotions = ref.read(promotionsProvider);
+    final appliedPromotions = ref.read(cartProvider).promotions;
+    if (promotions.isNotEmpty && appliedPromotions.isEmpty) {
+      List<Promotion>? promotions = await showModalBottomSheet(
+          backgroundColor: Colors.white,
+          isScrollControlled: true,
+          context: context,
+          isDismissible: false,
+          builder: (context) {
+            return CartPromotionsList(
+                confirmText: 'continue_without_promo'.tr());
+          });
+
+      log('promotions $promotions');
+
+      if (promotions != null) {
+        ref.read(cartProvider.notifier).applyPromotions(promotions);
+        if (context.mounted) {
+          context.push(Routes.checkout);
+        }
+      }
+    } else {
+      context.push(Routes.checkout);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   void onCheckout(BuildContext context) async {
     final outletState = ref.read(outletProvider).value;
     bool isCustomerRequired = outletState is OutletSelected
@@ -35,16 +74,7 @@ class _CartActionsState extends ConsumerState<CartActions> {
       AppAlert.toast('select_customer'.tr());
       context.push(Routes.customers);
     } else {
-      setState(() {
-        isLoading = true;
-      });
-      // await ref.read(cartProvider.notifier).checkPromotionByOrder();
-      setState(() {
-        isLoading = false;
-      });
-      if (context.mounted) {
-        context.push(Routes.checkout);
-      }
+      continueToPayment(context);
     }
   }
 

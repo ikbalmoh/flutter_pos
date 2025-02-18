@@ -314,5 +314,7 @@
   "or": "or",
   "max_qty_x": "max Qty {}",
   "support_auto_cut": "Auto Cut Support",
-  "x_copied": "{} has been copied"
+  "x_copied": "{} has been copied",
+  "continue_without_promo": "Continue without Promo",
+  "apply_x": "Apply {}"
 }

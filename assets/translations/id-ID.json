@@ -315,5 +315,7 @@
   "or": "atau",
   "max_qty_x": "Maksimal {}",
   "support_auto_cut": "Support Potong Otomatis",
-  "x_copied": "{} telah disalin"
+  "x_copied": "{} telah disalin",
+  "continue_without_promo": "Lanjutkan Tanpa Promo",
+  "apply_x": "Terapkan {}"
 }
