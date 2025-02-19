@@ -321,7 +321,9 @@ class _TransactionDetailScreenState
                                       label: Text('print'.tr()),
                                     ),
                                   ),
-                            widget.cart.totalPayment < widget.cart.grandTotal
+                            currentShift != null &&
+                                    widget.cart.totalPayment <
+                                        widget.cart.grandTotal
                                 ? Expanded(
                                     flex: 2,
                                     child: Padding(

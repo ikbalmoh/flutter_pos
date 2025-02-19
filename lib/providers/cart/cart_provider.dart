@@ -325,9 +325,11 @@ class Cart extends _$Cart {
 
   void addPayment(CartPayment payment) {
     final auth = ref.read(authProvider).value as Authenticated;
+    final shift = ref.read(shiftProvider).value;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
+      shiftId: shift?.id,
       payDate: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
     );
 
@@ -394,14 +396,12 @@ class Cart extends _$Cart {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
           outlet.config.attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(
-        state,
-        outlet: outlet.outlet,
-        attributes: attributeReceipts,
-        size: printer.size,
-        isCopy: printCounter > 1,
-        cut: printer.cut
-      );
+      final receipt = await util.Printer.buildReceiptBytes(state,
+          outlet: outlet.outlet,
+          attributes: attributeReceipts,
+          size: printer.size,
+          isCopy: printCounter > 1,
+          cut: printer.cut);
       ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {
       rethrow;
