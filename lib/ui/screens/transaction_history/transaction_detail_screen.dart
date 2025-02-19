@@ -306,6 +306,7 @@ class _TransactionDetailScreenState
                             }),
                             isTablet ? const SizedBox(width: 15) : Container(),
                             !isTablet &&
+                                    currentShift != null &&
                                     widget.cart.totalPayment <
                                         widget.cart.grandTotal
                                 ? IconButton(

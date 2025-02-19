@@ -702,7 +702,7 @@ class Cart extends _$Cart {
 
     List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
         .where((p) =>
-            p.type == 2 && p.requirementMinimumOrder! <= subtotal ||
+            p.type == 2 && (p.requirementMinimumOrder != null && p.requirementMinimumOrder! <= subtotal) ||
             activePromoByProductIds.contains(p.promotionId))
         .toList();
 
