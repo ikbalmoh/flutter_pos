@@ -5,12 +5,12 @@ import 'package:validators/validators.dart';
 class CurrencyFormat {
   static String currency(
     dynamic number, {
-    int decimalDigit = 0,
+    int decimalDigit = 2,
     bool symbol = true,
     bool minus = false,
   }) {
     if (number is num) {
-      if (number <= 0) {
+      if (number <= 0 && !minus) {
         number = 0;
       }
       if (number % 1 == 0 && decimalDigit != 0) {
@@ -21,7 +21,7 @@ class CurrencyFormat {
         symbol: symbol ? 'Rp' : '',
         decimalDigits: decimalDigit,
       );
-      return '${minus == true && number > 0 ? '-' : ''}${currencyFormatter.format(number)}';
+      return currencyFormatter.format(number);
     }
 
     return number;
@@ -37,9 +37,9 @@ class CurrencyFormat {
     return currencyFormatter.parse(formated);
   }
 
-  static CurrencyTextInputFormatter currencyInput() {
+  static CurrencyTextInputFormatter currencyInput({int decimalDigit = 0}) {
     return CurrencyTextInputFormatter.currency(
-        locale: 'id', decimalDigits: 0, symbol: '');
+        locale: 'id', decimalDigits: decimalDigit, symbol: '');
   }
 }
 

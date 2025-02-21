@@ -28,8 +28,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
   final priceController = TextEditingController();
   final noteController = TextEditingController();
 
-  final _priceFormater = CurrencyFormat.currencyInput();
-  final _discountFormater = CurrencyFormat.currencyInput();
+  final _priceFormater = CurrencyFormat.currencyInput(decimalDigit: 1);
+  final _discountFormater = CurrencyFormat.currencyInput(decimalDigit: 2);
 
   late double price;
   late double discount;

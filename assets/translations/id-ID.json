@@ -317,5 +317,7 @@
   "support_auto_cut": "Support Potong Otomatis",
   "x_copied": "{} telah disalin",
   "continue_without_promo": "Lanjutkan Tanpa Promo",
-  "apply_x": "Terapkan {}"
+  "apply_x": "Terapkan {}",
+  "rounding": "Pembulatan",
+  "round_to": "Bulatkan"
 }

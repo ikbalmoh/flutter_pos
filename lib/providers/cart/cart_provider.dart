@@ -174,7 +174,7 @@ class Cart extends _$Cart {
     }
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(item);
-    state = state.copyWith(items: items);
+    state = state.copyWith(items: items, roundingValue: 0);
     calculateCart();
   }
 
@@ -213,7 +213,7 @@ class Cart extends _$Cart {
       double finalPrice = itemCart.price - itemCart.discountTotal;
       items[index] =
           itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
-      state = state.copyWith(items: items);
+      state = state.copyWith(items: items, roundingValue: 0);
       calculateCart();
     }
   }
@@ -261,7 +261,7 @@ class Cart extends _$Cart {
         discountTotal: discountTotal,
         promotion: null,
       );
-      state = state.copyWith(items: items);
+      state = state.copyWith(items: items, roundingValue: 0);
       calculateCart();
     }
   }
@@ -274,7 +274,7 @@ class Cart extends _$Cart {
     promotions.removeWhere(
       (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
     );
-    state = state.copyWith(items: items, promotions: promotions);
+    state = state.copyWith(items: items, promotions: promotions, roundingValue: 0);
     calculateCart();
     return true;
   }
@@ -302,11 +302,17 @@ class Cart extends _$Cart {
     state = state.copyWith(customerName: '', idCustomer: null);
   }
 
+  void setRoundingValue(double value) {
+    state = state.copyWith(roundingValue: value);
+    calculateCart();
+  }
+
   void setDiscountTransaction(
       {required double discount, required bool discIsPercent}) {
     double discOverallTotal =
         discIsPercent ? state.subtotal * (discount / 100) : discount;
     state = state.copyWith(
+      roundingValue: 0,
       discIsPercent: discIsPercent,
       discOverall: discount,
       discOverallTotal: discOverallTotal,
@@ -702,7 +708,9 @@ class Cart extends _$Cart {
 
     List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
         .where((p) =>
-            p.type == 2 && (p.requirementMinimumOrder != null && p.requirementMinimumOrder! <= subtotal) ||
+            p.type == 2 &&
+                (p.requirementMinimumOrder != null &&
+                    p.requirementMinimumOrder! <= subtotal) ||
             activePromoByProductIds.contains(p.promotionId))
         .toList();
 
@@ -724,7 +732,7 @@ class Cart extends _$Cart {
     }
 
     double total = subtotal - discOverallTotal - discPromotionsTotal;
-    double grandTotal = total;
+    double grandTotal = total + state.roundingValue;
     double ppn = state.ppn;
 
     double ppnTotal = 0;

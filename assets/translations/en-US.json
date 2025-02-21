@@ -316,5 +316,7 @@
   "support_auto_cut": "Auto Cut Support",
   "x_copied": "{} has been copied",
   "continue_without_promo": "Continue without Promo",
-  "apply_x": "Apply {}"
+  "apply_x": "Apply {}",
+  "rounding": "Rounding",
+  "round_to": "Round to"
 }

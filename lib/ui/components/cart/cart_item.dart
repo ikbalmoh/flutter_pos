@@ -105,7 +105,7 @@ class _CartItemState extends State<CartItem> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                '-${CurrencyFormat.currency(widget.item.discount, symbol: !widget.item.discountIsPercent)}${widget.item.discountIsPercent ? '%' : ''}',
+                                '-${CurrencyFormat.currency(widget.item.discount, symbol: !widget.item.discountIsPercent, decimalDigit: 2)}${widget.item.discountIsPercent ? '%' : ''}',
                                 style: textTheme.bodyMedium
                                     ?.copyWith(color: Colors.red.shade600),
                               ),

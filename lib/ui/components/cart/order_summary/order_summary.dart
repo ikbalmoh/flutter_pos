@@ -14,9 +14,11 @@ class OrderSummary extends StatelessWidget {
   final bool? withAttribute;
   final bool taxable;
   final OutletSelected outletState;
+  final Function? onChangeRoundingValue;
 
   const OrderSummary({
     required this.cart,
+    this.onChangeRoundingValue,
     this.radius,
     this.mainAxisSize,
     this.withAttribute,
@@ -128,6 +130,53 @@ class OrderSummary extends StatelessWidget {
                     )
                   : Container()
               : Container(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'rounding'.tr(),
+                style: textTheme.bodyLarge?.copyWith(
+                    color: Colors.black87, fontWeight: FontWeight.w700),
+              ),
+              onChangeRoundingValue != null
+                  ? Expanded(
+                      child: GestureDetector(
+                        onTap: () => onChangeRoundingValue!(),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.edit,
+                                size: 12,
+                                color: Colors.blue,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                CurrencyFormat.currency(
+                                  cart.roundingValue,
+                                  symbol: false,
+                                ),
+                                style: textTheme.bodyLarge
+                                    ?.copyWith(color: Colors.blue.shade500),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  : Text(
+                      CurrencyFormat.currency(
+                        cart.roundingValue,
+                        symbol: false,
+                      ),
+                      style:
+                          textTheme.bodyLarge?.copyWith(color: Colors.black87),
+                    ),
+            ],
+          ),
           TwoColumn(
             label: 'Grand Total',
             value: cart.grandTotal,
