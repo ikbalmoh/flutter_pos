@@ -31,11 +31,15 @@ class AppAlert {
     );
   }
 
-  static void toast(String message,
-      {Color? backgroundColor, Color? textColor}) {
+  static void toast(
+    String message, {
+    Color? backgroundColor,
+    Color? textColor,
+    Toast? toastLength = Toast.LENGTH_LONG,
+  }) {
     Fluttertoast.showToast(
       msg: message,
-      toastLength: Toast.LENGTH_LONG,
+      toastLength: toastLength,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,
       backgroundColor: backgroundColor ?? Colors.black.withValues(alpha: 0.8),

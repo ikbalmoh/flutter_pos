@@ -319,5 +319,7 @@
   "continue_without_promo": "Lanjutkan Tanpa Promo",
   "apply_x": "Terapkan {}",
   "rounding": "Pembulatan",
-  "round_to": "Bulatkan"
+  "round_to": "Bulatkan",
+  "closing_shift": "Menutup shift",
+  "shift_auto_open": "Shift baru dibuka"
 }

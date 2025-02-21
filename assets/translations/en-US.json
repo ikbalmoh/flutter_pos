@@ -318,5 +318,7 @@
   "continue_without_promo": "Continue without Promo",
   "apply_x": "Apply {}",
   "rounding": "Rounding",
-  "round_to": "Round to"
+  "round_to": "Round to",
+  "closing_shift": "Closing shift",
+  "shift_auto_open": "New shift opened"
 }

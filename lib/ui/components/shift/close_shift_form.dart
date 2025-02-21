@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/data/models/shift_cashflow_image.dart';
@@ -109,6 +110,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     });
     final summary = widget.shift.summary;
     try {
+      AppAlert.toast('closing_shift'.tr(), toastLength: Toast.LENGTH_SHORT);
       await ref.read(shiftProvider.notifier).closeShift(
             widget.shift,
             closeAmount: amount,
@@ -120,7 +122,8 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
           );
       // ignore: use_build_context_synchronously
       context.pop();
-      AppAlert.toast('shift_closed'.tr());
+      AppAlert.toast(
+          isAutoShift ? 'shift_auto_open'.tr() : 'shift_closed'.tr());
     } catch (e, stackTrace) {
       log('close shift error: $e => $stackTrace');
       AppAlert.toast(e.toString());
