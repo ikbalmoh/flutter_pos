@@ -15,6 +15,8 @@ class NotificationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(notificationProvider.notifier).loadNotifications();
+
     void openNotification(String link) async {
       final Uri url = Uri.parse(link.replaceFirst('://', ':/'));
       while (context.canPop()) {
