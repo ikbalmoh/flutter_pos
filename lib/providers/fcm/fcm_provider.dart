@@ -37,7 +37,7 @@ class Fcm extends _$Fcm {
     } else {
       unsubscribe();
     }
-    return null;
+    return future;
   }
 
   Timer? _debounceSync;
@@ -195,7 +195,7 @@ class Fcm extends _$Fcm {
         return;
       }
       final tokens = state.value!;
-      log('UNSUBSCRIBING FCM ...');
+      log('UNSUBSCRIBING FCM: $tokens');
       await messaging.subscribeToTopic(tokens.companyTopic);
       log('FCM UNSUBSCRIBED from ${tokens.companyTopic}');
       await messaging.subscribeToTopic(tokens.outletTopic);

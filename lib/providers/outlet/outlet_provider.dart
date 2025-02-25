@@ -40,13 +40,13 @@ class Outlet extends _$Outlet {
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
       log('CONFIG LOADED: $config');
 
-      await ref.read(itemsStreamProvider().notifier).loadItems(
-            refresh: true,
-            fullSync: false,
-            progressCallback: (status) {
-              state = AsyncData(OutletLoading(message: status));
-            },
-          );
+      // await ref.read(itemsStreamProvider().notifier).loadItems(
+      //       refresh: true,
+      //       fullSync: false,
+      //       progressCallback: (status) {
+      //         state = AsyncData(OutletLoading(message: status));
+      //       },
+      //     );
 
       state = AsyncData(OutletSelected(outlet: outlet, config: config));
       if (onSelected != null) {

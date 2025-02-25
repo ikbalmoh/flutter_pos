@@ -322,5 +322,6 @@
   "round_to": "Bulatkan",
   "closing_shift": "Menutup shift",
   "shift_auto_open": "Shift baru dibuka",
-  "max_round_message": "Nilai pembulatan maksimal 1.000"
+  "max_round_message": "Nilai pembulatan maksimal 1.000",
+  "select_table": "Pilih Meja"
 }

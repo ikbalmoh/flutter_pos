@@ -97,6 +97,14 @@ class HomeMenu extends ConsumerWidget {
                   child: Text('holded_transactions'.tr()),
                 ),
                 MenuItemButton(
+                  onPressed: () => context.push(Routes.tables),
+                  leadingIcon: Icon(
+                    CupertinoIcons.square_grid_3x2,
+                    color: Colors.blueGrey.shade500,
+                  ),
+                  child: Text('select_table'.tr()),
+                ),
+                MenuItemButton(
                   onPressed: onNewTransaction,
                   leadingIcon: Icon(
                     CupertinoIcons.doc,

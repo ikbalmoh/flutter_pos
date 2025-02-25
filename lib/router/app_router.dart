@@ -30,6 +30,7 @@ import 'package:selleri/ui/screens/customer/customer_screen.dart';
 import 'package:selleri/ui/screens/settings/printer/printer_setting_screen.dart';
 import 'package:selleri/ui/screens/transaction_history/transaction_history_screen.dart';
 import 'package:selleri/ui/screens/adjustments/adjustment_screen.dart';
+import 'package:selleri/ui/screens/tables/tables_screen.dart';
 
 import 'routes.dart';
 
@@ -82,6 +83,10 @@ GoRouter router(Ref ref) {
         GoRoute(
           path: Routes.cart,
           builder: (context, state) => const CartScreen(),
+        ),
+        GoRoute(
+          path: Routes.tables,
+          builder: (context, state) => const TablesScreen(),
         ),
         GoRoute(
           name: Routes.checkout,
