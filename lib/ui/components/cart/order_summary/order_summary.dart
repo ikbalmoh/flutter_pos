@@ -130,6 +130,14 @@ class OrderSummary extends StatelessWidget {
                     )
                   : Container()
               : Container(),
+          TwoColumn(
+            label: 'Total',
+            value: cart.total,
+            labelStyle: textTheme.bodyLarge?.copyWith(
+                    color: Colors.black87, fontWeight: FontWeight.w700),
+            valueStyle: textTheme.bodyLarge?.copyWith(
+                    color: Colors.black87, fontWeight: FontWeight.w700),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

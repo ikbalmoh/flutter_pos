@@ -274,7 +274,8 @@ class Cart extends _$Cart {
     promotions.removeWhere(
       (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
     );
-    state = state.copyWith(items: items, promotions: promotions, roundingValue: 0);
+    state =
+        state.copyWith(items: items, promotions: promotions, roundingValue: 0);
     calculateCart();
     return true;
   }
@@ -732,7 +733,7 @@ class Cart extends _$Cart {
     }
 
     double total = subtotal - discOverallTotal - discPromotionsTotal;
-    double grandTotal = total + state.roundingValue;
+    double grandTotal = total;
     double ppn = state.ppn;
 
     double ppnTotal = 0;
@@ -745,6 +746,8 @@ class Cart extends _$Cart {
         grandTotal += ppnTotal;
       }
     }
+
+    grandTotal += state.roundingValue;
 
     double change =
         state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
