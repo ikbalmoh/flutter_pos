@@ -5,7 +5,8 @@ enum StoreKey {
   user('USER'),
   outlet('OUTLET'),
   outletConfig('OUTLET_CONFIG'),
-  shift('SHIFT');
+  shift('SHIFT'),
+  fcmSubscribe('FCM_SUBSCRIBE');
 
   final String name;
   const StoreKey(this.name);
