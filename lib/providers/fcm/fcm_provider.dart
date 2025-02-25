@@ -195,10 +195,10 @@ class Fcm extends _$Fcm {
         return;
       }
       final tokens = state.value!;
-      log('UNSUBSCRIBING FCM ...');
-      await messaging.subscribeToTopic(tokens.companyTopic);
+      log('UNSUBSCRIBING FCM ... $tokens');
+      await messaging.unsubscribeFromTopic(tokens.companyTopic);
       log('FCM UNSUBSCRIBED from ${tokens.companyTopic}');
-      await messaging.subscribeToTopic(tokens.outletTopic);
+      await messaging.unsubscribeFromTopic(tokens.outletTopic);
       log('FCM UNSUBSCRIBED from ${tokens.outletTopic}');
       state =
           AsyncData(FcmSubscribe(companyTopic: '', outletTopic: '', token: ''));
