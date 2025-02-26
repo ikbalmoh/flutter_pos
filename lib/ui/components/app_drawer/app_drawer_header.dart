@@ -80,12 +80,20 @@ class AppDrawerHeader extends ConsumerWidget {
                             ),
                           ),
                           IconButton(
-                            onPressed: () =>
-                                context.goNamed(Routes.notificaitons),
+                            onPressed: () {
+                              context.pop();
+                              context.goNamed(Routes.notificaitons);
+                            },
                             icon: ref.watch(notificationProvider).when(
                                   data: (notifications) => Badge.count(
-                                    count: notifications.length,
-                                    isLabelVisible: notifications.isNotEmpty,
+                                    count: notifications
+                                        .where(
+                                            (notif) => notif.data?.link != null)
+                                        .length,
+                                    isLabelVisible: notifications
+                                        .where(
+                                            (notif) => notif.data?.link != null)
+                                        .isNotEmpty,
                                     child: const Icon(CupertinoIcons.bell),
                                   ),
                                   error: (e, _) =>

@@ -66,9 +66,9 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         isScrollControlled: true,
         enableDrag: false,
         builder: (context) => DraggableScrollableSheet(
-              initialChildSize: 0.5,
+              initialChildSize: 0.6,
               maxChildSize: 0.9,
-              minChildSize: 0.5,
+              minChildSize: 0.6,
               expand: false,
               builder: (context, controller) => CloseShiftForm(
                 shift: shiftInfo,

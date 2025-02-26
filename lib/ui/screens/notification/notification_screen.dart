@@ -36,6 +36,7 @@ class NotificationScreen extends ConsumerWidget {
         drawer: const AppDrawer(),
         appBar: AppBar(
           title: Text('notification'.tr()),
+          elevation: 3,
           automaticallyImplyLeading: false,
           leading: Builder(builder: (context) {
             return IconButton(
@@ -56,6 +57,9 @@ class NotificationScreen extends ConsumerWidget {
                         title: Text(notif.title),
                         dense: true,
                         subtitle: Text(notif.body),
+                        tileColor: notif.data?.link != null
+                            ? Colors.red.shade50
+                            : Colors.white,
                         onTap: notif.data?.link != null
                             ? () => openNotification(notif.data!.link!)
                             : null,
@@ -63,9 +67,13 @@ class NotificationScreen extends ConsumerWidget {
                             ? Icon(
                                 CupertinoIcons.chevron_right,
                                 size: 16,
-                                color: Colors.blueGrey.shade700,
+                                color: Colors.blueGrey.shade500,
                               )
                             : null,
+                        shape: Border(
+                          bottom:
+                              BorderSide(width: 1, color: Colors.grey.shade100),
+                        ),
                       );
                     },
                     itemCount: data.length,

@@ -123,7 +123,6 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
             printReport: printReport,
             reopen: isAutoShift,
           );
-      // ignore: use_build_context_synchronously
       setState(() {
         status = Status.success;
       });
@@ -160,7 +159,9 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     return PopScope(
       canPop: status != Status.loading,
       child: status == Status.loading
-          ? const LoadingPlaceholder()
+          ? const Center(
+              child: LoadingPlaceholder(),
+            )
           : status == Status.success
               ? CloseShiftSuccess(
                   onClose: () => context.pop(),
@@ -455,50 +456,62 @@ class CloseShiftError extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 20),
-        const Icon(CupertinoIcons.exclamationmark_circle,
-            color: Colors.red, size: 50),
-        const SizedBox(height: 20),
-        Text(
-          'close_shift_error'.tr(),
-          style: textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
-        ),
-        const SizedBox(height: 14),
-        Text(
-          error ?? '',
-          style: textTheme.bodySmall?.copyWith(color: Colors.grey.shade500),
-        ),
-        const SizedBox(height: 40),
-        Row(
-          children: [
-            TextButton(
-              style:
-                  TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
-              onPressed: onClose,
-              child: Text('back'.tr()),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: onRetry,
-                style: ElevatedButton.styleFrom(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+              child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(CupertinoIcons.exclamationmark_circle,
+                  color: Colors.red, size: 50),
+              const SizedBox(height: 20),
+              Text(
+                'close_shift_error'.tr(),
+                style:
+                    textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                error ?? '',
+                style:
+                    textTheme.bodySmall?.copyWith(color: Colors.grey.shade500),
+              ),
+            ],
+          )),
+          const SizedBox(height: 40),
+          Row(
+            children: [
+              TextButton(
+                style:
+                    TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
+                onPressed: onClose,
+                child: Text('cancel'.tr()),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: onRetry,
+                  style: ElevatedButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
+                    ),
+                  ),
+                  icon: const Icon(CupertinoIcons.refresh),
+                  label: Text(
+                    'try_again'.tr(),
                   ),
                 ),
-                icon: const Icon(CupertinoIcons.refresh),
-                label: Text(
-                  'try_again'.tr(),
-                ),
               ),
-            ),
-          ],
-        )
-      ],
+            ],
+          )
+        ],
+      ),
     );
   }
 }
@@ -516,27 +529,41 @@ class CloseShiftSuccess extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          isAutoShift ? 'shift_auto_open'.tr() : 'shift_closed'.tr(),
-          style: textTheme.bodyLarge,
-        ),
-        const SizedBox(height: 40),
-        ElevatedButton(
-          onPressed: onClose,
-          style: ElevatedButton.styleFrom(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+              child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                CupertinoIcons.list_bullet_below_rectangle,
+                size: 36,
+                color: Colors.teal,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                isAutoShift ? 'shift_auto_open'.tr() : 'shift_closed'.tr(),
+                style: textTheme.bodyLarge,
+              ),
+            ],
+          )),
+          const SizedBox(height: 40),
+          ElevatedButton(
+            onPressed: onClose,
+            style: ElevatedButton.styleFrom(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+              ),
             ),
+            child: Text('OK'),
           ),
-          child: Text(
-            'close'.tr(),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

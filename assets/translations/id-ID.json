@@ -321,6 +321,7 @@
   "rounding": "Pembulatan",
   "round_to": "Bulatkan",
   "closing_shift": "Menutup shift",
-  "shift_auto_open": "Shift baru dibuka",
-  "max_round_message": "Nilai pembulatan maksimal 1.000"
+  "shift_auto_open": "Shift Baru Dibuka Otomatis",
+  "max_round_message": "Nilai pembulatan maksimal 1.000",
+  "close_shift_error": "Gagal Menutup Shift"
 }
