@@ -27,7 +27,7 @@ class NotificationScreen extends ConsumerWidget {
 
     return VisibilityDetector(
       onVisibilityChanged: (info) {
-        if (context.mounted) {
+        if (info.visibleFraction > 0) {
           ref.read(notificationProvider.notifier).loadNotifications();
         }
       },

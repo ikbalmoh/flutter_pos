@@ -9,7 +9,7 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 
 part 'notification_provider.g.dart';
 
-@Riverpod()
+@Riverpod(keepAlive: true)
 class Notification extends _$Notification {
   @override
   FutureOr<List<model.Notification>> build() async {
@@ -17,8 +17,9 @@ class Notification extends _$Notification {
     return future;
   }
 
-  loadNotifications() async {
+  Future<void> loadNotifications() async {
     try {
+      state = AsyncLoading();
       final outlet = ref.watch(outletProvider).value as OutletSelected;
       final api = ref.watch(notificationApiProvider);
       final notifications =

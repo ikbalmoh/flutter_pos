@@ -95,7 +95,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   Future<void> refreshData() async {
     await ref.read(outletProvider.notifier).refreshConfig();
-    return ref.read(itemsStreamProvider().notifier).syncItems();
+    await ref.read(itemsStreamProvider().notifier).syncItems();
+    return;
   }
 
   Future<void> loadShift() async {
