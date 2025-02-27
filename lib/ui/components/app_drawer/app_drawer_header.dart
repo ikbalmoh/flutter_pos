@@ -88,11 +88,11 @@ class AppDrawerHeader extends ConsumerWidget {
                                   data: (notifications) => Badge.count(
                                     count: notifications
                                         .where(
-                                            (notif) => notif.data?.link != null)
+                                            (notif) => notif.isReaded != true)
                                         .length,
                                     isLabelVisible: notifications
                                         .where(
-                                            (notif) => notif.data?.link != null)
+                                            (notif) => notif.isReaded != true)
                                         .isNotEmpty,
                                     child: const Icon(CupertinoIcons.bell),
                                   ),

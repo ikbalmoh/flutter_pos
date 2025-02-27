@@ -54,15 +54,18 @@ class NotificationScreen extends ConsumerWidget {
                     itemBuilder: (context, idx) {
                       final notif = data[idx];
                       return ListTile(
+                        enabled: notif.isReaded != true,
                         title: Text(notif.title),
                         dense: true,
                         subtitle: Text(notif.body),
-                        tileColor: notif.data?.link != null
-                            ? Colors.red.shade50
-                            : Colors.white,
+                        tileColor: notif.isReaded == true
+                            ? Colors.white
+                            : Colors.red.shade50,
                         onTap: notif.data?.link != null
                             ? () => openNotification(notif.data!.link!)
-                            : null,
+                            : () => ref
+                                .read(notificationProvider.notifier)
+                                .markAsReaded(notif.id),
                         trailing: notif.data?.link != null
                             ? Icon(
                                 CupertinoIcons.chevron_right,
