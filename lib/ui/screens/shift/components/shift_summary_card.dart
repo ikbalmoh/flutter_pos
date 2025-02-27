@@ -62,7 +62,7 @@ class ShiftSummaryCards extends StatelessWidget {
             ),
             color: Colors.purple.shade50,
             label: 'total_transaction'.tr(args: ['']),
-            value: CurrencyFormat.currency(shiftInfo.summary.cashSales),
+            value: CurrencyFormat.currency(shiftInfo.summary.totalTransaction),
             onTap: () => onShowRecap(shiftInfo.summary),
           ),
           const SizedBox(width: 10),

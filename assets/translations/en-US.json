@@ -322,5 +322,6 @@
   "closing_shift": "Closing shift",
   "shift_auto_open": "New shift opened",
   "max_round_message": "Max rounding value is 1000",
-  "select_table": "Select Table"
+  "select_table": "Select Table",
+  "close_shift_error": "Close Shift Failed"
 }

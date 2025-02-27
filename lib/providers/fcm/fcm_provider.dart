@@ -27,6 +27,7 @@ FirebaseMessaging messaging = FirebaseMessaging.instance;
 class Fcm extends _$Fcm {
   @override
   FutureOr<FcmSubscribe?> build() async {
+    init();
     final auth = ref.watch(authProvider);
     final outlet = ref.watch(outletProvider);
     if (auth.value is Authenticated && outlet.value is OutletSelected) {
@@ -42,7 +43,7 @@ class Fcm extends _$Fcm {
 
   Timer? _debounceSync;
 
-  void init() async {
+  void init() async { 
     LocalNotificationService.initialize();
 
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
@@ -195,10 +196,10 @@ class Fcm extends _$Fcm {
         return;
       }
       final tokens = state.value!;
-      log('UNSUBSCRIBING FCM: $tokens');
-      await messaging.subscribeToTopic(tokens.companyTopic);
+      log('UNSUBSCRIBING FCM ... $tokens');
+      await messaging.unsubscribeFromTopic(tokens.companyTopic);
       log('FCM UNSUBSCRIBED from ${tokens.companyTopic}');
-      await messaging.subscribeToTopic(tokens.outletTopic);
+      await messaging.unsubscribeFromTopic(tokens.outletTopic);
       log('FCM UNSUBSCRIBED from ${tokens.outletTopic}');
       state =
           AsyncData(FcmSubscribe(companyTopic: '', outletTopic: '', token: ''));

@@ -5,6 +5,7 @@ import 'package:selleri/data/models/adjustment_history.dart';
 import 'package:selleri/data/models/item_adjustment.dart';
 import 'package:selleri/data/models/item_variant_adjustment.dart';
 import 'package:selleri/data/network/adjustment.dart';
+import 'package:selleri/providers/notification/notification_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 
 part 'adjustment_provider.g.dart';
@@ -78,6 +79,7 @@ class Adjustment extends _$Adjustment {
       final res =
           await api.createAdjustment(outletState.outlet.idOutlet, payload);
       resetForm();
+      await ref.read(notificationProvider.notifier).loadNotifications();
       return res;
     } catch (e) {
       rethrow;
