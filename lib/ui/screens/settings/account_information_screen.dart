@@ -49,8 +49,7 @@ class AccountInformation extends ConsumerWidget {
                   tileColor: Colors.white,
                 ),
                 ListTile(
-                  dense: true,
-                  title: const Text('Email'),
+                  title: Text('account_email'.tr()),
                   subtitle: Text(authState.user.user.email),
                   tileColor: Colors.white,
                   trailing: IconButton(
@@ -66,10 +65,6 @@ class AccountInformation extends ConsumerWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
-                ),
-                ListTile(
-                  title: Text('phone'.tr()),
-                  tileColor: Colors.white,
                 ),
                 ListTile(
                   title: Text('company'.tr()),

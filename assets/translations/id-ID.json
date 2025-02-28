@@ -324,5 +324,7 @@
   "shift_auto_open": "Shift Baru Dibuka Otomatis",
   "max_round_message": "Nilai pembulatan maksimal 1.000",
   "select_table": "Pilih Meja",
-  "close_shift_error": "Gagal Menutup Shift"
+  "close_shift_error": "Gagal Menutup Shift",
+  "device_id": "ID Perangkat",
+  "account_email": "Email Akun"
 }
