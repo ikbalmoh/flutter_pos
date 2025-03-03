@@ -325,5 +325,7 @@
   "select_table": "Select Table",
   "close_shift_error": "Close Shift Failed",
   "device_id": "Device ID",
-  "account_email": "Account Email"
+  "account_email": "Account Email",
+  "x_person": "{} person",
+  "floor": "Floor"
 }

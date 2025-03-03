@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/ui/screens/tables/select_floor_sheet.dart';
 
 class TablesScreen extends ConsumerStatefulWidget {
@@ -35,8 +34,6 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('select_table'.tr()),
@@ -97,7 +94,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                         ),
                         SizedBox(width: 5),
                         Text(
-                          'x_person'.tr(),
+                          'x_person'.tr(args: ['1']),
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
