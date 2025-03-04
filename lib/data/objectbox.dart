@@ -315,19 +315,64 @@ class ObjectBox {
       .build()
       .find();
 
-  void putItems(List<Item> items) {
-    log('PUT ITEMS =>\n$items');
-    List<int> ids = itemBox.putMany(items);
-    log('ITEMS HAS BEEN STORED: $ids');
-    List<ItemVariant> itemVariants = [];
-    for (var item in items) {
-      if (item.variants.isNotEmpty) {
-        itemVariants.addAll(item.variants.toList());
+  void putItems(List<Item> items) async {
+    try {
+      log('PUT ITEMS =>\n$items');
+      List<int> ids = itemBox.putMany(items);
+      List<ItemVariant> itemVariants = [];
+      List<int> removeVariants = [];
+      for (var item in items) {
+        final unusedVariant = getItem(item.idItem)
+            ?.variants
+            .where((v) => !item.variants.map((vr) => vr.id).contains(v.id))
+            .map((v) => v.id)
+            .toList();
+        if (unusedVariant != null) {
+          removeVariants.addAll(unusedVariant);
+        }
+        if (item.variants.isNotEmpty) {
+          itemVariants.addAll(item.variants.toList());
+        }
       }
+      if (removeVariants.isNotEmpty) {
+        itemVariantBox.removeMany(removeVariants);
+      }
+      if (itemVariants.isNotEmpty) {
+        putVariants(itemVariants);
+      }
+      // ITEM PACKAGES
+      List<ItemPackage> itemPackages = [];
+      List<int> removeItemPackageIds = [];
+      for (var item in items) {
+        final unusedPackages = getItem(item.idItem)
+            ?.packageItems
+            .where((pkg) =>
+                !item.packageItems.map((pkg) => pkg.id).contains(pkg.id))
+            .map((pkg) => pkg.id)
+            .toList();
+        if (unusedPackages != null) {
+          removeItemPackageIds.addAll(unusedPackages);
+        }
+        if (item.packageItems.isNotEmpty) {
+          itemPackages.addAll(item.packageItems.toList());
+        }
+      }
+      if (removeItemPackageIds.isNotEmpty) {
+        itemPackageBox.removeMany(removeItemPackageIds);
+      }
+      if (itemPackages.isNotEmpty) {
+        putItemPackages(itemPackages);
+      }
+      log('ITEMS HAS BEEN STORED: $ids');
+    } catch (e, stackTrace) {
+      log('PUT ITEMS ERROR => $e => $stackTrace');
     }
-    if (itemVariants.isNotEmpty) {
-      putVariants(itemVariants);
-    }
+  }
+
+  void putItemPackages(List<ItemPackage> itemPackages) {
+    log('PUT ITEM PACKAGES =>\n$itemPackages');
+    List<int> ids = itemPackageBox.putMany(itemPackages);
+    log('ITEM PACKAGES HAS BEEN STORED: $ids');
   }
 
   void putVariants(List<ItemVariant> variants) {

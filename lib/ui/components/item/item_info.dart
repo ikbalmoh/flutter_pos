@@ -222,6 +222,7 @@ class ItemPackagesQtyInfo extends ConsumerWidget {
                   stockItem:
                       ref.read(itemsStreamProvider().notifier).getItemStock(
                             itemPackage.idItem,
+                            variantId: itemPackage.variantId,
                           ),
                   stockControl: true,
                 )
