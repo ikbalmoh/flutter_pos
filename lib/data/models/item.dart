@@ -95,9 +95,7 @@ class Item {
     }).toList();
     json['package_items'] = json['package_items']?.map((package) {
       ItemPackage? existPackage = objectBox.itemPackageBox
-          .query(ItemPackage_.idItem
-              .equals(package['id_item'])
-              .and(ItemPackage_.variantId.equals(package['variant_id'])))
+          .query(ItemPackage_.idItemPackage.equals(package['id_item_package']))
           .build()
           .findFirst();
       package['id'] = existPackage?.id ?? 0;

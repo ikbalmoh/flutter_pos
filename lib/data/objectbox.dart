@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:selleri/data/models/cart.dart';
@@ -317,7 +318,10 @@ class ObjectBox {
 
   void putItems(List<Item> items) async {
     try {
-      log('PUT ITEMS =>\n$items');
+      if (kDebugMode) {
+        print('PUT ITEMS');
+        log('$items');
+      }
       List<int> ids = itemBox.putMany(items);
       List<ItemVariant> itemVariants = [];
       List<int> removeVariants = [];
@@ -344,41 +348,61 @@ class ObjectBox {
       List<ItemPackage> itemPackages = [];
       List<int> removeItemPackageIds = [];
       for (var item in items) {
-        final unusedPackages = getItem(item.idItem)
-            ?.packageItems
-            .where((pkg) =>
-                !item.packageItems.map((pkg) => pkg.id).contains(pkg.id))
-            .map((pkg) => pkg.id)
-            .toList();
-        if (unusedPackages != null) {
-          removeItemPackageIds.addAll(unusedPackages);
+        if (item.isPackage) {
+          final unusedPackages = getItem(item.idItem)
+              ?.packageItems
+              .where((pkg) =>
+                  !item.packageItems.map((pkg) => pkg.idItemPackage).contains(pkg.idItemPackage))
+              .map((pkg) => pkg.id)
+              .toList();
+          if (unusedPackages != null) {
+            removeItemPackageIds.addAll(unusedPackages);
+          }
         }
         if (item.packageItems.isNotEmpty) {
           itemPackages.addAll(item.packageItems.toList());
         }
       }
       if (removeItemPackageIds.isNotEmpty) {
-        itemPackageBox.removeMany(removeItemPackageIds);
+        final removed = itemPackageBox.removeMany(removeItemPackageIds);
+        log('removeItemPackageIds $removeItemPackageIds => $removed');
       }
       if (itemPackages.isNotEmpty) {
         putItemPackages(itemPackages);
       }
-      log('ITEMS HAS BEEN STORED: $ids');
+      if (kDebugMode) {
+        print('ITEMS HAS BEEN STORED: $ids');
+      }
     } catch (e, stackTrace) {
-      log('PUT ITEMS ERROR => $e => $stackTrace');
+      if (kDebugMode) {
+        print('PUT ITEMS ERROR => $e => $stackTrace');
+      }
     }
   }
 
   void putItemPackages(List<ItemPackage> itemPackages) {
-    log('PUT ITEM PACKAGES =>\n$itemPackages');
+    if (itemPackages.isEmpty) {
+      return;
+    }
+    if (kDebugMode) {
+      print('PUT ITEM PACKAGES');
+      log('$itemPackages');
+    }
     List<int> ids = itemPackageBox.putMany(itemPackages);
-    log('ITEM PACKAGES HAS BEEN STORED: $ids');
+    if (kDebugMode) {
+      print('ITEM PACKAGES HAS BEEN STORED: $ids');
+    }
   }
 
   void putVariants(List<ItemVariant> variants) {
-    log('PUT VARIANTS =>\n$variants');
+    if (kDebugMode) {
+      print('PUT VARIANTS');
+      log('$variants');
+    }
     List<int> ids = itemVariantBox.putMany(variants);
-    log('VARIANTS HAS BEEN STORED: $ids');
+    if (kDebugMode) {
+      print('VARIANTS HAS BEEN STORED: $ids');
+    }
   }
 
   int getTotalItem(
