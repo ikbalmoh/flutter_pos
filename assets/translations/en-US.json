@@ -324,5 +324,6 @@
   "max_round_message": "Max rounding value is 1000",
   "close_shift_error": "Close Shift Failed",
   "device_id": "Device ID",
-  "account_email": "Account Email"
+  "account_email": "Account Email",
+  "cost_price": "Cost Price"
 }

@@ -325,5 +325,6 @@
   "max_round_message": "Nilai pembulatan maksimal 1.000",
   "close_shift_error": "Gagal Menutup Shift",
   "device_id": "ID Perangkat",
-  "account_email": "Email Akun"
+  "account_email": "Email Akun",
+  "cost_price": "Harga Modal"
 }

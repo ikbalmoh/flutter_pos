@@ -376,7 +376,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               contentPadding: const EdgeInsets.only(
                                   left: 0, top: 10, bottom: 5, right: 0),
                               label: Text(
-                                'purchase_price'.tr(),
+                                'cost_price'.tr(),
                                 style: labelStyle,
                               ),
                               alignLabelWithHint: true,
