@@ -147,8 +147,8 @@ class _AddBarcodeItemState extends ConsumerState<AddBarcodeItem> {
                               )
                             : TextButton.icon(
                                 onPressed: () => context.pop(),
-                                icon:
-                                    const Icon(CupertinoIcons.barcode_viewfinder),
+                                icon: const Icon(
+                                    CupertinoIcons.barcode_viewfinder),
                                 label: Text('scan_another_item'.tr()),
                               )
                       ],
