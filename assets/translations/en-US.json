@@ -327,5 +327,6 @@
   "device_id": "Device ID",
   "account_email": "Account Email",
   "x_person": "{} person",
-  "floor": "Floor"
+  "floor": "Floor",
+  "cost_price": "Cost Price"
 }

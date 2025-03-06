@@ -328,5 +328,6 @@
   "device_id": "ID Perangkat",
   "account_email": "Email Akun",
   "x_person": "{} kursi",
-  "floor": "Lantai"
+  "floor": "Lantai",
+  "cost_price": "Harga Modal"
 }

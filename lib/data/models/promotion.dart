@@ -139,6 +139,7 @@ class Promotion {
     return toJson().toString();
   }
 
+  @Transient()
   static Map<int, String> assignsType = {
     1: 'all_customer'.tr(),
     2: 'member'.tr(),

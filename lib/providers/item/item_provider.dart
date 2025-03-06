@@ -132,7 +132,12 @@ class ItemsStream extends _$ItemsStream {
     await ref.read(promotionsProvider.notifier).loadPromotions();
   }
 
-  double getItemStock(String idItem) {
+  double getItemStock(String idItem, {int? variantId}) {
+    if (variantId != null) {
+      final variant =
+          objectBox.getItemVariant(idItem: idItem, variantId: variantId);
+      return variant?.stockItem ?? 0;
+    }
     final item = objectBox.getItem(idItem);
     return item?.stockItem ?? 0;
   }

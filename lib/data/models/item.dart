@@ -49,28 +49,29 @@ class Item {
   @PackageItemRelToManyConverter()
   final ToMany<ItemPackage> packageItems;
 
-  Item(
-      {required this.id,
-      required this.idItem,
-      required this.itemName,
-      required this.itemPrice,
-      required this.isActive,
-      required this.obsolete,
-      required this.isPackage,
-      this.sku,
-      this.barcode,
-      required this.manualDiscount,
-      required this.isManualPrice,
-      required this.stockControl,
-      required this.idCategory,
-      this.categoryName,
-      required this.stockItem,
-      this.image,
-      this.lastAdjustment,
-      this.packageCategories,
-      required this.promotions,
-      required this.variants,
-      required this.packageItems});
+  Item({
+    required this.id,
+    required this.idItem,
+    required this.itemName,
+    required this.itemPrice,
+    required this.isActive,
+    required this.obsolete,
+    required this.isPackage,
+    this.sku,
+    this.barcode,
+    required this.manualDiscount,
+    required this.isManualPrice,
+    required this.stockControl,
+    required this.idCategory,
+    this.categoryName,
+    required this.stockItem,
+    this.image,
+    this.lastAdjustment,
+    this.packageCategories,
+    required this.promotions,
+    required this.variants,
+    required this.packageItems,
+  });
 
   factory Item.fromJson(Map<String, dynamic> json) {
     Item? existItem = objectBox.getItem(json['id_item']);
@@ -94,7 +95,7 @@ class Item {
     }).toList();
     json['package_items'] = json['package_items']?.map((package) {
       ItemPackage? existPackage = objectBox.itemPackageBox
-          .query(ItemPackage_.idItem.equals(package['id_item']))
+          .query(ItemPackage_.idItemPackage.equals(package['id_item_package']))
           .build()
           .findFirst();
       package['id'] = existPackage?.id ?? 0;
