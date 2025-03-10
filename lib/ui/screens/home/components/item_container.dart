@@ -34,9 +34,17 @@ class ItemContainer extends ConsumerWidget {
   });
 
   void onAddToCart(BuildContext context, WidgetRef ref,
-      {required Item item, ItemVariant? variant}) async {
+      {required Item item, required List<ItemVariant> variants}) async {
     try {
-      await ref.read(cartProvider.notifier).addToCart(item, variant: variant);
+      if (variants.isNotEmpty) {
+        for (var variant in variants) {
+          await ref
+              .read(cartProvider.notifier)
+              .addToCart(item, variant: variant);
+        }
+      } else {
+        await ref.read(cartProvider.notifier).addToCart(item);
+      }
       if (search.isNotEmpty &&
           [
             item.itemName.toLowerCase(),
@@ -61,11 +69,11 @@ class ItemContainer extends ConsumerWidget {
         builder: (BuildContext context) {
           return ItemVariantPicker(
             item: item,
-            onSelect: (variant) => onAddToCart(
+            onSelect: (variants) => onAddToCart(
               context,
               ref,
               item: item,
-              variant: variant,
+              variants: variants,
             ),
           );
         });
@@ -87,7 +95,7 @@ class ItemContainer extends ConsumerWidget {
             if (item.variants.isNotEmpty) {
               showVariants(context, item, ref);
             } else {
-              onAddToCart(context, ref, item: item);
+              onAddToCart(context, ref, item: item, variants: []);
             }
           },
         ),
@@ -164,7 +172,7 @@ class ItemContainer extends ConsumerWidget {
                         item: item,
                         qtyOnCart: qtyOnCart,
                         onAddToCart: (item) =>
-                            onAddToCart(context, ref, item: item),
+                            onAddToCart(context, ref, item: item, variants: []),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
                         onLongPress: (item) => onLongPress(context, item, ref),
@@ -185,7 +193,7 @@ class ItemContainer extends ConsumerWidget {
                         item: item,
                         qtyOnCart: qtyOnCart,
                         onAddToCart: (item) =>
-                            onAddToCart(context, ref, item: item),
+                            onAddToCart(context, ref, item: item, variants: []),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
                         onLongPress: (item) => onLongPress(context, item, ref),

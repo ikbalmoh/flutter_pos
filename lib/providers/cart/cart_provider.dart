@@ -9,6 +9,7 @@ import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
@@ -36,7 +37,11 @@ class Cart extends _$Cart {
     return model.Cart.initial();
   }
 
-  Future<void> initCart() async {
+  Future<void> initCart({
+    String? customerName,
+    String? idCustomer,
+    List<CustomerGroup>? customerGroup,
+  }) async {
     try {
       if (ref.read(authProvider).value is! Authenticated) {
         return;
@@ -71,6 +76,9 @@ class Cart extends _$Cart {
         ppn: tax?.percentage ?? 0,
         ppnIsInclude: tax?.isInclude ?? true,
         taxName: taxable ? tax?.taxName : '',
+        customerGroup: customerGroup,
+        customerName: customerName,
+        idCustomer: idCustomer,
       );
 
       log('Cart Initialized: ${state.toString()}');
@@ -94,7 +102,11 @@ class Cart extends _$Cart {
 
   Future<void> addToCart(Item item, {ItemVariant? variant}) async {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
-      await initCart();
+      await initCart(
+        customerGroup: state.customerGroup,
+        customerName: state.customerName,
+        idCustomer: state.idCustomer,
+      );
     }
     double itemStock = variant?.stockItem ?? item.stockItem;
     int onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
@@ -168,9 +180,13 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void addItemCart(ItemCart item) async {
+  void addExtraItemCart(ItemCart item) async {
     if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
-      await initCart();
+      await initCart(
+        customerGroup: state.customerGroup,
+        customerName: state.customerName,
+        idCustomer: state.idCustomer,
+      );
     }
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(item);

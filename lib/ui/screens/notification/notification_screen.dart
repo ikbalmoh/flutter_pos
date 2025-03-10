@@ -10,18 +10,24 @@ import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:selleri/data/models/notification/notification.dart' as model;
 
 class NotificationScreen extends ConsumerWidget {
   const NotificationScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void openNotification(String link) async {
-      final Uri url = Uri.parse(link.replaceFirst('://', ':/'));
-      while (context.canPop()) {
-        context.pop();
-      }
-      if (!await launchUrl(url)) {
-        AppAlert.toast('Could not launch $url');
+    void openNotification(model.Notification notif) async {
+      ref.read(notificationProvider.notifier).markAsReaded(notif.id);
+
+      final String? link = notif.data?.link;
+      if (link != null) {
+        final Uri url = Uri.parse(link.replaceFirst('://', ':/'));
+        while (context.canPop()) {
+          context.pop();
+        }
+        if (!await launchUrl(url)) {
+          AppAlert.toast('Could not launch $url');
+        }
       }
     }
 
@@ -61,11 +67,7 @@ class NotificationScreen extends ConsumerWidget {
                         tileColor: notif.isReaded == true
                             ? Colors.white
                             : Colors.red.shade50,
-                        onTap: notif.data?.link != null
-                            ? () => openNotification(notif.data!.link!)
-                            : () => ref
-                                .read(notificationProvider.notifier)
-                                .markAsReaded(notif.id),
+                        onTap: () => openNotification(notif),
                         trailing: notif.data?.link != null
                             ? Icon(
                                 CupertinoIcons.chevron_right,
