@@ -9,31 +9,24 @@ part 'table_stream_provider.g.dart';
 @riverpod
 class TableStream extends _$TableStream {
   @override
-  Stream<TableData> build() {
-    final authState = ref.watch(authProvider);
-    final outletState = ref.watch(outletProvider);
+  Stream<List<Table>> build({int floor = 1}) {
+    final authState = ref.watch(authProvider).value;
+    final outletState = ref.watch(outletProvider).value;
 
     final db = FirebaseFirestore.instance;
 
     if (authState is Authenticated && outletState is OutletSelected) {
-      final auth = authState as Authenticated;
-      final outlet = outletState as OutletSelected;
-      final DocumentReference<TableData> doc = db
-          .collection(auth.user.user.company.idCompany)
-          .doc(outlet.outlet.idOutlet)
-          .withConverter<TableData>(
-            fromFirestore: (snapshot, _) =>
-                TableData.fromJson(snapshot.data()!),
-            toFirestore: (model, _) => model.toJson(),
-          );
+      final tablesRef = db
+          .collection(
+              '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables')
+          .where('floor', isEqualTo: floor).orderBy('name').orderBy('capacity')
+          .withConverter<Table>(
+              fromFirestore: Table.fromFirestore,
+              toFirestore: (Table table, _) => table.toJson());
 
-      final Stream<DocumentSnapshot<TableData>> querySnapshot = doc.snapshots();
-
-      return querySnapshot.asyncMap((snapshot) async {
-        if (snapshot.exists) {
-          return snapshot.data()!;
-        }
-        throw Exception('no data');
+      return tablesRef.snapshots().map((snapshot) {
+        final tables = snapshot.docs.map((doc) => doc.data()).toList();
+        return tables;
       });
     }
     return Stream.empty();

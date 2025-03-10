@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/providers/table/table_stream_provider.dart';
+import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/screens/tables/select_floor_sheet.dart';
 
 class TablesScreen extends ConsumerStatefulWidget {
@@ -56,58 +58,69 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                 ? 5
                 : 3;
 
-        return GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: gridColumn,
-            mainAxisSpacing: 7.5,
-            crossAxisSpacing: 8,
-          ),
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(10),
-          controller: scrollController,
-          itemCount: 10,
-          itemBuilder: (context, index) {
-            return Material(
-              borderRadius: BorderRadius.circular(10),
-              color: index > 4 ? Colors.red.shade300 : Colors.green.shade300,
-              child: InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${index + 1}',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    Row(
+        return switch (ref.watch(tableStreamProvider())) {
+          AsyncData(:final value) => GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: gridColumn,
+                mainAxisSpacing: 7.5,
+                crossAxisSpacing: 8,
+              ),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(10),
+              controller: scrollController,
+              itemCount: value.length,
+              itemBuilder: (context, index) {
+                var table = value[index];
+                return Material(
+                  borderRadius: BorderRadius.circular(10),
+                  color: table.usedBy != null && table.usedBy != ''
+                      ? Colors.red.shade300
+                      : Colors.green.shade300,
+                  child: InkWell(
+                    onTap: () {},
+                    borderRadius: BorderRadius.circular(10),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(
-                          CupertinoIcons.person_2_fill,
-                          size: 14,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 5),
                         Text(
-                          'x_person'.tr(args: ['1']),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.white),
+                          table.name,
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              CupertinoIcons.person_2_fill,
+                              size: 14,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              'x_person'.tr(args: ['${table.capacity ?? '0'}']),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.white),
+                            )
+                          ],
                         )
                       ],
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
-        );
+                    ),
+                  ),
+                );
+              },
+            ),
+          AsyncError(:final error, :final stackTrace) => ErrorHandler(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
+          _ => const CircularProgressIndicator(),
+        };
       }),
     );
   }
