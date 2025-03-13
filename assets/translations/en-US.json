@@ -322,11 +322,13 @@
   "closing_shift": "Closing shift",
   "shift_auto_open": "New shift opened",
   "max_round_message": "Max rounding value is 1000",
-  "select_table": "Select Table",
+  "table": "Table",
   "close_shift_error": "Close Shift Failed",
   "device_id": "Device ID",
   "account_email": "Account Email",
   "x_person": "{} person",
   "floor": "Floor",
-  "cost_price": "Cost Price"
+  "cost_price": "Cost Price",
+  "add_table": "Add Table",
+  "no_table": "Without Table"
 }

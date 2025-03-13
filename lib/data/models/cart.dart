@@ -7,6 +7,7 @@ import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/table.dart';
 import 'package:selleri/utils/formater.dart';
 
 part 'cart.freezed.dart';
@@ -53,6 +54,7 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
+    required List<Table> tables,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
     String? deletedBy,
@@ -76,6 +78,7 @@ class Cart with _$Cart {
         discPromotionsTotal: 0,
         payments: [],
         promotions: [],
+        tables: [],
         totalPayment: 0,
         ppnIsInclude: true,
         ppn: 0,

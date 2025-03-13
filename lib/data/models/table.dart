@@ -30,28 +30,22 @@ class Table with _$Table {
 }
 
 @freezed
-class TableData with _$TableData {
+class TableConfig with _$TableConfig {
   @JsonSerializable(fieldRename: FieldRename.snake, createToJson: true)
-  const factory TableData({
+  const factory TableConfig({
     required int totalFloor,
-    required List<Table> tables,
-  }) = _TableData;
+  }) = _TableConfig;
 
-  factory TableData.fromJson(Map<String, dynamic> json) =>
-      _$TableDataFromJson(json);
+  factory TableConfig.fromJson(Map<String, dynamic> json) =>
+      _$TableConfigFromJson(json);
 
-  factory TableData.fromFirestore(
+  factory TableConfig.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
-    return TableData(
-        totalFloor: data?['total_floor'] ?? 1,
-        tables: data?['tables'] is Iterable
-            ? List.from(data?['tables'])
-                .map((json) => Table.fromJson(json))
-                .toList()
-            : []);
+    return TableConfig(
+        totalFloor: data?['total_floor'] ?? 1);
   }
 
   // Map<String, dynamic> toFirestore() {

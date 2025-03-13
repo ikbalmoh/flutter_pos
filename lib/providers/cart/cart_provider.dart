@@ -17,6 +17,7 @@ import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/data/models/table.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -24,6 +25,7 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/providers/table/tables_provider.dart';
 import 'package:selleri/utils/formater.dart';
 import 'dart:developer';
 import 'package:selleri/utils/printer.dart' as util;
@@ -101,7 +103,8 @@ class Cart extends _$Cart {
   }
 
   Future<void> addToCart(Item item, {ItemVariant? variant}) async {
-    if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
+    if (state.idTransaction == null &&
+        (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty)) {
       await initCart(
         customerGroup: state.customerGroup,
         customerName: state.customerName,
@@ -779,5 +782,15 @@ class Cart extends _$Cart {
       transactionDate: DateTime.now().millisecondsSinceEpoch,
       promotions: promotions,
     );
+  }
+
+  void setTables(List<Table> tables) async {
+    if (state.idTransaction == null) {
+      await initCart();
+    }
+    state = state.copyWith(
+      tables: tables,
+    );
+    ref.read(tablesProvider().notifier).markTables(tables);
   }
 }

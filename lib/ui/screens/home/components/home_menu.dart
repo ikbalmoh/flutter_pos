@@ -19,6 +19,8 @@ class HomeMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final outlet = ref.watch(outletProvider).value as OutletSelected;
 
+    final cart = ref.watch(cartProvider);
+
     void onNewTransaction() {
       if (ref.read(cartProvider).items.isNotEmpty) {
         showModalBottomSheet(
@@ -81,12 +83,11 @@ class HomeMenu extends ConsumerWidget {
                   onPressed: () => context.push(Routes.customers),
                   leadingIcon: Icon(
                     CupertinoIcons.rectangle_stack_person_crop,
-                    color: ref.watch(cartProvider).idCustomer == null
+                    color: cart.idCustomer == null
                         ? Colors.blueGrey.shade500
                         : Colors.green.shade600,
                   ),
-                  child: Text(ref.watch(cartProvider).customerName ??
-                      'select_customer'.tr()),
+                  child: Text(cart.customerName ?? 'select_customer'.tr()),
                 ),
                 MenuItemButton(
                   onPressed: () => context.push(Routes.holded),
@@ -100,9 +101,20 @@ class HomeMenu extends ConsumerWidget {
                   onPressed: () => context.push(Routes.tables),
                   leadingIcon: Icon(
                     CupertinoIcons.square_grid_3x2,
-                    color: Colors.blueGrey.shade500,
+                    color: cart.tables.isEmpty
+                        ? Colors.blueGrey.shade500
+                        : Colors.green.shade600,
                   ),
-                  child: Text('select_table'.tr()),
+                  child: Text(
+                    cart.tables.isEmpty
+                        ? 'select_x'.tr(args: ['table'.tr()])
+                        : cart.tables.map((tbl) => tbl.name).join(','),
+                    style: TextStyle(
+                      color: cart.tables.isEmpty
+                          ? Colors.blueGrey.shade500
+                          : Colors.green.shade600,
+                    ),
+                  ),
                 ),
                 MenuItemButton(
                   onPressed: onNewTransaction,
