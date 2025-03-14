@@ -7,7 +7,6 @@ import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:selleri/data/models/table.dart';
 import 'package:selleri/utils/formater.dart';
 
 part 'cart.freezed.dart';
@@ -54,7 +53,7 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
-    required List<Table> tables,
+    List<String>? tables,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
     String? deletedBy,
@@ -176,7 +175,8 @@ class Cart with _$Cart {
       ),
       "created_by": createdBy,
       "images": dataImages,
-      "person_in_charge": personInCharge
+      "person_in_charge": personInCharge,
+      "tables": tables,
     };
     if (deletedAt != null) {
       jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);

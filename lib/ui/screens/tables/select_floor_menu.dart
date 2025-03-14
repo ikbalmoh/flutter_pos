@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/table/table_config_provider.dart';
 
 class SelectFloorMenu extends ConsumerStatefulWidget {
-  const SelectFloorMenu({super.key, required this.onChange});
+  const SelectFloorMenu(
+      {super.key, required this.onChange, required this.floor});
 
+  final int floor;
   final Function(int) onChange;
 
   @override
@@ -16,6 +18,14 @@ class SelectFloorMenu extends ConsumerStatefulWidget {
 
 class _SelectFloorMenuState extends ConsumerState<SelectFloorMenu> {
   int selected = 1;
+
+  @override
+  void initState() {
+    setState(() {
+      selected = widget.floor;
+    });
+    super.initState();
+  }
 
   void onSelectFloor(int floor) {
     setState(() {

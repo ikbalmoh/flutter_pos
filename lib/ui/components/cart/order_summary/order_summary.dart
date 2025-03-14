@@ -63,6 +63,12 @@ class OrderSummary extends StatelessWidget {
                 '${'customer'.tr()}: ${cart.customerName ?? '-'}',
                 textAlign: TextAlign.left,
               ),
+              cart.tables != null && cart.tables!.isNotEmpty
+                  ? Text(
+                      '${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}',
+                      textAlign: TextAlign.left,
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -133,10 +139,10 @@ class OrderSummary extends StatelessWidget {
           TwoColumn(
             label: 'Total',
             value: cart.total,
-            labelStyle: textTheme.bodyLarge?.copyWith(
-                    color: Colors.black87, fontWeight: FontWeight.w700),
-            valueStyle: textTheme.bodyLarge?.copyWith(
-                    color: Colors.black87, fontWeight: FontWeight.w700),
+            labelStyle: textTheme.bodyLarge
+                ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
+            valueStyle: textTheme.bodyLarge
+                ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

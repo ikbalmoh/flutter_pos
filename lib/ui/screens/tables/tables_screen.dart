@@ -8,9 +8,10 @@ import 'package:selleri/data/models/table.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/table/tables_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
-import 'package:selleri/ui/components/generic/item_grid_skeleton.dart';
+import 'package:selleri/ui/screens/tables/add_table_dialog.dart';
+import 'package:selleri/ui/screens/tables/edit_table_dialog.dart';
 import 'package:selleri/ui/screens/tables/select_floor_menu.dart';
-import 'package:selleri/ui/screens/tables/select_floor_sheet.dart';
+import 'package:selleri/ui/screens/tables/select_table_sheet.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class TablesScreen extends ConsumerStatefulWidget {
@@ -28,51 +29,72 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
 
   @override
   void initState() {
-    final cart = ref.read(cartProvider);
-    setState(() {
-      selected = List.from(cart.tables);
-    });
+    initTable();
     super.initState();
+  }
+
+  void initTable() async {
+    final cart = ref.read(cartProvider);
+    final tables = cart.tables != null && cart.tables!.isNotEmpty
+        ? await ref.read(tablesProvider().notifier).getTables(cart.tables!)
+        : [];
+    setState(() {
+      selected = List.from(tables);
+      currentFloor = tables.isNotEmpty ? tables[0].floor! : 1;
+    });
   }
 
   void onPickTable(Table table, {bool? confirmed}) {
     List<Table> currentTables = List.from(selected);
-    int existIndex = currentTables.indexWhere((tbl) => tbl.id == table.id);
-    if (existIndex >= 0) {
-      currentTables.removeAt(existIndex);
-    } else {
-      if (table.usedBy != null && table.usedBy != '' && confirmed != true) {
-        AppAlert.confirm(
-          context,
-          title: 'table_in_use'.tr(),
-          subtitle: 'empty_table_confirmation'.tr(),
-          onConfirm: () => onPickTable(table, confirmed: true),
-        );
-        return;
-      }
-      currentTables.add(table);
+    if (table.usedBy != null && table.usedBy != '' && confirmed != true) {
+      AppAlert.confirm(
+        context,
+        title: 'table_in_use'.tr(),
+        subtitle: 'empty_table_confirmation'.tr(),
+        onConfirm: () => onPickTable(table, confirmed: true),
+      );
+      return;
     }
+    currentTables.add(table);
     setState(() {
       selected = currentTables;
     });
   }
 
-  void onSelectFloor() {
+  void onDeleteTable(Table table) {
+    ref.read(tablesProvider().notifier).deleteTable(table.id);
+  }
+
+  void onEditTable(Table table) {
+    showDialog(
+        context: context, builder: (context) => EditTableDialog(table: table));
+  }
+
+  void onSelectFloor(floor) {
+    setState(() {
+      currentFloor = floor;
+    });
+  }
+
+  void onSelectTable(Table table) {
+    List<Table> currentTables = List.from(selected);
+    int existIndex = currentTables.indexWhere((tbl) => tbl.id == table.id);
+    if (existIndex >= 0) {
+      currentTables.removeAt(existIndex);
+      setState(() {
+        selected = currentTables;
+      });
+      return;
+    }
     showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      builder: (context) => DraggableScrollableSheet(
-        maxChildSize: 0.9,
-        minChildSize: 0.4,
-        initialChildSize: 0.6,
-        expand: false,
-        builder: (context, controller) {
-          return SelectFloorSheet(
-            scrollController: controller,
-          );
-        },
-      ),
-    );
+        context: context,
+        builder: (context) => SelectTableSheet(
+              table: table,
+              onPickTable: onPickTable,
+              onEditTable: onEditTable,
+              onDeleteTable: onDeleteTable,
+            ),
+        backgroundColor: Colors.white);
   }
 
   void onSubmit() {
@@ -80,34 +102,38 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
     context.pop();
   }
 
-  Widget newTable = Material(
-    borderRadius: BorderRadius.circular(10),
-    color: Colors.grey.shade100,
-    child: InkWell(
-      onTap: () {},
-      borderRadius: BorderRadius.circular(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            CupertinoIcons.add,
-            size: 22,
-            color: Colors.blue.shade500,
+  Widget newTable() => Material(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey.shade100,
+        child: InkWell(
+          onTap: () => showDialog(
+              context: context,
+              builder: (context) => AddTableDialog(
+                    floor: currentFloor,
+                  )),
+          borderRadius: BorderRadius.circular(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                CupertinoIcons.add,
+                size: 22,
+                color: Colors.blue.shade500,
+              ),
+              SizedBox(height: 5),
+              Text(
+                'add_table'.tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.blue.shade500,
+                ),
+              )
+            ],
           ),
-          SizedBox(height: 5),
-          Text(
-            'add_table'.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.blue.shade500,
-            ),
-          )
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 
   Material tableItem(Table table,
       {required TextTheme textTheme, bool? selected}) {
@@ -125,7 +151,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
       borderRadius: BorderRadius.circular(10),
       color: backgroundColor,
       child: InkWell(
-        onTap: () => onPickTable(table),
+        onTap: () => onSelectTable(table),
         borderRadius: BorderRadius.circular(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -173,13 +199,30 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
         title: Text('select_x'.tr(args: ['table'.tr()])),
         elevation: 5,
         actions: [
-          IconButton(
-            onPressed: onSelectFloor,
-            icon: Badge.count(
-              count: 1,
-              child: Icon(CupertinoIcons.square_stack_3d_up),
+          TextButton.icon(
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.white,
+              builder: (context) => SelectFloorMenu(
+                  floor: currentFloor,
+                  onChange: (floor) {
+                    context.pop();
+                    onSelectFloor(floor);
+                  }),
             ),
-          )
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blue,
+              iconColor: Colors.blue,
+              backgroundColor: Colors.blue.shade50,
+            ),
+            label: Text('${'floor'.tr()} $currentFloor'),
+            icon: Icon(
+              CupertinoIcons.chevron_down,
+              size: 14,
+            ),
+            iconAlignment: IconAlignment.end,
+          ),
+          SizedBox(width: 10)
         ],
       ),
       body: Row(
@@ -191,11 +234,8 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                   padding: const EdgeInsets.all(10).copyWith(right: 0),
                   width: 350,
                   child: SelectFloorMenu(
-                    onChange: (floor) {
-                      setState(() {
-                        currentFloor = floor;
-                      });
-                    },
+                    floor: currentFloor,
+                    onChange: onSelectFloor,
                   ),
                 )
               : Container(),
@@ -209,20 +249,18 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                   surfaceTintColor: Colors.white,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: switch (
-                        ref.watch(tablesProvider(floor: currentFloor))) {
-                      AsyncData(:final value) =>
-                        LayoutBuilder(builder: (context, constraints) {
-                          final width = constraints.maxWidth;
-                          final int gridColumn = width > 800
-                              ? 6
-                              : width > 600
-                                  ? 5
-                                  : width > 400
-                                      ? 4
-                                      : 3;
-
-                          return GridView.builder(
+                    child: LayoutBuilder(builder: (context, constraints) {
+                      final width = constraints.maxWidth;
+                      final int gridColumn = width > 800
+                          ? 6
+                          : width > 600
+                              ? 5
+                              : width > 400
+                                  ? 4
+                                  : 3;
+                      return switch (
+                          ref.watch(tablesProvider(floor: currentFloor))) {
+                        AsyncData(:final value) => GridView.builder(
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: gridColumn,
@@ -235,22 +273,40 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                             itemCount: value.length + 1,
                             itemBuilder: (context, index) {
                               if (index == value.length) {
-                                return newTable;
+                                return newTable();
                               }
                               var table = value[index];
                               return tableItem(table,
                                   selected: selectedIndex.contains(table.id),
                                   textTheme: textTheme);
                             },
-                          );
-                        }),
-                      AsyncError(:final error, :final stackTrace) =>
-                        ErrorHandler(
-                          error: error.toString(),
-                          stackTrace: stackTrace.toString(),
-                        ),
-                      _ => const ItemGridSkeleton(),
-                    },
+                          ),
+                        AsyncError(:final error, :final stackTrace) =>
+                          ErrorHandler(
+                            error: error.toString(),
+                            stackTrace: stackTrace.toString(),
+                          ),
+                        _ => GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: gridColumn,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                            ),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(10),
+                            controller: scrollController,
+                            itemCount: 12,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(10)),
+                              );
+                            },
+                          ),
+                      };
+                    }),
                   ),
                 ),
               ),
@@ -266,7 +322,8 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
         onPressed: onSubmit,
         label: Text(selected.isEmpty
             ? 'no_table'.tr()
-            : 'select_x'.tr(args: ['table'.tr()])),
+            : 'use_table_x'
+                .tr(args: [selected.map((tbl) => tbl.name).join(', ')])),
         icon: Icon(selected.isEmpty ? Icons.undo_rounded : Icons.check_rounded),
       ),
     );

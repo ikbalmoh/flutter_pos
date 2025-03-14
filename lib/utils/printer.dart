@@ -83,6 +83,9 @@ class Printer {
       bytes += generator.text(
           'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
       bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
+      if (cart.tables != null && cart.tables!.isNotEmpty) {
+        bytes += generator.text('Table: ${cart.tables?.join(', ') ?? '-'}');
+      }
 
       bytes += generator.hr();
 

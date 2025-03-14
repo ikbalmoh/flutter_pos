@@ -76,7 +76,8 @@ class AppAlert {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: danger == true ? Colors.red : Colors.black),
                 ),
                 SizedBox(height: subtitle != null ? 20 : 0),
                 subtitle != null
@@ -100,6 +101,9 @@ class AppAlert {
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
+                          backgroundColor: danger != null && danger
+                              ? Colors.red.shade50
+                              : Colors.teal.shade50,
                           foregroundColor: danger != null && danger
                               ? Colors.red
                               : Colors.teal),

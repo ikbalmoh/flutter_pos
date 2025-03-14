@@ -785,12 +785,12 @@ class Cart extends _$Cart {
   }
 
   void setTables(List<Table> tables) async {
-    if (state.idTransaction == null) {
+    if (state.transactionNo == '') {
       await initCart();
     }
     state = state.copyWith(
-      tables: tables,
+      tables: tables.map((table) => table.name).toList(),
     );
-    ref.read(tablesProvider().notifier).markTables(tables);
+    ref.read(tablesProvider().notifier).markTables(state.transactionNo, tables);
   }
 }

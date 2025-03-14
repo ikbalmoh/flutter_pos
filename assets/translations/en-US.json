@@ -330,5 +330,12 @@
   "floor": "Floor",
   "cost_price": "Cost Price",
   "add_table": "Add Table",
-  "no_table": "Without Table"
+  "no_table": "Without Table",
+  "table_in_use": "Table in Use",
+  "empty_table_confirmation": "Empty Table?",
+  "chair": "Chair",
+  "table_no": "Table Number",
+  "use_table_x": "Use Table {}",
+  "table_name_added": "Table {} is already registered",
+  "clear": "Clear"
 }

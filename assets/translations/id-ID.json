@@ -331,5 +331,12 @@
   "floor": "Lantai",
   "cost_price": "Harga Modal",
   "add_table": "Tambah Meja",
-  "no_table": "Tanpa Meja"
+  "no_table": "Tanpa Meja",
+  "table_in_use": "Meja Sedang Diisi",
+  "empty_table_confirmation": "Kosongkan Meja?",
+  "chair": "Kursi",
+  "table_no": "Nomor Meja",
+  "use_table_x": "Gunakan Meja {}",
+  "table_name_added": "Meja {} sudah ada",
+  "clear": "Bersihkan"
 }

@@ -14,7 +14,7 @@ class Table with _$Table {
     @JsonKey(fromJson: Converters.dynamicToInt) int? floor,
     required String name,
     String? usedBy,
-    DateTime? usedFrom,
+    @JsonKey(fromJson: Converters.timeStampToDateTime) DateTime? usedFrom,
   }) = _Table;
 
   factory Table.fromJson(Map<String, dynamic> json) => _$TableFromJson(json);
@@ -44,8 +44,7 @@ class TableConfig with _$TableConfig {
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
-    return TableConfig(
-        totalFloor: data?['total_floor'] ?? 1);
+    return TableConfig(totalFloor: data?['total_floor'] ?? 1);
   }
 
   // Map<String, dynamic> toFirestore() {

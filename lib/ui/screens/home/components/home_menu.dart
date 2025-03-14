@@ -97,25 +97,21 @@ class HomeMenu extends ConsumerWidget {
                   ),
                   child: Text('holded_transactions'.tr()),
                 ),
+                outlet.config.addOns!.contains("table") ?
                 MenuItemButton(
                   onPressed: () => context.push(Routes.tables),
                   leadingIcon: Icon(
                     CupertinoIcons.square_grid_3x2,
-                    color: cart.tables.isEmpty
+                    color: cart.tables == null || cart.tables!.isEmpty
                         ? Colors.blueGrey.shade500
                         : Colors.green.shade600,
                   ),
                   child: Text(
-                    cart.tables.isEmpty
+                    cart.tables == null || cart.tables!.isEmpty
                         ? 'select_x'.tr(args: ['table'.tr()])
-                        : cart.tables.map((tbl) => tbl.name).join(','),
-                    style: TextStyle(
-                      color: cart.tables.isEmpty
-                          ? Colors.blueGrey.shade500
-                          : Colors.green.shade600,
-                    ),
+                        : cart.tables!.join(','),
                   ),
-                ),
+                ) : Container(),
                 MenuItemButton(
                   onPressed: onNewTransaction,
                   leadingIcon: Icon(
