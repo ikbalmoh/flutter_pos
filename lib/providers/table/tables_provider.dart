@@ -12,20 +12,23 @@ class Tables extends _$Tables {
   final db = FirebaseFirestore.instance;
 
   @override
-  Stream<List<Table>> build({int floor = 1}) {
+  Stream<List<Table>> build({int? floor}) {
     final authState = ref.watch(authProvider).value;
     final outletState = ref.watch(outletProvider).value;
 
     if (authState is Authenticated && outletState is OutletSelected) {
-      final tablesRef = db
+      Query<Table> tablesRef = db
           .collection(
               '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables')
-          .where('floor', isEqualTo: floor)
           .orderBy('name')
           .orderBy('capacity')
           .withConverter<Table>(
               fromFirestore: Table.fromFirestore,
               toFirestore: (Table table, _) => table.toJson());
+
+      if (floor != null) {
+        tablesRef = tablesRef.where('floor', isEqualTo: floor);
+      }
 
       return tablesRef.snapshots().map((snapshot) {
         final tables = snapshot.docs.map((doc) => doc.data()).toList();

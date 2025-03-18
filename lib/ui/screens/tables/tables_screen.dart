@@ -8,10 +8,11 @@ import 'package:selleri/data/models/table.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/table/tables_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
-import 'package:selleri/ui/screens/tables/add_table_dialog.dart';
-import 'package:selleri/ui/screens/tables/edit_table_dialog.dart';
-import 'package:selleri/ui/screens/tables/select_floor_menu.dart';
-import 'package:selleri/ui/screens/tables/select_table_sheet.dart';
+import 'package:selleri/ui/screens/tables/components/add_table_dialog.dart';
+import 'package:selleri/ui/screens/tables/components/edit_table_dialog.dart';
+import 'package:selleri/ui/screens/tables/components/select_floor_menu.dart';
+import 'package:selleri/ui/screens/tables/components/select_table_sheet.dart';
+import 'package:selleri/ui/screens/tables/components/table_item.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class TablesScreen extends ConsumerStatefulWidget {
@@ -135,95 +136,45 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
         ),
       );
 
-  Material tableItem(Table table,
-      {required TextTheme textTheme, bool? selected}) {
-    Color backgroundColor = selected == true
-        ? Colors.green.shade300
-        : table.usedBy != null && table.usedBy != ''
-            ? Colors.red.shade50
-            : Colors.blue.shade50;
-    Color textColor = selected == true
-        ? Colors.white
-        : table.usedBy != null && table.usedBy != ''
-            ? Colors.red.shade500
-            : Colors.blue.shade500;
-    return Material(
-      borderRadius: BorderRadius.circular(10),
-      color: backgroundColor,
-      child: InkWell(
-        onTap: () => onSelectTable(table),
-        borderRadius: BorderRadius.circular(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              table.name,
-              style: textTheme.titleLarge?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  CupertinoIcons.person_2_fill,
-                  size: 14,
-                  color: textColor,
-                ),
-                SizedBox(width: 5),
-                Text(
-                  'x_person'.tr(args: ['${table.capacity ?? '0'}']),
-                  style: textTheme.bodySmall?.copyWith(color: textColor),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     List<String> selectedIndex = selected.map((tbl) => tbl.id).toList();
 
-    TextTheme textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
         title: Text('select_x'.tr(args: ['table'.tr()])),
         elevation: 5,
-        actions: [
-          TextButton.icon(
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              backgroundColor: Colors.white,
-              builder: (context) => SelectFloorMenu(
-                  floor: currentFloor,
-                  onChange: (floor) {
-                    context.pop();
-                    onSelectFloor(floor);
-                  }),
-            ),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
-              iconColor: Colors.blue,
-              backgroundColor: Colors.blue.shade50,
-            ),
-            label: Text('${'floor'.tr()} $currentFloor'),
-            icon: Icon(
-              CupertinoIcons.chevron_down,
-              size: 14,
-            ),
-            iconAlignment: IconAlignment.end,
-          ),
-          SizedBox(width: 10)
-        ],
+        actions: isTablet
+            ? []
+            : [
+                TextButton.icon(
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.white,
+                    builder: (context) => SelectFloorMenu(
+                        floor: currentFloor,
+                        onChange: (floor) {
+                          context.pop();
+                          onSelectFloor(floor);
+                        }),
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    iconColor: Colors.blue,
+                    backgroundColor: Colors.blue.shade50,
+                  ),
+                  label: Text('${'floor'.tr()} $currentFloor'),
+                  icon: Icon(
+                    CupertinoIcons.chevron_down,
+                    size: 14,
+                  ),
+                  iconAlignment: IconAlignment.end,
+                ),
+                SizedBox(width: 10)
+              ],
       ),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -276,9 +227,11 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                                 return newTable();
                               }
                               var table = value[index];
-                              return tableItem(table,
-                                  selected: selectedIndex.contains(table.id),
-                                  textTheme: textTheme);
+                              return TableItem(
+                                table: table,
+                                selected: selectedIndex.contains(table.id),
+                                onSelect: (tbl) => onSelectTable(table),
+                              );
                             },
                           ),
                         AsyncError(:final error, :final stackTrace) =>

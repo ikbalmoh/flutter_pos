@@ -46,18 +46,25 @@ class _SelectFloorMenuState extends ConsumerState<SelectFloorMenu> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 17, right: 17, top: 15),
-            child: Text(
-              'select_x'.tr(args: ['floor'.tr()]),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+            padding: const EdgeInsets.only(left: 17, right: 10, top: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'select_x'.tr(args: ['floor'.tr()]),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
+                ),
+                IconButton(onPressed: () {}, icon: Icon(Icons.settings), tooltip: 'setting'.tr(),)
+              ],
             ),
           ),
           ListView.builder(
             shrinkWrap: true,
             padding: const EdgeInsets.symmetric(
-              vertical: 17.5,
+              vertical: 15,
               horizontal: 15,
             ),
             physics: const NeverScrollableScrollPhysics(),

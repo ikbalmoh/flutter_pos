@@ -32,7 +32,10 @@ class Transactions extends _$Transactions {
   }
 
   Future<void> loadTransactions(
-      {int page = 1, String search = '', bool? currentShift = false}) async {
+      {int page = 1,
+      String search = '',
+      bool? currentShift = false,
+      String? table}) async {
     if (page == 1) {
       state = const AsyncLoading();
     } else {
@@ -46,10 +49,12 @@ class Transactions extends _$Transactions {
         shiftId = ref.read(shiftProvider).value?.id;
       }
       var customers = await api.transactions(
-          page: page,
-          q: search,
-          idOutlet: outlet.outlet.idOutlet,
-          shiftId: shiftId);
+        page: page,
+        q: search,
+        idOutlet: outlet.outlet.idOutlet,
+        shiftId: shiftId,
+        table: table,
+      );
       List<Cart> data = List.from(state.value?.data as Iterable<Cart>);
       if (page > 1) {
         data = data..addAll(customers.data as Iterable<Cart>);
