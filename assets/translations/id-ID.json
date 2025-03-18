@@ -338,5 +338,6 @@
   "table_no": "Nomor Meja",
   "use_table_x": "Gunakan Meja {}",
   "table_name_added": "Meja {} sudah ada",
-  "clear": "Bersihkan"
+  "clear": "Bersihkan",
+  "total_x": "Total {}"
 }

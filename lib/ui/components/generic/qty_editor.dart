@@ -7,12 +7,14 @@ class QtyEditor extends StatefulWidget {
   final int qty;
   final int? min;
   final int? max;
+  final bool? keyboard;
   final Function(int) onChange;
 
   const QtyEditor({
     super.key,
     required this.qty,
     required this.onChange,
+    this.keyboard,
     this.min,
     this.max,
   });
@@ -48,7 +50,8 @@ class _QtyEditorState extends State<QtyEditor> {
 
   void onIncreaseQty(bool increase) {
     double value = increase ? qty + 1 : qty - 1;
-    if ((widget.min != null && value < widget.min!) || widget.max != null && value > widget.max!) {
+    if ((widget.min != null && value < widget.min!) ||
+        widget.max != null && value > widget.max!) {
       return;
     }
     setState(() {

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/table/table_config_provider.dart';
+import 'package:selleri/ui/components/generic/qty_editor.dart';
 
 class SelectFloorMenu extends ConsumerStatefulWidget {
   const SelectFloorMenu(
@@ -18,6 +19,7 @@ class SelectFloorMenu extends ConsumerStatefulWidget {
 
 class _SelectFloorMenuState extends ConsumerState<SelectFloorMenu> {
   int selected = 1;
+  bool settingVisible = false;
 
   @override
   void initState() {
@@ -57,10 +59,38 @@ class _SelectFloorMenuState extends ConsumerState<SelectFloorMenu> {
                         ),
                   ),
                 ),
-                IconButton(onPressed: () {}, icon: Icon(Icons.settings), tooltip: 'setting'.tr(),)
+                IconButton(
+                  onPressed: () => setState(() {
+                    settingVisible = !settingVisible;
+                  }),
+                  icon: Icon(Icons.settings),
+                  tooltip: 'setting'.tr(),
+                )
               ],
             ),
           ),
+          settingVisible
+              ? Container(
+                  color: Colors.grey.shade100,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('total_x'.tr(args: ['floor'.tr()])),
+                      QtyEditor(
+                        qty: ref.watch(tableConfigProvider).value?.totalFloor ??
+                            1,
+                        onChange: (total) => ref
+                            .read(tableConfigProvider.notifier)
+                            .setTotalFloor(total),
+                        min: 1,
+                        keyboard: false,
+                      )
+                    ],
+                  ),
+                )
+              : Container(),
           ListView.builder(
             shrinkWrap: true,
             padding: const EdgeInsets.symmetric(

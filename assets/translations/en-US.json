@@ -337,5 +337,6 @@
   "table_no": "Table Number",
   "use_table_x": "Use Table {}",
   "table_name_added": "Table {} is already registered",
-  "clear": "Clear"
+  "clear": "Clear",
+  "total_x": "Total {}"
 }

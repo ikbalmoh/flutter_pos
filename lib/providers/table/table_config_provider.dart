@@ -8,12 +8,13 @@ part 'table_config_provider.g.dart';
 
 @riverpod
 class TableConfig extends _$TableConfig {
+  final db = FirebaseFirestore.instance;
+
   @override
   Stream<model.TableConfig> build() {
     final authState = ref.watch(authProvider).value;
     final outletState = ref.watch(outletProvider).value;
 
-    final db = FirebaseFirestore.instance;
     if (authState is Authenticated && outletState is OutletSelected) {
       final configSnapshot = db
           .collection(authState.user.user.company.idCompany)
@@ -27,5 +28,14 @@ class TableConfig extends _$TableConfig {
       });
     }
     return Stream.empty();
+  }
+
+  void setTotalFloor(int total) {
+    final authState = ref.watch(authProvider).value as Authenticated;
+    final outletState = ref.watch(outletProvider).value as OutletSelected;
+    db
+        .collection(authState.user.user.company.idCompany)
+        .doc(outletState.outlet.idOutlet)
+        .set({"total_floor": total < 1 ? 1 : total});
   }
 }
