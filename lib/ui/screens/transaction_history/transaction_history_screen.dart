@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/table.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
@@ -106,28 +107,35 @@ class _TransactionHistoryScreenState
   }
 
   Widget filterTableButton(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          showCupertinoModalPopup(
-            context: context,
-            builder: (context) => TableSelector(
-              selected: table,
-              onSelect: onSelectTable,
-            ),
-          );
-        },
-        icon: table != null
-            ? Container(
-                decoration: BoxDecoration(
-                    color: Colors.blue.shade600,
-                    borderRadius: BorderRadius.circular(5)),
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                child: Text(
-                  table!.name,
-                  style: TextStyle(color: Colors.white),
+    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+        .config
+        .addOns
+        ?.contains('table');
+    return hasTableAddon == true
+        ? IconButton(
+            onPressed: () {
+              showCupertinoModalPopup(
+                context: context,
+                builder: (context) => TableSelector(
+                  selected: table,
+                  onSelect: onSelectTable,
                 ),
-              )
-            : Icon(CupertinoIcons.square_grid_3x2));
+              );
+            },
+            icon: table != null
+                ? Container(
+                    decoration: BoxDecoration(
+                        color: Colors.blue.shade600,
+                        borderRadius: BorderRadius.circular(5)),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                    child: Text(
+                      table!.name,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                : Icon(CupertinoIcons.square_grid_3x2))
+        : Container();
   }
 
   Widget transactionFilter(bool isTablet) {
