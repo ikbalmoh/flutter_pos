@@ -184,43 +184,51 @@ class VariantItem extends StatelessWidget {
     Color textColor = selected ? Colors.teal : Colors.black;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        decoration: BoxDecoration(
-            border: Border.all(
-                color: selected ? Colors.teal : Colors.blueGrey.shade200,
-                width: 0.5),
-            borderRadius: const BorderRadius.all(Radius.circular(5))),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Checkbox(
-              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-              value: selected,
-              onChanged: (_) => onSelect(variant),
+      child: Material(
+        borderRadius: BorderRadius.circular(5),
+        child: InkWell(
+          onTap: () => onSelect(variant),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 10,
+              horizontal: 10,
             ),
-            const SizedBox(width: 7),
-            Expanded(
-              child: Text(
-                variant.variantName,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: textColor),
-              ),
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: selected ? Colors.teal : Colors.blueGrey.shade200,
+                  width: 0.5),
+              borderRadius: BorderRadius.circular(5),
             ),
-            selected
-                ? QtyEditor(
-                    qty: variant.stockItem.toInt(), onChange: onChangeQty)
-                : StockBadge(
-                    stockItem: variant.stockItem,
-                    stockControl: true,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Checkbox(
+                  visualDensity:
+                      const VisualDensity(horizontal: -4, vertical: -4),
+                  value: selected,
+                  onChanged: (_) => onSelect(variant),
+                ),
+                const SizedBox(width: 7),
+                Expanded(
+                  child: Text(
+                    variant.variantName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: textColor),
                   ),
-          ],
+                ),
+                selected
+                    ? QtyEditor(
+                        qty: variant.stockItem.toInt(), onChange: onChangeQty)
+                    : StockBadge(
+                        stockItem: variant.stockItem,
+                        stockControl: true,
+                      ),
+              ],
+            ),
+          ),
         ),
       ),
     );

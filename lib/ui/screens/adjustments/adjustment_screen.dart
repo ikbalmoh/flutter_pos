@@ -132,6 +132,8 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
+    bool isLoading = ref.watch(adjustmentItemsProvider).isLoading;
+
     var itemContainer = VisibilityDetector(
       onVisibilityChanged: (info) {
         if (context.mounted) {
@@ -178,12 +180,13 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                       ),
                     ),
                   ),
-            const FastMovingItemBanner(),
+            isLoading ? Container() : const FastMovingItemBanner(),
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeInOut,
               height: searchVisible ? 0 : 56,
               child: ItemCategories(
+                itemLoading: isLoading,
                 active: idCategory,
                 onChange: onChangeCategory,
               ),
@@ -341,8 +344,9 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
                         borderRadius: BorderRadius.circular(20)),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: const AdjustmentCart(
+                      child: AdjustmentCart(
                         asWidget: true,
+                        isLoading: isLoading,
                       ),
                     ),
                   ),

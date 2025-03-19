@@ -193,7 +193,7 @@ class ItemContainer extends ConsumerWidget {
               ),
           loading: () => ListView.builder(
                 itemBuilder: (context, idx) {
-                  return const ItemListSkeleton();
+                  return const ItemListSkeleton(leading: false,);
                 },
                 itemCount: 6,
               ));

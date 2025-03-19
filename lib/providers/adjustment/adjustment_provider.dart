@@ -14,7 +14,8 @@ part 'adjustment_provider.g.dart';
 class Adjustment extends _$Adjustment {
   @override
   model.Adjustment build() {
-    return model.Adjustment(date: DateTime.now(), items: [], description: '');
+    return model.Adjustment(
+        date: DateTime.now(), items: [], description: '', isLoading: false);
   }
 
   void addToCart(ItemAdjustment item, {List<ItemVariantAdjustment>? variants}) {
@@ -91,14 +92,16 @@ class Adjustment extends _$Adjustment {
     try {
       final api = ref.watch(adjustmentApiProvider);
       state = model.Adjustment(
+        isLoading: true,
         date: DateTime.now(),
         description: adjustment.description ?? '',
         items: [],
       );
       List<ItemAdjustment> items = await api.adjustmentDetailItems(
           id: adjustment.idAdjustment, isCopy: true);
-      state = state.copyWith(items: items);
+      state = state.copyWith(items: items, isLoading: false);
     } catch (e) {
+      state = state.copyWith(isLoading: false);
       rethrow;
     }
   }
