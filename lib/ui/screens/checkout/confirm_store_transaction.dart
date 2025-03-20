@@ -28,6 +28,27 @@ class _ConfirmStoreTransactionState
     extends ConsumerState<ConfirmStoreTransaction> {
   final noteController = TextEditingController();
   List<XFile> images = [];
+  bool printKitchen = false;
+
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+          .config
+          .addOns
+          ?.contains('table');
+
+      if (hasTableAddon == true) {
+        setState(() {
+          printKitchen = true;
+        });
+      }
+    });
+
+    super.initState();
+  }
 
   Future pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
@@ -89,9 +110,11 @@ class _ConfirmStoreTransactionState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
-        builder: (context) => const PopScope(
+        builder: (context) => PopScope(
           canPop: false,
-          child: StoreTransaction(),
+          child: StoreTransaction(
+            printKitchen: printKitchen,
+          ),
         ),
       );
     }
@@ -109,6 +132,11 @@ class _ConfirmStoreTransactionState
 
     double height =
         MediaQuery.of(context).size.height * (isKeyboardVisible ? 0.95 : 0.7);
+
+    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+        .config
+        .addOns
+        ?.contains('table');
 
     return Container(
       height: height,
@@ -339,16 +367,57 @@ class _ConfirmStoreTransactionState
           )),
           isKeyboardVisible
               ? Container()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30),
+              : Column(
+                  spacing: 15,
+                  children: [
+                    hasTableAddon == true
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                Icon(
+                                  Icons.receipt_long_rounded,
+                                  color: Colors.grey.shade700,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'print_kitchen'.tr(),
+                                    style: textTheme.bodyLarge,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 35,
+                                  width: 45,
+                                  child: FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: Switch(
+                                      value: printKitchen,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          printKitchen = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
+                          ),
+                        ),
                       ),
+                      onPressed: () => onSubmit(context),
+                      child: Text('finish'.tr()),
                     ),
-                  ),
-                  onPressed: () => onSubmit(context),
-                  child: Text('finish'.tr()),
+                  ],
                 )
         ],
       ),

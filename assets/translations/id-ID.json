@@ -339,5 +339,7 @@
   "use_table_x": "Gunakan Meja {}",
   "table_name_added": "Meja {} sudah ada",
   "clear": "Bersihkan",
-  "total_x": "Total {}"
+  "total_x": "Total {}",
+  "print_kitchen": "Cetak Dapur",
+  "kitchen": "Dapur"
 }

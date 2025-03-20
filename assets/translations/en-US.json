@@ -338,5 +338,7 @@
   "use_table_x": "Use Table {}",
   "table_name_added": "Table {} is already registered",
   "clear": "Clear",
-  "total_x": "Total {}"
+  "total_x": "Total {}",
+  "print_kitchen": "Print Kitchen",
+  "kitchen": "Kitchen"
 }

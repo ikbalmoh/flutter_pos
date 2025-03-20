@@ -13,7 +13,9 @@ import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
 
 class StoreTransaction extends ConsumerStatefulWidget {
-  const StoreTransaction({super.key});
+  const StoreTransaction({super.key, this.printKitchen});
+
+  final bool? printKitchen;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -44,9 +46,8 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
 
   void onPrintReceipt() async {
     try {
-      await ref
-          .read(cartProvider.notifier)
-          .printReceipt(printCounter: printCounter);
+      await ref.read(cartProvider.notifier).printReceipt(
+          printCounter: printCounter, withKitchen: widget.printKitchen == true);
       setState(() {
         printCounter += 1;
       });

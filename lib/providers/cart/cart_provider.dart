@@ -413,7 +413,8 @@ class Cart extends _$Cart {
     }
   }
 
-  Future<void> printReceipt({int printCounter = 1}) async {
+  Future<void> printReceipt(
+      {int printCounter = 1, bool? withKitchen = false}) async {
     try {
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
@@ -428,7 +429,32 @@ class Cart extends _$Cart {
           size: printer.size,
           isCopy: printCounter > 1,
           cut: printer.cut);
-      ref.read(printerProvider.notifier).print(receipt);
+      await ref.read(printerProvider.notifier).print(receipt);
+      if (withKitchen == true) {
+        await printKitchen();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> printKitchen() async {
+    try {
+      final printer = ref.read(printerProvider).value;
+      if (printer == null) {
+        throw 'printer_not_connected'.tr();
+      }
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+      final AttributeReceipts? attributeReceipts =
+          outlet.config.attributeReceipts;
+      final receipt = await util.Printer.buildKitchenReceiptBytes(
+        state,
+        outlet: outlet.outlet,
+        attributes: attributeReceipts,
+        size: printer.size,
+        cut: printer.cut,
+      );
+      await ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {
       rethrow;
     }

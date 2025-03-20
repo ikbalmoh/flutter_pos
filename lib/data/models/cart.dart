@@ -38,6 +38,7 @@ class Cart with _$Cart {
     required double ppn,
     String? taxName,
     @JsonKey(fromJson: Converters.dynamicToDouble) required double ppnTotal,
+    @JsonKey(fromJson: Converters.dynamicToDouble)
     required double roundingValue,
     required double grandTotal,
     required double totalPayment,

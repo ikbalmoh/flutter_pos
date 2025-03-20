@@ -84,6 +84,17 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
     }
   }
 
+  void onPrintKitchen(BuildContext context) async {
+    try {
+      await ref.read(transactionsProvider.notifier).printKitchen(
+            widget.cart,
+          );
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      AppAlert.snackbar(context, e.toString());
+    }
+  }
+
   void resetCart() {
     // Reset Navigation
     while (context.canPop() == true) {
@@ -114,6 +125,7 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
           TextButton(
             onPressed: resetCart,
             style: TextButton.styleFrom(
+              backgroundColor: Colors.teal.shade50,
               foregroundColor: Colors.teal,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -122,6 +134,9 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
             child: Text(
               'new_transaction'.tr(),
             ),
+          ),
+          SizedBox(
+            width: 10,
           )
         ],
       ),
@@ -184,23 +199,20 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
                                     : const Icon(Icons.share),
                               );
                             }),
-                            isTablet ? const SizedBox(width: 15) : Container(),
-                            !isTablet &&
-                                    widget.cart.totalPayment <
-                                        widget.cart.grandTotal
-                                ? IconButton(
-                                    onPressed: () => onPrintReceipt(context),
-                                    icon: const Icon(CupertinoIcons.printer),
-                                    tooltip: 'print'.tr(),
-                                  )
-                                : Expanded(
-                                    flex: 1,
-                                    child: ElevatedButton.icon(
-                                      onPressed: () => onPrintReceipt(context),
-                                      icon: const Icon(CupertinoIcons.printer),
-                                      label: Text('print'.tr()),
-                                    ),
-                                  ),
+                            IconButton(
+                              onPressed: () => onPrintKitchen(context),
+                              icon: Icon(Icons.restaurant),
+                              tooltip: 'print_kitchen'.tr(),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton.icon(
+                                onPressed: () => onPrintReceipt(context),
+                                icon: const Icon(CupertinoIcons.printer),
+                                label: Text('receipt'.tr()),
+                              ),
+                            ),
                           ],
                         ),
                       ),

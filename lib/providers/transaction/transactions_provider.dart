@@ -96,6 +96,32 @@ class Transactions extends _$Transactions {
     }
   }
 
+  Future<void> printKitchen(Cart cart,
+      {bool isHold = false, bool withPrice = true}) async {
+    try {
+      final printer = ref.read(printerProvider).value;
+      if (printer == null) {
+        throw 'printer_not_connected'.tr();
+      }
+      final AttributeReceipts? attributeReceipts =
+          (ref.read(outletProvider).value as OutletSelected)
+              .config
+              .attributeReceipts;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+
+      final receipt = await util.Printer.buildKitchenReceiptBytes(
+        cart,
+        outlet: outlet.outlet,
+        attributes: attributeReceipts,
+        size: printer.size,
+        cut: printer.cut,
+      );
+      ref.read(printerProvider.notifier).print(receipt);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<Cart> cancelTransaction(Cart cart,
       {required String deleteReason}) async {
     try {

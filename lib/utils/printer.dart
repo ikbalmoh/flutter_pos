@@ -267,6 +267,80 @@ class Printer {
     }
   }
 
+  static Future<List<int>> buildKitchenReceiptBytes(
+    Cart cart, {
+    required Outlet outlet,
+    AttributeReceipts? attributes,
+    PaperSize? size = PaperSize.mm58,
+    bool? cut = false,
+  }) async {
+    try {
+      log('PRINTER SIZE: ${size?.value.toString()}');
+      log('BUILD KITCHEN RECEIPT: $cart\n$outlet\n$attributes');
+      final profile = await CapabilityProfile.load();
+      final generator =
+          Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
+      List<int> bytes = [];
+
+      bytes += generator.text(cart.outletName ?? '',
+          styles: const PosStyles(align: PosAlign.center, bold: true));
+
+      bytes += generator.emptyLines(1);
+
+      // info
+      bytes += generator.text('No: ${cart.transactionNo}');
+      bytes += generator.text(
+          'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
+      bytes += generator.text('Table: ${cart.tables?.join(', ') ?? '-'}');
+
+      bytes += generator.hr();
+
+      // items
+      for (ItemCart item in cart.items) {
+        bytes += generator.row([
+          PosColumn(
+            text: item.itemName,
+            width: 10,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: '${item.quantity}',
+            width: 2,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+        if (item.details.isNotEmpty) {
+          for (var i = 0; i < item.details.length; i++) {
+            final detail = item.details[i];
+            bytes += generator.row([
+              PosColumn(
+                text: ' ${detail.quantity}',
+                width: 2,
+                styles: const PosStyles(align: PosAlign.left),
+              ),
+              PosColumn(
+                text: detail.name,
+                width: 10,
+                styles: const PosStyles(align: PosAlign.right),
+              ),
+            ]);
+          }
+        }
+      }
+
+      if (cut == true) {
+        bytes += generator.cut();
+      } else {
+        bytes += generator.feed(3);
+      }
+
+      return bytes;
+    } catch (e, stackTrace) {
+      log('BUILD RECEIPT ERROR: $e\n$stackTrace');
+      rethrow;
+    }
+  }
+
   static Future<List<int>> buildShiftReportBytes(ShiftInfo shift,
       {AttributeReceipts? attributes,
       required Outlet outlet,
