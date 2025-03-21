@@ -70,6 +70,7 @@ class Transactions extends _$Transactions {
   Future<void> printReceipt(Cart cart,
       {bool isHold = false, bool withPrice = true}) async {
     try {
+      log('PRINT RECEIPT $cart');
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();

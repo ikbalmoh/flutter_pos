@@ -378,7 +378,7 @@ class _ConfirmStoreTransactionState
                               spacing: 10,
                               children: [
                                 Icon(
-                                  Icons.receipt_long_rounded,
+                                  Icons.restaurant,
                                   color: Colors.grey.shade700,
                                 ),
                                 Expanded(

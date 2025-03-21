@@ -26,7 +26,6 @@ class Printer {
     bool withPrice = true,
   }) async {
     try {
-      log('PRINTER SIZE: ${size?.value.toString()}');
       log('BUILD RECEIPT: $cart\n$outlet\n$attributes');
       final profile = await CapabilityProfile.load();
       final generator =
@@ -91,8 +90,12 @@ class Printer {
 
       // items
       for (ItemCart item in cart.items) {
-        bytes += generator.text(
-            withPrice ? item.itemName : "${item.quantity} x ${item.itemName}");
+        String itemName = item.itemName;
+        if (item.variantName != '' && item.variantName != null) {
+          itemName += ' - ${item.variantName}';
+        }
+        bytes += generator
+            .text(withPrice ? itemName : "${item.quantity} x $itemName");
         if (item.details.isNotEmpty) {
           for (var i = 0; i < item.details.length; i++) {
             final detail = item.details[i];
@@ -275,7 +278,6 @@ class Printer {
     bool? cut = false,
   }) async {
     try {
-      log('PRINTER SIZE: ${size?.value.toString()}');
       log('BUILD KITCHEN RECEIPT: $cart\n$outlet\n$attributes');
       final profile = await CapabilityProfile.load();
       final generator =
@@ -297,9 +299,13 @@ class Printer {
 
       // items
       for (ItemCart item in cart.items) {
+        String itemName = item.itemName;
+        if (item.variantName != '' && item.variantName != null) {
+          itemName += ' - ${item.variantName}';
+        }
         bytes += generator.row([
           PosColumn(
-            text: item.itemName,
+            text: itemName,
             width: 10,
             styles: const PosStyles(align: PosAlign.left),
           ),

@@ -416,6 +416,7 @@ class Cart extends _$Cart {
   Future<void> printReceipt(
       {int printCounter = 1, bool? withKitchen = false}) async {
     try {
+      log('PRINT RECEIPT $state');
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();

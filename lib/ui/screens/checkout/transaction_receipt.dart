@@ -210,7 +210,7 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
                               child: ElevatedButton.icon(
                                 onPressed: () => onPrintReceipt(context),
                                 icon: const Icon(CupertinoIcons.printer),
-                                label: Text('receipt'.tr()),
+                                label: Text('print'.tr()),
                               ),
                             ),
                           ],
