@@ -11,6 +11,7 @@ import 'package:selleri/data/models/cart.dart' as model;
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/ui/components/generic/picked_image.dart';
 import 'package:selleri/ui/components/pic_picker.dart';
 import 'package:selleri/ui/screens/checkout/store_transaction.dart';
@@ -35,16 +36,9 @@ class _ConfirmStoreTransactionState
     WidgetsFlutterBinding.ensureInitialized();
 
     Future.delayed(Duration(milliseconds: 100), () {
-      bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
-          .config
-          .addOns
-          ?.contains('table');
-
-      if (hasTableAddon == true) {
-        setState(() {
-          printKitchen = true;
-        });
-      }
+      setState(() {
+        printKitchen = ref.read(appSettingsProvider).autoPrintKitchen;
+      });
     });
 
     super.initState();
@@ -103,6 +97,11 @@ class _ConfirmStoreTransactionState
 
     await cartAction.setPic(pic);
 
+    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+        .config
+        .addOns
+        ?.contains('table');
+
     if (context.mounted) {
       showModalBottomSheet(
         isDismissible: false,
@@ -113,7 +112,7 @@ class _ConfirmStoreTransactionState
         builder: (context) => PopScope(
           canPop: false,
           child: StoreTransaction(
-            printKitchen: printKitchen,
+            printKitchen: hasTableAddon == true ? printKitchen : false,
           ),
         ),
       );
