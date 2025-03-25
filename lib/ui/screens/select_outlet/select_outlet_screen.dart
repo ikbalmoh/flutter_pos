@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart' hide Outlet;
 import 'package:selleri/ui/components/error_handler.dart';
+import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
+import 'package:selleri/ui/screens/select_outlet/outlet_loading_status.dart';
 import 'package:selleri/ui/screens/select_outlet/select_outlet_prompt.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'outlet_item.dart';
 import 'package:selleri/providers/outlet/outlet_list_provider.dart';
 
@@ -31,54 +33,27 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
     showDialog(
         context: context,
         barrierDismissible: false,
-        // backgroundColor: Colors.white,
-        // enableDrag: false,
-        // isDismissible: false,
-        // isScrollControlled: true,
         builder: (context) {
           return SelectOutletPrompt(outlet: outlet);
         });
   }
 
   Widget buildOutletLists(BuildContext context, List<Outlet> outlets) {
-    final height = MediaQuery.sizeOf(context).height * 0.38;
-    return SizedBox(
-      height:  height,
-      child: CupertinoScrollbar(
-        child: ShaderMask(
-          shaderCallback: (Rect rect) {
-            return const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.white
-              ],
-              stops: [
-                0.9,
-                1.0
-              ],
-            ).createShader(rect);
-          },
-          blendMode: BlendMode.dstOut,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(0),
-            shrinkWrap: true,
-            itemCount: outlets.length,
-            itemBuilder: (context, index) {
-              Outlet outlet = outlets[index];
-              return OutletItem(outlet: outlet, onSelect: onSelectOutlet);
-            },
-          ),
-        ),
-      ),
+    return ListView.builder(
+      padding: const EdgeInsets.all(0),
+      shrinkWrap: true,
+      itemCount: outlets.length,
+      itemBuilder: (context, index) {
+        Outlet outlet = outlets[index];
+        return OutletItem(outlet: outlet, onSelect: onSelectOutlet);
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    final height = MediaQuery.of(context).size.height * 0.48;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.teal.shade400,
       body: Center(
@@ -90,11 +65,10 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
             Container(
               margin: const EdgeInsets.only(top: 50),
               width: 300,
-              height: _isLoading ? null : height,
+              height: _isLoading ? null : height * 0.48,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(7.5),
                 color: Colors.white,
-                // border: Border.all(width: 0.5, color: Colors.black12),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.teal.shade600,
@@ -115,37 +89,52 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 17.5, vertical: 15),
-                    // decoration: BoxDecoration(
-                    //   border: Border(
-                    //     bottom: BorderSide(
-                    //       color: Colors.grey.shade300,
-                    //       width: 0.5,
-                    //     ),
-                    //   ),
-                    // ),
                     child: Text("select_outlet".tr(),
                         style: textTheme.bodyLarge
                             ?.copyWith(fontWeight: FontWeight.w500)),
                   ),
-                  ref.watch(outletListProvider).when(
-                        data: (data) {
-                          setState(() => _isLoading = false);
-                          return buildOutletLists(context, data);
+                  SizedBox(
+                    height: height * 0.4,
+                    child: CupertinoScrollbar(
+                      child: ShaderMask(
+                        shaderCallback: (Rect rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Colors.white],
+                            stops: [0.9, 1.0],
+                          ).createShader(rect);
                         },
-                        error: (error, stack) => ErrorHandler(
-                          error: error.toString(),
-                          stackTrace: stack.toString(),
-                          onRetry: () => ref
-                              .read(outletListProvider.notifier)
-                              .fetchOutletList(),
-                        ),
-                        loading: () => const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 50),
-                          child: LoadingIndicator(
-                            color: Colors.teal,
-                          ),
-                        ),
+                        blendMode: BlendMode.dstOut,
+                        child: ref.watch(outletProvider).value is OutletLoading
+                            ? OutletLoadingStatus()
+                            : ref.watch(outletListProvider).when(
+                                  data: (data) {
+                                    setState(() => _isLoading = false);
+                                    return buildOutletLists(context, data);
+                                  },
+                                  error: (error, stack) => ErrorHandler(
+                                    error: error.toString(),
+                                    stackTrace: stack.toString(),
+                                    onRetry: () => ref
+                                        .read(outletListProvider.notifier)
+                                        .fetchOutletList(),
+                                  ),
+                                  loading: () => Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: List.generate(
+                                        5,
+                                        (index) => ItemListSkeleton(
+                                              leading: false,
+                                            )),
+                                  ),
+                                ),
                       ),
+                    ),
+                  ),
                 ],
               ),
             ),

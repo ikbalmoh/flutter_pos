@@ -69,7 +69,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
               refresh: true,
               fullSync: true,
               progressCallback: (progress) => setState(() {
-                syncStatus = progress;
+                syncStatus = progress.message ?? '';
               }),
             );
       } else if (selected['categories'] == true) {

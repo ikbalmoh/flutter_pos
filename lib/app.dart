@@ -5,6 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/services.dart';
 import 'package:selleri/config/theme.dart';
 import 'package:selleri/providers/fcm/fcm_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/router/app_router.dart';
 
 class App extends ConsumerWidget {
@@ -27,6 +28,16 @@ class App extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     ref.watch(fcmProvider);
+
+    final outlet = ref.watch(outletProvider).value;
+
+    if (outlet is OutletSelected) {
+      context.setLocale(
+        outlet.config.locale == 'en'
+            ? const Locale('en', 'US')
+            : const Locale('id', 'ID'),
+      );
+    }
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,

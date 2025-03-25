@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:selleri/data/models/outlet.dart' as model;
-import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
+import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -30,27 +30,33 @@ class Outlet extends _$Outlet {
     return OutletNotSelected();
   }
 
-  Future<void> selectOutlet(model.Outlet outlet,
-      {Function(OutletConfig)? onSelected}) async {
-    state = AsyncData(OutletLoading(message: 'preparing_outlet'.tr()));
+  Future<void> selectOutlet(model.Outlet outlet) async {
+    var progress = OutletLoading(
+      config: false,
+      message: 'preparing_outlet'.tr(),
+      promotions: false,
+      items: [],
+    );
+    state = AsyncData(progress);
     try {
+      state = AsyncData(OutletNotSelected());
       _outletRepository.saveOutlet(outlet);
       await _outletRepository.fetchOutletInfo(outlet.idOutlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
       log('CONFIG LOADED: $config');
 
-      // await ref.read(itemsStreamProvider().notifier).loadItems(
-      //       refresh: true,
-      //       fullSync: false,
-      //       progressCallback: (status) {
-      //         state = AsyncData(OutletLoading(message: status));
-      //       },
-      //     );
+      state = AsyncData(progress.copyWith(config: true));
+
+      await ref.read(itemsStreamProvider().notifier).loadItems(
+            refresh: true,
+            fullSync: false,
+            progressCallback: (status) {
+              log('LOAD OUTLET STATUS: $status');
+              state = AsyncData(status);
+            },
+          );
 
       state = AsyncData(OutletSelected(outlet: outlet, config: config));
-      if (onSelected != null) {
-        onSelected(config);
-      }
     } catch (e, stacktrace) {
       if (kDebugMode) {
         print("SELECT OUTLET ERROR: $e\n$stacktrace");
