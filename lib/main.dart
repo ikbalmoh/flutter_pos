@@ -119,7 +119,9 @@ Future initServices() async {
 
   log(StoreKey.deviceName.name);
 
-  WakelockPlus.enable();
+  if (!kDebugMode) {
+    WakelockPlus.enable();
+  }
 }
 
 Future<void> main() async {

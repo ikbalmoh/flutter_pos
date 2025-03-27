@@ -7,6 +7,7 @@ import 'package:selleri/data/models/cart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/generic/loading_placeholder.dart';
+import 'package:selleri/utils/pin_input_helper.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class CancelTransactionForm extends ConsumerStatefulWidget {
@@ -26,6 +27,9 @@ class _CancelTransactionFormState extends ConsumerState<CancelTransactionForm> {
   bool isLoading = false;
 
   void onSubmit() async {
+    final isVerified = await PinInputHelper.verifyPin(context: context);
+    print('isVerified: $isVerified');
+    return;
     try {
       setState(() {
         isLoading = true;
