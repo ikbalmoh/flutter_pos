@@ -341,5 +341,6 @@
   "clear": "Bersihkan",
   "total_x": "Total {}",
   "print_kitchen": "Cetak Dapur",
-  "kitchen": "Dapur"
+  "kitchen": "Dapur",
+  "verificator": "Verifikator"
 }

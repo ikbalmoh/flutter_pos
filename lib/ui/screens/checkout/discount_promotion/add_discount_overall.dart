@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 
 class AddDiscountOverall extends ConsumerStatefulWidget {
   final double subtotal;
@@ -72,7 +73,12 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
     return 0;
   }
 
-  void onSubmit() {
+  void onSubmit() async {
+    final isAuthorized = await AuthorizationHelper.authorize(
+        context: context, module: 'set-discount-overall');
+    if (!isAuthorized) {
+      return;
+    }
     context.pop();
     ref.read(cartProvider.notifier).setDiscountTransaction(
           discount: discount,

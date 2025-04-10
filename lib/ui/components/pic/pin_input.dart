@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 
 class PinInput extends StatefulWidget {
   final Function(String) onSubmit;
-  final int minLength;
-  final int maxLength;
+  final int pinLength;
   final String? errorText;
 
   const PinInput({
-    Key? key,
+    super.key,
     required this.onSubmit,
-    this.minLength = 4,
-    this.maxLength = 6,
+    this.pinLength = 6,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   State<PinInput> createState() => _PinInputState();
@@ -20,13 +18,27 @@ class PinInput extends StatefulWidget {
 
 class _PinInputState extends State<PinInput> {
   String _pin = '';
-  final List<String> _numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+  final List<String> _numbers = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '0'
+  ];
 
   void _onNumberPressed(String number) {
-    if (_pin.length < widget.maxLength) {
+    if (_pin.length < widget.pinLength) {
       setState(() {
         _pin += number;
       });
+      if (_pin.length == widget.pinLength) {
+        widget.onSubmit(_pin);
+      }
     }
   }
 
@@ -38,18 +50,6 @@ class _PinInputState extends State<PinInput> {
     }
   }
 
-  void _onClearPressed() {
-    setState(() {
-      _pin = '';
-    });
-  }
-
-  void _onSubmit() {
-    if (_pin.length >= widget.minLength && _pin.length <= widget.maxLength) {
-      widget.onSubmit(_pin);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -57,11 +57,11 @@ class _PinInputState extends State<PinInput> {
       children: [
         // PIN Display
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 12.5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              widget.maxLength,
+              widget.pinLength,
               (index) => Container(
                 width: 12,
                 height: 12,
@@ -82,7 +82,7 @@ class _PinInputState extends State<PinInput> {
               style: TextStyle(color: Colors.red[700], fontSize: 12),
             ),
           ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 15),
         // Number Pad
         GridView.builder(
           shrinkWrap: true,
@@ -96,11 +96,11 @@ class _PinInputState extends State<PinInput> {
           itemCount: 12,
           itemBuilder: (context, index) {
             if (index == 9) {
-              return _buildButton('', onPressed: _onClearPressed);
+              return Container();
             } else if (index == 10) {
               return _buildButton('0', onPressed: () => _onNumberPressed('0'));
             } else if (index == 11) {
-              return _buildButton('', onPressed: _onSubmit);
+              return _buildButton('delete', onPressed: _onBackspacePressed);
             } else {
               return _buildButton(
                 _numbers[index],
@@ -115,15 +115,15 @@ class _PinInputState extends State<PinInput> {
 
   Widget _buildButton(String text, {required VoidCallback onPressed}) {
     return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(10),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(5),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(5),
         child: Center(
-          child: text.isEmpty
+          child: text == 'delete'
               ? Icon(
-                  text == '0' ? Icons.check_circle : Icons.clear,
+                  Icons.backspace,
                   color: text == '0' ? Colors.green : Colors.grey[700],
                   size: 20,
                 )
@@ -138,4 +138,4 @@ class _PinInputState extends State<PinInput> {
       ),
     );
   }
-} 
+}
