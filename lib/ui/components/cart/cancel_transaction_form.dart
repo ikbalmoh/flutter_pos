@@ -29,8 +29,8 @@ class _CancelTransactionFormState extends ConsumerState<CancelTransactionForm> {
 
   void onSubmit() async {
     reasonFocusNode.unfocus();
-    final isAuthorized = await AuthorizationHelper.authorize(
-        context: context, module: 'void-transaction');
+    final isAuthorized =
+        await AuthorizationHelper.authorize('void-transaction');
     if (!isAuthorized) {
       return;
     }

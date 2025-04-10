@@ -26,6 +26,7 @@ import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/table/tables_provider.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'package:selleri/utils/formater.dart';
 import 'dart:developer';
 import 'package:selleri/utils/printer.dart' as util;
@@ -420,6 +421,13 @@ class Cart extends _$Cart {
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
+      }
+      if (printCounter > 1) {
+        final isAuthorize =
+            await AuthorizationHelper.authorize('print-receipt');
+        if (!isAuthorize) {
+          return;
+        }
       }
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =

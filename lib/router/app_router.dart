@@ -31,6 +31,7 @@ import 'package:selleri/ui/screens/settings/printer/printer_setting_screen.dart'
 import 'package:selleri/ui/screens/transaction_history/transaction_history_screen.dart';
 import 'package:selleri/ui/screens/adjustments/adjustment_screen.dart';
 import 'package:selleri/ui/screens/tables/tables_screen.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 
 import 'routes.dart';
 
@@ -38,8 +39,6 @@ part 'app_router.g.dart';
 
 @riverpod
 GoRouter router(Ref ref) {
-  final key = GlobalKey<NavigatorState>();
-
   final appState =
       ValueNotifier<AsyncValue<AppStartState>>(const AsyncLoading());
 
@@ -51,7 +50,7 @@ GoRouter router(Ref ref) {
     });
 
   return GoRouter(
-      navigatorKey: key,
+      navigatorKey: AuthorizationHelper.navigatorKey,
       initialLocation: Routes.root,
       overridePlatformDefaultLocation: true,
       routes: [

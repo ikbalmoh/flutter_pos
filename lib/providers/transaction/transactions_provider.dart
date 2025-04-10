@@ -10,6 +10,7 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'package:selleri/utils/printer.dart' as util;
 
 part 'transactions_provider.g.dart';
@@ -74,6 +75,10 @@ class Transactions extends _$Transactions {
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
+      }
+      final isAuthorize = await AuthorizationHelper.authorize('print-receipt');
+      if (!isAuthorize) {
+        return;
       }
       final AttributeReceipts? attributeReceipts =
           (ref.read(outletProvider).value as OutletSelected)

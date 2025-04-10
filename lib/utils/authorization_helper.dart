@@ -12,10 +12,15 @@ import 'package:selleri/ui/components/verificator_picker.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class AuthorizationHelper {
-  static Future<bool> authorize({
-    required BuildContext context,
-    required String module,
-  }) async {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
+  static Future<bool> authorize(String module) async {
+    final context = navigatorKey.currentContext;
+    if (context == null) {
+      throw ('Navigation context not available');
+    }
+
     try {
       final container = ProviderContainer();
       final outletState = await container.read(outletProvider.future);
@@ -48,7 +53,6 @@ class AuthorizationHelper {
 
       // Step 1: Select PIC
       final selectedUser = await showModalBottomSheet<UserHasPin>(
-        // ignore: use_build_context_synchronously
         context: context,
         isDismissible: false,
         builder: (BuildContext context) {
@@ -76,7 +80,6 @@ class AuthorizationHelper {
 
       while (!isVerified) {
         final pin = await showDialog<String>(
-          // ignore: use_build_context_synchronously
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {

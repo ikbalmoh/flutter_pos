@@ -15,6 +15,7 @@ import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/ui/components/generic/picked_image.dart';
 import 'package:selleri/ui/components/pic_picker.dart';
 import 'package:selleri/ui/screens/checkout/store_transaction.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'package:selleri/utils/formater.dart';
 
 class ConfirmStoreTransaction extends ConsumerStatefulWidget {
@@ -66,6 +67,15 @@ class _ConfirmStoreTransactionState
 
   void onSubmit(BuildContext context) async {
     // context.pop();
+
+    model.Cart cart = ref.watch(cartProvider);
+    if (cart.totalPayment < cart.grandTotal) {
+      final isAuhtorized =
+          await AuthorizationHelper.authorize('partial-payment');
+      if (!isAuhtorized) {
+        return;
+      }
+    }
 
     final cartAction = ref.read(cartProvider.notifier);
 
