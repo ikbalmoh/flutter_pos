@@ -9,6 +9,7 @@ import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/firebase.dart';
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -137,7 +138,11 @@ Future<void> main() async {
         fallbackLocale: const Locale('id', 'ID'),
         child: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
-            child: const App()),
+            child: MaterialApp(
+              scaffoldMessengerKey: AppAlert.rootScaffoldMessengerKey,
+              // ...rest of your MaterialApp config
+              home: const App(),
+            )),
       ),
     ),
   );

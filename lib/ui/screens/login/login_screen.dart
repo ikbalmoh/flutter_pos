@@ -82,7 +82,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen(authProvider, (prev, next) {
       if (next.value is AuthFailure) {
         AppAlert.snackbar(
-          context,
           (next.value as AuthFailure).message,
           alertType: AlertType.error,
         );

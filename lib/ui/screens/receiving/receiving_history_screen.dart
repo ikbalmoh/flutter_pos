@@ -165,8 +165,7 @@ class _ReceivingHistoryScreenState
       });
 
       if (context.mounted) {
-        AppAlert.snackbar(
-            context, 'x_downloaded'.tr(args: ['sales_report'.tr()]),
+        AppAlert.snackbar('x_downloaded'.tr(args: ['sales_report'.tr()]),
             action: SnackBarAction(
                 label: 'open'.tr(), onPressed: () => OpenFile.open(path)));
       }

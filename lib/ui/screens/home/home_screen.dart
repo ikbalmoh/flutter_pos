@@ -161,7 +161,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           );
       AppAlert.toast('x_added'.tr(args: [result.item!.itemName]));
     } else {
-      AppAlert.snackbar(context, 'x_not_found'.tr(args: [barcode]));
+      AppAlert.snackbar('x_not_found'.tr(args: [barcode]), alertType: AlertType.error);
     }
   }
 

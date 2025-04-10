@@ -50,7 +50,7 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
         }
         context.pushReplacementNamed(Routes.home);
         context.pushNamed(Routes.receivingHistory);
-        AppAlert.snackbar(context, message);
+        AppAlert.snackbar( message);
       }
     } catch (e) {
       setState(() {

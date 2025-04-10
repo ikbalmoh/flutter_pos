@@ -8,7 +8,7 @@ part 'table_config_provider.g.dart';
 
 @riverpod
 class TableConfig extends _$TableConfig {
-  final db = FirebaseFirestore.instance;
+  static final db = FirebaseFirestore.instance;
 
   @override
   Stream<model.TableConfig> build() {

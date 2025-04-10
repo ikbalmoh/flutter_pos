@@ -9,8 +9,7 @@ part 'tables_provider.g.dart';
 
 @riverpod
 class Tables extends _$Tables {
-  final db = FirebaseFirestore.instance;
-
+  static final db = FirebaseFirestore.instance;
   @override
   Stream<List<Table>> build({int? floor}) {
     final authState = ref.watch(authProvider).value;

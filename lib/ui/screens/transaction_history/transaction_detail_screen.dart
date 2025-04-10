@@ -88,7 +88,7 @@ class _TransactionDetailScreenState
     } catch (e) {
       log('PRINT FAILED: $e');
       // ignore: use_build_context_synchronously
-      AppAlert.snackbar(context, e.toString());
+      AppAlert.snackbar( e.toString());
     }
   }
 
@@ -100,7 +100,7 @@ class _TransactionDetailScreenState
     } catch (e) {
       log('PRINT FAILED: $e');
       // ignore: use_build_context_synchronously
-      AppAlert.snackbar(context, e.toString());
+      AppAlert.snackbar( e.toString());
     }
   }
 

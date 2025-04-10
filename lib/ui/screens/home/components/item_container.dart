@@ -55,7 +55,7 @@ class ItemContainer extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        AppAlert.snackbar(context, e.toString());
+        AppAlert.snackbar( e.toString());
       }
     }
   }

@@ -20,6 +20,7 @@ class AddDiscountOverall extends ConsumerStatefulWidget {
 
 class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
   TextEditingController amountController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   late double discount;
   late bool discountIsPercent;
@@ -74,12 +75,15 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
   }
 
   void onSubmit() async {
+    focusNode.unfocus();
     final isAuthorized = await AuthorizationHelper.authorize(
         context: context, module: 'set-discount-overall');
     if (!isAuthorized) {
       return;
     }
-    context.pop();
+    if (mounted) {
+      context.pop();
+    }
     ref.read(cartProvider.notifier).setDiscountTransaction(
           discount: discount,
           discIsPercent: discountIsPercent,
@@ -121,6 +125,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
             ),
           ),
           TextFormField(
+            focusNode: focusNode,
             inputFormatters: [_discountFormatter],
             onChanged: onChangeDiscountValue,
             textAlign: TextAlign.right,

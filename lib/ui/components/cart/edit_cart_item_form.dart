@@ -109,9 +109,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
     try {
       await ref.read(cartProvider.notifier).updateItem(item);
     } catch (e) {
-      if (context.mounted) {
-        AppAlert.snackbar(context, e.toString());
-      }
+      AppAlert.snackbar(e.toString());
     }
   }
 

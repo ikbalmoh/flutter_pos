@@ -43,11 +43,11 @@ class VerificatorPicker extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'select_x'.tr(args: ['verificator'.tr()]),
+                      description,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
-                      description,
+                      'select_x'.tr(args: ['verificator'.tr()]),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ],
