@@ -11,9 +11,11 @@ import 'package:selleri/data/models/cart.dart' as model;
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
+import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/ui/components/generic/picked_image.dart';
 import 'package:selleri/ui/components/pic_picker.dart';
 import 'package:selleri/ui/screens/checkout/store_transaction.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'package:selleri/utils/formater.dart';
 
 class ConfirmStoreTransaction extends ConsumerStatefulWidget {
@@ -28,6 +30,20 @@ class _ConfirmStoreTransactionState
     extends ConsumerState<ConfirmStoreTransaction> {
   final noteController = TextEditingController();
   List<XFile> images = [];
+  bool printKitchen = false;
+
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        printKitchen = ref.read(appSettingsProvider).autoPrintKitchen;
+      });
+    });
+
+    super.initState();
+  }
 
   Future pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
@@ -51,6 +67,15 @@ class _ConfirmStoreTransactionState
 
   void onSubmit(BuildContext context) async {
     // context.pop();
+
+    model.Cart cart = ref.watch(cartProvider);
+    if (cart.totalPayment < cart.grandTotal) {
+      final isAuhtorized =
+          await AuthorizationHelper.authorize('partial-payment');
+      if (!isAuhtorized) {
+        return;
+      }
+    }
 
     final cartAction = ref.read(cartProvider.notifier);
 
@@ -82,6 +107,11 @@ class _ConfirmStoreTransactionState
 
     await cartAction.setPic(pic);
 
+    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+        .config
+        .addOns
+        ?.contains('table');
+
     if (context.mounted) {
       showModalBottomSheet(
         isDismissible: false,
@@ -89,9 +119,11 @@ class _ConfirmStoreTransactionState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
-        builder: (context) => const PopScope(
+        builder: (context) => PopScope(
           canPop: false,
-          child: StoreTransaction(),
+          child: StoreTransaction(
+            printKitchen: hasTableAddon == true ? printKitchen : false,
+          ),
         ),
       );
     }
@@ -109,6 +141,11 @@ class _ConfirmStoreTransactionState
 
     double height =
         MediaQuery.of(context).size.height * (isKeyboardVisible ? 0.95 : 0.7);
+
+    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+        .config
+        .addOns
+        ?.contains('table');
 
     return Container(
       height: height,
@@ -339,16 +376,57 @@ class _ConfirmStoreTransactionState
           )),
           isKeyboardVisible
               ? Container()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30),
+              : Column(
+                  spacing: 15,
+                  children: [
+                    hasTableAddon == true
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                Icon(
+                                  Icons.restaurant,
+                                  color: Colors.grey.shade700,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'print_kitchen'.tr(),
+                                    style: textTheme.bodyLarge,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 35,
+                                  width: 45,
+                                  child: FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: Switch(
+                                      value: printKitchen,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          printKitchen = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
+                          ),
+                        ),
                       ),
+                      onPressed: () => onSubmit(context),
+                      child: Text('finish'.tr()),
                     ),
-                  ),
-                  onPressed: () => onSubmit(context),
-                  child: Text('finish'.tr()),
+                  ],
                 )
         ],
       ),

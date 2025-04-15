@@ -10,14 +10,15 @@ class AppSettings with _$AppSettings {
     required bool autoPrintOnMakePayment,
     required bool autoPrintOnRefund,
     required bool autoPrintShiftReport,
-    required bool printKitchen,
+    required bool autoPrintKitchen,
   }) = _AppSettings;
 
   factory AppSettings.init() => const AppSettings(
-      itemLayoutGrid: false,
-      autoPrintReceipt: true,
-      autoPrintOnMakePayment: true,
-      autoPrintOnRefund: true,
-      autoPrintShiftReport: true,
-      printKitchen: false);
+        itemLayoutGrid: false,
+        autoPrintReceipt: true,
+        autoPrintOnMakePayment: true,
+        autoPrintOnRefund: true,
+        autoPrintShiftReport: true,
+        autoPrintKitchen: true,
+      );
 }

@@ -176,7 +176,9 @@ class _AddVariantFormState extends State<AddVariantForm> {
                                   : Colors.red,
                               width: 1),
                         ),
-                        errorText: optionsError ?? 'chip_input_note'.tr(),
+                        errorText: [optionsError, 'chip_input_note'.tr().toLowerCase()]
+                            .where((text) => text != null)
+                            .join('. '),
                       ),
                     )
                   ],

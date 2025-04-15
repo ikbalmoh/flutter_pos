@@ -3,10 +3,11 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/shift_info.dart';
 import 'package:selleri/data/models/shift_summary.dart';
@@ -14,35 +15,21 @@ import 'package:selleri/utils/formater.dart';
 import 'package:selleri/utils/transaction.dart';
 
 class Printer {
-  static String divider({PaperSize size = PaperSize.mm58}) {
-    String divider = '================================================';
-    if (size == PaperSize.mm58) {
-      divider = divider.substring(0, 32);
-    }
-    return divider;
-  }
-
-  static String subdivider({PaperSize size = PaperSize.mm58}) {
-    String divider = '------------------------------------------------';
-    if (size == PaperSize.mm58) {
-      divider = divider.substring(0, 32);
-    }
-    return divider;
-  }
-
   static Future<List<int>> buildReceiptBytes(
     Cart cart, {
+    required Outlet outlet,
     AttributeReceipts? attributes,
     PaperSize? size = PaperSize.mm58,
+    bool? cut = false,
     bool isCopy = false,
     bool isHold = false,
     bool withPrice = true,
   }) async {
     try {
-      log('PRINTER SIZE: ${size?.value.toString()}');
-      log('BUILD RECEIPT: $cart\n$attributes');
+      log('BUILD RECEIPT: $cart\n$outlet\n$attributes');
       final profile = await CapabilityProfile.load();
-      final generator = Generator(size ?? PaperSize.mm58, profile);
+      final generator =
+          Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
       List<int> bytes = [];
 
       Image? img;
@@ -52,7 +39,7 @@ class Printer {
       bytes += generator.drawer();
 
       if (attributes != null) {
-        if (attributes.imageBase64 != null && attributes.imageBase64 != '') {
+        if (isValidBase64(attributes.imageBase64!)) {
           try {
             final Uint8List imgBytes =
                 const Base64Decoder().convert(attributes.imageBase64!);
@@ -68,12 +55,21 @@ class Printer {
 
       if (img != null) {
         img = copyResize(img, height: 120);
-        bytes += generator.imageRaster(img, align: PosAlign.center);
+        bytes += generator.image(img, align: PosAlign.center);
       }
 
       bytes += generator.text(cart.outletName ?? '',
-          styles: const PosStyles(align: PosAlign.center, bold: true),
-          linesAfter: 1);
+          styles: const PosStyles(align: PosAlign.center, bold: true));
+      if (outlet.outletAddress != null && outlet.outletAddress != '') {
+        bytes += generator.text(outlet.outletAddress!,
+            styles: const PosStyles(align: PosAlign.center, bold: false));
+      }
+      if (outlet.outletPhone != null && outlet.outletPhone != '') {
+        bytes += generator.text(
+          outlet.outletPhone!,
+          styles: const PosStyles(align: PosAlign.center, bold: false),
+        );
+      }
 
       if (headers != null) {
         bytes += generator.text(headers,
@@ -86,12 +82,20 @@ class Printer {
       bytes += generator.text(
           'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
       bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
-      bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+      if (cart.tables != null && cart.tables!.isNotEmpty) {
+        bytes += generator.text('Table: ${cart.tables?.join(', ') ?? '-'}');
+      }
+
+      bytes += generator.hr();
 
       // items
       for (ItemCart item in cart.items) {
-        bytes += generator.text(
-            withPrice ? item.itemName : "${item.quantity} x ${item.itemName}");
+        String itemName = item.itemName;
+        if (item.variantName != '' && item.variantName != null) {
+          itemName += ' - ${item.variantName}';
+        }
+        bytes += generator
+            .text(withPrice ? itemName : "${item.quantity} x $itemName");
         if (item.details.isNotEmpty) {
           for (var i = 0; i < item.details.length; i++) {
             final detail = item.details[i];
@@ -134,8 +138,8 @@ class Printer {
       }
 
       if (withPrice) {
-        bytes +=
-            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.hr();
+
         // subtotal
         bytes += generator.row([
           PosColumn(
@@ -193,8 +197,7 @@ class Printer {
           ),
         ]);
         // Payments
-        bytes +=
-            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.hr();
         bytes += generator.text('payments'.tr());
         for (var payment in cart.payments) {
           bytes += generator.row([
@@ -212,8 +215,7 @@ class Printer {
           ]);
         }
         // Change
-        bytes +=
-            generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
+        bytes += generator.hr();
         bytes += generator.row([
           PosColumn(
             text: 'change'.tr(),
@@ -228,12 +230,10 @@ class Printer {
         ]);
       }
 
-      bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58),
-          linesAfter: 1);
+      bytes += generator.hr();
 
       if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),
-            linesAfter: 1,
             styles: const PosStyles(
               align: PosAlign.center,
               bold: true,
@@ -242,7 +242,7 @@ class Printer {
         // footer
         if (footers != null) {
           bytes += generator.text(footers,
-              linesAfter: 2, styles: const PosStyles(align: PosAlign.center));
+              styles: const PosStyles(align: PosAlign.center));
         }
       }
 
@@ -257,7 +257,88 @@ class Printer {
             styles: const PosStyles(align: PosAlign.center));
       }
 
-      bytes += generator.cut();
+      if (cut == true) {
+        bytes += generator.cut();
+      } else {
+        bytes += generator.feed(3);
+      }
+
+      return bytes;
+    } catch (e, stackTrace) {
+      log('BUILD RECEIPT ERROR: $e\n$stackTrace');
+      rethrow;
+    }
+  }
+
+  static Future<List<int>> buildKitchenReceiptBytes(
+    Cart cart, {
+    required Outlet outlet,
+    AttributeReceipts? attributes,
+    PaperSize? size = PaperSize.mm58,
+    bool? cut = false,
+  }) async {
+    try {
+      log('BUILD KITCHEN RECEIPT: $cart\n$outlet\n$attributes');
+      final profile = await CapabilityProfile.load();
+      final generator =
+          Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
+      List<int> bytes = [];
+
+      bytes += generator.text(cart.outletName ?? '',
+          styles: const PosStyles(align: PosAlign.center, bold: true));
+
+      bytes += generator.emptyLines(1);
+
+      // info
+      bytes += generator.text('No: ${cart.transactionNo}');
+      bytes += generator.text(
+          'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
+      bytes += generator.text('Table: ${cart.tables?.join(', ') ?? '-'}');
+
+      bytes += generator.hr();
+
+      // items
+      for (ItemCart item in cart.items) {
+        String itemName = item.itemName;
+        if (item.variantName != '' && item.variantName != null) {
+          itemName += ' - ${item.variantName}';
+        }
+        bytes += generator.row([
+          PosColumn(
+            text: itemName,
+            width: 10,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: '${item.quantity}',
+            width: 2,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+        if (item.details.isNotEmpty) {
+          for (var i = 0; i < item.details.length; i++) {
+            final detail = item.details[i];
+            bytes += generator.row([
+              PosColumn(
+                text: ' ${detail.quantity}',
+                width: 2,
+                styles: const PosStyles(align: PosAlign.left),
+              ),
+              PosColumn(
+                text: detail.name,
+                width: 10,
+                styles: const PosStyles(align: PosAlign.right),
+              ),
+            ]);
+          }
+        }
+      }
+
+      if (cut == true) {
+        bytes += generator.cut();
+      } else {
+        bytes += generator.feed(3);
+      }
 
       return bytes;
     } catch (e, stackTrace) {
@@ -268,18 +349,22 @@ class Printer {
 
   static Future<List<int>> buildShiftReportBytes(ShiftInfo shift,
       {AttributeReceipts? attributes,
+      required Outlet outlet,
       PaperSize? size = PaperSize.mm58,
+      bool? cut = false,
       bool isCopy = false}) async {
     log('BUILD SHIFT RERORT: $shift');
+    log('OUTLET: $outlet');
     final profile = await CapabilityProfile.load();
-    final generator = Generator(size ?? PaperSize.mm58, profile);
+    final generator =
+        Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
     List<int> bytes = [];
 
     Image? img;
     String? headers;
 
     if (attributes != null) {
-      if (attributes.imageBase64 != null && attributes.imageBase64 != '') {
+      if (isValidBase64(attributes.imageBase64)) {
         final Uint8List imgBytes =
             const Base64Decoder().convert(attributes.imageBase64!);
         img = decodeImage(imgBytes);
@@ -289,12 +374,22 @@ class Printer {
 
     if (img != null) {
       img = copyResize(img, height: 120);
-      bytes += generator.imageRaster(img, align: PosAlign.center);
+      bytes += generator.image(img, align: PosAlign.center);
     }
 
-    bytes += generator.text(shift.outletName ?? '',
-        styles: const PosStyles(align: PosAlign.center, bold: true),
-        linesAfter: 1);
+    bytes += generator.text(
+      shift.outletName ?? '',
+      styles: const PosStyles(align: PosAlign.center, bold: true),
+    );
+    if (outlet.outletAddress != null && outlet.outletAddress != '') {
+      bytes += generator.text(outlet.outletAddress!,
+          styles: const PosStyles(align: PosAlign.center, bold: false),
+          linesAfter: 0);
+    }
+    if (outlet.outletPhone != null && outlet.outletPhone != '') {
+      bytes += generator.text(outlet.outletPhone!,
+          styles: const PosStyles(align: PosAlign.center, bold: false));
+    }
 
     if (headers != null) {
       bytes += generator.text(headers,
@@ -310,7 +405,7 @@ class Printer {
         'Open: ${DateTimeFormater.dateToString(shift.openShift, format: 'dd/MM/y HH:mm')}');
     bytes += generator.text(
         'Close: ${shift.closeShift != null ? DateTimeFormater.dateToString(shift.closeShift!, format: 'dd/MM/y HH:mm') : '-'}');
-    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+    bytes += generator.hr();
 
     final List<SummaryItem> summaries = ShiftUtil.paymentList(shift.summary);
     for (var summary in summaries) {
@@ -333,44 +428,62 @@ class Printer {
       }
     }
 
-    bytes += generator.text(Printer.subdivider(size: size ?? PaperSize.mm58));
-    bytes += generator.row([
-      PosColumn(
-        text: 'item_sold'.tr(),
-        width: 8,
-        styles: const PosStyles(bold: true),
-      ),
-      PosColumn(
-        text: CurrencyFormat.currency(
-            shift.soldItems.isNotEmpty
-                ? shift.soldItems
-                    .map((sold) => sold.sold)
-                    .reduce((a, b) => a + b)
-                : 0,
-            symbol: false),
-        width: 4,
-        styles: const PosStyles(align: PosAlign.right, bold: true),
-      ),
-    ]);
-    for (var i = 0; i < shift.soldItems.length; i++) {
-      final item = shift.soldItems[i];
+    bytes += generator.hr();
+    if (shift.soldItems.isNotEmpty) {
       bytes += generator.row([
         PosColumn(
-          text: ' ${item.name}',
-          width: 10,
-          styles: const PosStyles(align: PosAlign.left),
+          text: 'item_sold'.tr(),
+          width: 8,
+          styles: const PosStyles(bold: true),
         ),
         PosColumn(
-          text: CurrencyFormat.currency(item.sold, symbol: false),
-          width: 2,
-          styles: const PosStyles(align: PosAlign.right),
+          text: CurrencyFormat.currency(
+              shift.soldItems.isNotEmpty
+                  ? shift.soldItems
+                      .map((sold) => sold.sold)
+                      .reduce((a, b) => a + b)
+                  : 0,
+              symbol: false),
+          width: 4,
+          styles: const PosStyles(align: PosAlign.right, bold: true),
         ),
       ]);
+      for (var i = 0; i < shift.soldItems.length; i++) {
+        final item = shift.soldItems[i];
+        bytes += generator.row([
+          PosColumn(
+            text: ' ${item.name}',
+            width: 10,
+            styles: const PosStyles(align: PosAlign.left),
+          ),
+          PosColumn(
+            text: CurrencyFormat.currency(item.sold, symbol: false),
+            width: 2,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
     }
-    bytes += generator.text(Printer.divider(size: size ?? PaperSize.mm58));
+    bytes += generator.hr();
 
-    bytes += generator.cut();
+    if (cut == true) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(3);
+    }
 
     return bytes;
+  }
+
+  static bool isValidBase64(String? str) {
+    if (str == null) {
+      return false;
+    }
+    try {
+      base64.decode(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

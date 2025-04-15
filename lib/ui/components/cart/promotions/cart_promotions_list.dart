@@ -10,7 +10,16 @@ import 'package:selleri/ui/components/cart/promotions/promotion_code_input.dart'
 import 'package:selleri/utils/formater.dart';
 
 class CartPromotionsList extends ConsumerStatefulWidget {
-  const CartPromotionsList({super.key});
+  const CartPromotionsList({
+    super.key,
+    this.scrollController,
+    this.withCancelButton,
+    this.confirmText,
+  });
+
+  final ScrollController? scrollController;
+  final bool? withCancelButton;
+  final String? confirmText;
 
   @override
   ConsumerState<CartPromotionsList> createState() => _CartPromotionsListState();
@@ -101,6 +110,7 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
           ),
           Expanded(
             child: SingleChildScrollView(
+              controller: widget.scrollController,
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -161,16 +171,18 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
             padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
             child: Row(
               children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.grey.shade700,
-                  ),
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    'cancel'.tr(),
-                  ),
-                ),
-                const SizedBox(width: 15),
+                widget.withCancelButton != false
+                    ? TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade700,
+                        ),
+                        onPressed: () => context.pop(),
+                        child: Text(
+                          'cancel'.tr(),
+                        ),
+                      )
+                    : Container(),
+                SizedBox(width: widget.withCancelButton != false ? 15 : 0),
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -179,7 +191,10 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                       ),
                     ),
                     onPressed: () => context.pop(selected),
-                    child: Text('apply'.tr()),
+                    child: Text(selected.isEmpty
+                        ? widget.confirmText ??
+                            'apply_x'.tr(args: ['promotions'.tr()])
+                        : 'apply_x'.tr(args: ['promotions'.tr()])),
                   ),
                 )
               ],

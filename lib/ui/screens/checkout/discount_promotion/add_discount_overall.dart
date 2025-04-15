@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 
 class AddDiscountOverall extends ConsumerStatefulWidget {
   final double subtotal;
@@ -19,6 +20,7 @@ class AddDiscountOverall extends ConsumerStatefulWidget {
 
 class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
   TextEditingController amountController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   late double discount;
   late bool discountIsPercent;
@@ -72,8 +74,16 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
     return 0;
   }
 
-  void onSubmit() {
-    context.pop();
+  void onSubmit() async {
+    focusNode.unfocus();
+    final isAuthorized =
+        await AuthorizationHelper.authorize('set-discount-overall');
+    if (!isAuthorized) {
+      return;
+    }
+    if (mounted) {
+      context.pop();
+    }
     ref.read(cartProvider.notifier).setDiscountTransaction(
           discount: discount,
           discIsPercent: discountIsPercent,
@@ -115,6 +125,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
             ),
           ),
           TextFormField(
+            focusNode: focusNode,
             inputFormatters: [_discountFormatter],
             onChanged: onChangeDiscountValue,
             textAlign: TextAlign.right,

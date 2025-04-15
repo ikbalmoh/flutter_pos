@@ -74,17 +74,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   void initState() {
-    loadShift();
-    super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    Future.delayed(Duration(seconds: 2), loadShift);
     WidgetsBinding.instance.addObserver(this);
+    super.initState();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       log('APP RESUMED');
-      ref.read(outletProvider.notifier).refreshConfig();
-      refreshItems();
+      refreshData();
     }
   }
 
@@ -94,11 +94,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  Future<void> refreshItems() async {
-    return ref.read(itemsStreamProvider().notifier).syncItems();
+  Future<void> refreshData() async {
+    await ref.read(outletProvider.notifier).refreshConfig();
+    await ref.read(itemsStreamProvider().notifier).syncItems();
+    return;
   }
 
   Future<void> loadShift() async {
+    await refreshData();
     final currentShift = ref.read(shiftProvider).value;
     if (currentShift == null) {
       ref.read(shiftProvider.notifier).initShift();
@@ -158,7 +161,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           );
       AppAlert.toast('x_added'.tr(args: [result.item!.itemName]));
     } else {
-      AppAlert.snackbar(context, 'x_not_found'.tr(args: [barcode]));
+      AppAlert.snackbar('x_not_found'.tr(args: [barcode]), alertType: AlertType.error);
     }
   }
 
@@ -191,6 +194,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               height: searchVisible ? 0 : 56,
               child: ItemCategories(
                 active: idCategory,
+                filterStock: filterStock,
                 onChange: onChangeCategory,
               ),
             ),
@@ -297,7 +301,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             children: [
               Expanded(
                 child: RefreshIndicator(
-                  onRefresh: refreshItems,
+                  onRefresh: refreshData,
                   child: itemContainer,
                 ),
               ),

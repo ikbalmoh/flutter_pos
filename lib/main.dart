@@ -14,6 +14,7 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -41,7 +42,7 @@ Future initServices() async {
 
   await dotenv.load(fileName: env);
 
-  String? deviceId = '';
+  String deviceId = await FlutterUdid.consistentUdid;
   String? deviceName = '';
 
   if (defaultTargetPlatform == TargetPlatform.android) {
@@ -50,15 +51,12 @@ Future initServices() async {
     deviceName = deviceInfo.device;
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
     IosDeviceInfo deviceInfo = await deviceInfoPlugin.iosInfo;
-    deviceId = deviceInfo.identifierForVendor;
     deviceName = deviceInfo.name;
   } else if (defaultTargetPlatform == TargetPlatform.macOS) {
     MacOsDeviceInfo deviceInfo = await deviceInfoPlugin.macOsInfo;
-    deviceId = deviceInfo.systemGUID;
     deviceName = deviceInfo.computerName;
   } else {
     WebBrowserInfo deviceInfo = await deviceInfoPlugin.webBrowserInfo;
-    deviceId = deviceInfo.userAgent;
     deviceName = deviceInfo.browserName.name;
   }
 
@@ -68,9 +66,7 @@ Future initServices() async {
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
-  if (deviceId != null && deviceId.isNotEmpty) {
-    storage.write(key: StoreKey.device.name, value: deviceId);
-  }
+  storage.write(key: StoreKey.device.name, value: deviceId);
   storage.write(key: StoreKey.deviceName.name, value: deviceName);
 
   await FirebaseHelper().init();
@@ -123,7 +119,9 @@ Future initServices() async {
 
   log(StoreKey.deviceName.name);
 
-  WakelockPlus.enable();
+  if (!kDebugMode) {
+    WakelockPlus.enable();
+  }
 }
 
 Future<void> main() async {
@@ -138,8 +136,9 @@ Future<void> main() async {
         path: 'assets/translations',
         fallbackLocale: const Locale('id', 'ID'),
         child: GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
-            child: const App()),
+          onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+          child: const App(),
+        ),
       ),
     ),
   );

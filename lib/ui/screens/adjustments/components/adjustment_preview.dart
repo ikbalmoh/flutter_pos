@@ -43,8 +43,7 @@ class AdjustmentPreview extends ConsumerWidget {
               adjustment: adjustment,
             );
         if (context.mounted) {
-          AppAlert.snackbar(
-              context, 'duplicate_x'.tr(args: ['adjustment'.tr()]));
+          AppAlert.snackbar('duplicate_x'.tr(args: ['adjustment'.tr()]));
         }
       } on Exception catch (e) {
         AppAlert.toast(e.toString());

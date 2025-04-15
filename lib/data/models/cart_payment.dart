@@ -13,6 +13,7 @@ class CartPayment with _$CartPayment {
     required String paymentMethodId,
     required String paymentName,
     required double paymentValue,
+    String? shiftId,
     String? reference,
     String? createdBy,
     DateTime? createdAt,

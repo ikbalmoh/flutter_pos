@@ -6,8 +6,10 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/data/models/fcm_subscribe.dart';
 import 'package:selleri/data/network/api.dart';
 import 'package:selleri/data/repository/item_repository.dart';
+import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/notification/notification_provider.dart';
@@ -21,29 +23,27 @@ part 'fcm_provider.g.dart';
 
 FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-class FcmSubscribe {
-  final String companyTopic;
-  final String outletTopic;
-  final String token;
-
-  const FcmSubscribe({
-    required this.companyTopic,
-    required this.outletTopic,
-    required this.token,
-  });
-}
-
 @Riverpod(keepAlive: true)
 class Fcm extends _$Fcm {
   @override
-  FcmSubscribe build() {
+  FutureOr<FcmSubscribe?> build() async {
     init();
-    return const FcmSubscribe(companyTopic: '', outletTopic: '', token: '');
+    final auth = ref.watch(authProvider);
+    final outlet = ref.watch(outletProvider);
+    if (auth.value is Authenticated && outlet.value is OutletSelected) {
+      return registerFcm(
+        idCompany: (auth.value as Authenticated).user.user.company.idCompany,
+        idOutlet: (outlet.value as OutletSelected).outlet.idOutlet,
+      );
+    } else {
+      unsubscribe();
+    }
+    return future;
   }
 
   Timer? _debounceSync;
 
-  init() async {
+  void init() async { 
     LocalNotificationService.initialize();
 
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
@@ -58,15 +58,6 @@ class Fcm extends _$Fcm {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-
-    final auth = ref.watch(authProvider);
-    final outlet = ref.watch(outletProvider);
-    if (auth.value is Authenticated && outlet.value is OutletSelected) {
-      registerFcm(
-        idCompany: (auth.value as Authenticated).user.user.company.idCompany,
-        idOutlet: (outlet.value as OutletSelected).outlet.idOutlet,
-      );
-    }
   }
 
   Future<void> _firebaseMessagingBackgroundHandler(
@@ -152,20 +143,20 @@ class Fcm extends _$Fcm {
     }
   }
 
-  Future<void> registerFcm(
+  Future<FcmSubscribe?> registerFcm(
       {required String idCompany, required String idOutlet}) async {
     final api = ref.watch(outletApiProvider);
 
     try {
       String? token = await retrieveFcmToken();
-      if (state.token != token) {
+      if (state.value?.token != token) {
         log("FCM TOKEN: $token");
 
         final authenticated = ref.read(authProvider).value is Authenticated;
-        if (!authenticated) return;
+        if (!authenticated) return null;
 
         final outletActive = ref.read(outletProvider).value is OutletSelected;
-        if (!outletActive) return;
+        if (!outletActive) return null;
 
         if (token != null) {
           await api.storeFcmToken(token: token, outletId: idOutlet);
@@ -179,31 +170,40 @@ class Fcm extends _$Fcm {
         await messaging.subscribeToTopic(companyTopic);
         await messaging.subscribeToTopic(outletTopic);
 
-        state = FcmSubscribe(
+        final data = FcmSubscribe(
           companyTopic: companyTopic,
           outletTopic: outletTopic,
           token: token!,
         );
 
+        state = AsyncData(data);
+
         log('FCM SUBSCRIBED => $companyTopic | $outletTopic');
+
+        return data;
       }
+
+      return null;
     } catch (e) {
       log('FCM SUBSCRIPTION ERROR: $e');
+      return null;
     }
   }
 
   Future<void> unsubscribe() async {
     try {
-      log('UNSUBSCRIBING FCM ...');
-      if (state.companyTopic.isNotEmpty) {
-        await messaging.subscribeToTopic(state.companyTopic);
-        log('FCM UNSUBSCRIBED from ${state.companyTopic}');
+      if (state.value == null) {
+        return;
       }
-      if (state.outletTopic.isNotEmpty) {
-        await messaging.subscribeToTopic(state.outletTopic);
-        log('FCM UNSUBSCRIBED from ${state.outletTopic}');
-      }
-      state = const FcmSubscribe(companyTopic: '', outletTopic: '', token: '');
+      final tokens = state.value!;
+      log('UNSUBSCRIBING FCM ... $tokens');
+      await messaging.unsubscribeFromTopic(tokens.companyTopic);
+      log('FCM UNSUBSCRIBED from ${tokens.companyTopic}');
+      await messaging.unsubscribeFromTopic(tokens.outletTopic);
+      log('FCM UNSUBSCRIBED from ${tokens.outletTopic}');
+      state =
+          AsyncData(FcmSubscribe(companyTopic: '', outletTopic: '', token: ''));
+      ref.read(tokenRepositoryProvider).removeToken();
     } catch (e) {
       log('UNSUBSCRIBING FCM FAILED => $e');
     }

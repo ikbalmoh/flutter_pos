@@ -75,9 +75,13 @@ class _TransactionReportDownloaderState
       });
       if (context.mounted) {
         AppAlert.snackbar(
-            context, 'x_downloaded'.tr(args: ['adjustment_history'.tr()]),
-            action: SnackBarAction(
-                label: 'open'.tr(), onPressed: () => OpenFile.open(path)));
+          'x_downloaded'.tr(args: ['adjustment_history'.tr()]),
+          alertType: AlertType.success,
+          action: SnackBarAction(
+            label: 'open'.tr(),
+            onPressed: () => OpenFile.open(path)
+          )
+        );
       }
       // ignore: use_build_context_synchronously
       context.pop();

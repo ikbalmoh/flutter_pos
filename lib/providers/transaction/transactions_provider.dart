@@ -10,6 +10,7 @@ import 'package:selleri/providers/auth/auth_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'package:selleri/utils/printer.dart' as util;
 
 part 'transactions_provider.g.dart';
@@ -32,7 +33,10 @@ class Transactions extends _$Transactions {
   }
 
   Future<void> loadTransactions(
-      {int page = 1, String search = '', bool? currentShift = false}) async {
+      {int page = 1,
+      String search = '',
+      bool? currentShift = false,
+      String? table}) async {
     if (page == 1) {
       state = const AsyncLoading();
     } else {
@@ -46,10 +50,12 @@ class Transactions extends _$Transactions {
         shiftId = ref.read(shiftProvider).value?.id;
       }
       var customers = await api.transactions(
-          page: page,
-          q: search,
-          idOutlet: outlet.outlet.idOutlet,
-          shiftId: shiftId);
+        page: page,
+        q: search,
+        idOutlet: outlet.outlet.idOutlet,
+        shiftId: shiftId,
+        table: table,
+      );
       List<Cart> data = List.from(state.value?.data as Iterable<Cart>);
       if (page > 1) {
         data = data..addAll(customers.data as Iterable<Cart>);
@@ -65,6 +71,40 @@ class Transactions extends _$Transactions {
   Future<void> printReceipt(Cart cart,
       {bool isHold = false, bool withPrice = true}) async {
     try {
+      log('PRINT RECEIPT $cart');
+      final printer = ref.read(printerProvider).value;
+      if (printer == null) {
+        throw 'printer_not_connected'.tr();
+      }
+      final isAuthorize = await AuthorizationHelper.authorize('print-receipt');
+      if (!isAuthorize) {
+        return;
+      }
+      final AttributeReceipts? attributeReceipts =
+          (ref.read(outletProvider).value as OutletSelected)
+              .config
+              .attributeReceipts;
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+
+      final receipt = await util.Printer.buildReceiptBytes(
+        cart,
+        outlet: outlet.outlet,
+        attributes: attributeReceipts,
+        size: printer.size,
+        isCopy: true,
+        isHold: isHold,
+        withPrice: withPrice,
+        cut: printer.cut,
+      );
+      ref.read(printerProvider.notifier).print(receipt);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> printKitchen(Cart cart,
+      {bool isHold = false, bool withPrice = true}) async {
+    try {
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
@@ -73,13 +113,14 @@ class Transactions extends _$Transactions {
           (ref.read(outletProvider).value as OutletSelected)
               .config
               .attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+
+      final receipt = await util.Printer.buildKitchenReceiptBytes(
         cart,
+        outlet: outlet.outlet,
         attributes: attributeReceipts,
         size: printer.size,
-        isCopy: true,
-        isHold: isHold,
-        withPrice: withPrice,
+        cut: printer.cut,
       );
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {

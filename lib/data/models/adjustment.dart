@@ -11,6 +11,7 @@ class Adjustment with _$Adjustment {
     required DateTime date,
     required String description,
     required List<ItemAdjustment> items,
+    required bool isLoading,
   }) = _Adjustment;
 
   factory Adjustment.fromJson(Map<String, dynamic> json) => _$AdjustmentFromJson(json);

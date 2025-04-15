@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' hide Table;
+import 'package:flutter/material.dart' hide Table;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/table.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/providers/transaction/transactions_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
@@ -14,6 +16,7 @@ import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/components/transaction/transaction_report_downloader.dart';
+import 'package:selleri/ui/screens/tables/table_selector.dart';
 import 'package:selleri/ui/screens/transaction_history/transaction_detail_screen.dart';
 import 'package:selleri/utils/formater.dart';
 
@@ -33,13 +36,14 @@ class _TransactionHistoryScreenState
   bool currentShift = false;
   bool searchVisible = false;
   Timer? _debounce;
+  Table? table;
 
   Cart? viewTransaction;
 
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    _searchController.addListener(() => onSearchItems(_searchController.text));
+    _searchController.addListener(() => onSearchItems(page: 1));
     _scrollController.addListener(loadMore);
     setState(() {
       currentShift = ref.read(shiftProvider).value != null;
@@ -54,15 +58,18 @@ class _TransactionHistoryScreenState
     super.dispose();
   }
 
-  void onSearchItems(String query) {
+  void onSearchItems({int page = 1}) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         viewTransaction = null;
       });
-      ref
-          .read(transactionsProvider.notifier)
-          .loadTransactions(page: 1, search: query, currentShift: currentShift);
+      ref.read(transactionsProvider.notifier).loadTransactions(
+            page: page,
+            search: _searchController.text,
+            currentShift: currentShift,
+            table: table?.name,
+          );
     });
   }
 
@@ -78,10 +85,7 @@ class _TransactionHistoryScreenState
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
       log('Load transaction... ${pagination.currentPage}/${pagination.to}');
-      ref.read(transactionsProvider.notifier).loadTransactions(
-          page: pagination.currentPage + 1,
-          search: _searchController.text,
-          currentShift: currentShift);
+      onSearchItems(page: pagination.currentPage + 1);
     }
   }
 
@@ -95,16 +99,56 @@ class _TransactionHistoryScreenState
         });
   }
 
+  void onSelectTable(Table? tbl) {
+    setState(() {
+      table = tbl;
+    });
+    onSearchItems();
+  }
+
+  Widget filterTableButton(BuildContext context) {
+    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+        .config
+        .addOns
+        ?.contains('table');
+    return hasTableAddon == true
+        ? IconButton(
+            onPressed: () {
+              showCupertinoModalPopup(
+                context: context,
+                builder: (context) => TableSelector(
+                  selected: table,
+                  onSelect: onSelectTable,
+                ),
+              );
+            },
+            icon: table != null
+                ? Container(
+                    decoration: BoxDecoration(
+                        color: Colors.blue.shade600,
+                        borderRadius: BorderRadius.circular(5)),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                    child: Text(
+                      table!.name,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                : Icon(CupertinoIcons.square_grid_3x2))
+        : Container();
+  }
+
   Widget transactionFilter(bool isTablet) {
     var shiftFilter = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          'current_shift'.tr(),
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.black87),
+        Expanded(
+          child: Text(
+            'current_shift'.tr(),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.black87),
+          ),
         ),
         SizedBox(
           height: 35,
@@ -117,11 +161,11 @@ class _TransactionHistoryScreenState
                 setState(() {
                   currentShift = value;
                 });
-                onSearchItems(_searchController.text);
+                onSearchItems(page: 1);
               },
             ),
           ),
-        )
+        ),
       ],
     );
     return ref.watch(shiftProvider).value != null
@@ -144,10 +188,21 @@ class _TransactionHistoryScreenState
                         const SizedBox(
                           height: 10,
                         ),
-                        SearchBar(
-                          leading: const Icon(CupertinoIcons.search),
-                          hintText: 'search'.tr(),
-                          controller: _searchController,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 50,
+                                width: double.maxFinite,
+                                child: SearchBar(
+                                  leading: const Icon(CupertinoIcons.search),
+                                  hintText: 'search'.tr(),
+                                  controller: _searchController,
+                                ),
+                              ),
+                            ),
+                            filterTableButton(context)
+                          ],
                         ),
                         const SizedBox(
                           height: 10,
@@ -176,6 +231,9 @@ class _TransactionHistoryScreenState
               ),
               controller: _searchController,
               onChanged: (_) {},
+              actions: [
+                filterTableButton(context),
+              ],
             )
           : AppBar(
               automaticallyImplyLeading: false,
@@ -215,6 +273,7 @@ class _TransactionHistoryScreenState
                         page: 1,
                         search: _searchController.text,
                         currentShift: currentShift,
+                        table: table?.name,
                       ),
               child: Column(
                 children: [
@@ -273,7 +332,8 @@ class _TransactionHistoryScreenState
                                             )
                                           : cart.totalPayment < cart.grandTotal
                                               ? Icon(
-                                                  CupertinoIcons.exclamationmark_circle_fill,
+                                                  CupertinoIcons
+                                                      .exclamationmark_circle_fill,
                                                   color: Colors.amber.shade600,
                                                 )
                                               : const Icon(

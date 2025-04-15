@@ -45,9 +45,12 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
         isLoading = false;
       });
       if (context.mounted) {
-        context.pop();
+        while (context.canPop()) {
+          context.pop();
+        }
+        context.pushReplacementNamed(Routes.home);
         context.pushNamed(Routes.receivingHistory);
-        AppAlert.snackbar(context, message);
+        AppAlert.snackbar( message);
       }
     } catch (e) {
       setState(() {

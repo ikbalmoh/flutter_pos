@@ -6,6 +6,7 @@ import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
+import 'package:selleri/ui/screens/checkout/add_rounding.dart';
 import 'package:selleri/ui/screens/checkout/confirm_store_transaction.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
 import 'package:selleri/ui/components/cart/order_summary/order_summary.dart';
@@ -27,6 +28,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     super.initState();
+  }
+
+  void onChangeRoundingValue() {
+    showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          backgroundColor: Colors.white,
+          builder: (context) {
+            return AddRounding();
+          });
   }
 
   void onConfirmStoreTransaction() async {
@@ -145,21 +156,27 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               ? Expanded(
                   child: OrderSummary(
                     taxable: config?.taxable ?? false,
-                    cart: cart,
+                    cart: ref.watch(cartProvider),
                     radius: const Radius.circular(10),
                     mainAxisSize:
                         isKeyboardVisible ? MainAxisSize.min : MainAxisSize.max,
                     outletState:
                         ref.watch(outletProvider).value as OutletSelected,
+                    onChangeRoundingValue: widget.isPartialPayment == true
+                        ? null
+                        : onChangeRoundingValue,
                   ),
                 )
               : OrderSummary(
                   taxable: config?.taxable ?? false,
-                  cart: cart,
+                  cart: ref.watch(cartProvider),
                   radius: const Radius.circular(10),
                   mainAxisSize: MainAxisSize.min,
                   outletState:
                       ref.watch(outletProvider).value as OutletSelected,
+                  onChangeRoundingValue: widget.isPartialPayment == true
+                      ? null
+                      : onChangeRoundingValue,
                 ),
         ],
       ),

@@ -64,7 +64,7 @@ class Item with _$Item {
     }).toList();
     json['package_items'] = json['package_items']?.map((package) {
       ItemPackage? existPackage = objectBox.itemPackageBox
-          .query(ItemPackage_.idItem.equals(package['id_item']))
+          .query(ItemPackage_.idItem.equals(package['id_item_package']))
           .build()
           .findFirst();
       package['id'] = existPackage?.id ?? 0;

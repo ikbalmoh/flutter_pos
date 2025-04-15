@@ -47,7 +47,7 @@ class StockBadge extends ConsumerWidget {
                   horizontal: 5,
                 ),
                 child: Text(
-                  '${'stock'.tr()} ${CurrencyFormat.currency(stockItem, symbol: false)}',
+                  '${'stock'.tr()} ${CurrencyFormat.currency(stockItem, symbol: false, decimalDigit: 2)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: stockItem <= 10
                             ? Colors.amber.shade700

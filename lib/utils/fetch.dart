@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/constants/store_key.dart';
@@ -19,6 +19,8 @@ Dio fetch() {
     baseUrl: dotenv.env['HOST']!,
     contentType: Headers.jsonContentType,
     validateStatus: (int? status) => status != null,
+    connectTimeout: Duration(seconds: 60),
+    receiveTimeout: Duration(seconds: 60),
   );
 
   Dio dio = Dio(baseOption);
@@ -62,6 +64,7 @@ class CustomInterceptors extends Interceptor {
       final outlet = Outlet.fromJson(jsonOutlet);
       options.headers['outlet'] = outlet.idOutlet;
     }
+
     return super.onRequest(options, handler);
   }
 
@@ -76,6 +79,10 @@ class CustomInterceptors extends Interceptor {
         response: response,
       );
     }
+    if (kDebugMode) {
+      print('[${response.statusCode}] ${response.realUri}');
+      log('${response.data}');
+    }
     super.onResponse(response, handler);
   }
 
@@ -85,7 +92,7 @@ class CustomInterceptors extends Interceptor {
         ? isJSON(jsonEncode(err.response?.data))
         : false;
     if (!json) {
-      err.response?.data = {'msg': 'connection_error'.tr()};
+      err.response?.data = {'msg': 'connection_error'};
     }
 
     if (err.response?.statusCode == 401) {
@@ -104,6 +111,10 @@ class CustomInterceptors extends Interceptor {
       message = err.response?.data?['msg'];
     } else if (err.response?.data['message'] != null) {
       message = err.response?.data?['message'];
+    } else if (err.response?.statusCode == 422) {
+      message = 'Invalid data. Please check your input and try again.';
+    } else {
+      message = 'Unexpected Error Occured!';
     }
     err = err.copyWith(message: message);
 

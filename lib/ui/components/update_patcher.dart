@@ -5,7 +5,7 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 enum Status { waiting, downloading, downloaded }
 
-final _shorebirdCodePush = ShorebirdCodePush();
+final _shorebirdCodePush = ShorebirdUpdater();
 
 class UpdatePatch extends StatefulWidget {
   const UpdatePatch({super.key});
@@ -23,7 +23,7 @@ class _UpdatePatchState extends State<UpdatePatch> {
       downloading = true;
     });
     await Future.wait([
-      _shorebirdCodePush.downloadUpdateIfAvailable(),
+      _shorebirdCodePush.update(),
       Future<void>.delayed(const Duration(milliseconds: 250)),
     ]);
     setState(() {
@@ -105,27 +105,26 @@ class UpdatePatcher extends StatefulWidget {
 
 class _UpdatePatcherState extends State<UpdatePatcher> {
   void checkUpdate() async {
-    final available = await _shorebirdCodePush.isNewPatchAvailableForDownload();
-    if (!available) {
-      return;
+    final status = await _shorebirdCodePush.checkForUpdate();
+    if (status == UpdateStatus.outdated) {
+      Future.delayed(
+        Duration.zero,
+            () {
+          if (context.mounted) {
+            showModalBottomSheet(
+              // ignore: use_build_context_synchronously
+              context: context,
+              backgroundColor: Colors.white,
+              builder: (context) {
+                return const UpdatePatch();
+              },
+              isDismissible: false,
+              enableDrag: false,
+            );
+          }
+        },
+      );
     }
-    Future.delayed(
-      Duration.zero,
-      () {
-        if (context.mounted) {
-          showModalBottomSheet(
-            // ignore: use_build_context_synchronously
-            context: context,
-            backgroundColor: Colors.white,
-            builder: (context) {
-              return const UpdatePatch();
-            },
-            isDismissible: false,
-            enableDrag: false,
-          );
-        }
-      },
-    );
   }
 
   @override

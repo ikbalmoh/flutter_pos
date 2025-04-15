@@ -73,7 +73,7 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
       details: [],
     );
 
-    ref.read(cartProvider.notifier).addItemCart(item);
+    ref.read(cartProvider.notifier).addExtraItemCart(item);
     context.pop();
   }
 

@@ -95,7 +95,7 @@ class _ManageItemVariantsScreenState
             child: TextButton.icon(
               style: TextButton.styleFrom(backgroundColor: Colors.teal.shade50),
               onPressed: onSubmit,
-              icon: const Icon(Icons.check),
+              icon: const Icon(Icons.check, color: Colors.teal,),
               label: Text('save'.tr()),
             ),
           )

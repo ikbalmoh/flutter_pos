@@ -23,6 +23,7 @@ class Shift with _$Shift {
     double? closeAmount,
     double? diffAmount,
     double? refundAmount,
+    double? expectedCashEnd,
     DateTime? updatedAt,
     String? updatedName,
     String? closedBy,

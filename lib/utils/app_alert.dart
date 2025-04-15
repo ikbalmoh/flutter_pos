@@ -6,36 +6,56 @@ import 'package:fluttertoast/fluttertoast.dart';
 enum AlertType { success, error, info }
 
 class AppAlert {
+  static final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   static void snackbar(
-    BuildContext context,
     String title, {
     AlertType alertType = AlertType.info,
     Duration duration = const Duration(seconds: 3),
     SnackBarAction? action,
   }) {
-    Color backgroundColor = Colors.grey.shade900;
-
-    if (alertType == AlertType.success) {
-      backgroundColor = Colors.teal.shade500;
-    } else if (alertType == AlertType.error) {
-      backgroundColor = Colors.red.shade500;
+    final messenger = rootScaffoldMessengerKey.currentState;
+    if (messenger == null || messenger.mounted == false) {
+      // Fallback to toast if no scaffold is available
+      toast(title);
+      return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(title),
-        backgroundColor: backgroundColor,
-        duration: duration,
-        action: action,
-      ),
-    );
+    try {
+      Color backgroundColor = Colors.grey.shade900;
+
+      if (alertType == AlertType.success) {
+        backgroundColor = Colors.teal.shade500;
+      } else if (alertType == AlertType.error) {
+        backgroundColor = Colors.red.shade500;
+      }
+
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(title),
+          backgroundColor: backgroundColor,
+          duration: duration,
+          action: action,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      // Fallback to toast if showing snackbar fails
+      toast(title);
+    }
   }
 
-  static void toast(String message,
-      {Color? backgroundColor, Color? textColor}) {
+  static void toast(
+    String message, {
+    Color? backgroundColor,
+    Color? textColor,
+    Toast? toastLength = Toast.LENGTH_LONG,
+  }) {
     Fluttertoast.showToast(
       msg: message,
-      toastLength: Toast.LENGTH_LONG,
+      toastLength: toastLength,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 5,
       backgroundColor: backgroundColor ?? Colors.black.withValues(alpha: 0.8),
@@ -72,7 +92,8 @@ class AppAlert {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: danger == true ? Colors.red : Colors.black),
                 ),
                 SizedBox(height: subtitle != null ? 20 : 0),
                 subtitle != null
@@ -96,6 +117,9 @@ class AppAlert {
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
+                          backgroundColor: danger != null && danger
+                              ? Colors.red.shade50
+                              : Colors.teal.shade50,
                           foregroundColor: danger != null && danger
                               ? Colors.red
                               : Colors.teal),

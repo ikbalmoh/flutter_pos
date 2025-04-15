@@ -11,6 +11,7 @@ class Notification with _$Notification {
     required int id,
     required String title,
     required String body,
+    bool? isReaded,
     NotificationData? data,
   }) = _Notification;
 

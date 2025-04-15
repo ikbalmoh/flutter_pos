@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
@@ -10,7 +11,6 @@ class ShopItem extends StatelessWidget {
   final Function(Item)? onLongPress;
   final Function(Item) onAddToCart;
   final Function(Item) showVariants;
-  final Function(String) addQty;
   final int qtyOnCart;
 
   const ShopItem({
@@ -19,19 +19,16 @@ class ShopItem extends StatelessWidget {
     required this.showVariants,
     this.onLongPress,
     super.key,
-    required this.addQty,
     required this.qtyOnCart,
   });
 
   @override
   Widget build(BuildContext context) {
+    final activePromotions = objectBox.getPromotions(item.promotions) ?? [];
     return InkWell(
       onLongPress: onLongPress != null ? () => onLongPress!(item) : null,
-      onTap: () => item.variants.isNotEmpty
-          ? showVariants(item)
-          : qtyOnCart > 0
-              ? addQty(item.idItem)
-              : onAddToCart(item),
+      onTap: () =>
+          item.variants.isNotEmpty ? showVariants(item) : onAddToCart(item),
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -98,7 +95,7 @@ class ShopItem extends StatelessWidget {
                                 stockControl: item.stockControl,
                                 packageItems: item.packageItems,
                               ),
-                              item.promotions.isNotEmpty
+                              activePromotions.isNotEmpty
                                   ? const PromotionBadge()
                                   : Container(),
                             ],

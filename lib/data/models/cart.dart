@@ -38,6 +38,8 @@ class Cart with _$Cart {
     required double ppn,
     String? taxName,
     @JsonKey(fromJson: Converters.dynamicToDouble) required double ppnTotal,
+    @JsonKey(fromJson: Converters.dynamicToDouble)
+    required double roundingValue,
     required double grandTotal,
     required double totalPayment,
     required double change,
@@ -52,6 +54,7 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
+    List<String>? tables,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
     String? deletedBy,
@@ -66,6 +69,7 @@ class Cart with _$Cart {
         transactionDate: DateTime.now().millisecondsSinceEpoch,
         items: [],
         subtotal: 0,
+        roundingValue: 0,
         total: 0,
         grandTotal: 0,
         discIsPercent: true,
@@ -74,6 +78,7 @@ class Cart with _$Cart {
         discPromotionsTotal: 0,
         payments: [],
         promotions: [],
+        tables: [],
         totalPayment: 0,
         ppnIsInclude: true,
         ppn: 0,
@@ -148,7 +153,7 @@ class Cart with _$Cart {
       "ppn": ppn,
       "ppn_total": ppnTotal,
       "grand_total": grandTotal,
-      "rounding_value": 0,
+      "rounding_value": roundingValue,
       "notes": notes ?? '',
       "total_payment": totalPayment,
       "change": change,
@@ -171,7 +176,8 @@ class Cart with _$Cart {
       ),
       "created_by": createdBy,
       "images": dataImages,
-      "person_in_charge": personInCharge
+      "person_in_charge": personInCharge,
+      "tables": tables,
     };
     if (deletedAt != null) {
       jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);

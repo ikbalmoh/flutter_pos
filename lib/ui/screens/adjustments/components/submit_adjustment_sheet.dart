@@ -45,7 +45,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
       if (context.mounted) {
         context.pop();
         context.push(Routes.adjustmentsHistory);
-        AppAlert.snackbar(context, message);
+        AppAlert.snackbar(message);
       }
     } on Exception catch (e) {
       setState(() {

@@ -6,6 +6,7 @@ import 'package:selleri/data/models/receiving/purchase_item.dart';
 import 'package:selleri/data/models/receiving/receiving_form.dart';
 import 'package:selleri/data/models/receiving/receiving_item.dart';
 import 'package:selleri/data/network/receiving.dart';
+import 'package:selleri/providers/notification/notification_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/receiving/purchase_info_provider.dart';
 
@@ -78,6 +79,7 @@ class Receiving extends _$Receiving {
       final api = ref.watch(receivingApiProvider);
       String message = await api.submit(form);
       ref.read(purchaseInfoProvider.notifier).reset();
+      await ref.read(notificationProvider.notifier).loadNotifications();
       return message;
     } catch (e) {
       rethrow;

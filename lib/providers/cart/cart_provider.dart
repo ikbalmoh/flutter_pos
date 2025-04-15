@@ -9,12 +9,15 @@ import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
+import 'package:selleri/data/models/item_cart_detail.dart';
 import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/data/models/table.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -22,7 +25,9 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/providers/table/tables_provider.dart';
+import 'package:selleri/utils/authorization_helper.dart';
+import 'package:selleri/utils/formater.dart';
 import 'dart:developer';
 import 'package:selleri/utils/printer.dart' as util;
 
@@ -35,7 +40,11 @@ class Cart extends _$Cart {
     return model.Cart.initial();
   }
 
-  Future<void> initCart() async {
+  Future<void> initCart({
+    String? customerName,
+    String? idCustomer,
+    List<CustomerGroup>? customerGroup,
+  }) async {
     try {
       if (ref.read(authProvider).value is! Authenticated) {
         return;
@@ -70,6 +79,9 @@ class Cart extends _$Cart {
         ppn: tax?.percentage ?? 0,
         ppnIsInclude: tax?.isInclude ?? true,
         taxName: taxable ? tax?.taxName : '',
+        customerGroup: customerGroup,
+        customerName: customerName,
+        idCustomer: idCustomer,
       );
 
       log('Cart Initialized: ${state.toString()}');
@@ -91,28 +103,73 @@ class Cart extends _$Cart {
     return emptyItems;
   }
 
-  void addToCart(Item item, {ItemVariant? variant}) async {
-    if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
-      await initCart();
+  Future<void> addToCart(Item item, {ItemVariant? variant}) async {
+    if (state.idTransaction == null &&
+        (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty)) {
+      await initCart(
+        customerGroup: state.customerGroup,
+        customerName: state.customerName,
+        idCustomer: state.idCustomer,
+      );
     }
-
-    ItemCart itemCart = ItemCart.fromItem(item, variant: variant);
+    double itemStock = variant?.stockItem ?? item.stockItem;
+    int onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
+    if (onCartQty > 0) {
+      return updateQty(item.idItem, idVariant: variant?.idVariant);
+    }
+    if (itemStock < 1 && item.stockControl) {
+      throw 'out_of_stock'.tr();
+    }
+    String identifier =
+        '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
+    String itemName = item.itemName;
+    double itemPrice = item.itemPrice;
 
     if (item.isPackage) {
       final emptyItems = getEmptyItemPackages(item.packageItems);
       if (emptyItems.isNotEmpty) {
-        AppAlert.toast('x_stock_empty'.tr(args: [emptyItems.first.itemName]));
-        return;
+        throw 'x_stock_empty'.tr(args: [emptyItems.first.itemName]);
       }
     }
 
     final int cartIndex =
-        state.items.indexWhere((i) => i.identifier == itemCart.identifier);
+        state.items.indexWhere((i) => i.identifier == identifier);
 
     if (cartIndex > -1) {
       final ItemCart existItem = state.items[cartIndex];
       return updateItem(existItem.copyWith(quantity: existItem.quantity + 1));
     }
+
+    ItemCart itemCart = ItemCart(
+      identifier: identifier,
+      idItem: item.idItem,
+      idCategory: item.idCategory,
+      itemName: itemName,
+      price: itemPrice,
+      isPackage: item.isPackage,
+      manualDiscount: item.manualDiscount,
+      isManualPrice: item.isManualPrice,
+      quantity: 1,
+      discount: 0,
+      discountIsPercent: true,
+      discountTotal: 0,
+      note: '',
+      total: itemPrice,
+      addedAt: DateTime.now(),
+      idVariant: variant?.idVariant,
+      variantName: variant?.variantName ?? '',
+      details: item.packageItems
+          .map(
+            (pkg) => ItemCartDetail(
+              itemId: pkg.idItem,
+              name: pkg.itemName,
+              variantId: pkg.variantId,
+              quantity: pkg.quantityItem,
+              itemPrice: pkg.itemPrice,
+            ),
+          )
+          .toList(),
+    );
 
     if (kDebugMode) {
       log('ADD TO CART: $itemCart');
@@ -125,47 +182,104 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void addItemCart(ItemCart item) {
+  void addExtraItemCart(ItemCart item) async {
+    if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
+      await initCart(
+        customerGroup: state.customerGroup,
+        customerName: state.customerName,
+        idCustomer: state.idCustomer,
+      );
+    }
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(item);
-    state = state.copyWith(items: items);
+    state = state.copyWith(items: items, roundingValue: 0);
     calculateCart();
   }
 
-  void updateQty(String identifier, {bool increment = true}) {
-    final index = state.items.indexWhere((i) => i.idItem == identifier);
+  Future<void> updateQty(String idItem,
+      {int? idVariant, bool increment = true}) async {
+    final index = state.items
+        .indexWhere((i) => i.idItem == idItem && i.idVariant == idVariant);
+
     if (index > -1) {
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+
       List<ItemCart> items = [...state.items];
-      ItemCart item = items[index];
-      int quantity = increment ? item.quantity + 1 : item.quantity - 1;
-      double finalPrice = item.price - item.discountTotal;
+      ItemCart itemCart = items[index];
+
+      Item? item = objectBox.getItem(idItem);
+
+      if (item == null) {
+        throw 'x_not_found'.tr(args: ['item'.tr()]);
+      }
+
+      ItemVariant? itemVariant = idVariant == null
+          ? null
+          : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
+
+      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+
+      if (item.stockControl &&
+          outlet.config.stockMinus == false &&
+          itemCart.quantity + 1 > itemStock) {
+        throw 'max_qty_x'.tr(args: [
+          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
+        ]);
+      }
+
+      int quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
+      double finalPrice = itemCart.price - itemCart.discountTotal;
       items[index] =
-          item.copyWith(quantity: quantity, total: quantity * finalPrice);
-      state = state.copyWith(items: items);
+          itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
+      state = state.copyWith(items: items, roundingValue: 0);
       calculateCart();
     }
   }
 
-  void updateItem(ItemCart item) {
+  Future<void> updateItem(ItemCart itemCart) async {
+    final outlet = ref.read(outletProvider).value as OutletSelected;
+
     final index =
-        state.items.indexWhere((i) => i.identifier == item.identifier);
+        state.items.indexWhere((i) => i.identifier == itemCart.identifier);
     if (index > -1) {
       List<ItemCart> items = [...state.items];
-      double discount = item.discount;
-      double discountTotal = item.discountTotal;
-      if (item.promotion != null) {
+
+      Item? item = objectBox.getItem(itemCart.idItem);
+
+      if (item == null) {
+        throw 'x_not_found'.tr(args: ['item'.tr()]);
+      }
+
+      ItemVariant? itemVariant = itemCart.idVariant == null
+          ? null
+          : objectBox.getItemVariant(
+              idItem: itemCart.idItem, variantId: itemCart.idVariant!);
+
+      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+
+      if (item.stockControl &&
+          outlet.config.stockMinus == false &&
+          itemCart.quantity + 1 > itemStock) {
+        throw 'max_qty_x'.tr(args: [
+          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
+        ]);
+      }
+
+      double discount = itemCart.discount;
+      double discountTotal = itemCart.discountTotal;
+      if (itemCart.promotion != null) {
         discount = 0;
         discountTotal = 0;
       }
-      double finalPrice = item.price - discountTotal;
-      double total = item.quantity * finalPrice;
-      items[index] = item.copyWith(
+      double finalPrice = itemCart.price - discountTotal;
+      double total = itemCart.quantity * finalPrice;
+      items[index] = itemCart.copyWith(
         total: total,
         discount: discount,
         discountTotal: discountTotal,
         promotion: null,
       );
-      state = state.copyWith(items: items);
+      state = state.copyWith(items: items, roundingValue: 0);
       calculateCart();
     }
   }
@@ -181,14 +295,15 @@ class Cart extends _$Cart {
     promotions.removeWhere(
       (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
     );
-    state = state.copyWith(items: items, promotions: promotions);
+    state =
+        state.copyWith(items: items, promotions: promotions, roundingValue: 0);
     calculateCart();
     return true;
   }
 
-  int qtyOnCart(String idItem) {
+  int qtyOnCart(String idItem, {int? idVariant}) {
     List<int> qtyItems = state.items
-        .where((i) => i.idItem == idItem)
+        .where((i) => i.idItem == idItem && i.idVariant == idVariant)
         .map((i) => i.quantity)
         .toList();
     return qtyItems.isNotEmpty
@@ -209,11 +324,17 @@ class Cart extends _$Cart {
     state = state.copyWith(customerName: '', idCustomer: null);
   }
 
+  void setRoundingValue(double value) {
+    state = state.copyWith(roundingValue: value);
+    calculateCart();
+  }
+
   void setDiscountTransaction(
       {required double discount, required bool discIsPercent}) {
     double discOverallTotal =
         discIsPercent ? state.subtotal * (discount / 100) : discount;
     state = state.copyWith(
+      roundingValue: 0,
       discIsPercent: discIsPercent,
       discOverall: discount,
       discOverallTotal: discOverallTotal,
@@ -232,9 +353,11 @@ class Cart extends _$Cart {
 
   void addPayment(CartPayment payment) {
     final auth = ref.read(authProvider).value as Authenticated;
+    final shift = ref.read(shiftProvider).value;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
+      shiftId: shift?.id,
       payDate: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
     );
 
@@ -292,23 +415,56 @@ class Cart extends _$Cart {
     }
   }
 
-  Future<void> printReceipt({int printCounter = 1}) async {
+  Future<void> printReceipt(
+      {int printCounter = 1, bool? withKitchen = false}) async {
+    try {
+      log('PRINT RECEIPT $state');
+      final printer = ref.read(printerProvider).value;
+      if (printer == null) {
+        throw 'printer_not_connected'.tr();
+      }
+      if (printCounter > 1) {
+        final isAuthorize =
+            await AuthorizationHelper.authorize('print-receipt');
+        if (!isAuthorize) {
+          return;
+        }
+      }
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+      final AttributeReceipts? attributeReceipts =
+          outlet.config.attributeReceipts;
+      final receipt = await util.Printer.buildReceiptBytes(state,
+          outlet: outlet.outlet,
+          attributes: attributeReceipts,
+          size: printer.size,
+          isCopy: printCounter > 1,
+          cut: printer.cut);
+      await ref.read(printerProvider.notifier).print(receipt);
+      if (withKitchen == true) {
+        await printKitchen();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> printKitchen() async {
     try {
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
       }
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletProvider).value as OutletSelected)
-              .config
-              .attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(
+          outlet.config.attributeReceipts;
+      final receipt = await util.Printer.buildKitchenReceiptBytes(
         state,
+        outlet: outlet.outlet,
         attributes: attributeReceipts,
         size: printer.size,
-        isCopy: printCounter > 1,
+        cut: printer.cut,
       );
-      ref.read(printerProvider.notifier).print(receipt);
+      await ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {
       rethrow;
     }
@@ -596,7 +752,9 @@ class Cart extends _$Cart {
 
     List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
         .where((p) =>
-            p.type == 2 && p.requirementMinimumOrder! <= subtotal ||
+            p.type == 2 &&
+                (p.requirementMinimumOrder != null &&
+                    p.requirementMinimumOrder! <= subtotal) ||
             activePromoByProductIds.contains(p.promotionId))
         .toList();
 
@@ -632,6 +790,8 @@ class Cart extends _$Cart {
       }
     }
 
+    grandTotal += state.roundingValue;
+
     double change =
         state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
 
@@ -646,5 +806,15 @@ class Cart extends _$Cart {
       transactionDate: DateTime.now().millisecondsSinceEpoch,
       promotions: promotions,
     );
+  }
+
+  void setTables(List<Table> tables) async {
+    if (state.transactionNo == '') {
+      await initCart();
+    }
+    state = state.copyWith(
+      tables: tables.map((table) => table.name).toList(),
+    );
+    ref.read(tablesProvider().notifier).markTables(state.transactionNo, tables);
   }
 }

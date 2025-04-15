@@ -9,13 +9,11 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
   const ActiveShiftInfoHorizontal({
     required this.shiftInfo,
     this.onCloseShift,
-    this.onEditOpenAmount,
     super.key,
   });
 
   final ShiftInfo shiftInfo;
   final Function()? onCloseShift;
-  final Function()? onEditOpenAmount;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -103,17 +101,6 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
                               style: textTheme.headlineMedium
                                   ?.copyWith(fontWeight: FontWeight.w600),
                             ),
-                            onEditOpenAmount != null
-                                ? IconButton(
-                                    onPressed: onEditOpenAmount,
-                                    padding: const EdgeInsets.all(0),
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      size: 16,
-                                    ),
-                                    tooltip: 'edit_open_amount'.tr(),
-                                  )
-                                : Container()
                           ],
                         ),
                       ],

@@ -6,6 +6,7 @@ import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/payment_method.dart';
 import 'package:selleri/data/models/payment_type.dart';
 import 'package:selleri/ui/components/cart/payment_form.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'payment_methods.dart';
 
 class PaymentDetails extends StatefulWidget {
@@ -86,6 +87,10 @@ class _PaymentDetailsState extends State<PaymentDetails> {
         },
       );
       if (payment == null) {
+        return;
+      }
+      final isAuthorized = await AuthorizationHelper.authorize('make-payment');
+      if (!isAuthorized) {
         return;
       }
       widget.onAddPayment(payment);
