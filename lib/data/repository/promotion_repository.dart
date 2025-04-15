@@ -5,6 +5,7 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/data/network/promotion.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
 
@@ -13,6 +14,7 @@ part 'promotion_repository.g.dart';
 abstract class PromotionRepositoryProtocol {
   Future<List<Promotion>> fetchPromotions();
   Future<Promotion?> getPromoByCode(String code);
+  Future<Voucher?> getVoucher(String code);
 }
 
 @riverpod
@@ -63,6 +65,26 @@ class PromotionRepository implements PromotionRepositoryProtocol {
       final data = await api.promotionByCode(code, outlet.idOutlet);
       if (data['data'] != null) {
         return Promotion.fromJson(data['data']);
+      }
+      throw Exception('Promotion Not Found!');
+    } on DioException catch (e) {
+      throw e.message!;
+    } on Exception catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Voucher?> getVoucher(String code) async {
+    try {
+      final api = ref.watch(promotionApiProvider);
+      final outlet = await outletState.retrieveOutlet();
+      if (outlet == null) {
+        return null;
+      }
+      final data = await api.getVoucher(code, outlet.idOutlet);
+      if (data['data'] != null) {
+        return Voucher.fromJson(data['data']);
       }
       throw Exception('Promotion Not Found!');
     } on DioException catch (e) {

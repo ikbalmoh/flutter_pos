@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/promotion_repository.dart';
 import 'package:selleri/data/models/cart.dart' as model;
@@ -56,6 +57,18 @@ class Promotions extends _$Promotions {
     }
   }
 
+  Future<Voucher?> getVoucher(String code) async {
+    try {
+      log('GET VOUCHER: $code');
+      final PromotionRepository promotionRepository =
+          ref.read(promotionRepositoryProvider);
+      Voucher? voucher = await promotionRepository.getVoucher(code);
+      return voucher;
+    } catch (_) {
+      rethrow;
+    }
+  }
+
   bool isPromotionEligible(Promotion? promo) {
     if (promo == null) {
       return false;
@@ -85,8 +98,8 @@ class Promotions extends _$Promotions {
     if (!promo.allTime) {
       int now = DateTime.now().millisecondsSinceEpoch;
       int start = promo.startDate!.millisecondsSinceEpoch;
-      DateTime endDate = DateTime(promo.endDate!.year,
-          promo.endDate!.month, promo.endDate!.day + 1, 0, 0, -1);
+      DateTime endDate = DateTime(promo.endDate!.year, promo.endDate!.month,
+          promo.endDate!.day + 1, 0, 0, -1);
       int end = endDate.millisecondsSinceEpoch;
 
       bool dateIsValid = now >= start && now <= end;
@@ -159,7 +172,8 @@ class Promotions extends _$Promotions {
         case 2:
           eligibleItems = cart.items
               .where((item) =>
-                  promo.requirementProductId.contains(item.idVariant.toString()) &&
+                  promo.requirementProductId
+                      .contains(item.idVariant.toString()) &&
                   item.quantity >= promo.requirementQuantity!)
               .toList();
           break;
