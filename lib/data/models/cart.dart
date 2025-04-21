@@ -175,7 +175,7 @@ class Cart with _$Cart {
           (voucher) => {
             'code': voucher.code,
             'value': voucher.discountValue,
-            'type': voucher.runtimeType
+            'type': voucher.voucherType
           },
         ),
       ),
