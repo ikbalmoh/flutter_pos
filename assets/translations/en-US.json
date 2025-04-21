@@ -47,7 +47,8 @@
   "close": "Close",
   "select": "Select",
   "cash": "Cash",
-  "payment": "{} Payment",
+  "payment": "Payment",
+  "payment_x": "{} Payment",
   "add_payment": "Add Payment",
   "payment_amount": "Payment Amount",
   "note": "Note",
@@ -141,7 +142,7 @@
   "successfully_deleted": "{} is successfully deleted",
   "shift_detail": "Shift Detail",
   "edit": "Edit {}",
-  "delete_n": "Delete {}",
+  "delete_x": "Delete {}",
   "saved": "Saved",
   "deleted": "Deleted",
   "available_cash": "Available Cash",
@@ -341,5 +342,11 @@
   "total_x": "Total {}",
   "print_kitchen": "Print Kitchen",
   "kitchen": "Kitchen",
-  "verificator": "Verifikator"
+  "verificator": "Verifikator",
+  "voucher": "Voucher",
+  "voucher_code": "Voucher Code",
+  "check": "Check",
+  "checking": "Checking",
+  "use_x": "Use {}",
+  "cannot_use_with_promotion": "Can not be used with promotions"
 }

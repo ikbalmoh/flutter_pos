@@ -6,8 +6,8 @@ import 'package:selleri/utils/formater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DiscountItem extends ConsumerWidget {
-  const DiscountItem({
+class DiscountOverallItem extends ConsumerWidget {
+  const DiscountOverallItem({
     super.key,
   });
 

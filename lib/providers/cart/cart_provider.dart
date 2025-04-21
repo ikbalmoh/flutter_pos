@@ -18,6 +18,7 @@ import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/data/models/table.dart';
+import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -371,10 +372,7 @@ class Cart extends _$Cart {
       // Add payment
       payments.add(payment);
     }
-    double totalPayment = payments
-        .map((payment) => payment.paymentValue)
-        .reduce((payment, total) => payment + total);
-    state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    state = state.copyWith(payments: payments);
     calculateCart();
   }
 
@@ -382,12 +380,7 @@ class Cart extends _$Cart {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
     payments.removeWhere(
         (p) => p.paymentMethodId == paymentMethodId && p.createdAt == null);
-    double totalPayment = payments.isNotEmpty
-        ? payments
-            .map((payment) => payment.paymentValue)
-            .reduce((payment, total) => payment + total)
-        : 0;
-    state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    state = state.copyWith(payments: payments);
     calculateCart();
   }
 
@@ -723,10 +716,32 @@ class Cart extends _$Cart {
     state = state.copyWith(
       items: items,
       promotions: cartPromotions,
+      vouchers: [],
       subtotal: subtotal,
       promoCode: promoByCode?.promoCode,
     );
     calculateCart();
+  }
+
+  void applyVoucher(Voucher voucher) {
+    state = state.copyWith(vouchers: [voucher]);
+    if (voucher.voucherType == 'discount') {
+      setDiscountTransaction(
+          discIsPercent: voucher.isPercent, discount: voucher.discountValue);
+    } else {
+      calculateCart();
+    }
+  }
+
+  void removeVoucher() {
+    Voucher? discountVoucher = state.vouchers
+        .firstWhereOrNull((voucher) => voucher.voucherType == 'discount');
+    state = state.copyWith(vouchers: []);
+    if (discountVoucher != null) {
+      setDiscountTransaction(discount: 0, discIsPercent: false);
+    } else {
+      calculateCart();
+    }
   }
 
   List<CartPromotion> activePromotion() {
@@ -803,8 +818,27 @@ class Cart extends _$Cart {
 
     grandTotal += state.roundingValue;
 
-    double change =
-        state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
+    double totalMoneyPayment = state.payments.isNotEmpty
+        ? state.payments
+            .map((payment) => payment.paymentValue)
+            .reduce((payment, total) => payment + total)
+        : 0;
+
+    List<Voucher> voucherPayments = state.vouchers
+        .where((voucher) => voucher.voucherType == 'payment')
+        .toList();
+
+    double totalVoucherPayment = voucherPayments.isNotEmpty
+        ? voucherPayments
+            .map((voucher) => voucher.isPercent
+                ? grandTotal - (grandTotal * voucher.discountValue / 100)
+                : voucher.discountValue)
+            .reduce((payment, total) => payment + total)
+        : 0;
+
+    double totalPayment = totalMoneyPayment + totalVoucherPayment;
+
+    double change = totalPayment > grandTotal ? totalPayment - grandTotal : 0;
 
     state = state.copyWith(
       subtotal: subtotal,
@@ -816,6 +850,7 @@ class Cart extends _$Cart {
       change: change,
       transactionDate: DateTime.now().millisecondsSinceEpoch,
       promotions: promotions,
+      totalPayment: totalPayment,
     );
   }
 

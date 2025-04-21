@@ -199,9 +199,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         appBar: AppBar(
           title: Text(widget.isPartialPayment == true
               ? 'finish_x'.tr(args: [
-                  'payment'.tr(args: [''])
+                  'payment_x'.tr(args: [''])
                 ])
-              : 'payment'.tr(args: [''])),
+              : 'payment_x'.tr(args: [''])),
           elevation: 1,
         ),
         body: Row(

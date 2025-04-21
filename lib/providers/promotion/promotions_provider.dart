@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/promotion.dart';
-import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/promotion_repository.dart';
 import 'package:selleri/data/models/cart.dart' as model;
@@ -52,18 +51,6 @@ class Promotions extends _$Promotions {
           ref.read(promotionRepositoryProvider);
       Promotion? promo = await promotionRepository.getPromoByCode(code);
       return promo;
-    } catch (_) {
-      rethrow;
-    }
-  }
-
-  Future<Voucher?> getVoucher(String code) async {
-    try {
-      log('GET VOUCHER: $code');
-      final PromotionRepository promotionRepository =
-          ref.read(promotionRepositoryProvider);
-      Voucher? voucher = await promotionRepository.getVoucher(code);
-      return voucher;
     } catch (_) {
       rethrow;
     }

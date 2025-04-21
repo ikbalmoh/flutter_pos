@@ -7,6 +7,7 @@ import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/utils/formater.dart';
 
 part 'cart.freezed.dart';
@@ -54,6 +55,7 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
+    required List<Voucher> vouchers,
     List<String>? tables,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
@@ -78,6 +80,7 @@ class Cart with _$Cart {
         discPromotionsTotal: 0,
         payments: [],
         promotions: [],
+        vouchers: [],
         tables: [],
         totalPayment: 0,
         ppnIsInclude: true,
@@ -167,7 +170,15 @@ class Cart with _$Cart {
           (payment) => payment.toJson(),
         ),
       ),
-      "vouchers": [],
+      "vouchers": List<Map<String, dynamic>>.from(
+        vouchers.map(
+          (voucher) => {
+            'code': voucher.code,
+            'value': voucher.discountValue,
+            'type': voucher.runtimeType
+          },
+        ),
+      ),
       "refunds": [],
       "promotions": List<Map<String, dynamic>>.from(
         promotions.map(
@@ -203,11 +214,23 @@ class Cart with _$Cart {
   double totalCurrentPayment() {
     List<CartPayment> currentPayment =
         payments.where((p) => p.createdAt == null).toList();
-    double? total = currentPayment.isNotEmpty
+
+    double totalMoneyPayment = currentPayment.isNotEmpty
         ? currentPayment
             .map((payment) => payment.paymentValue)
             .reduce((payment, total) => payment + total)
         : 0;
-    return total;
+
+    List<Voucher> voucherPayments =
+        vouchers.where((voucher) => voucher.voucherType == 'payment').toList();
+
+    double totalVoucherPayment = voucherPayments.isNotEmpty
+        ? voucherPayments
+            .map((voucher) => voucher.isPercent
+                ? grandTotal - (grandTotal * voucher.discountValue / 100)
+                : voucher.discountValue)
+            .reduce((payment, total) => payment + total)
+        : 0;
+    return totalMoneyPayment + totalVoucherPayment;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/converters/generic.dart';
 
 part 'voucher.freezed.dart';
 part 'voucher.g.dart';
@@ -15,8 +16,8 @@ class Voucher with _$Voucher {
     required DateTime start,
     required DateTime end,
     required String voucherType,
-    required int isPercent,
-    required int discountValue,
+    @JsonKey(fromJson: Converters.dynamicToBool) required bool isPercent,
+    required double discountValue,
     required String description,
     required bool policy,
     required DateTime createdAt,
