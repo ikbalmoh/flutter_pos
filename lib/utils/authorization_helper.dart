@@ -63,6 +63,7 @@ class AuthorizationHelper {
             expand: false,
             builder: (context, scrollController) {
               return VerificatorPicker(
+                  scrollController: scrollController,
                   description:
                       modulePinSetting.description ?? modulePinSetting.name);
             },

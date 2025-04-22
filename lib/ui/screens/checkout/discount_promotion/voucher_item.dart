@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
-import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/add_voucher.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:selleri/utils/formater.dart';
