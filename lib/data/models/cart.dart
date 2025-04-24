@@ -117,6 +117,7 @@ class Cart with _$Cart {
       }).toList();
     }
     data['promotions'] = data['promotions'] ?? [];
+    data['vouchers'] = data['vouchers'] ?? [];
     return Cart.fromJson(data);
   }
 

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/outlet/outlet_state.dart';
 import 'package:selleri/utils/formater.dart';
@@ -89,6 +90,9 @@ class OrderSummary extends StatelessWidget {
       ],
     );
 
+    CartVoucher? voucher =
+        cart.vouchers.isNotEmpty ? cart.vouchers.first : null;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -117,11 +121,16 @@ class OrderSummary extends StatelessWidget {
             label: 'Subtotal',
             value: cart.subtotal,
           ),
-          TwoColumn(
-            label:
-                '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
-            value: cart.discOverallTotal,
-          ),
+          voucher != null && voucher.voucherType == 'discount'
+              ? TwoColumn(
+                  label: '${'voucher'.tr()} (${voucher.code})',
+                  value: -voucher.value,
+                )
+              : TwoColumn(
+                  label:
+                      '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
+                  value: -cart.discOverallTotal,
+                ),
           cart.discPromotionsTotal > 0
               ? TwoColumn(
                   label: 'promotions'.tr(),
@@ -287,7 +296,7 @@ class TwoColumn extends StatelessWidget {
                 textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
           ),
           Text(
-            CurrencyFormat.currency(value, symbol: false),
+            CurrencyFormat.currency(value, symbol: false, minus: true),
             style: valueStyle ??
                 textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
           ),

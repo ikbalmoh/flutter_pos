@@ -6,6 +6,7 @@ import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image/image.dart';
 import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/outlet.dart';
 import 'package:selleri/data/models/outlet_config.dart';
@@ -32,11 +33,16 @@ class Printer {
           Generator(size ?? PaperSize.mm58, profile, spaceBetweenRows: 1);
       List<int> bytes = [];
 
+      CartVoucher? voucher =
+          cart.vouchers.isNotEmpty ? cart.vouchers.first : null;
+
       Image? img;
       String? headers;
       String? footers;
 
-      bytes += generator.drawer();
+      if (!isCopy) {
+        bytes += generator.drawer();
+      }
 
       if (attributes != null) {
         if (isValidBase64(attributes.imageBase64!)) {
@@ -155,7 +161,20 @@ class Printer {
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
-        if (cart.discOverallTotal > 0) {
+        if (voucher != null && voucher.voucherType == 'discount') {
+          bytes += generator.row([
+            PosColumn(
+              text: '${'voucher'.tr()} (${voucher.code})',
+              width: 9,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text: '-${CurrencyFormat.currency(voucher.value, symbol: false)}',
+              width: 3,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        } else if (cart.discOverallTotal > 0) {
           bytes += generator.row([
             PosColumn(
               text:
@@ -201,11 +220,10 @@ class Printer {
         // Payments
         bytes += generator.hr();
         bytes += generator.text('payments'.tr());
-        for (var voucher in cart.vouchers
-            .where((voucher) => voucher.voucherType == 'payment')) {
+        if (voucher != null && voucher.voucherType == 'payment') {
           bytes += generator.row([
             PosColumn(
-              text: "${'vocuher'.tr()} ${voucher.code}",
+              text: '${'voucher'.tr()} (${voucher.code})',
               width: 7,
               styles: const PosStyles(align: PosAlign.left),
             ),

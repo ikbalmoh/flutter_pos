@@ -66,7 +66,7 @@ class _AddVoucherState extends ConsumerState<AddVoucher> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 5,
       ),
       child: Form(
-        autovalidateMode: AutovalidateMode.always,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         key: formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
