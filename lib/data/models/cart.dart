@@ -3,11 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/utils/formater.dart';
 
 part 'cart.freezed.dart';
@@ -55,7 +55,7 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
-    required List<Voucher> vouchers,
+    required List<CartVoucher> vouchers,
     List<String>? tables,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
@@ -174,7 +174,7 @@ class Cart with _$Cart {
         vouchers.map(
           (voucher) => {
             'code': voucher.code,
-            'value': voucher.discountValue,
+            'value': voucher.value,
             'type': voucher.voucherType
           },
         ),
@@ -221,16 +221,6 @@ class Cart with _$Cart {
             .reduce((payment, total) => payment + total)
         : 0;
 
-    List<Voucher> voucherPayments =
-        vouchers.where((voucher) => voucher.voucherType == 'payment').toList();
-
-    double totalVoucherPayment = voucherPayments.isNotEmpty
-        ? voucherPayments
-            .map((voucher) => voucher.isPercent
-                ? grandTotal - (grandTotal * voucher.discountValue / 100)
-                : voucher.discountValue)
-            .reduce((payment, total) => payment + total)
-        : 0;
-    return totalMoneyPayment + totalVoucherPayment;
+    return totalMoneyPayment;
   }
 }

@@ -206,6 +206,22 @@ class OrderSummary extends StatelessWidget {
               color: Colors.blueGrey.shade50,
             ),
           ),
+          if (cart.vouchers.where((v) => v.voucherType == 'payment').isNotEmpty)
+            ...cart.vouchers
+                .where((v) => v.voucherType == 'payment')
+                .map((voucher) {
+              return TwoColumn(
+                label: "${'voucher'.tr()} (${voucher.code})",
+                value: voucher.value,
+              );
+            }),
+          if (cart.payments.isNotEmpty)
+            ...cart.payments.map((payment) {
+              return TwoColumn(
+                label: payment.paymentName,
+                value: payment.paymentValue,
+              );
+            }),
           TwoColumn(
             label: 'payment_amount'.tr(),
             value: cart.totalPayment,

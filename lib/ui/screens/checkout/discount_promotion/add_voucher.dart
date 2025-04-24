@@ -108,6 +108,7 @@ class _AddVoucherState extends ConsumerState<AddVoucher> {
               focusNode: focusNode,
               autofocus: true,
               onChanged: (_) => clearError(),
+              onEditingComplete: onSearchCode,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'enter_x'

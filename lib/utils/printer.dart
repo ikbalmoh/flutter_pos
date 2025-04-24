@@ -78,12 +78,14 @@ class Printer {
 
       // info
       bytes += generator.text('No: ${cart.transactionNo}');
-      bytes += generator.text('Cashier: ${cart.createdName ?? '-'}');
+      bytes += generator.text('${'cashier'.tr()}: ${cart.createdName ?? '-'}');
       bytes += generator.text(
           'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
-      bytes += generator.text('Customer: ${cart.customerName ?? '-'}');
+      bytes +=
+          generator.text('${'customer'.tr()}: ${cart.customerName ?? '-'}');
       if (cart.tables != null && cart.tables!.isNotEmpty) {
-        bytes += generator.text('Table: ${cart.tables?.join(', ') ?? '-'}');
+        bytes += generator
+            .text('${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}');
       }
 
       bytes += generator.hr();
@@ -199,6 +201,21 @@ class Printer {
         // Payments
         bytes += generator.hr();
         bytes += generator.text('payments'.tr());
+        for (var voucher in cart.vouchers
+            .where((voucher) => voucher.voucherType == 'payment')) {
+          bytes += generator.row([
+            PosColumn(
+              text: "${'vocuher'.tr()} ${voucher.code}",
+              width: 7,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text: CurrencyFormat.currency(voucher.value, symbol: false),
+              width: 5,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
         for (var payment in cart.payments) {
           bytes += generator.row([
             PosColumn(

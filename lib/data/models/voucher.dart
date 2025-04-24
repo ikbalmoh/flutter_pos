@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 
 part 'voucher.freezed.dart';
@@ -6,6 +7,8 @@ part 'voucher.g.dart';
 
 @freezed
 class Voucher with _$Voucher {
+  const Voucher._();
+
   @JsonSerializable(fieldRename: FieldRename.snake, createToJson: true)
   const factory Voucher({
     required String id,
@@ -28,4 +31,15 @@ class Voucher with _$Voucher {
 
   factory Voucher.fromJson(Map<String, dynamic> json) =>
       _$VoucherFromJson(json);
+
+  CartVoucher toCartVoucher({required double value}) {
+    return CartVoucher(
+      id: id,
+      code: code,
+      isPercent: isPercent,
+      discountValue: discountValue,
+      voucherType: voucherType,
+      value: value,
+    );
+  }
 }

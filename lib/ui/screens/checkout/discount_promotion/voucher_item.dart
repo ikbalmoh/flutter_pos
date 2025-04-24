@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/add_voucher.dart';
 import 'package:selleri/utils/app_alert.dart';
-import 'package:selleri/utils/formater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/components/promotions/applied_voucher.dart';
@@ -49,8 +48,7 @@ class VoucherItem extends ConsumerWidget {
               splashColor: Colors.blueGrey.shade50,
               highlightColor: Colors.blueGrey.shade50,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding: const EdgeInsets.only(bottom: 10, left: 12, right: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -110,7 +108,7 @@ class VoucherItem extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(
                       CupertinoIcons.ticket,
@@ -125,24 +123,7 @@ class VoucherItem extends ConsumerWidget {
                       style: textTheme.bodyMedium
                           ?.copyWith(color: Colors.grey.shade800),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Text(
-                        CurrencyFormat.currency(
-                          ref.watch(cartProvider).discOverallTotal,
-                          minus: true,
-                        ),
-                        textAlign: TextAlign.right,
-                        style: textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.red.shade600),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    const Spacer(),
                     Icon(
                       Icons.chevron_right,
                       color: Colors.blueGrey.shade300,

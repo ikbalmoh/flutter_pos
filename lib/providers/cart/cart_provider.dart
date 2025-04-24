@@ -8,6 +8,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
@@ -724,17 +725,28 @@ class Cart extends _$Cart {
   }
 
   void applyVoucher(Voucher voucher) {
-    state = state.copyWith(vouchers: [voucher]);
     if (voucher.voucherType == 'discount') {
+      double voucherValue = voucher.isPercent
+          ? state.subtotal * (voucher.discountValue / 100)
+          : voucher.discountValue;
+      state = state
+          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+
       setDiscountTransaction(
           discIsPercent: voucher.isPercent, discount: voucher.discountValue);
     } else {
+      double voucherValue = voucher.isPercent == true
+          ? state.grandTotal * voucher.discountValue / 100
+          : voucher.discountValue;
+      state = state
+          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+
       calculateCart();
     }
   }
 
   void removeVoucher() {
-    Voucher? discountVoucher = state.vouchers
+    CartVoucher? discountVoucher = state.vouchers
         .firstWhereOrNull((voucher) => voucher.voucherType == 'discount');
     state = state.copyWith(vouchers: []);
     if (discountVoucher != null) {
@@ -784,6 +796,9 @@ class Cart extends _$Cart {
             activePromoByProductIds.contains(p.promotionId))
         .toList();
 
+    CartVoucher? voucher =
+        state.vouchers.isNotEmpty ? state.vouchers.first : null;
+
     double discOverallTotal = 0;
     double discPromotionsTotal = 0;
 
@@ -799,6 +814,14 @@ class Cart extends _$Cart {
       discOverallTotal = state.discIsPercent
           ? subtotal * (state.discOverall / 100)
           : state.discOverall;
+      if (voucher != null && voucher.voucherType == 'discount') {
+        discOverallTotal = voucher.isPercent == true
+            ? subtotal * (voucher.discountValue ?? 0) / 100
+            : (voucher.discountValue ?? 0);
+        voucher = voucher.copyWith(
+          value: discOverallTotal,
+        );
+      }
     }
 
     double total = subtotal - discOverallTotal - discPromotionsTotal;
@@ -824,17 +847,15 @@ class Cart extends _$Cart {
             .reduce((payment, total) => payment + total)
         : 0;
 
-    List<Voucher> voucherPayments = state.vouchers
-        .where((voucher) => voucher.voucherType == 'payment')
-        .toList();
-
-    double totalVoucherPayment = voucherPayments.isNotEmpty
-        ? voucherPayments
-            .map((voucher) => voucher.isPercent
-                ? grandTotal - (grandTotal * voucher.discountValue / 100)
-                : voucher.discountValue)
-            .reduce((payment, total) => payment + total)
-        : 0;
+    double totalVoucherPayment = 0;
+    if (voucher != null && voucher.voucherType == 'payment') {
+      totalVoucherPayment = voucher.isPercent == true
+          ? grandTotal * (voucher.discountValue ?? 0) / 100
+          : (voucher.discountValue ?? 0);
+      voucher = voucher.copyWith(
+        value: totalVoucherPayment,
+      );
+    }
 
     double totalPayment = totalMoneyPayment + totalVoucherPayment;
 
@@ -849,6 +870,7 @@ class Cart extends _$Cart {
       discPromotionsTotal: discPromotionsTotal,
       change: change,
       transactionDate: DateTime.now().millisecondsSinceEpoch,
+      vouchers: voucher != null ? [voucher] : [],
       promotions: promotions,
       totalPayment: totalPayment,
     );
