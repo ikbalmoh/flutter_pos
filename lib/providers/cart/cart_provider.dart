@@ -637,7 +637,7 @@ class Cart extends _$Cart {
         );
         itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
 
-        log('ITEM GET PROMO: $itemCart');
+        // log('ITEM GET PROMO: $itemCart');
 
         cartPromotions.add(cartPromo);
         items[itemIdx] = itemCart;
@@ -677,7 +677,7 @@ class Cart extends _$Cart {
       // Apply Rewards
       Promotion promo = freeGiftpromotions[i];
       ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
-      log('REWARD\n ITEM=>${reward.item.toString()}\n Variant=>${reward.variant.toString()}');
+      log('\nA GET B REWARD ITEM=>${reward.item.toString()}\n A GET B REWARD Variant=>${reward.variant.toString()}\n\n');
       if (reward.item != null) {
         for (ItemCart itemCart in eligibleItems) {
           int itemIdx = items.indexWhere(
@@ -689,12 +689,13 @@ class Cart extends _$Cart {
 
           items[itemIdx] = itemCart;
         }
-        items.add(ItemCart.fromItem(
+        ItemCart rewardItem = ItemCart.fromItem(
           reward.item!,
           variant: reward.variant,
           promotion: promo,
           isReward: true,
-        ));
+        );
+        items.add(rewardItem);
         cartPromotions.add(CartPromotion.fromData(promo));
       }
     }

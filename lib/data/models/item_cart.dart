@@ -66,19 +66,24 @@ class ItemCart with _$ItemCart {
 
     if (promotion != null) {
       if (isReward) {
+        log('REWARD PROMOTION: $promotion');
         identifier = 'reward-${promotion.idPromotion}';
+      } else {
+        log('ITEM PROMOTION: $promotion');
       }
-      discountIsPercent = promotion.discountType == true;
-      discount = promotion.rewardNominal;
-      discountTotal =
-          discountIsPercent ? itemPrice * (discount / 100) : discount;
-      if (promotion.rewardMaximumAmount != null &&
-          promotion.rewardMaximumAmount! > 0 &&
-          discountTotal > promotion.rewardMaximumAmount!) {
-        discountTotal = promotion.rewardMaximumAmount!;
-      }
+      if (!isReward && promotion.type != 1) {
+        discountIsPercent = promotion.discountType == true;
+        discount = promotion.rewardNominal;
+        discountTotal =
+            discountIsPercent ? itemPrice * (discount / 100) : discount;
+        if (promotion.rewardMaximumAmount != null &&
+            promotion.rewardMaximumAmount! > 0 &&
+            discountTotal > promotion.rewardMaximumAmount!) {
+          discountTotal = promotion.rewardMaximumAmount!;
+        }
 
-      log('Promotion Discount: $discount => $discountTotal');
+        log('PROMOTION DISCOUNT: $discount => $discountTotal');
+      }
     }
 
     return itemCart.copyWith(
@@ -120,6 +125,7 @@ class ItemCart with _$ItemCart {
     }
 
     if (promotion != null) {
+      log('ITEM CART PROMOTION: $promotion');
       if (isReward) {
         identifier = 'reward-${promotion.idPromotion}';
         quantity = promotion.rewardQty ?? 1;
@@ -154,7 +160,7 @@ class ItemCart with _$ItemCart {
       discountIsPercent: discountIsPercent,
       discountTotal: discountTotal,
       note: '',
-      total: total,
+      total: total - discountTotal,
       addedAt: DateTime.now(),
       idVariant: variant?.idVariant,
       variantName: variant?.variantName ?? '',
@@ -170,8 +176,10 @@ class ItemCart with _$ItemCart {
           )
           .toList(),
       promotion: itemCartPromotion,
-      isReward: promotion != null,
+      isReward: isReward,
     );
+
+    log('ITEM CART FROM ITEM: $itemCart');
 
     return itemCart;
   }
