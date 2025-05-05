@@ -135,7 +135,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
   void onDeleteCashflow() {
     AppAlert.confirm(
       context,
-      title: 'delete_n'.tr(args: ['cashflow'.tr()]),
+      title: 'delete_x'.tr(args: ['cashflow'.tr()]),
       subtitle: 'are_you_sure'.tr(),
       danger: true,
       onConfirm: () {

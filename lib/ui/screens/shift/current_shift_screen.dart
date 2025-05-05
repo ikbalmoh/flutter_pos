@@ -61,20 +61,13 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
 
   void onCloseShift(ShiftInfo shiftInfo) {
     showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        enableDrag: false,
-        builder: (context) => DraggableScrollableSheet(
-              initialChildSize: 0.6,
-              maxChildSize: 0.9,
-              minChildSize: 0.6,
-              expand: false,
-              builder: (context, controller) => CloseShiftForm(
-                shift: shiftInfo,
-                scrollController: controller,
-              ),
-            ));
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) => CloseShiftForm(
+        shift: shiftInfo,
+      ),
+    );
   }
 
   void onEditOpenAmount(ShiftInfo shiftInfo) async {

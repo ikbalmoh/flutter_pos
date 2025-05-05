@@ -156,7 +156,8 @@ class Promotions extends _$Promotions {
         case 2:
           eligibleItems = cart.items
               .where((item) =>
-                  promo.requirementProductId.contains(item.idVariant.toString()) &&
+                  promo.requirementProductId
+                      .contains(item.idVariant.toString()) &&
                   item.quantity >= promo.requirementQuantity!)
               .toList();
           break;

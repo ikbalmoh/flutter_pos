@@ -27,6 +27,15 @@ class PromotionApi {
         await api.get(ApiUrl.promotionByVoucher, queryParameters: query);
     return res.data;
   }
+
+  Future getVoucher(String code, String idOulet) async {
+    Map<String, dynamic> query = {
+      'code': code,
+      'id_outlet': idOulet,
+    };
+    final res = await api.get(ApiUrl.vouchers, queryParameters: query);
+    return res.data;
+  }
 }
 
 final promotionApiProvider = Provider<PromotionApi>((ref) {

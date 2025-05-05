@@ -27,11 +27,9 @@ import 'package:image_picker/image_picker.dart';
 enum Status { iddle, loading, success, error }
 
 class CloseShiftForm extends ConsumerStatefulWidget {
-  const CloseShiftForm(
-      {required this.shift, this.height, super.key, this.scrollController});
+  const CloseShiftForm({required this.shift, super.key, this.scrollController});
 
   final ShiftInfo shift;
-  final double? height;
   final ScrollController? scrollController;
 
   @override
@@ -156,29 +154,31 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
         .bodyMedium
         ?.copyWith(color: Colors.blueGrey.shade600);
 
-    return PopScope(
-      canPop: status != Status.loading,
-      child: status == Status.loading
-          ? const Center(
-              child: LoadingPlaceholder(),
-            )
-          : status == Status.success
-              ? CloseShiftSuccess(
-                  onClose: () => context.pop(),
-                  isAutoShift: isAutoShift,
-                )
-              : status == Status.error
-                  ? CloseShiftError(
-                      onRetry: () => onSubmit(context),
-                      onClose: () {
-                        setState(() {
-                          status = Status.iddle;
-                        });
-                      },
-                    )
-                  : Container(
-                      margin: const EdgeInsets.only(top: 10),
-                      child: Column(
+    return SizedBox(
+      // padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      height: (MediaQuery.of(context).size.height *
+          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.6)),
+      child: PopScope(
+        canPop: status != Status.loading,
+        child: status == Status.loading
+            ? const Center(
+                child: LoadingPlaceholder(),
+              )
+            : status == Status.success
+                ? CloseShiftSuccess(
+                    onClose: () => context.pop(),
+                    isAutoShift: isAutoShift,
+                  )
+                : status == Status.error
+                    ? CloseShiftError(
+                        onRetry: () => onSubmit(context),
+                        onClose: () {
+                          setState(() {
+                            status = Status.iddle;
+                          });
+                        },
+                      )
+                    : Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -440,7 +440,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                           ),
                         ],
                       ),
-                    ),
+      ),
     );
   }
 }

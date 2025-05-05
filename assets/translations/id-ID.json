@@ -47,7 +47,8 @@
   "close": "Tutup",
   "select": "Pilih",
   "cash": "Tunai",
-  "payment": "Pembayaran {}",
+  "payment": "Pembayaran",
+  "payment_x": "Pembayaran {}",
   "add_payment": "Input Pembayaran",
   "payment_amount": "Total Bayar",
   "note": "Catatan",
@@ -141,7 +142,7 @@
   "successfully_deleted": "{} berhasil dihapus",
   "shift_detail": "Detail Shift",
   "edit": "Edit {}",
-  "delete_n": "Hapus {}",
+  "delete_x": "Hapus {}",
   "saved": "Disimpan",
   "deleted": "Dihapus",
   "available_cash": "Uang Tunai yang Ada",
@@ -343,5 +344,11 @@
   "total_x": "Total {}",
   "print_kitchen": "Cetak Dapur",
   "kitchen": "Dapur",
-  "verificator": "Verifikator"
+  "verificator": "Verifikator",
+  "voucher": "Kupon",
+  "voucher_code": "Kode Kupon",
+  "check": "Periksa",
+  "checking": "Memeriksa",
+  "use_x": "Gunakan {}",
+  "cannot_use_with_promotion": "Tidak dapat digunakan dengan promo"
 }
