@@ -689,11 +689,19 @@ class Cart extends _$Cart {
 
           items[itemIdx] = itemCart;
         }
-        ItemCart rewardItem = ItemCart.fromItem(
+        int rewardQty = promo.rewardQty ?? 1;
+        final int itemPromoQty = eligibleItems
+            .map((item) => item.quantity)
+            .reduce((value, total) => value + total);
+
+        if (promo.kelipatan == true) {
+          rewardQty = (rewardQty * itemPromoQty) ~/ promo.requirementQuantity!;
+        }
+        ItemCart rewardItem = ItemCart.asReward(
           reward.item!,
           variant: reward.variant,
           promotion: promo,
-          isReward: true,
+          quantity: rewardQty,
         );
         items.add(rewardItem);
         cartPromotions.add(CartPromotion.fromData(promo));

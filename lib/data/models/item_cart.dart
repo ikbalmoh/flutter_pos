@@ -99,16 +99,15 @@ class ItemCart with _$ItemCart {
     );
   }
 
-  factory ItemCart.fromItem(
+  factory ItemCart.asReward(
     Item item, {
     ItemVariant? variant,
     Promotion? promotion,
-    bool isReward = false,
+    int quantity = 1,
   }) {
     String identifier = item.idItem;
     String itemName = item.itemName;
     double itemPrice = item.itemPrice;
-    int quantity = 1;
     bool discountIsPercent = true;
     double discount = 0;
     double discountTotal = 0;
@@ -126,10 +125,7 @@ class ItemCart with _$ItemCart {
 
     if (promotion != null) {
       log('ITEM CART PROMOTION: $promotion');
-      if (isReward) {
-        identifier = 'reward-${promotion.idPromotion}';
-        quantity = promotion.rewardQty ?? 1;
-      }
+      identifier = 'reward-${promotion.idPromotion}';
       if (promotion.rewardType == 1) {
         itemPrice = 0;
       } else {
@@ -176,7 +172,7 @@ class ItemCart with _$ItemCart {
           )
           .toList(),
       promotion: itemCartPromotion,
-      isReward: isReward,
+      isReward: true,
     );
 
     log('ITEM CART FROM ITEM: $itemCart');
