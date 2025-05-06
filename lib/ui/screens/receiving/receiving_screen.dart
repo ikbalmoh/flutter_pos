@@ -162,7 +162,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
           showReceiveItemForm(item.copyWith(skuNumber: barcode),
               variant: variant);
         },
-        confirmLabel: 'repalce_sku'.tr(),
+        confirmLabel: 'replace_sku'.tr(),
         shouldPop: false,
       );
     } else {
