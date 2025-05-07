@@ -176,9 +176,7 @@ class Cart extends _$Cart {
     if (kDebugMode) {
       log('ADD TO CART: $itemCart');
     }
-    List<ItemCart> items = List<ItemCart>.from(state.items)
-        .where((item) => item.isReward != true)
-        .toList();
+    List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
     state = state.copyWith(items: items);
     calculateCart();
@@ -195,6 +193,30 @@ class Cart extends _$Cart {
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(item);
     state = state.copyWith(items: items, roundingValue: 0);
+    calculateCart();
+  }
+
+  Future<void> removePromotion(String promotionId) async {
+    CartPromotion? promotion =
+        state.promotions.firstWhereOrNull((p) => p.promotionId == promotionId);
+
+    if (promotion != null) {
+      List<ItemCart> items = List<ItemCart>.from(state.items)
+          .map((item) => item.isReward != true &&
+                  item.promotion?.promotionId == promotionId
+              ? item.copyWith(promotion: null)
+              : item)
+          .toList();
+
+      // Remove item reward
+      items.removeWhere((item) =>
+          item.isReward == true && item.promotion?.promotionId == promotionId);
+
+      List<CartPromotion> promotions = List.from(state.promotions);
+
+      promotions.removeWhere((p) => p.promotionId == promotionId);
+      state = state.copyWith(promotions: promotions, items: items);
+    }
     calculateCart();
   }
 
@@ -215,6 +237,14 @@ class Cart extends _$Cart {
         throw 'x_not_found'.tr(args: ['item'.tr()]);
       }
 
+      List<CartPromotion> promotions = List.from(state.promotions);
+      if (itemCart.promotion != null) {
+        itemCart = itemCart.copyWith(
+          discount: 0,
+          discountTotal: 0,
+        );
+      }
+
       ItemVariant? itemVariant = idVariant == null
           ? null
           : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
@@ -233,8 +263,13 @@ class Cart extends _$Cart {
       double finalPrice = itemCart.price - itemCart.discountTotal;
       items[index] =
           itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
-      state = state.copyWith(items: items, roundingValue: 0);
-      calculateCart();
+      state = state.copyWith(
+          items: items, roundingValue: 0, promotions: promotions);
+      if (itemCart.promotion != null) {
+        removePromotion(itemCart.promotion!.promotionId);
+      } else {
+        calculateCart();
+      }
     }
   }
 
@@ -279,10 +314,16 @@ class Cart extends _$Cart {
         total: total,
         discount: discount,
         discountTotal: discountTotal,
-        promotion: null,
       );
-      state = state.copyWith(items: items, roundingValue: 0);
-      calculateCart();
+      state = state.copyWith(
+        items: items,
+        roundingValue: 0,
+      );
+      if (itemCart.promotion != null) {
+        removePromotion(itemCart.promotion!.promotionId);
+      } else {
+        calculateCart();
+      }
     }
   }
 

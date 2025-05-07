@@ -84,7 +84,8 @@ class ObjectBox {
     // FILTER PROMO BY CODE
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
-    Condition<Promotion> promotionTermsQuery = (Promotion_.type.equals(2))
+    Condition<Promotion> promotionTermsQuery = Promotion_.type
+        .equals(2)
         .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
     // Filter promotions by product
@@ -167,7 +168,7 @@ class ObjectBox {
 
     promotionQuery = promotionQuery.and(promotionTermsQuery);
 
-    QueryBuilder<Promotion> builder = promotionBox.query(promotionTermsQuery)
+    QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
       ..order(Promotion_.needCode)
       ..order(Promotion_.priority)
       ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)
@@ -175,7 +176,7 @@ class ObjectBox {
 
     List<Promotion> promotions = builder.build().find();
 
-    log('active promotions: ${promotions.map((p) => p.name)}');
+    log('Active Promotions: ${promotions.map((p) => p.toJson())}');
 
     return promotions;
   }

@@ -308,7 +308,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                     initialValue:
                         _discountFormater.formatDouble(widget.item.discount),
                     onChanged: onChangeDiscountValue,
-                    readOnly: !widget.item.manualDiscount,
+                    readOnly: !(widget.item.manualDiscount &&
+                        widget.item.promotion == null),
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     enabled: widget.item.isReward != true,
