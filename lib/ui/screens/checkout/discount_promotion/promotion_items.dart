@@ -10,7 +10,8 @@ class PromotionItems extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<CartPromotion> promotions = ref.watch(cartProvider.notifier).activePromotion();
+    final List<CartPromotion> promotions =
+        ref.watch(cartProvider.notifier).activePromotion();
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return ListView.builder(
@@ -44,10 +45,7 @@ class PromotionItems extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  CurrencyFormat.currency(
-                    promo.discountValue,
-                    minus: true,
-                  ),
+                  '${CurrencyFormat.currency(promo.discountValue, minus: true, symbol: !promo.discountIsPercent)} ${promo.discountIsPercent ? '%' : ''}',
                   textAlign: TextAlign.right,
                   style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600, color: Colors.red.shade600),

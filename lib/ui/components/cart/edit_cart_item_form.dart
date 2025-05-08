@@ -304,9 +304,17 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                     ),
                   ),
                   TextFormField(
+                    style: TextStyle(
+                      color: widget.item.manualDiscount ||
+                              widget.item.promotion != null
+                          ? Colors.grey.shade600
+                          : null,
+                    ),
                     inputFormatters: [_discountFormater],
-                    initialValue:
-                        _discountFormater.formatDouble(widget.item.discount),
+                    initialValue: _discountFormater.formatDouble(
+                        widget.item.promotion == null
+                            ? widget.item.discount
+                            : widget.item.discountTotal),
                     onChanged: onChangeDiscountValue,
                     readOnly: !(widget.item.manualDiscount &&
                         widget.item.promotion == null),
@@ -328,16 +336,18 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                         style: labelStyle,
                       ),
                       alignLabelWithHint: true,
-                      suffix: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: DiscountTypeToggle(
-                          disabled: widget.item.isReward == true,
-                          isPercent: discountIsPercent,
-                          onChange: widget.item.promotion == null
-                              ? onChangeDiscountType
-                              : null,
-                        ),
-                      ),
+                      suffix: widget.item.promotion == null
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: DiscountTypeToggle(
+                                disabled: widget.item.isReward == true,
+                                isPercent: discountIsPercent,
+                                onChange: widget.item.promotion == null
+                                    ? onChangeDiscountType
+                                    : null,
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                   TextFormField(

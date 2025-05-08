@@ -74,8 +74,18 @@ class ItemCart with _$ItemCart {
       if (!isReward && promotion.type != 1) {
         discountIsPercent = promotion.discountType == true;
         discount = promotion.rewardNominal;
-        discountTotal =
-            discountIsPercent ? itemPrice * (discount / 100) : discount;
+        int requirementQty = promotion.requirementQuantity ?? 1;
+        int rewardQuantity = 1;
+        discountTotal = discount;
+        if (discountIsPercent) {
+          discountTotal = itemPrice * (discount / 100);
+          rewardQuantity = requirementQty * (quantity ~/ requirementQty);
+        } else {
+          if (quantity > requirementQty) {
+            rewardQuantity = quantity ~/ requirementQty;
+          }
+        }
+        discountTotal *= rewardQuantity;
         if (promotion.rewardMaximumAmount != null &&
             promotion.rewardMaximumAmount! > 0 &&
             discountTotal > promotion.rewardMaximumAmount!) {
@@ -94,7 +104,10 @@ class ItemCart with _$ItemCart {
       discountIsPercent: discountIsPercent,
       discountTotal: discountTotal,
       total: total - discountTotal,
-      promotion: promotion != null ? CartPromotion.fromData(promotion) : null,
+      promotion: promotion != null
+          ? CartPromotion.fromData(promotion)
+              .copyWith(discountValue: discountTotal)
+          : null,
       isReward: isReward,
     );
   }
