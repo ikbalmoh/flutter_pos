@@ -35,7 +35,7 @@ class _PromotionCodeInputState extends ConsumerState<PromotionCodeInput> {
         .read(cartProvider)
         .promotions
         .firstWhereOrNull((p) => p.needCode == true);
-        log('APPLIED PROMO BY CODE: $promoByCode');
+    log('APPLIED PROMO BY CODE: $promoByCode');
     if (promoByCode != null) {
       controller.text = promoByCode.voucherCode ?? '';
       onSubmit(promoByCode.voucherCode!);
@@ -74,10 +74,15 @@ class _PromotionCodeInputState extends ConsumerState<PromotionCodeInput> {
       if (isEligible) {
         widget.onSelect(promo!);
       }
-    } on Exception catch (e) {
+    } catch (e) {
       log('PROMO CODE ERROR: $e');
       setState(() {
-        validation = e.toString().replaceAll('Exception:', '');
+        validation = e.toString();
+        promotion = null;
+        isLoading = false;
+      });
+    } finally {
+      setState(() {
         isLoading = false;
       });
     }
