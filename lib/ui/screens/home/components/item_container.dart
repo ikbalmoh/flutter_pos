@@ -55,7 +55,7 @@ class ItemContainer extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        AppAlert.snackbar( e.toString());
+        AppAlert.snackbar(e.toString());
       }
     }
   }
@@ -80,6 +80,10 @@ class ItemContainer extends ConsumerWidget {
   }
 
   void onLongPress(BuildContext context, Item item, WidgetRef ref) {
+    if (item.variants.isNotEmpty || item.variants.length > 1) {
+      showVariants(context, item, ref);
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isDismissible: true,

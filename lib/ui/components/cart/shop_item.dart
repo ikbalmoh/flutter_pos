@@ -26,8 +26,8 @@ class ShopItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final activePromotions = objectBox.getPromotions(item.promotions) ?? [];
     return InkWell(
-      onLongPress: item.variants.isNotEmpty
-          ? null
+      onLongPress: item.variants.isNotEmpty || item.variants.length > 1
+          ? () => showVariants(item)
           : onLongPress != null
               ? () => onLongPress!(item)
               : null,

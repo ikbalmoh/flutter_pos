@@ -27,7 +27,7 @@ class ItemInfo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<String> promotionsIds = item.promotions;
+    List<String> promotionsIds = List.from(item.promotions);
     if (item.variants.isNotEmpty) {
       for (ItemVariant variant in item.variants) {
         if (variant.promotions != null) {
