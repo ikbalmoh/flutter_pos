@@ -13,9 +13,13 @@ import 'package:go_router/go_router.dart';
 class ItemVariantPicker extends StatefulWidget {
   final Item item;
   final Function(List<ItemVariant>) onSelect;
+  final Function(ItemVariant) onLongPress;
 
   const ItemVariantPicker(
-      {super.key, required this.item, required this.onSelect});
+      {super.key,
+      required this.item,
+      required this.onSelect,
+      required this.onLongPress});
 
   @override
   State<ItemVariantPicker> createState() => _ItemVariantPickerState();
@@ -146,6 +150,7 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                   stockControl: widget.item.stockControl,
                   selected: selected?.idVariant == variant.idVariant,
                   onSelect: onSelectVariant,
+                  onLongPress: widget.onLongPress,
                 );
               },
               itemCount: variants.length,
@@ -183,12 +188,14 @@ class VariantItem extends StatelessWidget {
     this.selected = false,
     required this.stockControl,
     required this.onSelect,
+    required this.onLongPress,
   });
 
   final ItemVariant variant;
   final bool selected;
   final bool stockControl;
   final Function(ItemVariant) onSelect;
+  final Function(ItemVariant) onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +206,7 @@ class VariantItem extends StatelessWidget {
       child: Material(
         color: isAvailable ? Colors.white : Colors.grey.shade100,
         child: InkWell(
+          onLongPress: () => onLongPress(variant),
           onTap: isAvailable ? () => onSelect(variant) : null,
           child: Container(
             padding: const EdgeInsets.symmetric(
