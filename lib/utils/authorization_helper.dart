@@ -30,6 +30,12 @@ class AuthorizationHelper {
 
       final OutletConfig outletConfig = (outletState as OutletSelected).config;
 
+      final userHasPinList = outletConfig.userHasPin ?? [];
+
+      if (userHasPinList.isEmpty) {
+        return true;
+      }
+
       final List<PinSetting> pinSettings = outletConfig.pinSettings ?? [];
       if (pinSettings.isEmpty) {
         throw ('PIN setting not available');
@@ -43,12 +49,6 @@ class AuthorizationHelper {
       if (modulePinSetting.locked == false) {
         log('${modulePinSetting.name} no locked');
         return true;
-      }
-
-      final userHasPinList = outletConfig.userHasPin ?? [];
-
-      if (userHasPinList.isEmpty) {
-        throw ('No PIC available');
       }
 
       // Step 1: Select PIC

@@ -95,7 +95,11 @@ class ItemContainer extends ConsumerWidget {
     required WidgetRef ref,
     ItemVariant? variant,
   }) {
-    log('show info $variant');
+    log('SHOW ITEM INFO $item');
+    if (item.variants.isNotEmpty) {
+      showVariants(context, item, ref);
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isDismissible: true,
