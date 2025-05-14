@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/outlet.dart' as model;
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/error_handler.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
+import 'package:selleri/ui/screens/select_outlet/outlet_loading_status.dart';
 
 class SelectOutletPrompt extends ConsumerWidget {
   const SelectOutletPrompt({required this.outlet, super.key});
@@ -22,14 +22,8 @@ class SelectOutletPrompt extends ConsumerWidget {
     }
 
     void onSubmit() {
-      ref.read(outletProvider.notifier).selectOutlet(
-            outlet,
-            onSelected: (config) => context.setLocale(
-              config.locale == 'en'
-                  ? const Locale('en', 'US')
-                  : const Locale('id', 'ID'),
-            ),
-          );
+      context.pop();
+      ref.read(outletProvider.notifier).selectOutlet(outlet);
     }
 
     final outletState = ref.watch(outletProvider).value;
@@ -65,28 +59,7 @@ class SelectOutletPrompt extends ConsumerWidget {
               ? ErrorHandler(
                   error: outletState.message,
                 )
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const LoadingIndicator(color: Colors.teal),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      outletState is OutletLoading
-                          ? outletState.message
-                          : 'preparing_outlet'.tr(),
-                      style:
-                          textTheme.bodyMedium?.copyWith(color: Colors.black45),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
+              : OutletLoadingStatus(),
     );
   }
 }

@@ -3,11 +3,14 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  cloud_firestore
   file_selector_windows
   firebase_core
   flutter_secure_storage_windows
+  flutter_udid
   objectbox_flutter_libs
   permission_handler_windows
+  print_bluetooth_thermal
   share_plus
   url_launcher_windows
 )

@@ -5,12 +5,14 @@ class AppDrawerMenu extends StatelessWidget {
   final Icon icon;
   final String title;
   final String route;
+  final Map<String, String>? pathParameters;
 
   const AppDrawerMenu({
     super.key,
     required this.icon,
     required this.title,
     required this.route,
+    this.pathParameters,
   });
 
   @override
@@ -25,7 +27,9 @@ class AppDrawerMenu extends StatelessWidget {
         selectedColor: Colors.teal,
         selected: GoRouterState.of(context).name == route,
         title: Text(title),
-        onTap: () => context.pushNamed(route),
+        onTap: () {
+          context.goNamed(route, pathParameters: pathParameters ?? {});
+        },
         leading: icon,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),

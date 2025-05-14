@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -9,6 +10,7 @@ import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/network/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/item_repository.dart';
+import 'package:selleri/providers/outlet/outlet_state.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/utils/app_alert.dart';
 
@@ -38,28 +40,56 @@ class ItemsStream extends _$ItemsStream {
   Future<void> loadItems({
     bool refresh = false,
     bool fullSync = false,
-    Function(String progress)? progressCallback,
+    required Function(OutletLoading progress) progressCallback,
   }) async {
     log('LOAD ITEMS: $refresh');
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
-    if (progressCallback != null) {
-      progressCallback('loading_x'.tr(args: ['categories'.tr()]));
-    }
+    var progress = OutletLoading(
+      message: 'loading_x'.tr(args: ['categories'.tr()]),
+      promotions: false,
+      items: [],
+      config: true,
+    );
+
     List<Category> categories = await syncCategories();
 
-    if (progressCallback != null) {
-      progressCallback('loading_x'.tr(args: ['promotions'.tr()]));
-    }
+    progress = progress.copyWith(
+      categories: true,
+      items: categories
+          .map((e) => LoadItemStatus(category: e.categoryName, isLoaded: false))
+          .toList(),
+    );
+
+    progressCallback(progress);
+
     await ref.read(promotionsProvider.notifier).loadPromotions();
 
+    progress = progress.copyWith(
+      promotions: true,
+    );
+
+    progressCallback(progress);
+
     if (refresh || objectBox.itemBox.isEmpty()) {
-      for (var i = 0; i < categories.length; i++) {
-        Category category = categories[i];
-        if (progressCallback != null) {
-          progressCallback(
-              'loading_categories_items'.tr(args: [category.categoryName]));
-        }
+      // Track loading status for each category
+      Map<String, bool> categoryLoadingStatus = {
+        for (var category in categories) category.categoryName: false
+      };
+
+      // Create a list of futures for concurrent loading
+      List<Future<void>> loadItemCategories = categories.map((category) async {
+        categoryLoadingStatus[category.categoryName] = false;
+        progress = progress.copyWith(
+          items: categories
+              .map((e) => LoadItemStatus(
+                    category: e.categoryName,
+                    isLoaded: categoryLoadingStatus[e.categoryName] ?? false,
+                  ))
+              .toList(),
+        );
+
+        progressCallback(progress);
 
         final DateTime startLoad = DateTime.now();
         List<Item> items = await itemRepository.fetchItems(
@@ -68,8 +98,29 @@ class ItemsStream extends _$ItemsStream {
         );
         final DateTime startSave = DateTime.now();
         objectBox.putItems(items);
-        final DateTime endSate = DateTime.now();
-        log('${items.length} ITEMS LOADED\n => Category: ${category.categoryName}\n => Load : ${startSave.difference(startLoad).inMilliseconds}ms\n => Save : ${endSate.difference(startSave).inMilliseconds}ms');
+        final DateTime endSave = DateTime.now();
+        log('${items.length} ITEMS LOADED\n => Category: ${category.categoryName}\n => Load : ${startSave.difference(startLoad).inMilliseconds}ms\n => Save : ${endSave.difference(startSave).inMilliseconds}ms');
+
+        // Update progress to show this category is loaded
+        categoryLoadingStatus[category.categoryName] = true;
+        progress = progress.copyWith(
+          items: categories
+              .map((e) => LoadItemStatus(
+                    category: e.categoryName,
+                    isLoaded: categoryLoadingStatus[e.categoryName] ?? false,
+                  ))
+              .toList(),
+        );
+
+        progressCallback(progress);
+      }).toList();
+
+      try {
+        // Wait for all items to load concurrently
+        await Future.wait(loadItemCategories);
+      } catch (e) {
+        log('Error loading items: $e');
+        rethrow;
       }
     } else {
       await syncItems();
@@ -81,7 +132,7 @@ class ItemsStream extends _$ItemsStream {
     List<Item> items = [];
     for (var json in jsonItems) {
       try {
-        Item item = Item.fromJson(json);
+        Item item = Item.fromJsonData(json);
         items.add(item);
       } catch (e) {
         log('parse item failed: $e');
@@ -105,7 +156,9 @@ class ItemsStream extends _$ItemsStream {
 
   Future<void> syncItems() async {
     if (objectBox.categoryBox.isEmpty()) {
-      await loadItems();
+      await loadItems(progressCallback: (status) {
+        log('SYNC ITEMS PROGRESS: $status');
+      });
     } else {
       log('SYNC ITEMS');
 
@@ -131,14 +184,19 @@ class ItemsStream extends _$ItemsStream {
     await ref.read(promotionsProvider.notifier).loadPromotions();
   }
 
-  double getItemStock(String idItem) {
+  double getItemStock(String idItem, {int? variantId}) {
+    if (variantId != null) {
+      final variant =
+          objectBox.getItemVariant(idItem: idItem, variantId: variantId);
+      return variant?.stockItem ?? 0;
+    }
     final item = objectBox.getItem(idItem);
     return item?.stockItem ?? 0;
   }
 
   Future<Item> storeItem(Map<String, dynamic> itemPayload,
       List<AttributeVariant> attributes) async {
-    final api = ItemApi();
+    final api = ref.watch(itemApiProvider);
 
     try {
       if (attributes.isNotEmpty) {
@@ -170,7 +228,7 @@ class ItemsStream extends _$ItemsStream {
   Future<List<ItemVariant>> updateVariants(
       String idItem, List<ItemVariant> variants) async {
     try {
-      final api = ItemApi();
+      final api = ref.watch(itemApiProvider);
       List<Map<String, dynamic>> attributes =
           variants.map<Map<String, dynamic>>((v) {
         return {

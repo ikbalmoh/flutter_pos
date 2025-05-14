@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
@@ -11,36 +12,61 @@ import 'package:go_router/go_router.dart';
 
 class ItemVariantPicker extends StatefulWidget {
   final Item item;
-  final Function(ItemVariant) onSelect;
+  final Function(List<ItemVariant>) onSelect;
+  final Function(ItemVariant) onLongPress;
 
   const ItemVariantPicker(
-      {super.key, required this.item, required this.onSelect});
+      {super.key,
+      required this.item,
+      required this.onSelect,
+      required this.onLongPress});
 
   @override
   State<ItemVariantPicker> createState() => _ItemVariantPickerState();
 }
 
 class _ItemVariantPickerState extends State<ItemVariantPicker> {
-  ItemVariant? selected;
+  List<ItemVariant> selectedVariants = [];
 
-  void onAddToCart(BuildContext context, ItemVariant variant) {
-    widget.onSelect(variant);
+  void onAddToCart(BuildContext context) {
+    widget.onSelect(selectedVariants);
     context.pop();
   }
 
-  bool isAvailable() {
-    if (selected != null) {
-      if (widget.item.stockControl) {
-        return selected!.stockItem > 0;
-      }
-      return true;
+  void onSelectVariant(ItemVariant variant) {
+    List<ItemVariant> allSelected =
+        List<ItemVariant>.from(selectedVariants).toList();
+
+    int existIdx =
+        allSelected.indexWhere((v) => v.idVariant == variant.idVariant);
+
+    if (existIdx < 0) {
+      allSelected.add(variant);
+    } else {
+      allSelected.removeAt(existIdx);
     }
-    return false;
+    setState(() {
+      selectedVariants = allSelected;
+    });
+  }
+
+  void onSelectAll() {
+    List<ItemVariant> variants = objectBox.itemVariants(widget.item.idItem);
+    List<ItemVariant> avaialableVariants = widget.item.stockControl
+        ? variants.where((v) => v.stockItem > 1).toList()
+        : variants;
+    bool isAllSelected = selectedVariants.length == avaialableVariants.length;
+    setState(() {
+      selectedVariants = isAllSelected ? [] : avaialableVariants;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     List<ItemVariant> variants = objectBox.itemVariants(widget.item.idItem);
+    List<ItemVariant> avaialableVariants = widget.item.stockControl
+        ? variants.where((v) => v.stockItem > 1).toList()
+        : variants;
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       padding: EdgeInsets.only(
@@ -91,12 +117,24 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
           const SizedBox(
             height: 15,
           ),
-          Text(
-            'select_variant'.tr(),
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Colors.blueGrey.shade600),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Checkbox(
+                  visualDensity:
+                      const VisualDensity(horizontal: -4, vertical: -4),
+                  value: selectedVariants.length == avaialableVariants.length,
+                  onChanged: (_) => onSelectAll(),
+                ),
+                const SizedBox(width: 7),
+                Text(
+                  'select_x'.tr(args: ['all'.tr()]),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.black87, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
           ),
           const SizedBox(
             height: 7.5,
@@ -105,15 +143,15 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
             child: ListView.builder(
               itemBuilder: (context, idx) {
                 ItemVariant variant = variants[idx];
+                ItemVariant? selected = selectedVariants
+                    .firstWhereOrNull((v) => v.idVariant == variant.idVariant);
                 return VariantItem(
-                    variant: variant,
-                    stockControl: widget.item.stockControl,
-                    selected: selected?.idVariant == variant.idVariant,
-                    onSelect: (v) {
-                      setState(() {
-                        selected = v;
-                      });
-                    });
+                  variant: variant,
+                  stockControl: widget.item.stockControl,
+                  selected: selected?.idVariant == variant.idVariant,
+                  onSelect: onSelectVariant,
+                  onLongPress: widget.onLongPress,
+                );
               },
               itemCount: variants.length,
               shrinkWrap: true,
@@ -124,13 +162,15 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
           ),
           ElevatedButton(
             onPressed:
-                isAvailable() ? () => onAddToCart(context, selected!) : null,
+                selectedVariants.isNotEmpty ? () => onAddToCart(context) : null,
             style: ElevatedButton.styleFrom(
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25)),
               ),
             ),
-            child: Text('choose'.tr()),
+            child: Text('${'select_x'.tr(args: [
+                  '${selectedVariants.length}'
+                ])} ${'variants'.tr()}'),
           ),
           const SizedBox(
             height: 7.5,
@@ -148,22 +188,26 @@ class VariantItem extends StatelessWidget {
     this.selected = false,
     required this.stockControl,
     required this.onSelect,
+    required this.onLongPress,
   });
 
   final ItemVariant variant;
   final bool selected;
   final bool stockControl;
   final Function(ItemVariant) onSelect;
+  final Function(ItemVariant) onLongPress;
 
   @override
   Widget build(BuildContext context) {
     Color textColor = selected ? Colors.teal : Colors.black;
+    final bool isAvailable = stockControl ? variant.stockItem > 1 : true;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
-        color: Colors.white,
+        color: isAvailable ? Colors.white : Colors.grey.shade100,
         child: InkWell(
-          onTap: () => onSelect(variant),
+          onLongPress: () => onLongPress(variant),
+          onTap: isAvailable ? () => onSelect(variant) : null,
           child: Container(
             padding: const EdgeInsets.symmetric(
               vertical: 10,
@@ -177,6 +221,13 @@ class VariantItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Checkbox(
+                  visualDensity:
+                      const VisualDensity(horizontal: -4, vertical: -4),
+                  value: selected,
+                  onChanged: isAvailable ? (_) => onSelect(variant) : null,
+                ),
+                const SizedBox(width: 7),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

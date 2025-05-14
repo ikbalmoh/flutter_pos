@@ -16,6 +16,7 @@ import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/screens/shift/shift_history_detail.dart';
 import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/formater.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 
 class ShiftHistoryScreen extends ConsumerStatefulWidget {
   const ShiftHistoryScreen({super.key});
@@ -28,6 +29,8 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
     with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+
+  final tooltipController = SuperTooltipController();
 
   DateTime? from;
   DateTime? to;
@@ -98,7 +101,18 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
         to = range[1];
       });
       onSearchItems(_searchController.text);
+      tooltipController.showTooltip();
+    } else {
+      tooltipController.hideTooltip();
     }
+  }
+
+  void resetDateFilter() {
+    setState(() {
+      from = null;
+      to = null;
+    });
+    onSearchItems(_searchController.text);
   }
 
   @override
@@ -112,44 +126,88 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
       body: Row(
         children: [
           Expanded(
-            child: Card(
-              elevation: 0,
-              margin: const EdgeInsets.all(0),
-              color: Colors.white,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SearchBar(
-                            leading: const Icon(CupertinoIcons.search),
-                            hintText: 'search'.tr(),
-                            controller: _searchController,
+            child: RefreshIndicator(
+              onRefresh: () => ref
+                  .read(shiftListNotifierProvider.notifier)
+                  .loadShifts(page: 1),
+              child: Card(
+                elevation: 0,
+                margin: const EdgeInsets.all(0),
+                color: Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: SearchBar(
+                              leading: const Icon(CupertinoIcons.search),
+                              hintText: 'search'.tr(),
+                              controller: _searchController,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        IconButton(
-                          onPressed: onShowDatePicker,
-                          icon: Badge(
-                            backgroundColor:
-                                from != null ? Colors.red : Colors.transparent,
-                            smallSize: 10,
-                            child: const Icon(CupertinoIcons.calendar),
+                          const SizedBox(
+                            width: 10,
                           ),
-                        )
-                      ],
+                          SuperTooltip(
+                            controller: tooltipController,
+                            showBarrier: false,
+                            showDropBoxFilter: false,
+                            hasShadow: false,
+                            onHide: () => resetDateFilter(),
+                            hideTooltipOnTap: true,
+                            content: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                from != null
+                                    ? Text(
+                                        DateTimeFormater.dateToString(from!,
+                                            format: 'dd MMM'),
+                                        softWrap: true,
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                        ),
+                                      )
+                                    : Container(),
+                                to != null && to != from
+                                    ? Text(
+                                        ' - ${DateTimeFormater.dateToString(to!, format: 'dd MMM')}',
+                                        softWrap: true,
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                        ),
+                                      )
+                                    : Container(),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 12,
+                                    color: Colors.black54,
+                                  ),
+                                )
+                              ],
+                            ),
+                            child: IconButton(
+                              onPressed: onShowDatePicker,
+                              icon: Badge(
+                                backgroundColor: from != null
+                                    ? Colors.red
+                                    : Colors.transparent,
+                                smallSize: 10,
+                                child: const Icon(CupertinoIcons.calendar),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () => ref
-                          .read(shiftListNotifierProvider.notifier)
-                          .loadShifts(page: 1),
+                    Expanded(
                       child: ref.watch(shiftListNotifierProvider).when(
                             data: (data) => data.data!.isNotEmpty
                                 ? ListView.builder(
@@ -200,7 +258,9 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                                             Text(shift.codeShift ?? shift.id),
                                         trailing: Text(
                                           CurrencyFormat.currency(
-                                            shift.closeAmount,
+                                            shift.closeShift != null
+                                                ? shift.closeAmount
+                                                : shift.expectedCashEnd,
                                             symbol: true,
                                           ),
                                           style: Theme.of(context)
@@ -309,8 +369,8 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                             ),
                           ),
                     ),
-                  )
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -61,15 +61,13 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
 
   void onCloseShift(ShiftInfo shiftInfo) {
     showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        enableDrag: false,
-        builder: (context) {
-          return CloseShiftForm(
-            shift: shiftInfo,
-          );
-        });
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) => CloseShiftForm(
+        shift: shiftInfo,
+      ),
+    );
   }
 
   void onEditOpenAmount(ShiftInfo shiftInfo) async {
@@ -110,7 +108,6 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                             ActiveShiftInfoHorizontal(
                               shiftInfo: data!,
                               onCloseShift: () => onCloseShift(data),
-                              onEditOpenAmount: () => onEditOpenAmount(data),
                             ),
                             const SizedBox(
                               height: 15,
@@ -155,6 +152,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                                             : viewSummary == 'summary'
                                                 ? SalesSummaryList(
                                                     summary: data.summary,
+                                                    openCashEditable: true,
                                                   )
                                                 : Container(
                                                     padding: const EdgeInsets
@@ -199,12 +197,12 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                               child: ActiveShiftInfo(
                                 shiftInfo: data!,
                                 onCloseShift: () => onCloseShift(data),
-                                onEditOpenAmount: () => onEditOpenAmount(data),
                               ),
                             ),
                           ),
                           ShiftSummaryCards(
                             shiftInfo: data,
+                            openCashEditable: true,
                           ),
                           const SizedBox(height: 15),
                           ShiftCashflows(

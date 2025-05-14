@@ -4,8 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/token.dart';
-import 'package:selleri/data/network/api.dart' show AuthApi;
 import 'package:selleri/data/models/user.dart';
+import 'package:selleri/data/network/auth.dart';
+import 'package:selleri/data/repository/outlet_repository.dart';
 import 'package:selleri/data/repository/token_repository.dart';
 import 'package:selleri/providers/auth/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'auth_repository.g.dart';
 
 @riverpod
-AuthRepository authRepository(AuthRepositoryRef ref) => AuthRepository(ref);
+AuthRepository authRepository(Ref ref) => AuthRepository(ref);
 
 abstract class AuthRepositoryProtocol {
   Future<AuthState> login(String username, String password);
@@ -25,11 +26,13 @@ class AuthRepository implements AuthRepositoryProtocol {
 
   final Ref _ref;
 
-  final api = AuthApi();
-
   @override
   Future<AuthState> login(String username, String password) async {
     final TokenRepository tokenRepository = _ref.read(tokenRepositoryProvider);
+    final OutletRepository outletRepository =
+        _ref.read(outletRepositoryProvider);
+
+    final api = _ref.watch(authApiProvider);
 
     try {
       final response = await api.login(username, password);
@@ -37,6 +40,7 @@ class AuthRepository implements AuthRepositoryProtocol {
       final Token token = Token.fromJson(response);
 
       await tokenRepository.saveToken(token);
+      await outletRepository.remove();
 
       User? user = await fetchUser();
       if (user != null) {
@@ -44,22 +48,21 @@ class AuthRepository implements AuthRepositoryProtocol {
       }
       return const AuthFailure(message: 'user authentication failed');
     } on DioException catch (e) {
-      String message = e.response?.data['msg'] ?? e.message;
-      await tokenRepository.remove();
-      return AuthFailure(message: message);
+      return AuthFailure(message: e.message!);
     } on PlatformException catch (e) {
-      await tokenRepository.remove();
+      await tokenRepository.removeToken();
       return AuthFailure(message: e.message ?? e.toString());
     }
   }
 
   Future<User?> fetchUser() async {
+    final api = _ref.watch(authApiProvider);
+
     try {
       final json = await api.user();
       return User.fromJson(json);
     } on DioException catch (e) {
-      String message = e.response?.data['msg'] ?? e.message;
-      throw message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -67,15 +70,16 @@ class AuthRepository implements AuthRepositoryProtocol {
 
   @override
   Future<void> logout() async {
+    final api = _ref.watch(authApiProvider);
+
     try {
       await api.logout();
     } on DioException catch (e) {
-      String message = e.response?.data['msg'] ?? e.message;
-      throw Exception(message);
+      throw e.message!;
     } catch (e) {
       log('API LOGOUT ERROR: $e');
     } finally {
-      _ref.read(tokenRepositoryProvider).remove();
+      _ref.read(tokenRepositoryProvider).removeToken();
     }
   }
 }

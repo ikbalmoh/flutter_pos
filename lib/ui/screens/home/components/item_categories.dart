@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/category.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/item/category_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,14 +9,43 @@ import 'package:selleri/utils/formater.dart';
 
 class ItemCategories extends ConsumerWidget {
   final String active;
+  final FilterStock? filterStock;
+  final bool? itemLoading;
   final void Function(String idCategory) onChange;
 
-  const ItemCategories(
-      {required this.active, required this.onChange, super.key});
+  const ItemCategories({
+    required this.active,
+    this.filterStock,
+    this.itemLoading,
+    required this.onChange,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoriesStreamProvider);
+
+    var loadingSkeleton = ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+      itemBuilder: (context, _) {
+        return Container(
+          width: 100,
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(25),
+          ),
+        );
+      },
+      itemCount: 10,
+    );
+
+    if (itemLoading == true) {
+      return loadingSkeleton;
+    }
+
     return switch (categories) {
       AsyncData(:final value) => SizedBox(
           height: 55,
@@ -40,7 +70,7 @@ class ItemCategories extends ConsumerWidget {
                   ),
                   backgroundColor: active == category.idCategory
                       ? Colors.teal.shade400
-                      : Colors.teal.shade50.withOpacity(0.5),
+                      : Colors.teal.shade50.withValues(alpha: 0.5),
                   labelStyle: TextStyle(
                     color: active == category.idCategory
                         ? Colors.white
@@ -64,7 +94,8 @@ class ItemCategories extends ConsumerWidget {
                         child: Text(
                           CurrencyFormat.currency(
                             objectBox.getTotalItem(
-                                idCategory: category.idCategory),
+                                idCategory: category.idCategory,
+                                filterStock: filterStock),
                             symbol: false,
                           ),
                           style: Theme.of(context)
@@ -86,23 +117,7 @@ class ItemCategories extends ConsumerWidget {
           ),
         ),
       AsyncError(:final error) => Text(error.toString()),
-      _ => ListView.builder(
-          scrollDirection: Axis.horizontal,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 3),
-          itemBuilder: (context, _) {
-            return Container(
-              width: 100,
-              height: 30,
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(20),
-              ),
-            );
-          },
-          itemCount: 10,
-        ),
+      _ => loadingSkeleton,
     };
   }
 }

@@ -29,7 +29,7 @@ class ActiveShiftInfoSkeleton extends StatelessWidget {
                   width: 150,
                   height: 40,
                   decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50.withOpacity(0.5),
+                      color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(10)),
                 ),
                 const SizedBox(height: 10),
@@ -37,7 +37,7 @@ class ActiveShiftInfoSkeleton extends StatelessWidget {
                   width: 140,
                   height: 20,
                   decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50.withOpacity(0.5),
+                      color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(5)),
                 ),
                 const SizedBox(height: 15),
@@ -45,7 +45,7 @@ class ActiveShiftInfoSkeleton extends StatelessWidget {
                   width: double.infinity,
                   height: 80,
                   decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50.withOpacity(0.5),
+                      color: Colors.blueGrey.shade50.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(10)),
                 ),
               ],

@@ -6,6 +6,7 @@ import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/hold/hold_button.dart';
+import 'package:selleri/ui/screens/checkout/add_rounding.dart';
 import 'package:selleri/ui/screens/checkout/confirm_store_transaction.dart';
 import 'package:selleri/ui/screens/checkout/discount_promotion/discount_promotion.dart';
 import 'package:selleri/ui/components/cart/order_summary/order_summary.dart';
@@ -27,6 +28,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     super.initState();
+  }
+
+  void onChangeRoundingValue() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        backgroundColor: Colors.white,
+        builder: (context) {
+          return AddRounding();
+        });
   }
 
   void onConfirmStoreTransaction() async {
@@ -62,7 +73,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         backgroundColor:
             cart.totalPayment >= cart.grandTotal ? Colors.teal : Colors.red,
       ),
-      onPressed: ((isPartialEnabled && cart.payments.isNotEmpty) ||
+      onPressed: ((isPartialEnabled && cart.totalPayment < cart.grandTotal) ||
               cart.totalPayment >= cart.grandTotal ||
               cart.grandTotal == 0)
           ? onConfirmStoreTransaction
@@ -145,21 +156,27 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               ? Expanded(
                   child: OrderSummary(
                     taxable: config?.taxable ?? false,
-                    cart: cart,
+                    cart: ref.watch(cartProvider),
                     radius: const Radius.circular(10),
                     mainAxisSize:
                         isKeyboardVisible ? MainAxisSize.min : MainAxisSize.max,
                     outletState:
                         ref.watch(outletProvider).value as OutletSelected,
+                    onChangeRoundingValue: widget.isPartialPayment == true
+                        ? null
+                        : onChangeRoundingValue,
                   ),
                 )
               : OrderSummary(
                   taxable: config?.taxable ?? false,
-                  cart: cart,
+                  cart: ref.watch(cartProvider),
                   radius: const Radius.circular(10),
                   mainAxisSize: MainAxisSize.min,
                   outletState:
                       ref.watch(outletProvider).value as OutletSelected,
+                  onChangeRoundingValue: widget.isPartialPayment == true
+                      ? null
+                      : onChangeRoundingValue,
                 ),
         ],
       ),
@@ -182,9 +199,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         appBar: AppBar(
           title: Text(widget.isPartialPayment == true
               ? 'finish_x'.tr(args: [
-                  'payment'.tr(args: [''])
+                  'payment_x'.tr(args: [''])
                 ])
-              : 'payment'.tr(args: [''])),
+              : 'payment_x'.tr(args: [''])),
           elevation: 1,
         ),
         body: Row(
@@ -241,7 +258,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       ),
                     ),
                   ),
-                  cart.payments.isNotEmpty ? actions : Container()
+                  cart.totalPayment > 0 ? actions : Container()
                 ],
               ),
             ),

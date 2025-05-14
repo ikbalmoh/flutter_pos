@@ -10,6 +10,8 @@ class ItemPackage {
   int id;
 
   @Index()
+  String idItemPackage;
+
   String idItem;
   
   String itemName;
@@ -21,6 +23,7 @@ class ItemPackage {
 
   ItemPackage({
     required this.id,
+    required this.idItemPackage,
     required this.idItem,
     required this.itemName,
     required this.variantId,

@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -13,7 +14,7 @@ class Holded extends _$Holded {
   @override
   FutureOr<Pagination<CartHolded>> build() async {
     try {
-      final api = TransactionApi();
+      final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final holded =
           await api.holdedTransactions(idOutlet: outlet.outlet.idOutlet);
@@ -31,7 +32,7 @@ class Holded extends _$Holded {
       state = AsyncData(state.value!.copyWith(loading: true));
     }
     try {
-      final api = TransactionApi();
+      final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       var holded = await api.holdedTransactions(
           idOutlet: outlet.outlet.idOutlet, page: page, q: search);

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/customer_group.dart';
-import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/data/constants/app.dart' show assignsType;
 
 class PromotionAssign extends StatelessWidget {
   const PromotionAssign({
@@ -37,7 +37,7 @@ class PromotionAssign extends StatelessWidget {
           Text(
             assignCustomer == 4
                 ? groups!.map((group) => group.groupName).join(', ')
-                : Promotion.assignsType[assignCustomer]!,
+                : assignsType[assignCustomer]!,
             style: Theme.of(context)
                 .textTheme
                 .bodySmall

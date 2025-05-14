@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/config/api_url.dart';
 import 'package:selleri/data/constants/store_key.dart';
@@ -12,7 +13,9 @@ import 'package:selleri/utils/formater.dart';
 const storage = FlutterSecureStorage();
 
 class ShiftApi {
-  final api = fetch();
+  final Dio api;
+
+  ShiftApi({required this.api});
 
   Future<Shift?> startShift(Shift shift) async {
     Map<String, dynamic> data = {
@@ -73,7 +76,7 @@ class ShiftApi {
           await api.post('${ApiUrl.shifts}/$id/closing', data: formData);
       return res;
     } on DioException catch (e) {
-      throw Exception(e);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -111,7 +114,7 @@ class ShiftApi {
       final res = await api.post(ApiUrl.cashFlows, data: formData);
       return res;
     } on DioException catch (e) {
-      throw Exception(e);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -143,10 +146,15 @@ class ShiftApi {
 
       return pagination;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } on Exception catch (e) {
       log('LIST SHIFT API ERROR: $e');
       rethrow;
     }
   }
 }
+
+final shiftApiProvider = Provider<ShiftApi>((ref) {
+  final api = ref.watch(apiProvider);
+  return ShiftApi(api: api);
+});

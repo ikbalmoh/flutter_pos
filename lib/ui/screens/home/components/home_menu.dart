@@ -3,23 +3,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/ui/components/hold/hold_form.dart';
+import 'package:selleri/ui/screens/item/add_extra_item_form.dart';
 
 class HomeMenu extends ConsumerWidget {
   const HomeMenu({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final outlet = ref.watch(outletProvider).value as OutletSelected;
+
+    final cart = ref.watch(cartProvider);
+
     void onNewTransaction() {
       if (ref.read(cartProvider).items.isNotEmpty) {
         showModalBottomSheet(
           context: context,
-          backgroundColor: Colors.white,
           isDismissible: false,
           enableDrag: false,
           isScrollControlled: true,
@@ -35,6 +40,14 @@ class HomeMenu extends ConsumerWidget {
       } else {
         ref.read(cartProvider.notifier).initCart();
       }
+    }
+
+    void showAddExtraItem() {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => const AddExtraItemForm(),
+      );
     }
 
     return MenuAnchor(
@@ -70,12 +83,11 @@ class HomeMenu extends ConsumerWidget {
                   onPressed: () => context.push(Routes.customers),
                   leadingIcon: Icon(
                     CupertinoIcons.rectangle_stack_person_crop,
-                    color: ref.watch(cartProvider).idCustomer == null
+                    color: cart.idCustomer == null
                         ? Colors.blueGrey.shade500
                         : Colors.green.shade600,
                   ),
-                  child: Text(ref.watch(cartProvider).customerName ??
-                      'select_customer'.tr()),
+                  child: Text(cart.customerName ?? 'select_customer'.tr()),
                 ),
                 MenuItemButton(
                   onPressed: () => context.push(Routes.holded),
@@ -85,6 +97,21 @@ class HomeMenu extends ConsumerWidget {
                   ),
                   child: Text('holded_transactions'.tr()),
                 ),
+                outlet.config.addOns!.contains("table") ?
+                MenuItemButton(
+                  onPressed: () => context.push(Routes.tables),
+                  leadingIcon: Icon(
+                    CupertinoIcons.square_grid_3x2,
+                    color: cart.tables == null || cart.tables!.isEmpty
+                        ? Colors.blueGrey.shade500
+                        : Colors.green.shade600,
+                  ),
+                  child: Text(
+                    cart.tables == null || cart.tables!.isEmpty
+                        ? 'select_x'.tr(args: ['table'.tr()])
+                        : cart.tables!.join(','),
+                  ),
+                ) : Container(),
                 MenuItemButton(
                   onPressed: onNewTransaction,
                   leadingIcon: Icon(
@@ -102,19 +129,28 @@ class HomeMenu extends ConsumerWidget {
                   ),
                   child: Text('promotion_list'.tr()),
                 ),
+                outlet.config.extraItem == true
+                    ? MenuItemButton(
+                        onPressed: showAddExtraItem,
+                        leadingIcon: Icon(
+                          CupertinoIcons.cart_badge_plus,
+                          color: Colors.blue.shade700,
+                        ),
+                        child: Text('extra_item'.tr()),
+                      )
+                    : Container(),
                 MenuItemButton(
                   onPressed: () => context.push(Routes.addItem),
                   leadingIcon: Icon(
-                    CupertinoIcons.plus_rectangle_on_rectangle,
+                    CupertinoIcons.plus_square_on_square,
                     color: Colors.teal.shade700,
                   ),
                   child: Text('add_item'.tr()),
                 ),
                 const PopupMenuDivider(),
                 MenuItemButton(
-                  onPressed: () => ref
-                      .read(appSettingsProvider.notifier)
-                      .changeItemLayout(),
+                  onPressed: () =>
+                      ref.read(appSettingsProvider.notifier).changeItemLayout(),
                   leadingIcon: Icon(
                       ref.watch(appSettingsProvider).itemLayoutGrid
                           ? CupertinoIcons.rectangle_grid_1x2
@@ -138,8 +174,7 @@ class HomeMenu extends ConsumerWidget {
               color: Colors.blueGrey.shade400,
             ),
           ),
-          child:
-              Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
+          child: Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
         ),
       ],
     );

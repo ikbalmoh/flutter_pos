@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/pagination.dart';
@@ -8,7 +9,9 @@ import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/config/api_url.dart';
 
 class TransactionApi {
-  final api = fetch();
+  final Dio api;
+
+  TransactionApi({required this.api});
 
   Future<List<dynamic>> storeTransaction(Cart cart) async {
     try {
@@ -25,20 +28,25 @@ class TransactionApi {
 
       return res.data['data'];
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
   }
 
   Future<Pagination<Cart>> transactions(
-      {required String idOutlet, int? page, String? q, String? shiftId}) async {
+      {required String idOutlet,
+      int? page,
+      String? q,
+      String? shiftId,
+      String? table}) async {
     try {
       final Map<String, dynamic> params = {
         'id_outlet': idOutlet,
         'q': q,
         'page': page,
         'shift_id': shiftId,
+        'q_table': table,
       };
       final res = await api.get(ApiUrl.transaction, queryParameters: params);
       final data = res.data['data'];
@@ -48,7 +56,7 @@ class TransactionApi {
 
       return pagination;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -70,7 +78,7 @@ class TransactionApi {
 
       return pagination;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -84,7 +92,7 @@ class TransactionApi {
 
       return res.data['data'];
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -94,7 +102,7 @@ class TransactionApi {
     try {
       await api.delete('${ApiUrl.hold}/$transactionId');
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -109,9 +117,14 @@ class TransactionApi {
 
       return res.data['data'];
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } catch (e) {
       throw Exception(e);
     }
   }
 }
+
+final transactionApiProvider = Provider<TransactionApi>((ref) {
+  final api = ref.watch(apiProvider);
+  return TransactionApi(api: api);
+});

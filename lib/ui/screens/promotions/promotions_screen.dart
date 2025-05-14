@@ -229,7 +229,10 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                   color: Colors.blueGrey.shade50,
                                 ),
                               ),
-                              title: Row(
+                              title: Wrap(
+                                spacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                direction: Axis.horizontal,
                                 children: [
                                   Text(promo.name),
                                   promo.needCode
@@ -239,11 +242,10 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(5),
                                           ),
-                                          margin:
-                                              const EdgeInsets.only(left: 10),
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 3),
                                           child: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               const Icon(
                                                 CupertinoIcons.tag_fill,

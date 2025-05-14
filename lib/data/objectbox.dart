@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:selleri/data/models/customer_group.dart';
@@ -10,9 +12,11 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:path/path.dart' as p;
 
 class ObjectBox {
   late final Store store;
+  static ObjectBox? _instance;
 
   late final Box<Category> categoryBox;
   late final Box<Item> itemBox;
@@ -31,8 +35,20 @@ class ObjectBox {
   }
 
   static Future<ObjectBox> create() async {
-    final store = await openStore();
-    return ObjectBox._create(store);
+    if (_instance != null) {
+      return _instance!;
+    } else {
+      final docsDir = await getApplicationDocumentsDirectory();
+      final storePath = p.join(docsDir.path, "obx");
+      late Store store;
+      if (Store.isOpen(storePath)) {
+        store = Store.attach(getObjectBoxModel(), storePath);
+      } else {
+        store = await openStore(directory: storePath);
+      }
+      _instance = ObjectBox._create(store);
+      return _instance!;
+    }
   }
 
   List<Category> categories() {
@@ -47,8 +63,10 @@ class ObjectBox {
   List<Promotion> transactionPromotions({required Cart cart}) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
+
     Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
 
+    // Filter Promo by day
     promotionQuery = promotionQuery.and(Promotion_.days.isNull().or(
         Promotion_.days.containsElement(
             DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
@@ -63,9 +81,6 @@ class ObjectBox {
             .equalsDate(today)
             .or(Promotion_.endDate.equalsDate(today))));
 
-    // Disable promo A get B
-    promotionQuery = promotionQuery.and(Promotion_.type.notEquals(1));
-
     // FILTER PROMO BY CODE
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
@@ -77,10 +92,12 @@ class ObjectBox {
     if (cart.items.isNotEmpty) {
       List<ItemCart> items = List<ItemCart>.from(cart.items.toList());
 
-      Condition<Promotion> requirementProductIds = (Promotion_
-          .requirementProductId
-          .containsElement(items[0].idItem)
-          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity)));
+      Condition<Promotion> requirementProductIds = (items[0].idVariant != null
+              ? Promotion_.requirementVariantId
+                  .containsElement(items[0].idVariant!.toString())
+              : Promotion_.requirementProductId
+                  .containsElement(items[0].idItem))
+          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity));
 
       Condition<Promotion> requirementCategoryIds = (Promotion_
           .requirementProductId
@@ -89,14 +106,28 @@ class ObjectBox {
 
       for (var i = 1; i < items.length; i++) {
         ItemCart itemCart = items[i];
-        requirementProductIds = requirementProductIds.or((itemCart.idVariant !=
-                    null
-                ? Promotion_.requirementVariantId
-                    .containsElement(itemCart.idVariant!.toString())
-                : Promotion_.requirementProductId
-                    .containsElement(itemCart.idItem))
-            .and(
-                Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity)));
+        requirementProductIds = requirementProductIds.or(
+          (itemCart.idVariant != null
+                  ? Promotion_.requirementVariantId
+                      .containsElement(itemCart.idVariant!.toString())
+                  : Promotion_.requirementProductId
+                      .containsElement(itemCart.idItem))
+              .and(
+            Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity),
+          ),
+        );
+
+        requirementProductIds = requirementProductIds.or(
+          (itemCart.idVariant != null
+                  ? Promotion_.requirementVariantId
+                      .containsElement(itemCart.idVariant!.toString())
+                  : Promotion_.requirementProductId
+                      .containsElement(itemCart.idItem))
+              .and(
+            Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity),
+          ),
+        );
+
         requirementCategoryIds = requirementCategoryIds.or((Promotion_
                 .requirementProductId
                 .containsElement(itemCart.idCategory ?? ''))
@@ -132,7 +163,7 @@ class ObjectBox {
       }
 
       promotionTermsQuery = promotionTermsQuery
-          .or(Promotion_.type.equals(3).and(requirementProductQuery));
+          .or(Promotion_.type.oneOf([1, 3]).and(requirementProductQuery));
     }
 
     promotionQuery = promotionQuery.and(promotionTermsQuery);
@@ -143,7 +174,11 @@ class ObjectBox {
       ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)
       ..order(Promotion_.allTime);
 
-    return builder.build().find();
+    List<Promotion> promotions = builder.build().find();
+
+    log('Active Promotions: ${promotions.map((p) => p.toJson())}');
+
+    return promotions;
   }
 
   Stream<List<Promotion>> promotionsStream(
@@ -155,11 +190,11 @@ class ObjectBox {
       PickerDateRange? range}) {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
-    Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
+    Condition<Promotion> promotionQuery = Promotion_.allTime.equals(true).or(
           Promotion_.endDate.greaterThanDate(
             today.subtract(const Duration(days: 30)),
           ),
-        )).and(Promotion_.type.notEquals(1));
+        );
 
     if (active == true) {
       promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
@@ -208,6 +243,38 @@ class ObjectBox {
       ..order(Promotion_.priority)
       ..order(Promotion_.endDate);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
+  }
+
+  ScanItemResult getPromotionReward({required Promotion promotion}) {
+    Condition<Item> itemQuery = Item_.isActive.equals(true);
+    ScanItemResult result = const ScanItemResult(item: null, variant: null);
+    Item? item;
+    ItemVariant? variant;
+    if (promotion.rewardProductId == null) {
+      return result;
+    }
+    if (promotion.rewardProductType == 1) {
+      itemQuery =
+          itemQuery.and(Item_.idItem.equals(promotion.rewardProductId!));
+
+      item = itemBox.query(itemQuery).build().findFirst();
+
+      if (item == null) {
+        return result;
+      }
+
+      if (promotion.rewardVariantId != null) {
+        variant = itemVariantBox
+            .query(ItemVariant_.idItem
+                .equals(promotion.rewardProductId!)
+                .and(ItemVariant_.idVariant.equals(promotion.rewardVariantId!)))
+            .build()
+            .findFirst();
+      }
+
+      result = ScanItemResult(item: item, variant: variant);
+    }
+    return result;
   }
 
   Stream<List<Item>> itemsStream({
@@ -267,6 +334,15 @@ class ObjectBox {
   Item? getItem(String idItem) =>
       itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 
+  ItemVariant? getItemVariant(
+          {required String idItem, required int variantId}) =>
+      itemVariantBox
+          .query(ItemVariant_.idItem
+              .equals(idItem)
+              .and(ItemVariant_.idVariant.equals(variantId)))
+          .build()
+          .findFirst();
+
   CustomerGroup? getCustomerGroup(int groupId) => customerGroupBox
       .query(CustomerGroup_.groupId.equals(groupId))
       .build()
@@ -278,38 +354,115 @@ class ObjectBox {
       .findFirst();
 
   List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
-      .query(Promotion_.idPromotion
-          .oneOf(idPromotions)
-          .and(Promotion_.type.notEquals(1)))
+      .query(Promotion_.idPromotion.oneOf(idPromotions))
       .build()
       .find();
 
-  void putItems(List<Item> items) {
-    log('PUT ITEMS =>\n$items');
-    List<int> ids = itemBox.putMany(items);
-    log('ITEMS HAS BEEN STORED: $ids');
-    List<ItemVariant> itemVariants = [];
-    for (var item in items) {
-      if (item.variants.isNotEmpty) {
-        itemVariants.addAll(item.variants.toList());
+  void putItems(List<Item> items) async {
+    try {
+      if (kDebugMode) {
+        print('PUT ITEMS');
+        log('$items');
+      }
+      List<int> ids = itemBox.putMany(items);
+      List<ItemVariant> itemVariants = [];
+      List<int> removeVariants = [];
+      for (var item in items) {
+        final unusedVariant = getItem(item.idItem)
+            ?.variants
+            .where((v) => !item.variants.map((vr) => vr.id).contains(v.id))
+            .map((v) => v.id)
+            .toList();
+        if (unusedVariant != null) {
+          removeVariants.addAll(unusedVariant);
+        }
+        if (item.variants.isNotEmpty) {
+          itemVariants.addAll(item.variants.toList());
+        }
+      }
+      if (removeVariants.isNotEmpty) {
+        itemVariantBox.removeMany(removeVariants);
+      }
+      if (itemVariants.isNotEmpty) {
+        putVariants(itemVariants);
+      }
+      // ITEM PACKAGES
+      List<ItemPackage> itemPackages = [];
+      List<int> removeItemPackageIds = [];
+      for (var item in items) {
+        if (item.isPackage) {
+          final unusedPackages = getItem(item.idItem)
+              ?.packageItems
+              .where((pkg) => !item.packageItems
+                  .map((pkg) => pkg.idItemPackage)
+                  .contains(pkg.idItemPackage))
+              .map((pkg) => pkg.id)
+              .toList();
+          if (unusedPackages != null) {
+            removeItemPackageIds.addAll(unusedPackages);
+          }
+        }
+        if (item.packageItems.isNotEmpty) {
+          itemPackages.addAll(item.packageItems.toList());
+        }
+      }
+      if (removeItemPackageIds.isNotEmpty) {
+        final removed = itemPackageBox.removeMany(removeItemPackageIds);
+        log('removeItemPackageIds $removeItemPackageIds => $removed');
+      }
+      if (itemPackages.isNotEmpty) {
+        putItemPackages(itemPackages);
+      }
+      if (kDebugMode) {
+        print('ITEMS HAS BEEN STORED: $ids');
+      }
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('PUT ITEMS ERROR => $e => $stackTrace');
       }
     }
-    if (itemVariants.isNotEmpty) {
-      putVariants(itemVariants);
+  }
+
+  void putItemPackages(List<ItemPackage> itemPackages) {
+    if (itemPackages.isEmpty) {
+      return;
+    }
+    if (kDebugMode) {
+      print('PUT ITEM PACKAGES');
+      log('$itemPackages');
+    }
+    List<int> ids = itemPackageBox.putMany(itemPackages);
+    if (kDebugMode) {
+      print('ITEM PACKAGES HAS BEEN STORED: $ids');
     }
   }
 
   void putVariants(List<ItemVariant> variants) {
-    log('PUT VARIANTS =>\n$variants');
+    if (kDebugMode) {
+      print('PUT VARIANTS');
+      log('$variants');
+    }
     List<int> ids = itemVariantBox.putMany(variants);
-    log('VARIANTS HAS BEEN STORED: $ids');
+    if (kDebugMode) {
+      print('VARIANTS HAS BEEN STORED: $ids');
+    }
   }
 
-  int getTotalItem({required String idCategory}) {
+  int getTotalItem(
+      {String idCategory = '', FilterStock? filterStock = FilterStock.all}) {
+    Condition<Item> itemQuery = Item_.isActive.equals(true);
+
     if (idCategory != '') {
-      return itemBox.query(Item_.idCategory.equals(idCategory)).build().count();
+      itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
-    return itemBox.count();
+    if (filterStock == FilterStock.available) {
+      itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
+    } else if (filterStock == FilterStock.empty) {
+      itemQuery = itemQuery.and(Item_.stockItem.lessOrEqual(0));
+    }
+    final result = itemBox.query(itemQuery).build().count();
+
+    return result;
   }
 
   void putPromotions(List<Promotion> promotions) {

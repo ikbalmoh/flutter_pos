@@ -10,7 +10,7 @@ class AutoPrintScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('sync_data'.tr()),
+        title: Text('auto_print'.tr()),
       ),
       body: const AutoPrint(),
     );
@@ -37,6 +37,10 @@ class _AutoPrintState extends ConsumerState<AutoPrint> {
             .toggleAutoPrintShiftReport(value);
         break;
 
+      case 'autoPrintKitchen':
+        ref.read(appSettingsProvider.notifier).toggleAutoPrintKitchen(value);
+        break;
+
       default:
     }
   }
@@ -59,6 +63,13 @@ class _AutoPrintState extends ConsumerState<AutoPrint> {
                 value: ref.watch(appSettingsProvider).autoPrintShiftReport,
                 onChanged: (bool value) =>
                     onToggleAutoPrint('autoPrintShiftReport', value)),
+          ),
+          ListTile(
+            title: Text('kitchen'.tr()),
+            trailing: Switch(
+                value: ref.watch(appSettingsProvider).autoPrintKitchen,
+                onChanged: (bool value) =>
+                    onToggleAutoPrint('autoPrintKitchen', value)),
           ),
         ],
       ),

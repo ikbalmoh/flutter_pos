@@ -1,17 +1,19 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/settings/app_settings_provider.dart';
 import 'package:selleri/ui/components/cart/shop_item_list.dart';
+import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/item/item_info.dart';
 import 'package:selleri/ui/components/cart/item_variant_picker.dart';
 import 'package:selleri/ui/components/cart/shop_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/ui/widgets/loading_widget.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class ItemContainer extends ConsumerWidget {
@@ -34,15 +36,33 @@ class ItemContainer extends ConsumerWidget {
   });
 
   void onAddToCart(BuildContext context, WidgetRef ref,
-      {required Item item, ItemVariant? variant}) {
-    double stock = variant?.stockItem ?? item.stockItem;
-    if (stock <= 0 && item.stockControl) {
-      AppAlert.snackbar(context, 'out_of_stock'.tr());
-      return;
-    }
-    ref.read(cartProvider.notifier).addToCart(item, variant: variant);
-    if (search.isNotEmpty && [item.itemName.toLowerCase(), item.sku?.toLowerCase(), item.barcode?.toLowerCase()].contains(search.toLowerCase())) {
-      clearSearch();
+      {required Item item,
+      required List<ItemVariant> variants,
+      ItemVariant? variant}) async {
+    try {
+      if (variant != null) {
+        await ref.read(cartProvider.notifier).addToCart(item, variant: variant);
+      } else if (variants.isNotEmpty) {
+        for (var variant in variants) {
+          await ref
+              .read(cartProvider.notifier)
+              .addToCart(item, variant: variant);
+        }
+      } else {
+        await ref.read(cartProvider.notifier).addToCart(item);
+      }
+      if (search.isNotEmpty &&
+          [
+            item.itemName.toLowerCase(),
+            item.sku?.toLowerCase(),
+            item.barcode?.toLowerCase()
+          ].contains(search.toLowerCase())) {
+        clearSearch();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        AppAlert.snackbar(e.toString());
+      }
     }
   }
 
@@ -55,26 +75,60 @@ class ItemContainer extends ConsumerWidget {
         builder: (BuildContext context) {
           return ItemVariantPicker(
             item: item,
-            onSelect: (variant) => onAddToCart(
+            onSelect: (variants) => onAddToCart(
               context,
               ref,
               item: item,
-              variant: variant,
+              variants: variants,
             ),
+            onLongPress: (variant) {
+              onLongPress(
+                  context: context, item: item, ref: ref, variant: variant);
+            },
           );
         });
   }
 
-  void onLongPress(BuildContext context, Item item) {
+  void onLongPress({
+    required BuildContext context,
+    required Item item,
+    required WidgetRef ref,
+    ItemVariant? variant,
+  }) {
+    log('SHOW ITEM INFO $item');
+    if (item.variants.isNotEmpty && variant == null) {
+      showVariants(context, item, ref);
+      return;
+    }
     showModalBottomSheet(
-        context: context,
-        isDismissible: true,
-        isScrollControlled: true,
-        backgroundColor: Colors.white,
-        useSafeArea: true,
-        builder: (context) {
-          return ItemInfo(item: item);
-        });
+      context: context,
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      useSafeArea: true,
+      builder: (context) => DraggableScrollableSheet(
+        builder: (context, controller) => ItemInfo(
+          scrollController: controller,
+          item: item,
+          variant: variant,
+          onSelect: () {
+            while (context.canPop()) {
+              context.pop();
+            }
+            if (variant != null) {
+              onAddToCart(context, ref, item: item, variants: [variant]);
+            } else if (item.variants.isNotEmpty) {
+              showVariants(context, item, ref);
+            } else {
+              onAddToCart(context, ref, item: item, variants: []);
+            }
+          },
+        ),
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        expand: false,
+      ),
+    );
   }
 
   @override
@@ -124,34 +178,32 @@ class ItemContainer extends ConsumerWidget {
                 ),
               )
             : ref.watch(appSettingsProvider).itemLayoutGrid
-                ? GridView.count(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    crossAxisCount: gridColumn,
-                    childAspectRatio: 0.9,
-                    padding: const EdgeInsets.all(7.5),
-                    crossAxisSpacing: 7.5,
-                    mainAxisSpacing: 7.5,
-                    controller: scrollController,
-                    children: List.generate(
-                      value.length,
-                      (index) {
-                        final Item item = value[index];
-                        int qtyOnCart = ref
-                            .read(cartProvider.notifier)
-                            .qtyOnCart(item.idItem);
-                        return ShopItem(
-                          item: item,
-                          qtyOnCart: qtyOnCart,
-                          onAddToCart: (item) =>
-                              onAddToCart(context, ref, item: item),
-                          addQty: (idItem) =>
-                              ref.read(cartProvider.notifier).updateQty(idItem),
-                          showVariants: (item) =>
-                              showVariants(context, item, ref),
-                          onLongPress: (item) => onLongPress(context, item),
-                        );
-                      },
+                ? GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: gridColumn,
+                      mainAxisSpacing: 7.5,
+                      crossAxisSpacing: 8,
                     ),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(7.5),
+                    controller: scrollController,
+                    itemCount: value.length,
+                    itemBuilder: (context, index) {
+                      final Item item = value[index];
+                      int qtyOnCart = ref
+                          .read(cartProvider.notifier)
+                          .qtyOnCart(item.idItem);
+                      return ShopItem(
+                        item: item,
+                        qtyOnCart: qtyOnCart,
+                        onAddToCart: (item) =>
+                            onAddToCart(context, ref, item: item, variants: []),
+                        showVariants: (item) =>
+                            showVariants(context, item, ref),
+                        onLongPress: (item) =>
+                            onLongPress(context: context, item: item, ref: ref),
+                      );
+                    },
                   )
                 : ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -167,19 +219,23 @@ class ItemContainer extends ConsumerWidget {
                         item: item,
                         qtyOnCart: qtyOnCart,
                         onAddToCart: (item) =>
-                            onAddToCart(context, ref, item: item),
-                        addQty: (idItem) =>
-                            ref.read(cartProvider.notifier).updateQty(idItem),
+                            onAddToCart(context, ref, item: item, variants: []),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
-                        onLongPress: (item) => onLongPress(context, item),
+                        onLongPress: (item) =>
+                            onLongPress(context: context, item: item, ref: ref),
                       );
                     },
                   ),
         AsyncError(:final error) => Center(
             child: Text(error.toString()),
           ),
-        _ => const LoadingIndicator(color: Colors.teal)
+        _ => ListView.builder(
+            itemBuilder: (context, idx) {
+              return const ItemListSkeleton();
+            },
+            itemCount: 6,
+          )
       };
     });
   }

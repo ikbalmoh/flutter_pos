@@ -5,6 +5,7 @@ class Routes {
   static const String home = '/home';
   static const String cart = '/cart';
   static const String checkout = '/checkout';
+  static const String tables = '/tables';
   static const String customers = '/customers';
   static const String holded = '/holded';
   static const String printers = '/printers';
@@ -19,4 +20,9 @@ class Routes {
   static const String about = '/about';
   static const String addItem = '/add-item';
   static const String manageVariant = '/manage-variant';
+  static const String adjustments = '/adjustments';
+  static const String adjustmentsHistory = '/adjustments-history';
+  static const String receiving = '/receiving/form';
+  static const String receivingHistory = '/receiving-history';
+  static const String notificaitons = '/notificaitons';
 }

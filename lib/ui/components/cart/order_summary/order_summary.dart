@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/cart.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/providers/outlet/outlet_state.dart';
 import 'package:selleri/utils/formater.dart';
@@ -14,9 +15,11 @@ class OrderSummary extends StatelessWidget {
   final bool? withAttribute;
   final bool taxable;
   final OutletSelected outletState;
+  final Function? onChangeRoundingValue;
 
   const OrderSummary({
     required this.cart,
+    this.onChangeRoundingValue,
     this.radius,
     this.mainAxisSize,
     this.withAttribute,
@@ -61,6 +64,12 @@ class OrderSummary extends StatelessWidget {
                 '${'customer'.tr()}: ${cart.customerName ?? '-'}',
                 textAlign: TextAlign.left,
               ),
+              cart.tables != null && cart.tables!.isNotEmpty
+                  ? Text(
+                      '${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}',
+                      textAlign: TextAlign.left,
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -80,6 +89,9 @@ class OrderSummary extends StatelessWidget {
         ),
       ],
     );
+
+    CartVoucher? voucher =
+        cart.vouchers.isNotEmpty ? cart.vouchers.first : null;
 
     return Container(
       decoration: BoxDecoration(
@@ -109,11 +121,16 @@ class OrderSummary extends StatelessWidget {
             label: 'Subtotal',
             value: cart.subtotal,
           ),
-          TwoColumn(
-            label:
-                '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
-            value: cart.discOverallTotal,
-          ),
+          voucher != null && voucher.voucherType == 'discount'
+              ? TwoColumn(
+                  label: '${'voucher'.tr()} (${voucher.code})',
+                  value: -voucher.value,
+                )
+              : TwoColumn(
+                  label:
+                      '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
+                  value: -cart.discOverallTotal,
+                ),
           cart.discPromotionsTotal > 0
               ? TwoColumn(
                   label: 'promotions'.tr(),
@@ -129,6 +146,61 @@ class OrderSummary extends StatelessWidget {
                   : Container()
               : Container(),
           TwoColumn(
+            label: 'Total',
+            value: cart.total,
+            labelStyle: textTheme.bodyLarge
+                ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
+            valueStyle: textTheme.bodyLarge
+                ?.copyWith(color: Colors.black87, fontWeight: FontWeight.w700),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'rounding'.tr(),
+                style: textTheme.bodyLarge?.copyWith(
+                    color: Colors.black87, fontWeight: FontWeight.w700),
+              ),
+              onChangeRoundingValue != null
+                  ? Expanded(
+                      child: GestureDetector(
+                        onTap: () => onChangeRoundingValue!(),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.edit,
+                                size: 12,
+                                color: Colors.blue,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                CurrencyFormat.currency(
+                                  cart.roundingValue,
+                                  symbol: false,
+                                ),
+                                style: textTheme.bodyLarge
+                                    ?.copyWith(color: Colors.blue.shade500),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  : Text(
+                      CurrencyFormat.currency(
+                        cart.roundingValue,
+                        symbol: false,
+                      ),
+                      style:
+                          textTheme.bodyLarge?.copyWith(color: Colors.black87),
+                    ),
+            ],
+          ),
+          TwoColumn(
             label: 'Grand Total',
             value: cart.grandTotal,
             labelStyle: textTheme.bodyLarge
@@ -143,6 +215,22 @@ class OrderSummary extends StatelessWidget {
               color: Colors.blueGrey.shade50,
             ),
           ),
+          if (cart.vouchers.where((v) => v.voucherType == 'payment').isNotEmpty)
+            ...cart.vouchers
+                .where((v) => v.voucherType == 'payment')
+                .map((voucher) {
+              return TwoColumn(
+                label: "${'voucher'.tr()} (${voucher.code})",
+                value: voucher.value,
+              );
+            }),
+          if (cart.payments.isNotEmpty)
+            ...cart.payments.map((payment) {
+              return TwoColumn(
+                label: payment.paymentName,
+                value: payment.paymentValue,
+              );
+            }),
           TwoColumn(
             label: 'payment_amount'.tr(),
             value: cart.totalPayment,
@@ -208,7 +296,7 @@ class TwoColumn extends StatelessWidget {
                 textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
           ),
           Text(
-            CurrencyFormat.currency(value, symbol: false),
+            CurrencyFormat.currency(value, symbol: false, minus: true),
             style: valueStyle ??
                 textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
           ),

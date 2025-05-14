@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -42,7 +41,7 @@ class Printer extends _$Printer {
   }
 
   Future<void> connectPrinter(BluetoothInfo device,
-      {required PaperSize size, bool print = true}) async {
+      {required PaperSize size, bool cut = false, bool print = true}) async {
     state = const AsyncLoading();
     try {
       const storage = FlutterSecureStorage();
@@ -65,31 +64,39 @@ class Printer extends _$Printer {
         macAddress: device.macAdress,
         name: device.name,
         size: size,
+        cut: cut,
       );
 
       await storage.write(key: 'printer', value: printer.toString());
       state = AsyncData(printer);
-      if (!kDebugMode) {
-        await printTest();
-      }
+      await printTest();
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
       log('CONNECT PRINTER FAILED: ${e.toString()}');
     }
   }
 
-  void updatePrinter(BluetoothInfo device, {required PaperSize size}) {
+  void updatePrinter(BluetoothInfo device,
+      {required PaperSize size, bool cut = false}) async {
+    const storage = FlutterSecureStorage();
+
     final printer = model.Printer(
       macAddress: device.macAdress,
       name: device.name,
       size: size,
+      cut: cut,
     );
+    await storage.write(key: 'printer', value: printer.toString());
     state = AsyncData(printer);
   }
 
   void disconnect() async {
+    const storage = FlutterSecureStorage();
+
     bool disconnect = await PrintBluetoothThermal.disconnect;
+
     if (disconnect) {
+      await storage.delete(key: 'printer');
       state = const AsyncData(null);
     }
   }
@@ -108,7 +115,10 @@ class Printer extends _$Printer {
   Future<void> print(List<int> bytes, {bool isCopy = false}) async {
     try {
       final isConnected = await PrintBluetoothThermal.connectionStatus;
+      const storage = FlutterSecureStorage();
+
       if (!isConnected) {
+        await storage.delete(key: 'printer');
         state = const AsyncData(null);
         throw Exception('printer_not_connected'.tr());
       }
@@ -123,16 +133,21 @@ class Printer extends _$Printer {
   }
 
   Future<List<int>> generateTestTicket() async {
+    final printer = state.value;
+    if (printer == null) {
+      throw 'printer_not_connected'.tr();
+    }
     // Using default profile
     final profile = await CapabilityProfile.load();
-    final generator = Generator(PaperSize.mm58, profile);
+    final generator = Generator(printer.size, profile, spaceBetweenRows: 2);
     List<int> bytes = [];
 
     final ByteData data = await rootBundle.load('assets/images/icon-print.jpg');
     final Uint8List imgBytes = data.buffer.asUint8List();
     final Image? img = decodeImage(imgBytes);
     if (img != null) {
-      bytes += generator.imageRaster(img, align: PosAlign.center);
+      log('Print Image  $img');
+      bytes += generator.image(img, align: PosAlign.center);
     }
     bytes += generator.text(
       'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ',
@@ -185,8 +200,11 @@ class Printer extends _$Printer {
 
     bytes += generator.qrcode('selleri.co.id');
 
-    // bytes += generator.feed(1);
-    bytes += generator.cut();
+    if (printer.cut) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(3);
+    }
     return bytes;
   }
 

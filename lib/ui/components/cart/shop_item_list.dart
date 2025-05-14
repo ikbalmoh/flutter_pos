@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
@@ -9,7 +10,6 @@ class ShopItemList extends StatelessWidget {
   final Function(Item)? onLongPress;
   final Function(Item) onAddToCart;
   final Function(Item) showVariants;
-  final Function(String) addQty;
   final int qtyOnCart;
 
   const ShopItemList({
@@ -18,21 +18,27 @@ class ShopItemList extends StatelessWidget {
     required this.showVariants,
     this.onLongPress,
     super.key,
-    required this.addQty,
     required this.qtyOnCart,
   });
 
   @override
   Widget build(BuildContext context) {
+    bool hasPromotions = item.promotions.isNotEmpty;
+
+    if (!hasPromotions && item.variants.isNotEmpty) {
+      var variantPromotions = item.variants.firstWhereOrNull(
+          (variant) => variant.promotions?.isNotEmpty ?? false);
+      if (variantPromotions != null) {
+        hasPromotions = true;
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: InkWell(
         onLongPress: onLongPress != null ? () => onLongPress!(item) : null,
-        onTap: () => item.variants.isNotEmpty
-            ? showVariants(item)
-            : qtyOnCart > 0
-                ? addQty(item.idItem)
-                : onAddToCart(item),
+        onTap: () =>
+            item.variants.isNotEmpty ? showVariants(item) : onAddToCart(item),
         child: Material(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -91,9 +97,7 @@ class ShopItemList extends StatelessWidget {
                       Wrap(
                         spacing: 5,
                         children: [
-                          item.promotions.isNotEmpty
-                              ? const PromotionBadge()
-                              : Container(),
+                          hasPromotions ? const PromotionBadge() : Container(),
                           StockBadge(
                             stockItem: item.stockItem,
                             stockControl: item.stockControl,

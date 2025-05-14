@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +8,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
@@ -15,6 +18,8 @@ import 'package:selleri/data/models/item_package.dart';
 import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/promotion.dart';
+import 'package:selleri/data/models/table.dart';
+import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -22,7 +27,9 @@ import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/providers/settings/printer_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
-import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/providers/table/tables_provider.dart';
+import 'package:selleri/utils/authorization_helper.dart';
+import 'package:selleri/utils/formater.dart';
 import 'dart:developer';
 import 'package:selleri/utils/printer.dart' as util;
 
@@ -35,16 +42,19 @@ class Cart extends _$Cart {
     return model.Cart.initial();
   }
 
-  Future<void> initCart() async {
+  Future<void> initCart({
+    String? customerName,
+    String? idCustomer,
+    List<CustomerGroup>? customerGroup,
+  }) async {
     try {
-      if (ref.read(authNotifierProvider).value is! Authenticated) {
+      if (ref.read(authProvider).value is! Authenticated) {
         return;
       }
 
       final outletState = ref.read(outletProvider).value as OutletSelected;
 
-      final authState =
-          await ref.read(authNotifierProvider.future) as Authenticated;
+      final authState = await ref.read(authProvider.future) as Authenticated;
 
       final shift = ref.read(shiftProvider).value;
 
@@ -71,6 +81,9 @@ class Cart extends _$Cart {
         ppn: tax?.percentage ?? 0,
         ppnIsInclude: tax?.isInclude ?? true,
         taxName: taxable ? tax?.taxName : '',
+        customerGroup: customerGroup,
+        customerName: customerName,
+        idCustomer: idCustomer,
       );
 
       log('Cart Initialized: ${state.toString()}');
@@ -92,24 +105,33 @@ class Cart extends _$Cart {
     return emptyItems;
   }
 
-  void addToCart(Item item, {ItemVariant? variant}) async {
-    if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
-      await initCart();
+  Future<void> addToCart(Item item, {ItemVariant? variant}) async {
+    if (state.idTransaction == null &&
+        (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty)) {
+      await initCart(
+        customerGroup: state.customerGroup,
+        customerName: state.customerName,
+        idCustomer: state.idCustomer,
+      );
     }
-    String identifier = item.idItem;
+    double itemStock = variant?.stockItem ?? item.stockItem;
+    int onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
+    if (onCartQty > 0) {
+      return updateQty(item.idItem, idVariant: variant?.idVariant);
+    }
+    if (itemStock < 1 && item.stockControl) {
+      throw 'out_of_stock'.tr();
+    }
+    String identifier =
+        '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
     String itemName = item.itemName;
     double itemPrice = item.itemPrice;
 
     if (item.isPackage) {
       final emptyItems = getEmptyItemPackages(item.packageItems);
       if (emptyItems.isNotEmpty) {
-        AppAlert.toast('x_stock_empty'.tr(args: [emptyItems.first.itemName]));
-        return;
+        throw 'x_stock_empty'.tr(args: [emptyItems.first.itemName]);
       }
-      identifier += (DateTime.now().millisecondsSinceEpoch).toString();
-    } else if (variant != null) {
-      identifier += '-v${variant.idVariant.toString()}';
-      itemPrice = variant.itemPrice;
     }
 
     final int cartIndex =
@@ -118,10 +140,6 @@ class Cart extends _$Cart {
     if (cartIndex > -1) {
       final ItemCart existItem = state.items[cartIndex];
       return updateItem(existItem.copyWith(quantity: existItem.quantity + 1));
-    }
-
-    if (item.promotions.isNotEmpty) {
-      // check promo by order = 3
     }
 
     ItemCart itemCart = ItemCart(
@@ -164,41 +182,148 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void updateQty(String identifier, {bool increment = true}) {
-    final index = state.items.indexWhere((i) => i.idItem == identifier);
+  void addExtraItemCart(ItemCart item) async {
+    if (state.idOutlet == '' || state.shiftId == '' || state.items.isEmpty) {
+      await initCart(
+        customerGroup: state.customerGroup,
+        customerName: state.customerName,
+        idCustomer: state.idCustomer,
+      );
+    }
+    List<ItemCart> items = List<ItemCart>.from(state.items);
+    items.add(item);
+    state = state.copyWith(items: items, roundingValue: 0);
+    calculateCart();
+  }
+
+  Future<void> removePromotion(String promotionId) async {
+    CartPromotion? promotion =
+        state.promotions.firstWhereOrNull((p) => p.promotionId == promotionId);
+
+    if (promotion != null) {
+      List<ItemCart> items = List<ItemCart>.from(state.items)
+          .map((item) => item.isReward != true &&
+                  item.promotion?.promotionId == promotionId
+              ? item.copyWith(promotion: null)
+              : item)
+          .toList();
+
+      // Remove item reward
+      items.removeWhere((item) =>
+          item.isReward == true && item.promotion?.promotionId == promotionId);
+
+      List<CartPromotion> promotions = List.from(state.promotions);
+
+      promotions.removeWhere((p) => p.promotionId == promotionId);
+      state = state.copyWith(promotions: promotions, items: items);
+    }
+    calculateCart();
+  }
+
+  Future<void> updateQty(String idItem,
+      {int? idVariant, bool increment = true}) async {
+    final index = state.items
+        .indexWhere((i) => i.idItem == idItem && i.idVariant == idVariant);
+
     if (index > -1) {
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+
       List<ItemCart> items = [...state.items];
-      ItemCart item = items[index];
-      int quantity = increment ? item.quantity + 1 : item.quantity - 1;
-      double finalPrice = item.price - item.discountTotal;
+      ItemCart itemCart = items[index];
+
+      Item? item = objectBox.getItem(idItem);
+
+      if (item == null) {
+        throw 'x_not_found'.tr(args: ['item'.tr()]);
+      }
+
+      List<CartPromotion> promotions = List.from(state.promotions);
+      if (itemCart.promotion != null) {
+        itemCart = itemCart.copyWith(
+          discount: 0,
+          discountTotal: 0,
+        );
+      }
+
+      ItemVariant? itemVariant = idVariant == null
+          ? null
+          : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
+
+      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+
+      if (item.stockControl &&
+          outlet.config.stockMinus == false &&
+          itemCart.quantity + 1 > itemStock) {
+        throw 'max_qty_x'.tr(args: [
+          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
+        ]);
+      }
+
+      int quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
+      double finalPrice = itemCart.price - itemCart.discountTotal;
       items[index] =
-          item.copyWith(quantity: quantity, total: quantity * finalPrice);
-      state = state.copyWith(items: items);
-      calculateCart();
+          itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
+      state = state.copyWith(
+          items: items, roundingValue: 0, promotions: promotions);
+      if (itemCart.promotion != null) {
+        removePromotion(itemCart.promotion!.promotionId);
+      } else {
+        calculateCart();
+      }
     }
   }
 
-  void updateItem(ItemCart item) {
+  Future<void> updateItem(ItemCart itemCart) async {
+    final outlet = ref.read(outletProvider).value as OutletSelected;
+
     final index =
-        state.items.indexWhere((i) => i.identifier == item.identifier);
+        state.items.indexWhere((i) => i.identifier == itemCart.identifier);
     if (index > -1) {
       List<ItemCart> items = [...state.items];
-      double discount = item.discount;
-      double discountTotal = item.discountTotal;
-      if (item.promotion != null) {
+
+      Item? item = objectBox.getItem(itemCart.idItem);
+
+      if (item == null) {
+        throw 'x_not_found'.tr(args: ['item'.tr()]);
+      }
+
+      ItemVariant? itemVariant = itemCart.idVariant == null
+          ? null
+          : objectBox.getItemVariant(
+              idItem: itemCart.idItem, variantId: itemCart.idVariant!);
+
+      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+
+      if (item.stockControl &&
+          outlet.config.stockMinus == false &&
+          itemCart.quantity + 1 > itemStock) {
+        throw 'max_qty_x'.tr(args: [
+          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
+        ]);
+      }
+
+      double discount = itemCart.discount;
+      double discountTotal = itemCart.discountTotal;
+      if (itemCart.promotion != null) {
         discount = 0;
         discountTotal = 0;
       }
-      double finalPrice = item.price - discountTotal;
-      double total = item.quantity * finalPrice;
-      items[index] = item.copyWith(
+      double finalPrice = itemCart.price - discountTotal;
+      double total = itemCart.quantity * finalPrice;
+      items[index] = itemCart.copyWith(
         total: total,
         discount: discount,
         discountTotal: discountTotal,
-        promotion: null,
       );
-      state = state.copyWith(items: items);
-      calculateCart();
+      state = state.copyWith(
+        items: items,
+        roundingValue: 0,
+      );
+      if (itemCart.promotion != null) {
+        removePromotion(itemCart.promotion!.promotionId);
+      } else {
+        calculateCart();
+      }
     }
   }
 
@@ -206,18 +331,22 @@ class Cart extends _$Cart {
     List<ItemCart> items = [...state.items];
     List<CartPromotion> promotions = [...state.promotions];
     ItemCart item = items.firstWhere((item) => item.identifier == identifier);
-    items.removeWhere((i) => i.identifier == identifier);
+    items.removeWhere((i) =>
+        i.identifier == item.identifier ||
+        (i.isReward == true &&
+            i.promotion?.promotionId == item.promotion?.promotionId));
     promotions.removeWhere(
       (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
     );
-    state = state.copyWith(items: items, promotions: promotions);
+    state =
+        state.copyWith(items: items, promotions: promotions, roundingValue: 0);
     calculateCart();
     return true;
   }
 
-  int qtyOnCart(String idItem) {
+  int qtyOnCart(String idItem, {int? idVariant}) {
     List<int> qtyItems = state.items
-        .where((i) => i.idItem == idItem)
+        .where((i) => i.idItem == idItem && i.idVariant == idVariant)
         .map((i) => i.quantity)
         .toList();
     return qtyItems.isNotEmpty
@@ -238,11 +367,17 @@ class Cart extends _$Cart {
     state = state.copyWith(customerName: '', idCustomer: null);
   }
 
+  void setRoundingValue(double value) {
+    state = state.copyWith(roundingValue: value);
+    calculateCart();
+  }
+
   void setDiscountTransaction(
       {required double discount, required bool discIsPercent}) {
     double discOverallTotal =
         discIsPercent ? state.subtotal * (discount / 100) : discount;
     state = state.copyWith(
+      roundingValue: 0,
       discIsPercent: discIsPercent,
       discOverall: discount,
       discOverallTotal: discOverallTotal,
@@ -260,10 +395,12 @@ class Cart extends _$Cart {
   }
 
   void addPayment(CartPayment payment) {
-    final auth = ref.read(authNotifierProvider).value as Authenticated;
+    final auth = ref.read(authProvider).value as Authenticated;
+    final shift = ref.read(shiftProvider).value;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
+      shiftId: shift?.id,
       payDate: (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
     );
 
@@ -278,10 +415,7 @@ class Cart extends _$Cart {
       // Add payment
       payments.add(payment);
     }
-    double totalPayment = payments
-        .map((payment) => payment.paymentValue)
-        .reduce((payment, total) => payment + total);
-    state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    state = state.copyWith(payments: payments);
     calculateCart();
   }
 
@@ -289,18 +423,13 @@ class Cart extends _$Cart {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
     payments.removeWhere(
         (p) => p.paymentMethodId == paymentMethodId && p.createdAt == null);
-    double totalPayment = payments.isNotEmpty
-        ? payments
-            .map((payment) => payment.paymentValue)
-            .reduce((payment, total) => payment + total)
-        : 0;
-    state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    state = state.copyWith(payments: payments);
     calculateCart();
   }
 
   Future<void> storeTransaction() async {
     try {
-      final api = TransactionApi();
+      final api = ref.watch(transactionApiProvider);
 
       final shift = ref.read(shiftProvider).value;
       if (shift == null) {
@@ -321,23 +450,56 @@ class Cart extends _$Cart {
     }
   }
 
-  Future<void> printReceipt({int printCounter = 1}) async {
+  Future<void> printReceipt(
+      {int printCounter = 1, bool? withKitchen = false}) async {
+    try {
+      log('PRINT RECEIPT $state');
+      final printer = ref.read(printerProvider).value;
+      if (printer == null) {
+        throw 'printer_not_connected'.tr();
+      }
+      if (printCounter > 1) {
+        final isAuthorize =
+            await AuthorizationHelper.authorize('print-receipt');
+        if (!isAuthorize) {
+          return;
+        }
+      }
+      final outlet = ref.read(outletProvider).value as OutletSelected;
+      final AttributeReceipts? attributeReceipts =
+          outlet.config.attributeReceipts;
+      final receipt = await util.Printer.buildReceiptBytes(state,
+          outlet: outlet.outlet,
+          attributes: attributeReceipts,
+          size: printer.size,
+          isCopy: printCounter > 1,
+          cut: printer.cut);
+      await ref.read(printerProvider.notifier).print(receipt);
+      if (withKitchen == true) {
+        await printKitchen();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> printKitchen() async {
     try {
       final printer = ref.read(printerProvider).value;
       if (printer == null) {
         throw 'printer_not_connected'.tr();
       }
+      final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
-          (ref.read(outletProvider).value as OutletSelected)
-              .config
-              .attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(
+          outlet.config.attributeReceipts;
+      final receipt = await util.Printer.buildKitchenReceiptBytes(
         state,
+        outlet: outlet.outlet,
         attributes: attributeReceipts,
         size: printer.size,
-        isCopy: printCounter > 1,
+        cut: printer.cut,
       );
-      ref.read(printerProvider.notifier).print(receipt);
+      await ref.read(printerProvider.notifier).print(receipt);
     } catch (e) {
       rethrow;
     }
@@ -346,7 +508,7 @@ class Cart extends _$Cart {
   Future<void> holdCart({required String note, bool createNew = false}) async {
     model.Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
-    final api = TransactionApi();
+    final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
       await api.updateHoldTransaction(cart.idTransaction!, cart);
     } else {
@@ -361,12 +523,21 @@ class Cart extends _$Cart {
 
   void openHoldedCart(CartHolded holded) {
     log('OPEN HOLDED CART $holded');
+    final outletState = ref.read(outletProvider).value as OutletSelected;
+
+    final tax = outletState.config.tax;
+    final taxable = outletState.config.taxable ?? false;
+
     model.Cart cart = holded.dataHold.copyWith(
-        idTransaction: holded.transactionId,
-        shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
-        holdAt: holded.dataHold.holdAt ?? DateTime.now(),
-        promotions: [],
-        items: []);
+      idTransaction: holded.transactionId,
+      ppn: tax?.percentage ?? 0,
+      ppnIsInclude: tax?.isInclude ?? true,
+      taxName: taxable ? tax?.taxName : '',
+      shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
+      holdAt: holded.dataHold.holdAt ?? DateTime.now(),
+      promotions: [],
+      items: [],
+    );
 
     List<ItemCart> items = [];
     for (ItemCart item in holded.dataHold.items) {
@@ -394,7 +565,7 @@ class Cart extends _$Cart {
   }
 
   void removeHoldedCart() async {
-    final api = TransactionApi();
+    final api = ref.watch(transactionApiProvider);
     String idTransaction = state.idTransaction!;
     initCart();
     await api.deleteHoldedTransaction(idTransaction);
@@ -464,6 +635,7 @@ class Cart extends _$Cart {
     }
 
     List<ItemCart> items = List<ItemCart>.from(state.items)
+        .where((item) => item.isReward != true)
         .map((item) => item.promotion == null
             ? item
             : item.copyWith(
@@ -473,10 +645,17 @@ class Cart extends _$Cart {
                 total: item.price * item.quantity,
               ))
         .toList();
-    List<Promotion> promotionByProducts =
-        promotions.where((promo) => promo.type == 3).toList();
+
+    List<Promotion> freeGiftpromotions =
+        promotions.where((promo) => promo.type == 1).toList();
+
     Promotion? promotionByOrder =
         promotions.firstWhereOrNull((promo) => promo.type == 2);
+
+    List<Promotion> promotionByProducts =
+        promotions.where((promo) => promo.type == 3).toList();
+
+    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT\n$freeGiftpromotions\n2 => BY ORDER\n$promotionByOrder\n3 => BY PRODUCTS\n$promotionByProducts');
 
     List<CartPromotion> cartPromotions = [];
 
@@ -486,33 +665,8 @@ class Cart extends _$Cart {
 
       CartPromotion cartPromo = CartPromotion.fromData(promo);
 
-      List<ItemCart> eligibleItems = [];
-
-      if (promo.requirementProductType == 1) {
-        // require product id
-        eligibleItems = items
-            .where((item) =>
-                (item.idVariant != null && promo.requirementVariantId.isNotEmpty
-                    ? promo.requirementVariantId
-                        .contains(item.idVariant.toString())
-                    : promo.requirementProductId.contains(item.idItem)) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      } else if (promo.requirementProductType == 2) {
-        // require package id
-        eligibleItems = items
-            .where((item) =>
-                promo.requirementProductId.contains(item.idItem) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      } else if (promo.requirementProductType == 3) {
-        // require category id
-        eligibleItems = items
-            .where((item) =>
-                promo.requirementProductId.contains(item.idCategory) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      }
+      List<ItemCart> eligibleItems =
+          ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
 
       if (eligibleItems.isEmpty) {
         continue;
@@ -522,39 +676,9 @@ class Cart extends _$Cart {
         int itemIdx = items.indexWhere(
           (item) => item.identifier == itemCart.identifier,
         );
-        double discountTotal = cartPromo.discountIsPercent
-            ? itemCart.price * (promo.rewardNominal / 100)
-            : promo.rewardNominal;
+        itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
 
-        int requirementQty = cartPromo.requirementQuantity!;
-        int eligibleQty = cartPromo.kelipatan == true
-            ? (itemCart.quantity ~/ requirementQty) * requirementQty
-            : requirementQty;
-
-        double finalDiscountTotal = discountTotal * eligibleQty;
-        if (promo.rewardMaximumAmount != null &&
-            promo.rewardMaximumAmount! > 0 &&
-            finalDiscountTotal > promo.rewardMaximumAmount!) {
-          finalDiscountTotal = promo.rewardMaximumAmount!;
-        }
-
-        cartPromo = cartPromo.copyWith(
-          discountValue: finalDiscountTotal,
-          idItem: itemCart.idItem,
-          variantId: itemCart.idVariant,
-        );
-
-        double finalPrice = itemCart.price * itemCart.quantity;
-
-        itemCart = itemCart.copyWith(
-          discountIsPercent: cartPromo.discountIsPercent,
-          discountTotal: finalDiscountTotal,
-          discount: promo.rewardNominal,
-          total: finalPrice - finalDiscountTotal,
-          promotion: cartPromo,
-        );
-
-        log('ITEM GET PROMO: $discountTotal => $eligibleQty \n $itemCart');
+        // log('ITEM GET PROMO: $itemCart');
 
         cartPromotions.add(cartPromo);
         items[itemIdx] = itemCart;
@@ -582,16 +706,93 @@ class Cart extends _$Cart {
       cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
     }
 
+    // PROMO A GET B
+    for (var i = 0; i < freeGiftpromotions.length; i++) {
+      List<ItemCart> eligibleItems = ref
+          .read(promotionsProvider.notifier)
+          .eligibleItems(freeGiftpromotions[i], items);
+      log('A GET B eligible items: $eligibleItems');
+      if (eligibleItems.isEmpty) {
+        continue;
+      }
+      // Apply Rewards
+      Promotion promo = freeGiftpromotions[i];
+      ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
+      log('\nA GET B REWARD ITEM=>${reward.item.toString()}\n A GET B REWARD Variant=>${reward.variant.toString()}\n\n');
+      if (reward.item != null) {
+        for (ItemCart itemCart in eligibleItems) {
+          int itemIdx = items.indexWhere(
+            (item) => item.identifier == itemCart.identifier,
+          );
+          itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
+
+          log('ITEM GET PROMO AB: $itemCart');
+
+          items[itemIdx] = itemCart;
+        }
+        int rewardQty = promo.rewardQty ?? 1;
+        final int itemPromoQty = eligibleItems
+            .map((item) => item.quantity)
+            .reduce((value, total) => value + total);
+
+        if (promo.kelipatan == true) {
+          rewardQty = (rewardQty * itemPromoQty) ~/ promo.requirementQuantity!;
+        }
+        ItemCart rewardItem = ItemCart.asReward(
+          reward.item!,
+          variant: reward.variant,
+          promotion: promo,
+          quantity: rewardQty,
+        );
+        items.add(rewardItem);
+        cartPromotions.add(CartPromotion.fromData(promo));
+      }
+    }
+
     // PROMO BY CODE
     Promotion? promoByCode = promotions.firstWhereOrNull((p) => p.needCode);
 
     state = state.copyWith(
       items: items,
       promotions: cartPromotions,
+      vouchers: [],
       subtotal: subtotal,
       promoCode: promoByCode?.promoCode,
     );
+
     calculateCart();
+  }
+
+  void applyVoucher(Voucher voucher) {
+    if (voucher.voucherType == 'discount') {
+      double voucherValue = voucher.isPercent
+          ? state.subtotal * (voucher.discountValue / 100)
+          : voucher.discountValue;
+      state = state
+          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+
+      setDiscountTransaction(
+          discIsPercent: voucher.isPercent, discount: voucher.discountValue);
+    } else {
+      double voucherValue = voucher.isPercent == true
+          ? state.grandTotal * voucher.discountValue / 100
+          : voucher.discountValue;
+      state = state
+          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+
+      calculateCart();
+    }
+  }
+
+  void removeVoucher() {
+    CartVoucher? discountVoucher = state.vouchers
+        .firstWhereOrNull((voucher) => voucher.voucherType == 'discount');
+    state = state.copyWith(vouchers: []);
+    if (discountVoucher != null) {
+      setDiscountTransaction(discount: 0, discIsPercent: false);
+    } else {
+      calculateCart();
+    }
   }
 
   List<CartPromotion> activePromotion() {
@@ -628,9 +829,14 @@ class Cart extends _$Cart {
 
     List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
         .where((p) =>
-            p.type == 2 && p.requirementMinimumOrder! <= subtotal ||
+            p.type == 2 &&
+                (p.requirementMinimumOrder != null &&
+                    p.requirementMinimumOrder! <= subtotal) ||
             activePromoByProductIds.contains(p.promotionId))
         .toList();
+
+    CartVoucher? voucher =
+        state.vouchers.isNotEmpty ? state.vouchers.first : null;
 
     double discOverallTotal = 0;
     double discPromotionsTotal = 0;
@@ -647,6 +853,14 @@ class Cart extends _$Cart {
       discOverallTotal = state.discIsPercent
           ? subtotal * (state.discOverall / 100)
           : state.discOverall;
+      if (voucher != null && voucher.voucherType == 'discount') {
+        discOverallTotal = voucher.isPercent == true
+            ? subtotal * (voucher.discountValue ?? 0) / 100
+            : (voucher.discountValue ?? 0);
+        voucher = voucher.copyWith(
+          value: discOverallTotal,
+        );
+      }
     }
 
     double total = subtotal - discOverallTotal - discPromotionsTotal;
@@ -664,8 +878,27 @@ class Cart extends _$Cart {
       }
     }
 
-    double change =
-        state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
+    grandTotal += state.roundingValue;
+
+    double totalMoneyPayment = state.payments.isNotEmpty
+        ? state.payments
+            .map((payment) => payment.paymentValue)
+            .reduce((payment, total) => payment + total)
+        : 0;
+
+    double totalVoucherPayment = 0;
+    if (voucher != null && voucher.voucherType == 'payment') {
+      totalVoucherPayment = voucher.isPercent == true
+          ? grandTotal * (voucher.discountValue ?? 0) / 100
+          : (voucher.discountValue ?? 0);
+      voucher = voucher.copyWith(
+        value: totalVoucherPayment,
+      );
+    }
+
+    double totalPayment = totalMoneyPayment + totalVoucherPayment;
+
+    double change = totalPayment > grandTotal ? totalPayment - grandTotal : 0;
 
     state = state.copyWith(
       subtotal: subtotal,
@@ -676,7 +909,19 @@ class Cart extends _$Cart {
       discPromotionsTotal: discPromotionsTotal,
       change: change,
       transactionDate: DateTime.now().millisecondsSinceEpoch,
+      vouchers: voucher != null ? [voucher] : [],
       promotions: promotions,
+      totalPayment: totalPayment,
     );
+  }
+
+  void setTables(List<Table> tables) async {
+    if (state.transactionNo == '') {
+      await initCart();
+    }
+    state = state.copyWith(
+      tables: tables.map((table) => table.name).toList(),
+    );
+    ref.read(tablesProvider().notifier).markTables(state.transactionNo, tables);
   }
 }

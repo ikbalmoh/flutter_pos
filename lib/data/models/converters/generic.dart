@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Converters {
   static double dynamicToDouble(dynamic number) {
     if (number is String) {
@@ -9,7 +11,7 @@ class Converters {
     } else if (number == null) {
       return 0.00;
     }
-    return number;
+    return number ?? 0;
   }
 
   static bool dynamicToBool(dynamic value) {
@@ -46,6 +48,13 @@ class Converters {
       return null;
     }
     return value?.toString();
+  }
+
+  static DateTime? timeStampToDateTime(Timestamp? value) {
+    if (value == null) {
+      return null;
+    }
+    return value.toDate();
   }
 
   static Map<String, dynamic> stringToMap(String value) {

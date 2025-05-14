@@ -5,7 +5,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/services.dart';
 import 'package:selleri/config/theme.dart';
 import 'package:selleri/providers/fcm/fcm_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/router/app_router.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 class App extends ConsumerWidget {
   const App({super.key});
@@ -25,13 +27,23 @@ class App extends ConsumerWidget {
     }
 
     final router = ref.watch(routerProvider);
-
     ref.watch(fcmProvider);
+
+    final outlet = ref.watch(outletProvider).value;
+    if (outlet is OutletSelected) {
+      context.setLocale(
+        outlet.config.locale == 'en'
+            ? const Locale('en', 'US')
+            : const Locale('id', 'ID'),
+      );
+    }
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Selleri',
       theme: appTheme(context),
+      scaffoldMessengerKey: AppAlert.rootScaffoldMessengerKey,
+      routerConfig: router,
       builder: (context, child) => ResponsiveBreakpoints.builder(
         breakpoints: const [
           Breakpoint(start: 0, end: 400, name: PHONE),
@@ -42,7 +54,6 @@ class App extends ConsumerWidget {
         ],
         child: child!,
       ),
-      routerConfig: router,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,

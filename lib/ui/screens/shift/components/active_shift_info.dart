@@ -10,7 +10,6 @@ import 'package:selleri/utils/formater.dart';
 class ActiveShiftInfo extends ConsumerWidget {
   const ActiveShiftInfo({
     required this.shiftInfo,
-    this.onEditOpenAmount,
     this.onCloseShift,
     this.showPrintButton,
     super.key,
@@ -18,7 +17,6 @@ class ActiveShiftInfo extends ConsumerWidget {
 
   final ShiftInfo shiftInfo;
   final Function()? onCloseShift;
-  final Function()? onEditOpenAmount;
   final bool? showPrintButton;
 
   @override
@@ -90,17 +88,6 @@ class ActiveShiftInfo extends ConsumerWidget {
                                     style: textTheme.headlineMedium
                                         ?.copyWith(fontWeight: FontWeight.w600),
                                   ),
-                                  onEditOpenAmount != null
-                                      ? IconButton(
-                                          onPressed: onEditOpenAmount,
-                                          padding: const EdgeInsets.all(0),
-                                          icon: const Icon(
-                                            Icons.edit,
-                                            size: 16,
-                                          ),
-                                          tooltip: 'edit_open_amount'.tr(),
-                                        )
-                                      : Container()
                                 ],
                               ),
                             ],
@@ -192,7 +179,10 @@ class ActiveShiftInfo extends ConsumerWidget {
                                                           Colors.red),
                                                   onPressed: onCloseShift,
                                                   label: Text('close'.tr()),
-                                                  icon: const Icon(Icons.stop),
+                                                  icon: const Icon(
+                                                    Icons.stop,
+                                                    color: Colors.white,
+                                                  ),
                                                 )
                                               : shiftInfo.closeShift != null
                                                   ? Column(

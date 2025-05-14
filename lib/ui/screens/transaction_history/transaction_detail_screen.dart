@@ -88,7 +88,19 @@ class _TransactionDetailScreenState
     } catch (e) {
       log('PRINT FAILED: $e');
       // ignore: use_build_context_synchronously
-      AppAlert.snackbar(context, e.toString());
+      AppAlert.snackbar( e.toString());
+    }
+  }
+
+  void onPrintKitchen(BuildContext context) async {
+    try {
+      await ref.read(transactionsProvider.notifier).printKitchen(
+            widget.cart,
+          );
+    } catch (e) {
+      log('PRINT FAILED: $e');
+      // ignore: use_build_context_synchronously
+      AppAlert.snackbar( e.toString());
     }
   }
 
@@ -137,6 +149,11 @@ class _TransactionDetailScreenState
     final OutletSelected outletState =
         ref.watch(outletProvider).value as OutletSelected;
     OutletConfig? config = outletState.config;
+
+    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
+        .config
+        .addOns
+        ?.contains('table');
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
@@ -304,8 +321,15 @@ class _TransactionDetailScreenState
                                     : const Icon(Icons.share),
                               );
                             }),
-                            isTablet ? const SizedBox(width: 15) : Container(),
+                            hasTableAddon == true
+                                ? IconButton(
+                                    tooltip: 'print_kitchen'.tr(),
+                                    onPressed: () => onPrintKitchen(context),
+                                    icon: Icon(Icons.restaurant_outlined))
+                                : Container(),
+                            const SizedBox(width: 10),
                             !isTablet &&
+                                    currentShift != null &&
                                     widget.cart.totalPayment <
                                         widget.cart.grandTotal
                                 ? IconButton(
@@ -321,7 +345,9 @@ class _TransactionDetailScreenState
                                       label: Text('print'.tr()),
                                     ),
                                   ),
-                            widget.cart.totalPayment < widget.cart.grandTotal
+                            currentShift != null &&
+                                    widget.cart.totalPayment <
+                                        widget.cart.grandTotal
                                 ? Expanded(
                                     flex: 2,
                                     child: Padding(

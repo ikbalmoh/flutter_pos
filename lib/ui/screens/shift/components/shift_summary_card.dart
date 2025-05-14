@@ -9,10 +9,16 @@ import 'package:selleri/utils/formater.dart';
 import 'package:selleri/data/models/shift_summary.dart';
 
 class ShiftSummaryCards extends StatelessWidget {
-  const ShiftSummaryCards({required this.shiftInfo, this.isColumn, super.key});
+  const ShiftSummaryCards({
+    required this.shiftInfo,
+    this.isColumn,
+    this.openCashEditable,
+    super.key,
+  });
 
   final ShiftInfo shiftInfo;
   final bool? isColumn;
+  final bool? openCashEditable;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +31,7 @@ class ShiftSummaryCards extends StatelessWidget {
           builder: (context) {
             return SalesSummary(
               summary: summary,
+              openCashEditable: openCashEditable,
             );
           });
     }
@@ -55,7 +62,7 @@ class ShiftSummaryCards extends StatelessWidget {
             ),
             color: Colors.purple.shade50,
             label: 'total_transaction'.tr(args: ['']),
-            value: CurrencyFormat.currency(shiftInfo.summary.cashSales),
+            value: CurrencyFormat.currency(shiftInfo.summary.totalTransaction),
             onTap: () => onShowRecap(shiftInfo.summary),
           ),
           const SizedBox(width: 10),

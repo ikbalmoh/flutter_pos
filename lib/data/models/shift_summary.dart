@@ -10,6 +10,7 @@ class ShiftSummary with _$ShiftSummary {
   const factory ShiftSummary({
     required double startingCash,
     required double cashSales,
+    required double totalTransaction,
     @JsonKey(name: 'Expense') required double expense,
     @JsonKey(name: 'Income') required double income,
     @JsonKey(name: 'Refunded') required double refunded,
@@ -30,10 +31,12 @@ class SummaryItem {
   final String label;
   final double? value;
   final bool? isTotal;
+  final bool? isStartingCash;
 
   const SummaryItem({
     required this.label,
     this.value,
     this.isTotal,
+    this.isStartingCash,
   });
 }

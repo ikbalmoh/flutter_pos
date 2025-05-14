@@ -35,7 +35,9 @@ class Promotion {
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool allOutlet;
 
+  @Property(type: PropertyType.date)
   DateTime? startDate;
+  @Property(type: PropertyType.date)
   DateTime? endDate;
 
   @JsonKey(fromJson: Converters.dynamicToBool)
@@ -119,6 +121,9 @@ class Promotion {
     if (json['assign_groups'] == null) {
       json['assign_groups'] = [];
     }
+    if (json['days'] != null && (json['days'] as List).isEmpty) {
+      json['days'] = null;
+    }
     json['times'] = json['times'] == null
         ? []
         : List.from(json['times']).map((time) {
@@ -134,12 +139,6 @@ class Promotion {
     return toJson().toString();
   }
 
-  static Map<int, String> assignsType = {
-    1: 'all_customer'.tr(),
-    2: 'member'.tr(),
-    3: 'non_member'.tr(),
-    4: 'group'.tr()
-  };
 }
 
 class AssignGroupRelToManyConverter
@@ -168,6 +167,6 @@ class PromotionType {
         PromotionType(id: 0, name: 'all_type'.tr()),
         PromotionType(id: 2, name: 'transaction'.tr()),
         PromotionType(id: 3, name: 'item'.tr()),
-        // const PromotionType(id: 1, name: 'A get B'),
+        const PromotionType(id: 1, name: 'A get B'),
       ];
 }

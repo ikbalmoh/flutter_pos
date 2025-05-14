@@ -14,6 +14,7 @@ import 'package:selleri/providers/item/item_provider.dart';
 import 'package:selleri/providers/shift/shift_provider.dart';
 import 'package:selleri/ui/components/app_drawer/app_drawer.dart';
 import 'package:selleri/ui/components/barcode_scanner/barcode_scanner.dart';
+import 'package:selleri/ui/components/cart/add_barcode_item.dart';
 import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/ui/screens/cart/cart_screen.dart';
 import 'package:selleri/ui/screens/home/components/bottom_action.dart';
@@ -73,15 +74,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   void initState() {
-    loadShift();
-    super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    Future.delayed(Duration(seconds: 2), loadShift);
     WidgetsBinding.instance.addObserver(this);
+    super.initState();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      refreshItems();
+      log('APP RESUMED');
+      refreshData();
     }
   }
 
@@ -91,11 +94,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  Future<void> refreshItems() async {
-    return ref.read(itemsStreamProvider().notifier).syncItems();
+  Future<void> refreshData() async {
+    await ref.read(outletProvider.notifier).refreshConfig();
+    await ref.read(itemsStreamProvider().notifier).syncItems();
+    return;
   }
 
   Future<void> loadShift() async {
+    await refreshData();
     final currentShift = ref.read(shiftProvider).value;
     if (currentShift == null) {
       ref.read(shiftProvider.notifier).initShift();
@@ -121,13 +127,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  void onBarcodeCaptured(barcode, cb) async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isDismissible: true,
+      builder: (context) {
+        return AddBarcodeItem(barcode: barcode);
+      },
+    );
+    cb();
+  }
+
   void onBarcodeScanned(barcode) {
     if (!canListenBarcode) return;
     log('barcodes canned: $barcode');
     ScanItemResult result = objectBox.getItemByBarcode(barcode);
     if (result.item != null) {
-      final isStockAvailable =
-          ref.read(ItemsStreamProvider().notifier).isScannedItemStockAvailable(result);
+      final isStockAvailable = ref
+          .read(ItemsStreamProvider().notifier)
+          .isScannedItemStockAvailable(result);
       if (isStockAvailable == false) {
         AppAlert.confirm(
           context,
@@ -142,7 +161,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           );
       AppAlert.toast('x_added'.tr(args: [result.item!.itemName]));
     } else {
-      AppAlert.snackbar(context, 'x_not_found'.tr(args: [barcode]));
+      AppAlert.snackbar('x_not_found'.tr(args: [barcode]), alertType: AlertType.error);
     }
   }
 
@@ -155,9 +174,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     var itemContainer = VisibilityDetector(
       onVisibilityChanged: (info) {
-        setState(() {
-          canListenBarcode = info.visibleFraction > 0;
-        });
+        if (context.mounted) {
+          setState(() {
+            canListenBarcode = info.visibleFraction > 0;
+          });
+        }
       },
       key: const Key('visible-detector-key'),
       child: BarcodeKeyboardListener(
@@ -173,6 +194,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               height: searchVisible ? 0 : 56,
               child: ItemCategories(
                 active: idCategory,
+                filterStock: filterStock,
                 onChange: onChangeCategory,
               ),
             ),
@@ -223,10 +245,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       showCupertinoModalPopup(
                           context: context,
                           builder: (context) {
-                            return const BarcodeScanner();
+                            return BarcodeScanner(
+                              onCaptured: onBarcodeCaptured,
+                            );
                           });
                     },
-                    icon: const Icon(Icons.document_scanner_outlined))
+                    icon: const Icon(CupertinoIcons.barcode_viewfinder))
               ],
             )
           : AppBar(
@@ -277,7 +301,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             children: [
               Expanded(
                 child: RefreshIndicator(
-                  onRefresh: refreshItems,
+                  onRefresh: refreshData,
                   child: itemContainer,
                 ),
               ),
@@ -310,12 +334,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
           const ShiftOverlay(),
           const UpdatePatcher(),
-          ref.watch(authNotifierProvider).when(
+          ref.watch(authProvider).when(
                 data: (_) => Container(),
                 error: (_, stackTrace) => Container(),
                 loading: () => Positioned.fill(
                   child: Container(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     child: const Center(
                       child: LoadingIndicator(color: Colors.teal),
                     ),

@@ -1,13 +1,18 @@
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/providers/app_start/app_start_provider.dart';
 import 'package:selleri/providers/app_start/app_start_state.dart';
+import 'package:selleri/ui/screens/adjustments/adjustment_history_screen.dart';
 import 'package:selleri/ui/screens/holded/holded_screen.dart';
 import 'package:selleri/ui/screens/item/add_item_screen.dart';
 import 'package:selleri/ui/screens/item/manage_item_variants_screen.dart';
+import 'package:selleri/ui/screens/notification/notification_screen.dart';
 import 'package:selleri/ui/screens/promotions/promotions_screen.dart';
+import 'package:selleri/ui/screens/receiving/receiving_history_screen.dart';
+import 'package:selleri/ui/screens/receiving/receiving_screen.dart';
 import 'package:selleri/ui/screens/settings/about_app_screen.dart';
 import 'package:selleri/ui/screens/settings/account_information_screen.dart';
 import 'package:selleri/ui/screens/settings/auto_print_screen.dart';
@@ -24,15 +29,16 @@ import 'package:selleri/ui/screens/checkout/checkout_screen.dart';
 import 'package:selleri/ui/screens/customer/customer_screen.dart';
 import 'package:selleri/ui/screens/settings/printer/printer_setting_screen.dart';
 import 'package:selleri/ui/screens/transaction_history/transaction_history_screen.dart';
+import 'package:selleri/ui/screens/adjustments/adjustment_screen.dart';
+import 'package:selleri/ui/screens/tables/tables_screen.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 
 import 'routes.dart';
 
 part 'app_router.g.dart';
 
 @riverpod
-GoRouter router(RouterRef ref) {
-  final key = GlobalKey<NavigatorState>();
-
+GoRouter router(Ref ref) {
   final appState =
       ValueNotifier<AsyncValue<AppStartState>>(const AsyncLoading());
 
@@ -44,8 +50,9 @@ GoRouter router(RouterRef ref) {
     });
 
   return GoRouter(
-      navigatorKey: key,
+      navigatorKey: AuthorizationHelper.navigatorKey,
       initialLocation: Routes.root,
+      overridePlatformDefaultLocation: true,
       routes: [
         GoRoute(
           name: Routes.root,
@@ -75,6 +82,10 @@ GoRouter router(RouterRef ref) {
         GoRoute(
           path: Routes.cart,
           builder: (context, state) => const CartScreen(),
+        ),
+        GoRoute(
+          path: Routes.tables,
+          builder: (context, state) => const TablesScreen(),
         ),
         GoRoute(
           name: Routes.checkout,
@@ -115,6 +126,16 @@ GoRouter router(RouterRef ref) {
           },
         ),
         GoRoute(
+          name: Routes.adjustments,
+          path: Routes.adjustments,
+          builder: (context, state) => const AdjustmentScreen(),
+        ),
+        GoRoute(
+          name: Routes.adjustmentsHistory,
+          path: Routes.adjustmentsHistory,
+          builder: (context, state) => const AdjustmentHistoryScreen(),
+        ),
+        GoRoute(
           name: Routes.settings,
           path: Routes.settings,
           builder: (context, state) => const SettingScreen(),
@@ -152,12 +173,29 @@ GoRouter router(RouterRef ref) {
             return ManageItemVariantsScreen(idItem: idItem);
           },
         ),
+        GoRoute(
+          name: Routes.receiving,
+          path: '${Routes.receiving}/:type/:code',
+          builder: (context, state) => ReceivingScreen(
+            type: state.pathParameters['type']?.toString() ?? '1',
+            code: state.pathParameters['code']?.toString() ?? '0',
+          ),
+        ),
+        GoRoute(
+          name: Routes.receivingHistory,
+          path: Routes.receivingHistory,
+          builder: (context, state) => const ReceivingHistoryScreen(),
+        ),
+        GoRoute(
+          name: Routes.notificaitons,
+          path: Routes.notificaitons,
+          builder: (context, state) => const NotificationScreen(),
+        ),
       ],
+      debugLogDiagnostics: true,
       refreshListenable: appState,
       redirect: (context, state) {
         final currentRoute = state.topRoute?.path;
-
-        log('ROUTE STATE:\napp : ${appState.value.asData}\nroute: ${state.topRoute}');
 
         if (appState.value.isLoading) {
           return null;
@@ -184,8 +222,6 @@ GoRouter router(RouterRef ref) {
         final shouldRedirect = redirectRoute != null
             ? (currentRoute != null && currentRoute != redirectRoute)
             : false;
-
-        log('ROUTE: current = $currentRoute | redirect = $redirectRoute | should redirect = $shouldRedirect');
 
         if (shouldRedirect) {
           return redirectRoute;

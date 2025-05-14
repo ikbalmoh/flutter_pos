@@ -18,25 +18,28 @@ class FileDownload {
       {required String fileName,
       Map<String, dynamic>? params,
       Function(double progress)? callback,
+      Options? options,
       bool? openAfterDownload}) async {
     try {
       String savePath = await _getFilePath(fileName);
 
       log('Download: url => $urlPath\n fileName => $savePath');
 
-      await fetch().download(urlPath, savePath, queryParameters: params,
-          onReceiveProgress: (receive, total) {
+      await fetch().download(urlPath, savePath,
+          queryParameters: params,
+          options: options, onReceiveProgress: (receive, total) {
         log('downloading: $receive/$total');
         if (callback != null) {
           callback((receive / total) * 100);
         }
       });
       if (openAfterDownload == true) {
+        log('opening fileL $savePath');
         OpenFile.open(savePath);
       }
       return savePath;
     } on DioException catch (e) {
-      throw e.response?.data['msg'] ?? e.message;
+      throw e.message!;
     } catch (e) {
       rethrow;
     }
@@ -45,9 +48,11 @@ class FileDownload {
   Future<String> _getFilePath(String uniqueFileName) async {
     String path = '';
 
-    Directory? dir = await getDownloadsDirectory();
+    Directory? dir = Platform.isAndroid
+        ? await getDownloadsDirectory()
+        : await getApplicationDocumentsDirectory();
 
-    dir ??= await getApplicationCacheDirectory();
+    dir = dir ?? await getApplicationCacheDirectory();
 
     path = '${dir.path}/$uniqueFileName';
 

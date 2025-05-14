@@ -8,21 +8,29 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/category.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/data/models/item.dart';
+import 'package:selleri/data/models/item_adjustment.dart';
+import 'package:selleri/data/models/pagination.dart';
+import 'package:selleri/data/network/adjustment.dart';
+import 'package:selleri/data/network/item.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/data/repository/outlet_repository.dart';
-import 'package:selleri/data/network/api.dart' show ItemApi;
 
 part 'item_repository.g.dart';
 
 String syncKey = 'LAST_UPDATE/ITEMS';
 
 @riverpod
-ItemRepository itemRepository(ItemRepositoryRef ref) => ItemRepository(ref);
+ItemRepository itemRepository(Ref ref) => ItemRepository(ref);
 
 abstract class ItemRepositoryProtocol {
   Future<List<Category>> fetchCategoris();
-  Future<List<Item>> fetchItems(
-      {String? idCategory, bool? fromLastSync, bool? fullSync});
+  Future<List<Item>> fetchItems({String? idCategory, bool? fromLastSync});
+  Future<Pagination<ItemAdjustment>> fetchAdjustmnetItems({
+    int page = 1,
+    DateTime? date,
+    String? search,
+    String? idCategory,
+  });
 }
 
 class ItemRepository implements ItemRepositoryProtocol {
@@ -30,13 +38,12 @@ class ItemRepository implements ItemRepositoryProtocol {
 
   final Ref ref;
 
-  final api = ItemApi();
-
   late final outletState = ref.read(outletRepositoryProvider);
 
   @override
   Future<List<Category>> fetchCategoris() async {
     try {
+      final api = ref.watch(itemApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return [];
@@ -55,7 +62,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       objectBox.putCategories(categories);
       return categories;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);
     }
@@ -80,6 +87,7 @@ class ItemRepository implements ItemRepositoryProtocol {
     }
 
     try {
+      final api = ref.watch(itemApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return [];
@@ -90,7 +98,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       for (var i = 0; i < List.from(data['data']).length; i++) {
         var json = data['data'][i];
         try {
-          final item = Item.fromJson(json);
+          final item = Item.fromJsonData(json);
           items.add(item);
         } on Error catch (e, stackTrace) {
           if (kDebugMode) {
@@ -102,7 +110,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       }
       return items;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['msg'] ?? e.message);
+      throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);
     } finally {
@@ -110,6 +118,33 @@ class ItemRepository implements ItemRepositoryProtocol {
         key: syncKey,
         value: DateTime.now().millisecondsSinceEpoch.toString(),
       );
+    }
+  }
+
+  @override
+  Future<Pagination<ItemAdjustment>> fetchAdjustmnetItems({
+    int page = 1,
+    DateTime? date,
+    String? search,
+    String? idCategory,
+  }) async {
+    late final outletState = ref.read(outletRepositoryProvider);
+
+    final outlet = await outletState.retrieveOutlet();
+
+    final api = ref.watch(adjustmentApiProvider);
+    try {
+      var items = await api.itemsForAdjustment(
+        idOutlet: outlet!.idOutlet,
+        page: page,
+        date: date,
+        search: search,
+        idCategory: idCategory,
+      );
+      return items;
+    } catch (e, trace) {
+      log('Fetch items adjustments Error: $e => $trace');
+      rethrow;
     }
   }
 }

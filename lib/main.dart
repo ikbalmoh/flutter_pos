@@ -9,16 +9,20 @@ import 'package:selleri/data/constants/store_key.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:selleri/utils/firebase.dart';
 import 'dart:developer';
-import 'firebase_options.dart' as firebase_option;
-import 'firebase_options_dev.dart' as firebase_option_dev;
-import 'firebase_options_stage.dart' as firebase_option_stage;
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  log("Handling a background message: $message");
+  await FirebaseHelper().init();
+}
 
 Future initServices() async {
   log('INITIALIZING APP $appFlavor ...');
@@ -38,7 +42,7 @@ Future initServices() async {
 
   await dotenv.load(fileName: env);
 
-  String? deviceId = '';
+  String deviceId = await FlutterUdid.consistentUdid;
   String? deviceName = '';
 
   if (defaultTargetPlatform == TargetPlatform.android) {
@@ -47,15 +51,12 @@ Future initServices() async {
     deviceName = deviceInfo.device;
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
     IosDeviceInfo deviceInfo = await deviceInfoPlugin.iosInfo;
-    deviceId = deviceInfo.identifierForVendor;
     deviceName = deviceInfo.name;
   } else if (defaultTargetPlatform == TargetPlatform.macOS) {
     MacOsDeviceInfo deviceInfo = await deviceInfoPlugin.macOsInfo;
-    deviceId = deviceInfo.systemGUID;
     deviceName = deviceInfo.computerName;
   } else {
     WebBrowserInfo deviceInfo = await deviceInfoPlugin.webBrowserInfo;
-    deviceId = deviceInfo.userAgent;
     deviceName = deviceInfo.browserName.name;
   }
 
@@ -65,24 +66,10 @@ Future initServices() async {
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
-  if (deviceId != null && deviceId.isNotEmpty) {
-    storage.write(key: StoreKey.device.name, value: deviceId);
-  }
+  storage.write(key: StoreKey.device.name, value: deviceId);
   storage.write(key: StoreKey.deviceName.name, value: deviceName);
 
-  var firebaseOptions = firebase_option.DefaultFirebaseOptions.currentPlatform;
-  if (appFlavor == 'stage') {
-    firebaseOptions =
-        firebase_option_stage.DefaultFirebaseOptions.currentPlatform;
-  } else if (appFlavor == 'dev') {
-    firebaseOptions =
-        firebase_option_dev.DefaultFirebaseOptions.currentPlatform;
-  }
-
-  await Firebase.initializeApp(
-    name: 'selleri-$appFlavor',
-    options: firebaseOptions,
-  );
+  await FirebaseHelper().init();
 
   const fatalError = true;
   // Non-async exceptions
@@ -120,6 +107,8 @@ Future initServices() async {
     sound: true,
   );
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     log('FCM NOTIFICATION: User granted permission');
   } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
@@ -130,7 +119,9 @@ Future initServices() async {
 
   log(StoreKey.deviceName.name);
 
-  WakelockPlus.enable();
+  if (!kDebugMode) {
+    WakelockPlus.enable();
+  }
 }
 
 Future<void> main() async {
@@ -145,8 +136,9 @@ Future<void> main() async {
         path: 'assets/translations',
         fallbackLocale: const Locale('id', 'ID'),
         child: GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
-            child: const App()),
+          onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+          child: const App(),
+        ),
       ),
     ),
   );

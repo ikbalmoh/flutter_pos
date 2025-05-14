@@ -8,6 +8,8 @@ import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
 import 'package:selleri/ui/components/generic/qty_editor.dart';
 import 'package:selleri/ui/components/pic_picker.dart';
+import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -27,8 +29,8 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
   final priceController = TextEditingController();
   final noteController = TextEditingController();
 
-  final _priceFormater = CurrencyFormat.currencyInput();
-  final _discountFormater = CurrencyFormat.currencyInput();
+  final _priceFormater = CurrencyFormat.currencyInput(decimalDigit: 1);
+  final _discountFormater = CurrencyFormat.currencyInput(decimalDigit: 2);
 
   late double price;
   late double discount;
@@ -104,8 +106,19 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
       picName: picName,
     );
     // Update Item
-    ref.read(cartProvider.notifier).updateItem(item);
-    context.pop();
+    try {
+      if (price != widget.item.price || discount != widget.item.discount) {
+        final isAuthorized =
+            await AuthorizationHelper.authorize('change-discount-price');
+        if (!isAuthorized) {
+          return;
+        }
+      }
+      await ref.read(cartProvider.notifier).updateItem(item);
+      context.pop();
+    } catch (e) {
+      AppAlert.snackbar(e.toString());
+    }
   }
 
   void onSelectPic() async {
@@ -225,8 +238,10 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                         price = _priceFormater.getUnformattedValue().toDouble();
                       });
                     },
-                    readOnly: !widget.item.isManualPrice,
+                    readOnly: !widget.item.isManualPrice ||
+                        widget.item.isReward == true,
                     textAlign: TextAlign.right,
+                    enabled: widget.item.isReward != true,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       enabled: widget.item.isManualPrice,
@@ -250,7 +265,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(
@@ -264,24 +279,48 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                           'quantity'.tr(),
                           style: labelStyle,
                         ),
-                        QtyEditor(
-                            qty: qty,
-                            onChange: (value) {
-                              setState(() {
-                                qty = value;
-                              });
-                            }),
+                        widget.item.isReward == true
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 5,
+                                  horizontal: 5,
+                                ),
+                                child: Text(
+                                  qty.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(color: Colors.grey.shade500),
+                                ),
+                              )
+                            : QtyEditor(
+                                qty: qty,
+                                onChange: (value) {
+                                  setState(() {
+                                    qty = value;
+                                  });
+                                }),
                       ],
                     ),
                   ),
                   TextFormField(
+                    style: TextStyle(
+                      color: widget.item.manualDiscount ||
+                              widget.item.promotion != null
+                          ? Colors.grey.shade600
+                          : null,
+                    ),
                     inputFormatters: [_discountFormater],
-                    initialValue:
-                        _discountFormater.formatDouble(widget.item.discount),
+                    initialValue: _discountFormater.formatDouble(
+                        widget.item.promotion == null
+                            ? widget.item.discount
+                            : widget.item.discountTotal),
                     onChanged: onChangeDiscountValue,
-                    readOnly: !widget.item.manualDiscount,
+                    readOnly: !(widget.item.manualDiscount &&
+                        widget.item.promotion == null),
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
+                    enabled: widget.item.isReward != true,
                     decoration: InputDecoration(
                       enabled: widget.item.manualDiscount &&
                           widget.item.promotion == null,
@@ -297,15 +336,18 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                         style: labelStyle,
                       ),
                       alignLabelWithHint: true,
-                      suffix: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: DiscountTypeToggle(
-                          isPercent: discountIsPercent,
-                          onChange: widget.item.promotion == null
-                              ? onChangeDiscountType
-                              : null,
-                        ),
-                      ),
+                      suffix: widget.item.promotion == null
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: DiscountTypeToggle(
+                                disabled: widget.item.isReward == true,
+                                isPercent: discountIsPercent,
+                                onChange: widget.item.promotion == null
+                                    ? onChangeDiscountType
+                                    : null,
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                   TextFormField(
@@ -353,7 +395,9 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                   onPressed: () => onUpdateItem(context),
                   icon: const Icon(CupertinoIcons.checkmark_alt),
                   label: Text(
-                    CurrencyFormat.currency(total()),
+                    widget.item.isReward == true
+                        ? 'save'.tr()
+                        : CurrencyFormat.currency(total()),
                   ),
                 ),
               ),
