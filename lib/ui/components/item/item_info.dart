@@ -33,13 +33,14 @@ class ItemInfo extends ConsumerWidget {
         ? List.from(variant!.promotions!)
         : List.from(item.promotions);
 
-    if (variant != null && item.variants.isNotEmpty) {
+    if (variant == null && item.variants.isNotEmpty) {
       for (ItemVariant variant in item.variants) {
         if (variant.promotions != null) {
           promotionsIds = promotionsIds..addAll(variant.promotions!);
         }
       }
     }
+
     List<Promotion> promotions = objectBox.getPromotions(promotionsIds) ?? [];
     return Padding(
       padding: EdgeInsets.only(

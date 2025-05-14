@@ -96,7 +96,7 @@ class ItemContainer extends ConsumerWidget {
     ItemVariant? variant,
   }) {
     log('SHOW ITEM INFO $item');
-    if (item.variants.isNotEmpty) {
+    if (item.variants.isNotEmpty && variant == null) {
       showVariants(context, item, ref);
       return;
     }

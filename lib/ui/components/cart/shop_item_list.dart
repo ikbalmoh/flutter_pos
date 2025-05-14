@@ -1,6 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
-import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
 import 'package:selleri/ui/components/cart/stock_badge.dart';
 import 'package:selleri/utils/formater.dart';
@@ -23,7 +23,16 @@ class ShopItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activePromotions = objectBox.getPromotions(item.promotions) ?? [];
+    bool hasPromotions = item.promotions.isNotEmpty;
+
+    if (!hasPromotions && item.variants.isNotEmpty) {
+      var variantPromotions = item.variants.firstWhereOrNull(
+          (variant) => variant.promotions?.isNotEmpty ?? false);
+      if (variantPromotions != null) {
+        hasPromotions = true;
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: InkWell(
@@ -88,9 +97,7 @@ class ShopItemList extends StatelessWidget {
                       Wrap(
                         spacing: 5,
                         children: [
-                          activePromotions.isNotEmpty
-                              ? const PromotionBadge()
-                              : Container(),
+                          hasPromotions ? const PromotionBadge() : Container(),
                           StockBadge(
                             stockItem: item.stockItem,
                             stockControl: item.stockControl,

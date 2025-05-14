@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/ui/components/cart/promotions/promotion_badge.dart';
@@ -23,11 +24,13 @@ class ShopItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> promotionIds = List.from(item.promotions);
+    bool hasPromotions = item.promotions.isNotEmpty;
 
-    if (promotionIds.isEmpty) {
-      for (var i = 0; i < item.variants.length; i++) {
-        promotionIds = promotionIds..addAll(item.variants[i].promotions ?? []);
+    if (!hasPromotions && item.variants.isNotEmpty) {
+      var variantPromotions = item.variants.firstWhereOrNull(
+          (variant) => variant.promotions?.isNotEmpty ?? false);
+      if (variantPromotions != null) {
+        hasPromotions = true;
       }
     }
 
@@ -105,7 +108,7 @@ class ShopItem extends StatelessWidget {
                                 stockControl: item.stockControl,
                                 packageItems: item.packageItems,
                               ),
-                              promotionIds.isNotEmpty
+                              hasPromotions
                                   ? const PromotionBadge()
                                   : Container(),
                             ],
