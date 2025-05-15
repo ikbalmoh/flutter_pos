@@ -350,5 +350,12 @@
   "check": "Periksa",
   "checking": "Memeriksa",
   "use_x": "Gunakan {}",
-  "cannot_use_with_promotion": "Tidak dapat digunakan dengan promo"
+  "no_account": "Belum punya akun?",
+  "register": "Daftar",
+  "cannot_use_with_promotion": "Tidak dapat digunakan dengan promo",
+  "reset_password": "Atur Ulang Kata Sandi",
+  "forgot_password": "Lupa Kata Sandi?",
+  "reset_password_note": "Silahkan masukkan alamat email Anda. Kami akan mengirim tautan untuk membuat password baru.",
+  "reset_password_success": "Tautan reset password telah dikirim ke email Anda",
+  "reset_password_failed": "Gagal mengirim tautan reset password"
 }

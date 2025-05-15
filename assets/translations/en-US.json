@@ -349,5 +349,12 @@
   "check": "Check",
   "checking": "Checking",
   "use_x": "Use {}",
-  "cannot_use_with_promotion": "Can not be used with promotions"
+  "cannot_use_with_promotion": "Can not be used with promotions",
+  "reset_password": "Reset Password",
+  "forgot_password": "Forgot Password?",
+  "reset_password_note": "Please enter your email address to receive a password reset link",
+  "no_account": "Don't have an account?",
+  "register": "Register",
+  "reset_password_success": "Password reset link has been sent to your email address",
+  "reset_password_failed": "Failed to send password reset link"
 }

@@ -24,9 +24,11 @@ class AppAlert {
 
     try {
       Color backgroundColor = Colors.grey.shade900;
+      Color textColor = Colors.white;
 
       if (alertType == AlertType.success) {
-        backgroundColor = Colors.teal.shade500;
+        backgroundColor = Colors.white;
+        textColor = Colors.teal;
       } else if (alertType == AlertType.error) {
         backgroundColor = Colors.red.shade500;
       }
@@ -34,7 +36,10 @@ class AppAlert {
       messenger.hideCurrentSnackBar();
       messenger.showSnackBar(
         SnackBar(
-          content: Text(title),
+          content: Text(
+            title,
+            style: TextStyle(color: textColor),
+          ),
           backgroundColor: backgroundColor,
           duration: duration,
           action: action,

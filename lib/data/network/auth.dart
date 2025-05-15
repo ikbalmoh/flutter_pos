@@ -30,6 +30,13 @@ class AuthApi {
     return res.data;
   }
 
+  Future resetPassword(String email) async {
+    final res = await api.post(ApiUrl.resetPassword, data: {
+      'email': email,
+    });
+    return res.data['success'] ?? false;
+  }
+
   Future<void> logout() async {
     await api.post(ApiUrl.logout);
   }

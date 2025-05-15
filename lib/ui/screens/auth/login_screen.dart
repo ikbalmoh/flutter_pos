@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
+import 'package:selleri/router/routes.dart';
 import 'package:selleri/ui/components/update_patcher.dart';
 import 'package:selleri/utils/app_alert.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -107,6 +109,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         vertical: 25, horizontal: 20),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Form(
                           key: _formKey,
@@ -114,15 +117,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
+                            spacing: 15,
                             children: [
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 5),
                               Image.asset(
                                 'assets/images/icon.png',
                                 height: 50,
                                 width: 200,
                                 fit: BoxFit.contain,
                               ),
-                              const SizedBox(height: 50),
+                              const SizedBox(height: 25),
                               TextFormField(
                                 decoration: InputDecoration(
                                   labelText: "Username",
@@ -176,7 +180,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'enter_username'.tr();
+                                    return 'enter_email'.tr();
                                   }
                                   return null;
                                 },
@@ -185,7 +189,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.emailAddress,
                               ),
-                              const SizedBox(height: 15),
                               TextFormField(
                                 decoration: InputDecoration(
                                   suffix: GestureDetector(
@@ -260,7 +263,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 onEditingComplete: _submitLogin,
                                 textInputAction: TextInputAction.go,
                               ),
-                              const SizedBox(height: 20),
                               ElevatedButton.icon(
                                 onPressed: state.value is Authenticating
                                     ? null
@@ -287,32 +289,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
+                        TextButton(
+                          onPressed: () =>
+                              context.pushNamed(Routes.resetPassword),
+                          child: Text('forgot_password'.tr()),
                         ),
-                        Text(
-                          'or'.tr().toUpperCase(),
-                          textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey,
-                                  ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        TextButton.icon(
-                          style: TextButton.styleFrom(
-                              backgroundColor: Colors.teal.shade50,
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 15)),
-                          onPressed: onTapRegister,
-                          icon: Icon(CupertinoIcons.chevron_right),
-                          iconAlignment: IconAlignment.end,
-                          label: Text(
-                            'create_x'.tr(args: ['account'.tr()]),
-                            textAlign: TextAlign.center,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 0,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5),
+                              child: Text(
+                                'no_account'.tr(),
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.grey,
+                                    ),
+                              ),
+                            ),
+                            TextButton.icon(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.teal.shade50,
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 15),
+                              ),
+                              onPressed: onTapRegister,
+                              icon: Icon(CupertinoIcons.chevron_right),
+                              iconAlignment: IconAlignment.end,
+                              label: Text(
+                                'register'.tr(),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

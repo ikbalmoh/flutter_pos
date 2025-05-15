@@ -31,4 +31,5 @@ class ApiUrl {
   static const String purchaseInfo = '/info/purchase-order';
   static const String notifications = '/notifications';
   static const String vouchers = '/code-voucher/voucher'; // ?code=&id_outlet
+  static const String resetPassword = '/password/email';
 }
