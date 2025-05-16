@@ -565,6 +565,10 @@ class Cart extends _$Cart {
   }
 
   void removeHoldedCart() async {
+    final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
+    if (!isAuthorize) {
+      return;
+    }
     final api = ref.watch(transactionApiProvider);
     String idTransaction = state.idTransaction!;
     initCart();

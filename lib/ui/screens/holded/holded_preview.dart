@@ -13,10 +13,15 @@ import 'package:selleri/ui/components/hold/hold_form.dart';
 import 'package:selleri/utils/app_alert.dart';
 
 class HoldedPreview extends ConsumerWidget {
-  const HoldedPreview({required this.cartHolded, this.asWidget, super.key});
+  const HoldedPreview(
+      {required this.cartHolded,
+      this.asWidget,
+      required this.onDelete,
+      super.key});
 
   final CartHolded cartHolded;
   final bool? asWidget;
+  final void Function() onDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -162,21 +167,28 @@ class HoldedPreview extends ConsumerWidget {
               child: Row(
                 children: [
                   IconButton(
+                    tooltip: 'delete_x'.tr(args: ['holded_transactions'.tr()]),
+                    onPressed: onDelete,
+                    icon: const Icon(
+                      CupertinoIcons.trash,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(),
+                  ),
+                  IconButton(
                     tooltip: 'print_receipt'.tr(),
                     onPressed: onPrintReceipt,
                     icon: const Icon(CupertinoIcons.printer),
-                  ),
-                  const SizedBox(
-                    width: 10,
+                    constraints: const BoxConstraints(),
                   ),
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: onOpenHoldedCart,
-                      child: Text('open_transaction'.tr()),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 7.5),
+                      child: ElevatedButton(
+                        onPressed: onOpenHoldedCart,
+                        child: Text('open_transaction'.tr()),
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 5,
                   ),
                 ],
               ),
