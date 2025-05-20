@@ -64,4 +64,16 @@ class CustomerList extends _$CustomerList {
       rethrow;
     }
   }
+
+  Future<void> updateCustomer(String id,
+      {required Map<String, dynamic> payload}) async {
+    final api = ref.watch(customerApiProvider);
+    try {
+      final Customer customer = await api.updateCustomer(id, payload);
+      ref.read(cartProvider.notifier).selectCustomer(customer);
+      loadCustomers(page: 1, search: customer.customerName);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

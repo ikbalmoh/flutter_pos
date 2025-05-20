@@ -80,6 +80,19 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
         });
   }
 
+  void onEditCustomer(Customer customer) {
+    context.pop();
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        enableDrag: false,
+        builder: (context) {
+          return CustomerForm(
+              query: _searchController.text, customer: customer);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedCustomer = ref.watch(cartProvider).idCustomer;
@@ -99,6 +112,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
         builder: (BuildContext context) => CustomerDetail(
           customer: customer,
           onSelect: onSelectCustomer,
+          onEdit: onEditCustomer,
         ),
       );
     }

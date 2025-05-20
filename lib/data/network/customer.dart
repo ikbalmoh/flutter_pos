@@ -39,6 +39,19 @@ class CustomerApi {
       rethrow;
     }
   }
+
+  Future<Customer> updateCustomer(
+      String id, Map<String, dynamic> payload) async {
+    try {
+      final res = await api.put('${ApiUrl.customers}/$id', data: payload);
+      final data = res.data['data'];
+      return Customer.fromJson(data);
+    } on DioException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 
 final customerApiProvider = Provider<CustomerApi>((ref) {

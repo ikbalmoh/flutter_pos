@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:selleri/app.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/cart/holded_provider.dart';

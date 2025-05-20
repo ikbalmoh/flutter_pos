@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/data/models/customer.dart';
 import 'package:selleri/data/models/shift_cashflow.dart';
 import 'package:selleri/data/models/shift_cashflow_image.dart';
 import 'package:selleri/data/models/shift_info.dart';
@@ -21,9 +22,10 @@ import 'package:selleri/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CustomerForm extends ConsumerStatefulWidget {
-  const CustomerForm({required this.query, super.key});
+  const CustomerForm({required this.query, this.customer, super.key});
 
   final String query;
+  final Customer? customer;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CustomerFormState();
@@ -46,7 +48,14 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
   @override
   void initState() {
     setState(() {
-      customerName = widget.query;
+      customerName = widget.customer?.customerName ?? widget.query;
+      dob = widget.customer?.dob != null
+          ? DateTime.parse(widget.customer!.dob!)
+          : DateTime.now();
+      email = widget.customer?.email ?? '';
+      barcode = widget.customer?.barcode ?? '';
+      phoneNumber = widget.customer?.phoneNumber ?? '';
+      address = widget.customer?.address ?? '';
     });
     super.initState();
   }
@@ -65,7 +74,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     }
   }
 
-  void submitCloseShift({bool? isDelete}) async {
+  void submitCustomer({bool? isDelete}) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -81,8 +90,16 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
         'barcode': barcode,
         'phone_number': phoneNumber,
         'address': address,
+        'groups': [],
+        'vehicles': [],
       };
-      await ref.read(customerListProvider.notifier).submitNewCustomer(data);
+      if (widget.customer == null) {
+        await ref.read(customerListProvider.notifier).submitNewCustomer(data);
+      } else {
+        await ref
+            .read(customerListProvider.notifier)
+            .updateCustomer(widget.customer!.idCustomer, payload: data);
+      }
       // ignore: use_build_context_synchronously
       context.pop();
       AppAlert.toast('saved'.tr());
@@ -134,7 +151,9 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'add'.tr(args: ['customer'.tr()]),
+                            widget.customer == null
+                                ? 'add'.tr(args: ['customer'.tr()])
+                                : 'edit'.tr(args: ['customer'.tr()]),
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           GestureDetector(
@@ -344,9 +363,11 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                             ),
                           ),
                         ),
-                        onPressed: isLoading ? null : submitCloseShift,
+                        onPressed: isLoading ? null : submitCustomer,
                         child: Text(
-                          'submit'.tr(),
+                          widget.customer == null
+                              ? 'submit'.tr()
+                              : 'update'.tr(),
                         ),
                       ),
                     ),

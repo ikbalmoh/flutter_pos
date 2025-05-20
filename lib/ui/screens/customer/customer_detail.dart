@@ -7,9 +7,14 @@ import 'package:selleri/utils/formater.dart';
 class CustomerDetail extends StatelessWidget {
   final Customer customer;
   final Function(Customer) onSelect;
+  final Function(Customer) onEdit;
 
-  const CustomerDetail(
-      {required this.customer, required this.onSelect, super.key});
+  const CustomerDetail({
+    required this.customer,
+    required this.onSelect,
+    required this.onEdit,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +97,13 @@ class CustomerDetail extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      TextButton.icon(
+                        onPressed: () => onEdit(customer),
+                        icon: const Icon(Icons.edit),
+                        label: Text('edit'.tr(args: ['customer'.tr()])),
+                      ),
                       TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.teal,
