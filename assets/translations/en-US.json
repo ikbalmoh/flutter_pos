@@ -356,5 +356,17 @@
   "no_account": "Don't have an account?",
   "register": "Register",
   "reset_password_success": "Password reset link has been sent to your email address",
-  "reset_password_failed": "Failed to send password reset link"
+  "reset_password_failed": "Failed to send password reset link",
+  "data_x": "{} Data",
+  "expired_date": "Expired Date",
+  "npwp": "Tax Number",
+  "membership": "Membership",
+  "groups": "Customer Group",
+  "card_id": "Card ID",
+  "vehicle": "Vehicle",
+  "vehicle_type": "Vehicle Type",
+  "vehicle_number": "Vehicle Number",
+  "no_x_added": "No {} added",
+  "student_card": "Student Card",
+  "card_id_number": "Card ID Number"
 }

@@ -357,5 +357,17 @@
   "forgot_password": "Lupa Kata Sandi?",
   "reset_password_note": "Silahkan masukkan alamat email Anda. Kami akan mengirim tautan untuk membuat password baru.",
   "reset_password_success": "Tautan reset password telah dikirim ke email Anda",
-  "reset_password_failed": "Gagal mengirim tautan reset password"
+  "reset_password_failed": "Gagal mengirim tautan reset password",
+  "data_x": "Data {}",
+  "expired_date": "Tanggal Kadaluarsa",
+  "npwp": "NPWP",
+  "membership": "Keanggotaan",
+  "groups": "Grup Pelanggan",
+  "card_id": "ID Kartu",
+  "vehicle": "Kendaraan",
+  "vehicle_type": "Jenis Kendaraan",
+  "vehicle_number": "Nomor Kendaraan",
+  "no_x_added": "Tidak ada {} yang ditambahkan",
+  "student_card": "Kartu Pelajar",
+  "card_id_number": "Nomor ID Kartu"
 }

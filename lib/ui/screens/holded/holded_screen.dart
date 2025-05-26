@@ -83,6 +83,8 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
   }
 
   void deleteTransaction() async {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
     final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
     if (!isAuthorize) {
       return;
@@ -94,6 +96,9 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
       setState(() {
         viewTransaction = null;
       });
+      if (!isTablet) {
+        context.pop();
+      }
       AppAlert.toast(
         'successfully_deleted'.tr(args: ['transaction'.tr()]),
       );

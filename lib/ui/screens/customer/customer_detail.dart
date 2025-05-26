@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer/customer.dart';
 import 'package:selleri/utils/formater.dart';
 
 class CustomerDetail extends StatelessWidget {
@@ -18,16 +18,22 @@ class CustomerDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget listTile(String title, String? value) => ListTile(
-          title: Text(title),
-          subtitle: Text(value ?? '-'),
-          shape: Border(
-            bottom: BorderSide(
-              width: 1,
-              color: Colors.blueGrey.shade50,
-            ),
-          ),
-        );
+    Widget listTile(String title, String? value) =>
+        value != null && value.isNotEmpty
+            ? ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                dense: true,
+                title: Text(title),
+                subtitle: Text(value),
+                shape: Border(
+                  bottom: BorderSide(
+                    width: 1,
+                    color: Colors.blueGrey.shade50,
+                  ),
+                ),
+              )
+            : Container();
 
     bool isExpired = customer.expiredDate != null
         ? customer.expiredDate!.isBefore(DateTime.now())
@@ -89,32 +95,49 @@ class CustomerDetail extends StatelessWidget {
               ],
             ),
           ),
-          isExpired
-              ? Container()
-              : Container(
-                  color: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () => onEdit(customer),
-                        icon: const Icon(Icons.edit),
-                        label: Text('edit'.tr(args: ['customer'.tr()])),
-                      ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () => onSelect(customer),
-                        child: Text('select'.tr()),
-                      ),
-                    ],
-                  ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  width: 0.5,
+                  color: Colors.blueGrey.shade100,
                 ),
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 10,
+              children: [
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue.shade700,
+                  ),
+                  onPressed: () => onEdit(customer),
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.blue.shade700,
+                  ),
+                  label: Text('edit'.tr(args: ['customer'.tr()])),
+                ),
+                if (!isExpired)
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () => onSelect(customer),
+                    icon: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                    ),
+                    label: Text('select'.tr()),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );

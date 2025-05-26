@@ -90,7 +90,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 17.5, vertical: 15),
                     child: Text(
-                        _isLoading
+                        ref.watch(outletProvider).value is OutletLoading
                             ? "preparing_outlet".tr()
                             : "select_outlet".tr(),
                         style: textTheme.bodyLarge

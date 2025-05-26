@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/constants/app.dart' show assignsType;
 
 class PromotionAssign extends StatelessWidget {

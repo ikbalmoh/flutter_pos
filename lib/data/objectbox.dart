@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_package.dart';

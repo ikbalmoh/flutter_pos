@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer/customer.dart';
 
 class CustomerItem extends StatelessWidget {
   const CustomerItem({

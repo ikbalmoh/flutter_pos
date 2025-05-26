@@ -32,4 +32,5 @@ class ApiUrl {
   static const String notifications = '/notifications';
   static const String vouchers = '/code-voucher/voucher'; // ?code=&id_outlet
   static const String resetPassword = '/password/email';
+  static const String customerGroups = '/options/customer-groups';
 }

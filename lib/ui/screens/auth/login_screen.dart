@@ -294,40 +294,59 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               context.pushNamed(Routes.resetPassword),
                           child: Text('forgot_password'.tr()),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          spacing: 0,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5),
-                              child: Text(
-                                'no_account'.tr(),
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.grey,
+                        isTablet
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                spacing: 0,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(
+                                      'no_account'.tr(),
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Colors.grey,
+                                          ),
                                     ),
+                                  ),
+                                  TextButton.icon(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.teal.shade50,
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 15),
+                                    ),
+                                    onPressed: onTapRegister,
+                                    icon: Icon(CupertinoIcons.chevron_right),
+                                    iconAlignment: IconAlignment.end,
+                                    label: Text(
+                                      'register'.tr(),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : SizedBox(
+                                width: double.maxFinite,
+                                child: TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.teal.shade50,
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 15),
+                                  ),
+                                  onPressed: onTapRegister,
+                                  icon: Icon(CupertinoIcons.chevron_right),
+                                  iconAlignment: IconAlignment.end,
+                                  label: Text(
+                                    'register'.tr(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               ),
-                            ),
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.teal.shade50,
-                                padding:
-                                    const EdgeInsets.only(left: 20, right: 15),
-                              ),
-                              onPressed: onTapRegister,
-                              icon: Icon(CupertinoIcons.chevron_right),
-                              iconAlignment: IconAlignment.end,
-                              label: Text(
-                                'register'.tr(),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
