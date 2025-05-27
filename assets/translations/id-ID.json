@@ -42,6 +42,7 @@
   "customer_name": "Nama Pelanggan",
   "customer_code": "Kode Pelanggan",
   "phone": "Telepon",
+  "phone_number": "Nomor Telepon",
   "address": "Alamat",
   "group": "Grup",
   "close": "Tutup",
@@ -369,5 +370,8 @@
   "vehicle_number": "Nomor Kendaraan",
   "no_x_added": "Tidak ada {} yang ditambahkan",
   "student_card": "Kartu Pelajar",
-  "card_id_number": "Nomor ID Kartu"
+  "card_id_number": "Nomor ID Kartu",
+  "province": "Provinsi",
+  "city": "Kota",
+  "district": "Kecamatan"
 }

@@ -55,7 +55,9 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
   @override
   void initState() {
     if (widget.customer != null) {
-      customer = widget.customer ?? Customer.initial();
+      customer = widget.customer!;
+    } else if (widget.query.isNotEmpty) {
+      customer = customer.copyWith(customerName: widget.query);
     }
     super.initState();
   }
@@ -323,6 +325,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 });
               },
               validator: (value) => validateField('email', value),
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 label: labelWidget('email'),
                 alignLabelWithHint: true,
@@ -350,10 +353,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               },
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-                label: labelWidget('phone'),
+                label: labelWidget('phone_number'),
                 alignLabelWithHint: true,
               ),
-              validator: (value) => validateField('phone', value),
+              validator: (value) => validateField('phone_number', value),
             ),
             TextFormField(
               initialValue: customer.npwp,
@@ -362,7 +365,6 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                   customer = customer.copyWith(npwp: value);
                 });
               },
-              keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 label: labelWidget('npwp'),
                 alignLabelWithHint: true,
@@ -398,7 +400,6 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                   customer = customer.copyWith(city: value);
                 });
               },
-              keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 label: labelWidget('city'),
                 alignLabelWithHint: true,
@@ -415,7 +416,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 hintText: 'add'.tr(args: ['address'.tr()]),
                 alignLabelWithHint: true,
               ),
-              validator: (value) => validateField('addres', value),
+              validator: (value) => validateField('address', value),
             ),
           ],
         ),

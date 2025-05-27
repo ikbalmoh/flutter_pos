@@ -113,8 +113,6 @@ class CustomInterceptors extends Interceptor {
       message = err.response?.data?['message'];
     } else if (err.response?.statusCode == 422) {
       message = 'Invalid data. Please check your input and try again.';
-    } else {
-      message = 'Unexpected Error Occured!';
     }
     err = err.copyWith(message: message);
 

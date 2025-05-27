@@ -42,6 +42,7 @@
   "customer_name": "Customer Name",
   "customer_code": "Customer Code",
   "phone": "Phone",
+  "phone_number": "Phone Number",
   "address": "Address",
   "group": "Group",
   "close": "Close",
@@ -368,5 +369,8 @@
   "vehicle_number": "Vehicle Number",
   "no_x_added": "No {} added",
   "student_card": "Student Card",
-  "card_id_number": "Card ID Number"
+  "card_id_number": "Card ID Number",
+  "province": "Province",
+  "city": "City",
+  "district": "District"
 }
