@@ -36,7 +36,8 @@ class CustomerDetail extends StatelessWidget {
             : Container();
 
     bool isExpired = customer.expiredDate != null
-        ? customer.expiredDate!.isBefore(DateTime.now())
+        ? DateTimeFormater.stringToDateTime(customer.expiredDate!)!
+            .isBefore(DateTime.now())
         : false;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.9,
@@ -81,17 +82,13 @@ class CustomerDetail extends StatelessWidget {
               children: [
                 listTile('customer_code'.tr(), customer.code.trim()),
                 listTile('customer_name'.tr(), customer.customerName.trim()),
-                listTile('group', customer.groupNames),
+                listTile('group'.tr(), customer.groupNames),
                 listTile('Email', customer.email),
                 listTile('phone'.tr(), customer.phoneNumber),
                 listTile('address'.tr(), customer.address),
-                listTile('Barcode', customer.barcode),
-                listTile(
-                    'active_date'.tr(),
-                    customer.expiredDate != null
-                        ? DateTimeFormater.dateToString(customer.expiredDate!,
-                            format: 'dd MMM y')
-                        : '-'),
+                listTile('barcode'.tr(), customer.barcode),
+                listTile('expired_date'.tr(),
+                    customer.expiredDate != null ? customer.expiredDate! : '-'),
               ],
             ),
           ),

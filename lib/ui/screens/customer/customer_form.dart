@@ -30,6 +30,7 @@ import 'package:selleri/ui/components/generic/loading_placeholder.dart';
 import 'package:selleri/ui/components/generic/picked_image.dart';
 import 'package:selleri/ui/screens/customer/vehicle_form.dart';
 import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -83,12 +84,14 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365 * 10)),
       lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
-      initialDate:
-          customer.expiredDate != null ? customer.expiredDate! : DateTime.now(),
+      initialDate: customer.expiredDate != null
+          ? DateTimeFormater.stringToDateTime(customer.expiredDate!)
+          : DateTime.now(),
     );
     if (pickedDate != null) {
       setState(() {
-        customer = customer.copyWith(expiredDate: pickedDate);
+        customer = customer.copyWith(
+            expiredDate: DateTimeFormater.dateToString(pickedDate));
       });
     }
   }
@@ -148,6 +151,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       if (widget.customer == null) {
         await ref.read(customerListProvider.notifier).submitNewCustomer(data);
       } else {
+        await AuthorizationHelper.authorize('edit-customer');
         await ref
             .read(customerListProvider.notifier)
             .updateCustomer(widget.customer!.idCustomer, payload: data);
@@ -462,8 +466,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                     ),
                     onPressed: picExpiredDate,
                     label: Text(customer.expiredDate != null
-                        ? DateTimeFormater.dateToString(customer.expiredDate!,
-                            format: 'dd MMM yyyy')
+                        ? customer.expiredDate!
                         : 'select'.tr()),
                   ),
                 ],

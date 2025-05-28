@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/customer/customer.dart';
+import 'package:selleri/utils/formater.dart';
 
 class CustomerItem extends StatelessWidget {
   const CustomerItem({
@@ -18,7 +19,8 @@ class CustomerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isExpired = customer.expiredDate != null
-        ? customer.expiredDate!.isBefore(DateTime.now())
+        ? DateTimeFormater.stringToDateTime(customer.expiredDate!)!
+            .isBefore(DateTime.now())
         : false;
 
     return ListTile(
