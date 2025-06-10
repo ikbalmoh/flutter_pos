@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/utils/formater.dart';
@@ -23,7 +25,7 @@ class _CartItemState extends State<CartItem> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Material(
-      color: Colors.white,
+      color: widget.item.isReward == true ? Colors.grey.shade100 : Colors.white,
       shape: Border(
         bottom: BorderSide(width: 1, color: Colors.grey.shade100),
       ),
@@ -86,12 +88,13 @@ class _CartItemState extends State<CartItem> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
+                                color: Colors.blue.shade50,
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
                                 widget.item.variantName ?? '',
-                                style: textTheme.bodyMedium,
+                                style: textTheme.bodySmall
+                                    ?.copyWith(color: Colors.blue.shade600),
                               ),
                             )
                           : Container(),
@@ -105,7 +108,7 @@ class _CartItemState extends State<CartItem> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                '-${CurrencyFormat.currency(widget.item.discount, symbol: !widget.item.discountIsPercent, decimalDigit: 2)}${widget.item.discountIsPercent ? '%' : ''}',
+                                '-${CurrencyFormat.currency(widget.item.discountTotal, symbol: !widget.item.discountIsPercent, decimalDigit: 2)}',
                                 style: textTheme.bodyMedium
                                     ?.copyWith(color: Colors.red.shade600),
                               ),
@@ -113,6 +116,46 @@ class _CartItemState extends State<CartItem> {
                           : Container(),
                     ],
                   ),
+                  widget.item.promotion != null
+                      ? Container(
+                          margin: const EdgeInsets.only(top: 5, right: 5),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: widget.item.isReward == true
+                                ? Colors.red.shade50
+                                : Colors.amber.shade50,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                CupertinoIcons.ticket_fill,
+                                size: 16,
+                                color: widget.item.isReward == true
+                                    ? Colors.red.shade600
+                                    : Colors.amber.shade600,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                widget.item.isReward == true
+                                    ? 'reward_x'.tr(args: [
+                                        widget.item.promotion!.promotionName
+                                            .toString(),
+                                      ])
+                                    : widget.item.promotion!.promotionName
+                                        .toString(),
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: widget.item.isReward == true
+                                      ? Colors.red.shade700
+                                      : Colors.amber.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
                   widget.item.note != null && widget.item.note!.isNotEmpty
                       ? Text(
                           widget.item.note ?? '-',

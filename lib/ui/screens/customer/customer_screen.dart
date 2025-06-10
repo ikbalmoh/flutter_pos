@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer/customer.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/customer/customer_list_provider.dart';
-import 'package:selleri/ui/components/customer/customer_form.dart';
+import 'package:selleri/ui/screens/customer/customer_form.dart';
 import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
@@ -70,13 +71,20 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
   }
 
   void onCreateNewCustomer() {
-    showModalBottomSheet(
+    showCupertinoModalPopup(
         context: context,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        enableDrag: false,
         builder: (context) {
           return CustomerForm(query: _searchController.text);
+        });
+  }
+
+  void onEditCustomer(Customer customer) {
+    context.pop();
+    showCupertinoModalPopup(
+        context: context,
+        builder: (context) {
+          return CustomerForm(
+              query: _searchController.text, customer: customer);
         });
   }
 
@@ -99,6 +107,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
         builder: (BuildContext context) => CustomerDetail(
           customer: customer,
           onSelect: onSelectCustomer,
+          onEdit: onEditCustomer,
         ),
       );
     }

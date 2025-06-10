@@ -8,8 +8,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
-import 'package:selleri/data/models/customer.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
+import 'package:selleri/data/models/customer/customer.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
@@ -18,6 +19,7 @@ import 'package:selleri/data/models/item_variant.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/data/models/table.dart';
+import 'package:selleri/data/models/voucher.dart';
 import 'package:selleri/data/network/transaction.dart';
 import 'package:selleri/data/objectbox.dart';
 import 'package:selleri/providers/auth/auth_provider.dart';
@@ -130,10 +132,6 @@ class Cart extends _$Cart {
       if (emptyItems.isNotEmpty) {
         throw 'x_stock_empty'.tr(args: [emptyItems.first.itemName]);
       }
-      identifier += (DateTime.now().millisecondsSinceEpoch).toString();
-    } else if (variant != null) {
-      identifier += '-v${variant.idVariant.toString()}';
-      itemPrice = variant.itemPrice;
     }
 
     final int cartIndex =
@@ -198,6 +196,30 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
+  Future<void> removePromotion(String promotionId) async {
+    CartPromotion? promotion =
+        state.promotions.firstWhereOrNull((p) => p.promotionId == promotionId);
+
+    if (promotion != null) {
+      List<ItemCart> items = List<ItemCart>.from(state.items)
+          .map((item) => item.isReward != true &&
+                  item.promotion?.promotionId == promotionId
+              ? item.copyWith(promotion: null)
+              : item)
+          .toList();
+
+      // Remove item reward
+      items.removeWhere((item) =>
+          item.isReward == true && item.promotion?.promotionId == promotionId);
+
+      List<CartPromotion> promotions = List.from(state.promotions);
+
+      promotions.removeWhere((p) => p.promotionId == promotionId);
+      state = state.copyWith(promotions: promotions, items: items);
+    }
+    calculateCart();
+  }
+
   Future<void> updateQty(String idItem,
       {int? idVariant, bool increment = true}) async {
     final index = state.items
@@ -213,6 +235,14 @@ class Cart extends _$Cart {
 
       if (item == null) {
         throw 'x_not_found'.tr(args: ['item'.tr()]);
+      }
+
+      List<CartPromotion> promotions = List.from(state.promotions);
+      if (itemCart.promotion != null) {
+        itemCart = itemCart.copyWith(
+          discount: 0,
+          discountTotal: 0,
+        );
       }
 
       ItemVariant? itemVariant = idVariant == null
@@ -233,8 +263,13 @@ class Cart extends _$Cart {
       double finalPrice = itemCart.price - itemCart.discountTotal;
       items[index] =
           itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
-      state = state.copyWith(items: items, roundingValue: 0);
-      calculateCart();
+      state = state.copyWith(
+          items: items, roundingValue: 0, promotions: promotions);
+      if (itemCart.promotion != null) {
+        removePromotion(itemCart.promotion!.promotionId);
+      } else {
+        calculateCart();
+      }
     }
   }
 
@@ -279,10 +314,16 @@ class Cart extends _$Cart {
         total: total,
         discount: discount,
         discountTotal: discountTotal,
-        promotion: null,
       );
-      state = state.copyWith(items: items, roundingValue: 0);
-      calculateCart();
+      state = state.copyWith(
+        items: items,
+        roundingValue: 0,
+      );
+      if (itemCart.promotion != null) {
+        removePromotion(itemCart.promotion!.promotionId);
+      } else {
+        calculateCart();
+      }
     }
   }
 
@@ -290,7 +331,10 @@ class Cart extends _$Cart {
     List<ItemCart> items = [...state.items];
     List<CartPromotion> promotions = [...state.promotions];
     ItemCart item = items.firstWhere((item) => item.identifier == identifier);
-    items.removeWhere((i) => i.identifier == identifier);
+    items.removeWhere((i) =>
+        i.identifier == item.identifier ||
+        (i.isReward == true &&
+            i.promotion?.promotionId == item.promotion?.promotionId));
     promotions.removeWhere(
       (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
     );
@@ -371,10 +415,7 @@ class Cart extends _$Cart {
       // Add payment
       payments.add(payment);
     }
-    double totalPayment = payments
-        .map((payment) => payment.paymentValue)
-        .reduce((payment, total) => payment + total);
-    state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    state = state.copyWith(payments: payments);
     calculateCart();
   }
 
@@ -382,12 +423,7 @@ class Cart extends _$Cart {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
     payments.removeWhere(
         (p) => p.paymentMethodId == paymentMethodId && p.createdAt == null);
-    double totalPayment = payments.isNotEmpty
-        ? payments
-            .map((payment) => payment.paymentValue)
-            .reduce((payment, total) => payment + total)
-        : 0;
-    state = state.copyWith(payments: payments, totalPayment: totalPayment);
+    state = state.copyWith(payments: payments);
     calculateCart();
   }
 
@@ -529,6 +565,10 @@ class Cart extends _$Cart {
   }
 
   void removeHoldedCart() async {
+    final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
+    if (!isAuthorize) {
+      return;
+    }
     final api = ref.watch(transactionApiProvider);
     String idTransaction = state.idTransaction!;
     initCart();
@@ -599,6 +639,7 @@ class Cart extends _$Cart {
     }
 
     List<ItemCart> items = List<ItemCart>.from(state.items)
+        .where((item) => item.isReward != true)
         .map((item) => item.promotion == null
             ? item
             : item.copyWith(
@@ -608,10 +649,17 @@ class Cart extends _$Cart {
                 total: item.price * item.quantity,
               ))
         .toList();
-    List<Promotion> promotionByProducts =
-        promotions.where((promo) => promo.type == 3).toList();
+
+    List<Promotion> freeGiftpromotions =
+        promotions.where((promo) => promo.type == 1).toList();
+
     Promotion? promotionByOrder =
         promotions.firstWhereOrNull((promo) => promo.type == 2);
+
+    List<Promotion> promotionByProducts =
+        promotions.where((promo) => promo.type == 3).toList();
+
+    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT\n$freeGiftpromotions\n2 => BY ORDER\n$promotionByOrder\n3 => BY PRODUCTS\n$promotionByProducts');
 
     List<CartPromotion> cartPromotions = [];
 
@@ -621,33 +669,8 @@ class Cart extends _$Cart {
 
       CartPromotion cartPromo = CartPromotion.fromData(promo);
 
-      List<ItemCart> eligibleItems = [];
-
-      if (promo.requirementProductType == 1) {
-        // require product id
-        eligibleItems = items
-            .where((item) =>
-                (item.idVariant != null && promo.requirementVariantId.isNotEmpty
-                    ? promo.requirementVariantId
-                        .contains(item.idVariant.toString())
-                    : promo.requirementProductId.contains(item.idItem)) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      } else if (promo.requirementProductType == 2) {
-        // require package id
-        eligibleItems = items
-            .where((item) =>
-                promo.requirementProductId.contains(item.idItem) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      } else if (promo.requirementProductType == 3) {
-        // require category id
-        eligibleItems = items
-            .where((item) =>
-                promo.requirementProductId.contains(item.idCategory) &&
-                item.quantity >= promo.requirementQuantity!.toInt())
-            .toList();
-      }
+      List<ItemCart> eligibleItems =
+          ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
 
       if (eligibleItems.isEmpty) {
         continue;
@@ -657,39 +680,9 @@ class Cart extends _$Cart {
         int itemIdx = items.indexWhere(
           (item) => item.identifier == itemCart.identifier,
         );
-        double discountTotal = cartPromo.discountIsPercent
-            ? itemCart.price * (promo.rewardNominal / 100)
-            : promo.rewardNominal;
+        itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
 
-        int requirementQty = cartPromo.requirementQuantity!;
-        int eligibleQty = cartPromo.kelipatan == true
-            ? (itemCart.quantity ~/ requirementQty)
-            : requirementQty;
-
-        double finalDiscountTotal = discountTotal * eligibleQty;
-        if (promo.rewardMaximumAmount != null &&
-            promo.rewardMaximumAmount! > 0 &&
-            finalDiscountTotal > promo.rewardMaximumAmount!) {
-          finalDiscountTotal = promo.rewardMaximumAmount!;
-        }
-
-        cartPromo = cartPromo.copyWith(
-          discountValue: finalDiscountTotal,
-          idItem: itemCart.idItem,
-          variantId: itemCart.idVariant,
-        );
-
-        double finalPrice = itemCart.price * itemCart.quantity;
-
-        itemCart = itemCart.copyWith(
-          discountIsPercent: cartPromo.discountIsPercent,
-          discountTotal: finalDiscountTotal,
-          discount: promo.rewardNominal,
-          total: finalPrice - finalDiscountTotal,
-          promotion: cartPromo,
-        );
-
-        log('ITEM GET PROMO: $discountTotal => $eligibleQty \n $itemCart');
+        // log('ITEM GET PROMO: $itemCart');
 
         cartPromotions.add(cartPromo);
         items[itemIdx] = itemCart;
@@ -717,16 +710,93 @@ class Cart extends _$Cart {
       cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
     }
 
+    // PROMO A GET B
+    for (var i = 0; i < freeGiftpromotions.length; i++) {
+      List<ItemCart> eligibleItems = ref
+          .read(promotionsProvider.notifier)
+          .eligibleItems(freeGiftpromotions[i], items);
+      log('A GET B eligible items: $eligibleItems');
+      if (eligibleItems.isEmpty) {
+        continue;
+      }
+      // Apply Rewards
+      Promotion promo = freeGiftpromotions[i];
+      ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
+      log('\nA GET B REWARD ITEM=>${reward.item.toString()}\n A GET B REWARD Variant=>${reward.variant.toString()}\n\n');
+      if (reward.item != null) {
+        for (ItemCart itemCart in eligibleItems) {
+          int itemIdx = items.indexWhere(
+            (item) => item.identifier == itemCart.identifier,
+          );
+          itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
+
+          log('ITEM GET PROMO AB: $itemCart');
+
+          items[itemIdx] = itemCart;
+        }
+        int rewardQty = promo.rewardQty ?? 1;
+        final int itemPromoQty = eligibleItems
+            .map((item) => item.quantity)
+            .reduce((value, total) => value + total);
+
+        if (promo.kelipatan == true) {
+          rewardQty = (rewardQty * itemPromoQty) ~/ promo.requirementQuantity!;
+        }
+        ItemCart rewardItem = ItemCart.asReward(
+          reward.item!,
+          variant: reward.variant,
+          promotion: promo,
+          quantity: rewardQty,
+        );
+        items.add(rewardItem);
+        cartPromotions.add(CartPromotion.fromData(promo));
+      }
+    }
+
     // PROMO BY CODE
     Promotion? promoByCode = promotions.firstWhereOrNull((p) => p.needCode);
 
     state = state.copyWith(
       items: items,
       promotions: cartPromotions,
+      vouchers: [],
       subtotal: subtotal,
       promoCode: promoByCode?.promoCode,
     );
+
     calculateCart();
+  }
+
+  void applyVoucher(Voucher voucher) {
+    if (voucher.voucherType == 'discount') {
+      double voucherValue = voucher.isPercent
+          ? state.subtotal * (voucher.discountValue / 100)
+          : voucher.discountValue;
+      state = state
+          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+
+      setDiscountTransaction(
+          discIsPercent: voucher.isPercent, discount: voucher.discountValue);
+    } else {
+      double voucherValue = voucher.isPercent == true
+          ? state.grandTotal * voucher.discountValue / 100
+          : voucher.discountValue;
+      state = state
+          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+
+      calculateCart();
+    }
+  }
+
+  void removeVoucher() {
+    CartVoucher? discountVoucher = state.vouchers
+        .firstWhereOrNull((voucher) => voucher.voucherType == 'discount');
+    state = state.copyWith(vouchers: []);
+    if (discountVoucher != null) {
+      setDiscountTransaction(discount: 0, discIsPercent: false);
+    } else {
+      calculateCart();
+    }
   }
 
   List<CartPromotion> activePromotion() {
@@ -769,6 +839,9 @@ class Cart extends _$Cart {
             activePromoByProductIds.contains(p.promotionId))
         .toList();
 
+    CartVoucher? voucher =
+        state.vouchers.isNotEmpty ? state.vouchers.first : null;
+
     double discOverallTotal = 0;
     double discPromotionsTotal = 0;
 
@@ -784,6 +857,14 @@ class Cart extends _$Cart {
       discOverallTotal = state.discIsPercent
           ? subtotal * (state.discOverall / 100)
           : state.discOverall;
+      if (voucher != null && voucher.voucherType == 'discount') {
+        discOverallTotal = voucher.isPercent == true
+            ? subtotal * (voucher.discountValue ?? 0) / 100
+            : (voucher.discountValue ?? 0);
+        voucher = voucher.copyWith(
+          value: discOverallTotal,
+        );
+      }
     }
 
     double total = subtotal - discOverallTotal - discPromotionsTotal;
@@ -803,8 +884,25 @@ class Cart extends _$Cart {
 
     grandTotal += state.roundingValue;
 
-    double change =
-        state.totalPayment > grandTotal ? state.totalPayment - grandTotal : 0;
+    double totalMoneyPayment = state.payments.isNotEmpty
+        ? state.payments
+            .map((payment) => payment.paymentValue)
+            .reduce((payment, total) => payment + total)
+        : 0;
+
+    double totalVoucherPayment = 0;
+    if (voucher != null && voucher.voucherType == 'payment') {
+      totalVoucherPayment = voucher.isPercent == true
+          ? grandTotal * (voucher.discountValue ?? 0) / 100
+          : (voucher.discountValue ?? 0);
+      voucher = voucher.copyWith(
+        value: totalVoucherPayment,
+      );
+    }
+
+    double totalPayment = totalMoneyPayment + totalVoucherPayment;
+
+    double change = totalPayment > grandTotal ? totalPayment - grandTotal : 0;
 
     state = state.copyWith(
       subtotal: subtotal,
@@ -815,7 +913,9 @@ class Cart extends _$Cart {
       discPromotionsTotal: discPromotionsTotal,
       change: change,
       transactionDate: DateTime.now().millisecondsSinceEpoch,
+      vouchers: voucher != null ? [voucher] : [],
       promotions: promotions,
+      totalPayment: totalPayment,
     );
   }
 

@@ -30,6 +30,12 @@ class AuthorizationHelper {
 
       final OutletConfig outletConfig = (outletState as OutletSelected).config;
 
+      final userHasPinList = outletConfig.userHasPin ?? [];
+
+      if (userHasPinList.isEmpty) {
+        return true;
+      }
+
       final List<PinSetting> pinSettings = outletConfig.pinSettings ?? [];
       if (pinSettings.isEmpty) {
         throw ('PIN setting not available');
@@ -45,12 +51,6 @@ class AuthorizationHelper {
         return true;
       }
 
-      final userHasPinList = outletConfig.userHasPin ?? [];
-
-      if (userHasPinList.isEmpty) {
-        throw ('No PIC available');
-      }
-
       // Step 1: Select PIC
       final selectedUser = await showModalBottomSheet<UserHasPin>(
         context: context,
@@ -63,6 +63,7 @@ class AuthorizationHelper {
             expand: false,
             builder: (context, scrollController) {
               return VerificatorPicker(
+                  scrollController: scrollController,
                   description:
                       modulePinSetting.description ?? modulePinSetting.name);
             },

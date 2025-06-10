@@ -3,8 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
+import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/converters/generic.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/utils/formater.dart';
@@ -54,6 +55,7 @@ class Cart with _$Cart {
     required List<ItemCart> items,
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
+    required List<CartVoucher> vouchers,
     List<String>? tables,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
@@ -78,6 +80,7 @@ class Cart with _$Cart {
         discPromotionsTotal: 0,
         payments: [],
         promotions: [],
+        vouchers: [],
         tables: [],
         totalPayment: 0,
         ppnIsInclude: true,
@@ -114,6 +117,7 @@ class Cart with _$Cart {
       }).toList();
     }
     data['promotions'] = data['promotions'] ?? [];
+    data['vouchers'] = data['vouchers'] ?? [];
     return Cart.fromJson(data);
   }
 
@@ -167,7 +171,15 @@ class Cart with _$Cart {
           (payment) => payment.toJson(),
         ),
       ),
-      "vouchers": [],
+      "vouchers": List<Map<String, dynamic>>.from(
+        vouchers.map(
+          (voucher) => {
+            'code': voucher.code,
+            'value': voucher.value,
+            'type': voucher.voucherType
+          },
+        ),
+      ),
       "refunds": [],
       "promotions": List<Map<String, dynamic>>.from(
         promotions.map(
@@ -203,11 +215,13 @@ class Cart with _$Cart {
   double totalCurrentPayment() {
     List<CartPayment> currentPayment =
         payments.where((p) => p.createdAt == null).toList();
-    double? total = currentPayment.isNotEmpty
+
+    double totalMoneyPayment = currentPayment.isNotEmpty
         ? currentPayment
             .map((payment) => payment.paymentValue)
             .reduce((payment, total) => payment + total)
         : 0;
-    return total;
+
+    return totalMoneyPayment;
   }
 }

@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:objectbox/objectbox.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/objectbox.dart';
 
 part 'promotion.g.dart';
@@ -138,14 +138,6 @@ class Promotion {
   String toString() {
     return toJson().toString();
   }
-
-  @Transient()
-  static Map<int, String> assignsType = {
-    1: 'all_customer'.tr(),
-    2: 'member'.tr(),
-    3: 'non_member'.tr(),
-    4: 'group'.tr()
-  };
 }
 
 class AssignGroupRelToManyConverter
@@ -174,6 +166,6 @@ class PromotionType {
         PromotionType(id: 0, name: 'all_type'.tr()),
         PromotionType(id: 2, name: 'transaction'.tr()),
         PromotionType(id: 3, name: 'item'.tr()),
-        // const PromotionType(id: 1, name: 'A get B'),
+        const PromotionType(id: 1, name: 'A get B'),
       ];
 }

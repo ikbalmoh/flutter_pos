@@ -68,6 +68,19 @@ class AuthRepository implements AuthRepositoryProtocol {
     }
   }
 
+  Future<bool> resetPassword(String email) async {
+    final api = _ref.watch(authApiProvider);
+
+    try {
+      final status = await api.resetPassword(email);
+      return status;
+    } on DioException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   @override
   Future<void> logout() async {
     final api = _ref.watch(authApiProvider);

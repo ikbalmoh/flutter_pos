@@ -98,7 +98,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       for (var i = 0; i < List.from(data['data']).length; i++) {
         var json = data['data'][i];
         try {
-          final item = Item.fromJson(json);
+          final item = Item.fromJsonData(json);
           items.add(item);
         } on Error catch (e, stackTrace) {
           if (kDebugMode) {

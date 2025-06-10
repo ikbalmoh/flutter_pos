@@ -47,4 +47,20 @@ class Holded extends _$Holded {
       state = AsyncError(e, trace);
     }
   }
+
+  Future<void> deleteHoldedTransaction(String transactionId) async {
+    try {
+      final api = ref.watch(transactionApiProvider);
+      await api.deleteHoldedTransaction(transactionId);
+      state = AsyncData(
+        state.value!.copyWith(
+          data: state.value?.data
+              ?.where((holded) => holded.transactionId != transactionId)
+              .toList(),
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

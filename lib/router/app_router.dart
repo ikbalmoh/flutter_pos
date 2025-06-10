@@ -21,7 +21,8 @@ import 'package:selleri/ui/screens/settings/sync_screen.dart';
 import 'package:selleri/ui/screens/shift/shift_history_detail.dart';
 import 'package:selleri/ui/screens/shift/shift_screen.dart';
 import 'package:selleri/ui/screens/splash/splash_screen.dart';
-import 'package:selleri/ui/screens/login/login_screen.dart';
+import 'package:selleri/ui/screens/auth/login_screen.dart';
+import 'package:selleri/ui/screens/auth/reset_password_screen.dart';
 import 'package:selleri/ui/screens/select_outlet/select_outlet_screen.dart';
 import 'package:selleri/ui/screens/home/home_screen.dart';
 import 'package:selleri/ui/screens/cart/cart_screen.dart';
@@ -63,6 +64,11 @@ GoRouter router(Ref ref) {
           name: Routes.login,
           path: Routes.login,
           builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          name: Routes.resetPassword,
+          path: Routes.resetPassword,
+          builder: (context, state) => const ResetPasswordScreen(),
         ),
         GoRoute(
           name: Routes.outlet,
@@ -206,11 +212,18 @@ GoRouter router(Ref ref) {
             final redirectRoute = appState.maybeWhen(
               initializing: () => Routes.root,
               authenticated: () => Routes.outlet,
-              selectedOutlet: () => [Routes.root, Routes.login, Routes.outlet]
-                      .contains(currentRoute)
+              selectedOutlet: () => [
+                Routes.root,
+                Routes.login,
+                Routes.resetPassword,
+                Routes.outlet
+              ].contains(currentRoute)
                   ? Routes.home
                   : null,
-              unauthenticated: () => Routes.login,
+              unauthenticated: () =>
+                  [Routes.login, Routes.resetPassword].contains(currentRoute)
+                      ? null
+                      : Routes.login,
               orElse: () => Routes.login,
             );
             return redirectRoute;

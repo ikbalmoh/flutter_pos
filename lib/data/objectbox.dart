@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:selleri/data/models/cart.dart';
 import 'package:selleri/data/models/category.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_package.dart';
@@ -84,7 +84,8 @@ class ObjectBox {
     // FILTER PROMO BY CODE
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
-    Condition<Promotion> promotionTermsQuery = (Promotion_.type.equals(2))
+    Condition<Promotion> promotionTermsQuery = Promotion_.type
+        .equals(2)
         .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
     // Filter promotions by product
@@ -105,6 +106,17 @@ class ObjectBox {
 
       for (var i = 1; i < items.length; i++) {
         ItemCart itemCart = items[i];
+        requirementProductIds = requirementProductIds.or(
+          (itemCart.idVariant != null
+                  ? Promotion_.requirementVariantId
+                      .containsElement(itemCart.idVariant!.toString())
+                  : Promotion_.requirementProductId
+                      .containsElement(itemCart.idItem))
+              .and(
+            Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity),
+          ),
+        );
+
         requirementProductIds = requirementProductIds.or(
           (itemCart.idVariant != null
                   ? Promotion_.requirementVariantId
@@ -151,7 +163,7 @@ class ObjectBox {
       }
 
       promotionTermsQuery = promotionTermsQuery
-          .or(Promotion_.type.oneOf([3]).and(requirementProductQuery));
+          .or(Promotion_.type.oneOf([1, 3]).and(requirementProductQuery));
     }
 
     promotionQuery = promotionQuery.and(promotionTermsQuery);
@@ -164,7 +176,7 @@ class ObjectBox {
 
     List<Promotion> promotions = builder.build().find();
 
-    log('active promotions: ${promotions.map((p) => p.name)}');
+    log('Active Promotions: ${promotions.map((p) => p.toJson())}');
 
     return promotions;
   }
@@ -178,11 +190,11 @@ class ObjectBox {
       PickerDateRange? range}) {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
-    Condition<Promotion> promotionQuery = (Promotion_.allTime.equals(true).or(
+    Condition<Promotion> promotionQuery = Promotion_.allTime.equals(true).or(
           Promotion_.endDate.greaterThanDate(
             today.subtract(const Duration(days: 30)),
           ),
-        )).and(Promotion_.type.notEquals(1));
+        );
 
     if (active == true) {
       promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
@@ -231,6 +243,38 @@ class ObjectBox {
       ..order(Promotion_.priority)
       ..order(Promotion_.endDate);
     return builder.watch(triggerImmediately: true).map((query) => query.find());
+  }
+
+  ScanItemResult getPromotionReward({required Promotion promotion}) {
+    Condition<Item> itemQuery = Item_.isActive.equals(true);
+    ScanItemResult result = const ScanItemResult(item: null, variant: null);
+    Item? item;
+    ItemVariant? variant;
+    if (promotion.rewardProductId == null) {
+      return result;
+    }
+    if (promotion.rewardProductType == 1) {
+      itemQuery =
+          itemQuery.and(Item_.idItem.equals(promotion.rewardProductId!));
+
+      item = itemBox.query(itemQuery).build().findFirst();
+
+      if (item == null) {
+        return result;
+      }
+
+      if (promotion.rewardVariantId != null) {
+        variant = itemVariantBox
+            .query(ItemVariant_.idItem
+                .equals(promotion.rewardProductId!)
+                .and(ItemVariant_.idVariant.equals(promotion.rewardVariantId!)))
+            .build()
+            .findFirst();
+      }
+
+      result = ScanItemResult(item: item, variant: variant);
+    }
+    return result;
   }
 
   Stream<List<Item>> itemsStream({
@@ -310,9 +354,7 @@ class ObjectBox {
       .findFirst();
 
   List<Promotion>? getPromotions(List<String> idPromotions) => promotionBox
-      .query(Promotion_.idPromotion
-          .oneOf(idPromotions)
-          .and(Promotion_.type.notEquals(1)))
+      .query(Promotion_.idPromotion.oneOf(idPromotions))
       .build()
       .find();
 
@@ -351,8 +393,9 @@ class ObjectBox {
         if (item.isPackage) {
           final unusedPackages = getItem(item.idItem)
               ?.packageItems
-              .where((pkg) =>
-                  !item.packageItems.map((pkg) => pkg.idItemPackage).contains(pkg.idItemPackage))
+              .where((pkg) => !item.packageItems
+                  .map((pkg) => pkg.idItemPackage)
+                  .contains(pkg.idItemPackage))
               .map((pkg) => pkg.id)
               .toList();
           if (unusedPackages != null) {

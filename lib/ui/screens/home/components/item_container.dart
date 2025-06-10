@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -34,9 +36,13 @@ class ItemContainer extends ConsumerWidget {
   });
 
   void onAddToCart(BuildContext context, WidgetRef ref,
-      {required Item item, required List<ItemVariant> variants}) async {
+      {required Item item,
+      required List<ItemVariant> variants,
+      ItemVariant? variant}) async {
     try {
-      if (variants.isNotEmpty) {
+      if (variant != null) {
+        await ref.read(cartProvider.notifier).addToCart(item, variant: variant);
+      } else if (variants.isNotEmpty) {
         for (var variant in variants) {
           await ref
               .read(cartProvider.notifier)
@@ -55,7 +61,7 @@ class ItemContainer extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        AppAlert.snackbar( e.toString());
+        AppAlert.snackbar(e.toString());
       }
     }
   }
@@ -75,11 +81,25 @@ class ItemContainer extends ConsumerWidget {
               item: item,
               variants: variants,
             ),
+            onLongPress: (variant) {
+              onLongPress(
+                  context: context, item: item, ref: ref, variant: variant);
+            },
           );
         });
   }
 
-  void onLongPress(BuildContext context, Item item, WidgetRef ref) {
+  void onLongPress({
+    required BuildContext context,
+    required Item item,
+    required WidgetRef ref,
+    ItemVariant? variant,
+  }) {
+    log('SHOW ITEM INFO $item');
+    if (item.variants.isNotEmpty && variant == null) {
+      showVariants(context, item, ref);
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isDismissible: true,
@@ -90,9 +110,14 @@ class ItemContainer extends ConsumerWidget {
         builder: (context, controller) => ItemInfo(
           scrollController: controller,
           item: item,
+          variant: variant,
           onSelect: () {
-            context.pop();
-            if (item.variants.isNotEmpty) {
+            while (context.canPop()) {
+              context.pop();
+            }
+            if (variant != null) {
+              onAddToCart(context, ref, item: item, variants: [variant]);
+            } else if (item.variants.isNotEmpty) {
               showVariants(context, item, ref);
             } else {
               onAddToCart(context, ref, item: item, variants: []);
@@ -175,7 +200,8 @@ class ItemContainer extends ConsumerWidget {
                             onAddToCart(context, ref, item: item, variants: []),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
-                        onLongPress: (item) => onLongPress(context, item, ref),
+                        onLongPress: (item) =>
+                            onLongPress(context: context, item: item, ref: ref),
                       );
                     },
                   )
@@ -196,7 +222,8 @@ class ItemContainer extends ConsumerWidget {
                             onAddToCart(context, ref, item: item, variants: []),
                         showVariants: (item) =>
                             showVariants(context, item, ref),
-                        onLongPress: (item) => onLongPress(context, item, ref),
+                        onLongPress: (item) =>
+                            onLongPress(context: context, item: item, ref: ref),
                       );
                     },
                   ),

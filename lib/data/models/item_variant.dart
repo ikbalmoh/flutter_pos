@@ -1,50 +1,28 @@
 import 'package:objectbox/objectbox.dart';
-import 'item_variant_image.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'converters/generic.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'item_variant.freezed.dart';
 part 'item_variant.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-@Entity(uid: 4358767868100185192)
-class ItemVariant {
-  int id;
+@Freezed(addImplicitFinal: false)
+class ItemVariant with _$ItemVariant {
+  const ItemVariant._();
 
-  @Index()
-  int idVariant;
+  @Entity(uid: 4358767868100185192, realClass: ItemVariant)
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  factory ItemVariant({
+    @Default(0) @Id() int id,
+    @Index() required int idVariant,
+    @JsonKey(fromJson: Converters.dynamicToDouble) required double stockItem,
+    required String idItem,
+    required String variantName,
+    required double itemPrice,
+    String? skuNumber,
+    String? barcodeNumber,
+    List<String>? promotions,
+  }) = _ItemVariant;
 
-  @JsonKey(fromJson: Converters.dynamicToDouble)
-  final double stockItem;
-  
-  final String idItem;
-  final String variantName;
-  final double itemPrice;
-  final String? skuNumber;
-  final String? barcodeNumber;
-  final List<String>? promotions;
-
-  final ItemVariantImage? image;
-
-  ItemVariant({
-    required this.id,
-    required this.idItem,
-    required this.idVariant,
-    required this.itemPrice,
-    this.skuNumber,
-    this.barcodeNumber,
-    required this.variantName,
-    required this.stockItem,
-    this.promotions,
-    this.image
-  });
-
-  factory ItemVariant.fromJson(Map<String, dynamic> json) => _$ItemVariantFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ItemVariantToJson(this);
-
-  @override
-  String toString() {
-    return '{id_variant: $idVariant, variant_name: $variantName, item_price: $itemPrice}';
-  }
-
+  factory ItemVariant.fromJson(Map<String, dynamic> json) =>
+      _$ItemVariantFromJson(json);
 }

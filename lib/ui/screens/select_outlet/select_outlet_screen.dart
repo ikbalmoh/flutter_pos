@@ -89,7 +89,10 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 17.5, vertical: 15),
-                    child: Text("select_outlet".tr(),
+                    child: Text(
+                        ref.watch(outletProvider).value is OutletLoading
+                            ? "preparing_outlet".tr()
+                            : "select_outlet".tr(),
                         style: textTheme.bodyLarge
                             ?.copyWith(fontWeight: FontWeight.w500)),
                   ),

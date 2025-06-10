@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/converters/generic.dart';
+import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
+import 'package:selleri/data/models/item_variant.dart';
+import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/utils/formater.dart';
 import 'package:uuid/uuid.dart';
 
@@ -43,10 +47,151 @@ class ItemCart with _$ItemCart {
     String? picDetailId,
     String? picName,
     CartPromotion? promotion,
+    bool? isReward,
+    int? rewardType,
   }) = _ItemCart;
 
   factory ItemCart.fromJson(Map<String, dynamic> json) =>
       _$ItemCartFromJson(json);
+
+  factory ItemCart.copyWithPromotion(ItemCart itemCart,
+      {Promotion? promotion, bool isReward = false}) {
+    String identifier = itemCart.idItem;
+    bool discountIsPercent = true;
+    double discount = 0;
+    double discountTotal = 0;
+    int quantity = itemCart.quantity;
+    double itemPrice = itemCart.price;
+    double total = itemPrice * quantity;
+
+    if (promotion != null) {
+      if (isReward) {
+        log('REWARD PROMOTION: $promotion');
+        identifier = 'reward-${promotion.idPromotion}';
+      } else {
+        log('ITEM PROMOTION: $promotion');
+      }
+      if (!isReward && promotion.type != 1) {
+        discountIsPercent = promotion.discountType == true;
+        discount = promotion.rewardNominal;
+        int requirementQty = promotion.requirementQuantity ?? 1;
+        int rewardQuantity = 1;
+        discountTotal = discount;
+        if (discountIsPercent) {
+          discountTotal = itemPrice * (discount / 100);
+          rewardQuantity = requirementQty * (quantity ~/ requirementQty);
+        } else {
+          if (quantity > requirementQty) {
+            rewardQuantity = quantity ~/ requirementQty;
+          }
+        }
+        discountTotal *= rewardQuantity;
+        if (promotion.rewardMaximumAmount != null &&
+            promotion.rewardMaximumAmount! > 0 &&
+            discountTotal > promotion.rewardMaximumAmount!) {
+          discountTotal = promotion.rewardMaximumAmount!;
+        }
+
+        log('PROMOTION DISCOUNT: $discount => $discountTotal');
+      }
+    }
+
+    return itemCart.copyWith(
+      identifier: identifier,
+      price: itemPrice,
+      quantity: quantity,
+      discount: discount,
+      discountIsPercent: discountIsPercent,
+      discountTotal: discountTotal,
+      total: total - discountTotal,
+      promotion: promotion != null
+          ? CartPromotion.fromData(promotion)
+              .copyWith(discountValue: discountTotal)
+          : null,
+      isReward: isReward,
+    );
+  }
+
+  factory ItemCart.asReward(
+    Item item, {
+    ItemVariant? variant,
+    Promotion? promotion,
+    int quantity = 1,
+  }) {
+    String identifier = item.idItem;
+    String itemName = item.itemName;
+    double itemPrice = item.itemPrice;
+    bool discountIsPercent = true;
+    double discount = 0;
+    double discountTotal = 0;
+    double total = itemPrice * quantity;
+
+    CartPromotion? itemCartPromotion =
+        promotion != null ? CartPromotion.fromData(promotion) : null;
+
+    if (item.isPackage) {
+      identifier += (DateTime.now().millisecondsSinceEpoch).toString();
+    } else if (variant != null) {
+      identifier += '-v${variant.idVariant.toString()}';
+      itemPrice = variant.itemPrice;
+    }
+
+    if (promotion != null) {
+      log('ITEM CART PROMOTION: $promotion');
+      identifier = 'reward-${promotion.idPromotion}';
+      if (promotion.rewardType == 1) {
+        itemPrice = 0;
+      } else {
+        discountIsPercent = promotion.discountType == true;
+        discount = promotion.rewardNominal;
+        discountTotal =
+            discountIsPercent ? itemPrice * (discount / 100) : discount;
+      }
+      if (promotion.rewardMaximumAmount != null &&
+          promotion.rewardMaximumAmount! > 0 &&
+          discountTotal > promotion.rewardMaximumAmount!) {
+        discountTotal = promotion.rewardMaximumAmount!;
+      }
+      total = itemPrice * quantity;
+    }
+
+    ItemCart itemCart = ItemCart(
+      identifier: identifier,
+      idItem: item.idItem,
+      idCategory: item.idCategory,
+      itemName: itemName,
+      price: itemPrice,
+      isPackage: item.isPackage,
+      manualDiscount: item.manualDiscount,
+      isManualPrice: item.isManualPrice,
+      quantity: quantity,
+      discount: discount,
+      discountIsPercent: discountIsPercent,
+      discountTotal: discountTotal,
+      note: '',
+      total: total - discountTotal,
+      addedAt: DateTime.now(),
+      idVariant: variant?.idVariant,
+      variantName: variant?.variantName ?? '',
+      details: item.packageItems
+          .map(
+            (pkg) => ItemCartDetail(
+              itemId: pkg.idItem,
+              name: pkg.itemName,
+              variantId: pkg.variantId,
+              quantity: pkg.quantityItem,
+              itemPrice: pkg.itemPrice,
+            ),
+          )
+          .toList(),
+      promotion: itemCartPromotion,
+      isReward: true,
+    );
+
+    log('ITEM CART FROM ITEM: $itemCart');
+
+    return itemCart;
+  }
 
   @override
   String toString() {
@@ -54,7 +199,7 @@ class ItemCart with _$ItemCart {
   }
 
   Map<String, dynamic> toTransactionPayload() => <String, dynamic>{
-        "id": uuid.v4(),
+        "id": identifier,
         "id_item": idItem,
         "variant_id": idVariant,
         "quantity": quantity,
@@ -72,6 +217,7 @@ class ItemCart with _$ItemCart {
             ? details.map((itemPackage) => itemPackage.toJson()).toList()
             : [],
         "added_at":
-            addedAt != null ? DateTimeFormater.dateToString(addedAt!) : null
+            addedAt != null ? DateTimeFormater.dateToString(addedAt!) : null,
+        "is_reward": isReward,
       };
 }

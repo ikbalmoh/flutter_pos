@@ -15,6 +15,8 @@ import 'package:selleri/ui/components/error_handler.dart';
 import 'package:selleri/ui/components/generic/item_list_skeleton.dart';
 import 'package:selleri/ui/components/search_app_bar.dart';
 import 'package:selleri/ui/screens/holded/holded_preview.dart';
+import 'package:selleri/utils/app_alert.dart';
+import 'package:selleri/utils/authorization_helper.dart';
 
 import 'holded_item.dart';
 
@@ -80,6 +82,46 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
     }
   }
 
+  void deleteTransaction() async {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
+    final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
+    if (!isAuthorize) {
+      return;
+    }
+    try {
+      await ref
+          .read(holdedProvider.notifier)
+          .deleteHoldedTransaction(viewTransaction!.transactionId);
+      setState(() {
+        viewTransaction = null;
+      });
+      if (!isTablet) {
+        context.pop();
+      }
+      AppAlert.toast(
+        'successfully_deleted'.tr(args: ['transaction'.tr()]),
+      );
+    } catch (e) {
+      AppAlert.toast(
+        e.toString(),
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  void onDeleteHoldedTransaction() {
+    if (viewTransaction == null) {
+      return;
+    }
+    AppAlert.confirm(context,
+        danger: true,
+        title: 'delete_transaction'.tr(),
+        subtitle: 'delete_transaction_confirmation'.tr(),
+        onConfirm: deleteTransaction);
+  }
+
   void onOpenHoldedCart(CartHolded cartHolded) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
     setState(() {
@@ -87,10 +129,14 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
     });
     if (!isTablet) {
       showCupertinoModalPopup(
-          context: context,
-          builder: (context) {
-            return HoldedPreview(cartHolded: cartHolded);
-          });
+        context: context,
+        builder: (context) {
+          return HoldedPreview(
+            cartHolded: cartHolded,
+            onDelete: onDeleteHoldedTransaction,
+          );
+        },
+      );
     }
   }
 
@@ -183,12 +229,13 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
 
                               final hold = data.data![idx];
                               return HoldedItem(
-                                  color: viewTransaction?.transactionId ==
-                                          hold.transactionId
-                                      ? Colors.grey.shade100
-                                      : Colors.white,
-                                  hold: hold,
-                                  onSelect: onOpenHoldedCart);
+                                color: viewTransaction?.transactionId ==
+                                        hold.transactionId
+                                    ? Colors.grey.shade100
+                                    : Colors.white,
+                                hold: hold,
+                                onSelect: onOpenHoldedCart,
+                              );
                             },
                             itemCount: data.data!.length + 1,
                           )
@@ -230,6 +277,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                       ? HoldedPreview(
                           cartHolded: viewTransaction!,
                           asWidget: true,
+                          onDelete: onDeleteHoldedTransaction,
                         )
                       : emptyPlaceholder,
                 )

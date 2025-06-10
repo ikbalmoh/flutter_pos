@@ -49,6 +49,14 @@ class Auth extends _$Auth {
     }
   }
 
+  Future<bool> resetPassword(String email) async {
+    try {
+      return await _authRepoistory.resetPassword(email);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> logout({bool? skipLogout}) async {
     ref.read(fcmProvider.notifier).unsubscribe();
     ref.read(shiftProvider.notifier).shiftLoading();

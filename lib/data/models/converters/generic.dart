@@ -11,7 +11,7 @@ class Converters {
     } else if (number == null) {
       return 0.00;
     }
-    return number;
+    return number ?? 0;
   }
 
   static bool dynamicToBool(dynamic value) {

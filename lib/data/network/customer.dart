@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer/customer.dart';
+import 'package:selleri/data/models/option.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/utils/fetch.dart';
 import 'package:selleri/config/api_url.dart';
@@ -31,6 +32,32 @@ class CustomerApi {
   Future<Customer> storeCustomer(Map<String, dynamic> payload) async {
     try {
       final res = await api.post(ApiUrl.customers, data: payload);
+      final data = res.data['data'];
+      return Customer.fromJson(data);
+    } on DioException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Option>> customerGroups() async {
+    try {
+      final res = await api.get(ApiUrl.customerGroups);
+      return List<Map<String, dynamic>>.from(res.data)
+          .map((e) => Option.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Customer> updateCustomer(
+      String id, Map<String, dynamic> payload) async {
+    try {
+      final res = await api.put('${ApiUrl.customers}/$id', data: payload);
       final data = res.data['data'];
       return Customer.fromJson(data);
     } on DioException catch (e) {

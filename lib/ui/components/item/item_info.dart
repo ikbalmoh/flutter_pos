@@ -16,25 +16,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ItemInfo extends ConsumerWidget {
   final Item item;
+  final ItemVariant? variant;
   final ScrollController scrollController;
   final Function() onSelect;
 
   const ItemInfo(
       {required this.item,
+      this.variant,
       required this.scrollController,
       required this.onSelect,
       super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<String> promotionsIds = item.promotions;
-    if (item.variants.isNotEmpty) {
+    List<String> promotionsIds = variant != null
+        ? List.from(variant!.promotions!)
+        : List.from(item.promotions);
+
+    if (variant == null && item.variants.isNotEmpty) {
       for (ItemVariant variant in item.variants) {
         if (variant.promotions != null) {
           promotionsIds = promotionsIds..addAll(variant.promotions!);
         }
       }
     }
+
     List<Promotion> promotions = objectBox.getPromotions(promotionsIds) ?? [];
     return Padding(
       padding: EdgeInsets.only(
@@ -66,12 +72,15 @@ class ItemInfo extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.itemName,
+                        [
+                          item.itemName,
+                          variant != null ? variant!.variantName : ''
+                        ].join(' - '),
                         style: Theme.of(context).textTheme.bodyLarge,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      item.barcode != null
+                      variant?.barcodeNumber != null || item.barcode != null
                           ? Row(
                               children: [
                                 const Icon(
@@ -83,7 +92,7 @@ class ItemInfo extends ConsumerWidget {
                                   width: 10,
                                 ),
                                 Text(
-                                  item.barcode!,
+                                  variant?.barcodeNumber ?? item.barcode!,
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleSmall
@@ -119,7 +128,8 @@ class ItemInfo extends ConsumerWidget {
                           details: item.packageItems,
                           stockControl: item.stockControl,
                         )
-                      : ItemQtyInfo(stockItem: item.stockItem),
+                      : ItemQtyInfo(
+                          stockItem: variant?.stockItem ?? item.stockItem),
                   const SizedBox(height: 10),
                   promotions.isNotEmpty
                       ? Column(
@@ -162,8 +172,12 @@ class ItemInfo extends ConsumerWidget {
             style: TextButton.styleFrom(
                 backgroundColor: Colors.teal.shade50,
                 disabledBackgroundColor: Colors.grey.shade100),
-            onPressed:
-                item.stockItem <= 0 && item.stockControl ? null : onSelect,
+            onPressed: (variant != null
+                        ? variant!.stockItem <= 0
+                        : item.stockItem <= 0) &&
+                    item.stockControl
+                ? null
+                : onSelect,
             icon: Icon(
               CupertinoIcons.cart_badge_plus,
             ),

@@ -27,7 +27,7 @@ class SelectTableSheet extends ConsumerWidget {
       context.pop();
       AppAlert.confirm(
         context,
-        title: '${'delete_n'.tr(args: ['table'.tr()])} ${table.name}',
+        title: '${'delete_x'.tr(args: ['table'.tr()])} ${table.name}',
         subtitle: 'are_you_sure'.tr(),
         danger: true,
         onConfirm: () => onDeleteTable(table),
@@ -206,7 +206,7 @@ class SelectTableSheet extends ConsumerWidget {
                     ),
                     Expanded(
                         child: Text(
-                      'delete_n'.tr(args: ['table'.tr()]),
+                      'delete_x'.tr(args: ['table'.tr()]),
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.red),
                     ))
