@@ -54,7 +54,6 @@
   "payment_ref": "No Referensi",
   "search": "Cari",
   "search_x": "Cari {}",
-  "search_customer": "Cari Pelanggan",
   "transaction_loading": "Transaksi sedang diproses",
   "transaction_done": "Transaksi Selesai",
   "transaction_error": "Transaksi Gagal",

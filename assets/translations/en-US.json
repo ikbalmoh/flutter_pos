@@ -54,7 +54,6 @@
   "payment_ref": "Payment Ref",
   "search": "Search",
   "search_x": "Search {}",
-  "search_customer": "Search Customer",
   "transaction_loading": "Processing Transaction",
   "transaction_done": "Transaction Success",
   "transaction_error": "Transaction Failed",

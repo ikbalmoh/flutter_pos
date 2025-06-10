@@ -105,7 +105,7 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
       appBar: searchVisible
           ? SearchAppBar(
               controller: _searchController,
-              placeholder: 'search_customer'.tr(),
+              placeholder: 'search_x'.tr(args: ['promotions'.tr()]),
               onBack: () {
                 setState(() {
                   searchVisible = false;
