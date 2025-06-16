@@ -5,7 +5,7 @@ import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/cart_voucher.dart';
 import 'package:selleri/data/models/converters/generic.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/utils/formater.dart';

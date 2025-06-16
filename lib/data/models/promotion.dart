@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:selleri/data/models/converters/generic.dart';
 import 'package:objectbox/objectbox.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/objectbox.dart';
 
 part 'promotion.g.dart';
@@ -138,7 +138,6 @@ class Promotion {
   String toString() {
     return toJson().toString();
   }
-
 }
 
 class AssignGroupRelToManyConverter

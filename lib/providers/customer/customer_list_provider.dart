@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/data/models/customer.dart';
+import 'package:selleri/data/models/customer/customer.dart';
 import 'package:selleri/data/models/pagination.dart';
 import 'package:selleri/data/network/customer.dart';
 import 'dart:developer';
@@ -58,6 +58,18 @@ class CustomerList extends _$CustomerList {
     final api = ref.watch(customerApiProvider);
     try {
       final Customer customer = await api.storeCustomer(payload);
+      ref.read(cartProvider.notifier).selectCustomer(customer);
+      loadCustomers(page: 1, search: customer.customerName);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateCustomer(String id,
+      {required Map<String, dynamic> payload}) async {
+    final api = ref.watch(customerApiProvider);
+    try {
+      final Customer customer = await api.updateCustomer(id, payload);
       ref.read(cartProvider.notifier).selectCustomer(customer);
       loadCustomers(page: 1, search: customer.customerName);
     } catch (e) {

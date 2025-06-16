@@ -9,8 +9,8 @@ import 'package:selleri/data/models/cart_holded.dart';
 import 'package:selleri/data/models/cart_payment.dart';
 import 'package:selleri/data/models/cart_promotion.dart';
 import 'package:selleri/data/models/cart_voucher.dart';
-import 'package:selleri/data/models/customer.dart';
-import 'package:selleri/data/models/customer_group.dart';
+import 'package:selleri/data/models/customer/customer.dart';
+import 'package:selleri/data/models/customer/customer_group.dart';
 import 'package:selleri/data/models/item.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/item_cart_detail.dart';
@@ -565,6 +565,10 @@ class Cart extends _$Cart {
   }
 
   void removeHoldedCart() async {
+    final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
+    if (!isAuthorize) {
+      return;
+    }
     final api = ref.watch(transactionApiProvider);
     String idTransaction = state.idTransaction!;
     initCart();

@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:selleri/data/models/option.dart';
 
 Map<int, String> assignsType = {
   1: 'all_customer'.tr(),
@@ -6,3 +7,10 @@ Map<int, String> assignsType = {
   3: 'non_member'.tr(),
   4: 'group'.tr()
 };
+
+List<Option> cardIdOptions = [
+  Option(id: 1, text: 'KTP'),
+  Option(id: 2, text: 'SIM'),
+  Option(id: 3, text: 'student_card'.tr()),
+  Option(id: 4, text: 'NIP')
+];
