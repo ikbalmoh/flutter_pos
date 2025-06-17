@@ -44,6 +44,9 @@ class CustomerApi {
   Future<List<Option>> customerGroups() async {
     try {
       final res = await api.get(ApiUrl.customerGroups);
+      if (res.data is! List) {
+        return [];
+      }
       return List<Map<String, dynamic>>.from(res.data)
           .map((e) => Option.fromJson(e))
           .toList();

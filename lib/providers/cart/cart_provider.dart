@@ -296,7 +296,7 @@ class Cart extends _$Cart {
 
       if (item.stockControl &&
           outlet.config.stockMinus == false &&
-          itemCart.quantity + 1 > itemStock) {
+          itemCart.quantity > itemStock) {
         throw 'max_qty_x'.tr(args: [
           CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
         ]);

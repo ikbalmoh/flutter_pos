@@ -491,45 +491,42 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                labelWidget('groups'),
                 ref.watch(customerGroupsProvider).when(
-                      data: (data) => Wrap(
-                        spacing: 5.0,
-                        children:
-                            List<Widget>.generate(data.length, (int index) {
-                          return ChoiceChip(
-                            label: Text(data[index].text),
-                            selected: customer.groups != null
-                                ? customer.groups!.any((element) =>
-                                    element.groupId == data[index].id)
-                                : false,
-                            onSelected: (selected) => onSelectGroup(
-                                selected,
-                                CustomerGroup(
-                                  id: data[index].id,
-                                  groupId: data[index].id,
-                                  groupName: data[index].text,
-                                )),
-                          );
-                        }).toList(),
-                      ),
+                      data: (data) => data.isEmpty
+                          ? Container()
+                          : Column(
+                              spacing: 5,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                labelWidget('groups'),
+                                Wrap(
+                                  spacing: 5.0,
+                                  children: List<Widget>.generate(data.length,
+                                      (int index) {
+                                    return ChoiceChip(
+                                      label: Text(data[index].text),
+                                      selected: customer.groups != null
+                                          ? customer.groups!.any((element) =>
+                                              element.groupId == data[index].id)
+                                          : false,
+                                      onSelected: (selected) => onSelectGroup(
+                                          selected,
+                                          CustomerGroup(
+                                            id: data[index].id,
+                                            groupId: data[index].id,
+                                            groupName: data[index].text,
+                                          )),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
                       error: (error, stackTrace) => ErrorHandler(
                         error: error.toString(),
                         stackTrace: stackTrace.toString(),
                       ),
-                      loading: () => Wrap(
-                        spacing: 5,
-                        children: List<Widget>.generate(3, (int index) {
-                          return Container(
-                            width: 100,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                      loading: () => Container(),
                     ),
                 if (errors.isNotEmpty && errors['groups'] != null)
                   Text(

@@ -44,7 +44,7 @@ class _AddRoundingState extends ConsumerState<AddRounding> {
       final double roundValue = roundingTo - cart.total;
       setState(() {
         roundingValue = roundValue;
-        validation = roundValue > -1000 && roundValue < 1000
+        validation = roundValue >= -1000 && roundValue <= 1000
             ? null
             : 'max_round_message'.tr();
       });
