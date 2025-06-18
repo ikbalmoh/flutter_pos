@@ -258,7 +258,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       ),
                     ),
                   ),
-                  cart.totalPayment > 0 ? actions : Container()
+                  actions
                 ],
               ),
             ),

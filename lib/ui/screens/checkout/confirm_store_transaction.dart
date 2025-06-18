@@ -82,7 +82,7 @@ class _ConfirmStoreTransactionState
     cartAction.addNote(notes: noteController.text, images: images);
 
     bool isPicRequired = false;
-    final outletState = ref.watch(outletProvider).value;
+    final outletState = ref.read(outletProvider).value;
     if (outletState is OutletSelected) {
       isPicRequired = outletState.config.saleWithPic == true;
     }
@@ -142,10 +142,11 @@ class _ConfirmStoreTransactionState
     double height =
         MediaQuery.of(context).size.height * (isKeyboardVisible ? 0.95 : 0.7);
 
-    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
-        .config
-        .addOns
-        ?.contains('table');
+    OutletConfig outletConfig =
+        (ref.watch(outletProvider).value as OutletSelected).config;
+
+    bool? hasTableAddon = outletConfig.addOns?.contains('table');
+    bool isPartialPayment = outletConfig.partialPayment ?? false;
 
     return Container(
       height: height,
@@ -423,7 +424,11 @@ class _ConfirmStoreTransactionState
                           ),
                         ),
                       ),
-                      onPressed: () => onSubmit(context),
+                      onPressed: isPartialPayment ||
+                              cart.totalPayment >= cart.grandTotal ||
+                              cart.grandTotal == 0
+                          ? () => onSubmit(context)
+                          : null,
                       child: Text('finish'.tr()),
                     ),
                   ],
