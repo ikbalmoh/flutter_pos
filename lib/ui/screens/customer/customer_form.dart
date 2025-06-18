@@ -491,36 +491,38 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                labelWidget('groups'),
                 ref.watch(customerGroupsProvider).when(
                       data: (data) => data.isEmpty
-                          ? Container()
-                          : Column(
-                              spacing: 5,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                labelWidget('groups'),
-                                Wrap(
-                                  spacing: 5.0,
-                                  children: List<Widget>.generate(data.length,
-                                      (int index) {
-                                    return ChoiceChip(
-                                      label: Text(data[index].text),
-                                      selected: customer.groups != null
-                                          ? customer.groups!.any((element) =>
-                                              element.groupId == data[index].id)
-                                          : false,
-                                      onSelected: (selected) => onSelectGroup(
-                                          selected,
-                                          CustomerGroup(
-                                            id: data[index].id,
-                                            groupId: data[index].id,
-                                            groupName: data[index].text,
-                                          )),
-                                    );
-                                  }).toList(),
-                                ),
-                              ],
+                          ? Container(
+                              margin: EdgeInsets.only(top: 5),
+                              child: Text(
+                                'no_data'.tr(args: ['groups'.tr()]),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: Colors.grey.shade500),
+                              ),
+                            )
+                          : Wrap(
+                              spacing: 5.0,
+                              children: List<Widget>.generate(data.length,
+                                  (int index) {
+                                return ChoiceChip(
+                                  label: Text(data[index].text),
+                                  selected: customer.groups != null
+                                      ? customer.groups!.any((element) =>
+                                          element.groupId == data[index].id)
+                                      : false,
+                                  onSelected: (selected) => onSelectGroup(
+                                      selected,
+                                      CustomerGroup(
+                                        id: data[index].id,
+                                        groupId: data[index].id,
+                                        groupName: data[index].text,
+                                      )),
+                                );
+                              }).toList(),
                             ),
                       error: (error, stackTrace) => ErrorHandler(
                         error: error.toString(),
