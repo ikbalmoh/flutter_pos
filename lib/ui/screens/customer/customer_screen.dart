@@ -116,7 +116,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
       appBar: searchVisible
           ? SearchAppBar(
               controller: _searchController,
-              placeholder: 'search_customer'.tr(),
+              placeholder: 'search_x'.tr(args: ['customer'.tr()]),
               onBack: () {
                 setState(() {
                   searchVisible = false;
