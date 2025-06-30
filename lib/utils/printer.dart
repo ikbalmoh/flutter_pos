@@ -102,8 +102,9 @@ class Printer {
         if (item.variantName != '' && item.variantName != null) {
           itemName += ' - ${item.variantName}';
         }
-        bytes += generator
-            .text(withPrice ? itemName : "${item.quantity} x $itemName");
+        bytes += generator.text(withPrice
+            ? itemName
+            : "${CurrencyFormat.currency(item.quantity, symbol: false)} x $itemName");
         if (item.details.isNotEmpty) {
           for (var i = 0; i < item.details.length; i++) {
             final detail = item.details[i];
@@ -114,7 +115,7 @@ class Printer {
           bytes += generator.row([
             PosColumn(
               text:
-                  '${item.quantity} x ${CurrencyFormat.currency(item.price, symbol: false)}',
+                  '${CurrencyFormat.currency(item.quantity, symbol: false)} x ${CurrencyFormat.currency(item.price, symbol: true)}',
               width: 9,
               styles: const PosStyles(align: PosAlign.left),
             ),

@@ -25,44 +25,42 @@ class OrderItem extends StatelessWidget {
             itemName,
             style: textTheme.bodyMedium,
           ),
-          item.details.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 7),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: item.details
-                        .map(
-                          (itemPackage) => Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '- ${itemPackage.quantity} x',
-                                style: textTheme.bodySmall
-                                    ?.copyWith(color: Colors.black54),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  itemPackage.name,
-                                  style: textTheme.bodySmall
-                                      ?.copyWith(color: Colors.black54),
-                                ),
-                              ),
-                            ],
+          if (item.details.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 7),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: item.details
+                    .map(
+                      (itemPackage) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '- ${CurrencyFormat.currency(itemPackage.quantity, symbol: false)} x',
+                            style: textTheme.bodySmall
+                                ?.copyWith(color: Colors.black54),
                           ),
-                        )
-                        .toList(),
-                  ),
-                )
-              : Container(),
-          item.note != ''
-              ? Text(
-                  item.note ?? '',
-                  style: textTheme.bodySmall,
-                )
-              : Container(),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Expanded(
+                            child: Text(
+                              itemPackage.name,
+                              style: textTheme.bodySmall
+                                  ?.copyWith(color: Colors.black54),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          if (item.note != '')
+            Text(
+              item.note ?? '',
+              style: textTheme.bodySmall,
+            ),
           const SizedBox(height: 3),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -70,7 +68,7 @@ class OrderItem extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  ' ${item.quantity} x ${CurrencyFormat.currency(item.price)}',
+                  ' ${CurrencyFormat.currency(item.quantity, symbol: false)} x ${CurrencyFormat.currency(item.price)}',
                   style: textTheme.bodySmall
                       ?.copyWith(fontSize: 14, color: Colors.grey.shade700),
                 ),

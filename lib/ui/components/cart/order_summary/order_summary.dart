@@ -64,12 +64,11 @@ class OrderSummary extends StatelessWidget {
                 '${'customer'.tr()}: ${cart.customerName ?? '-'}',
                 textAlign: TextAlign.left,
               ),
-              cart.tables != null && cart.tables!.isNotEmpty
-                  ? Text(
-                      '${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}',
-                      textAlign: TextAlign.left,
-                    )
-                  : Container(),
+              if (cart.tables != null && cart.tables!.isNotEmpty)
+                Text(
+                  '${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}',
+                  textAlign: TextAlign.left,
+                ),
             ],
           ),
         ),
