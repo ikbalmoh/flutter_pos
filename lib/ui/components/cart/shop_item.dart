@@ -11,7 +11,7 @@ class ShopItem extends StatelessWidget {
   final Function(Item)? onLongPress;
   final Function(Item) onAddToCart;
   final Function(Item) showVariants;
-  final int qtyOnCart;
+  final double qtyOnCart;
 
   const ShopItem({
     required this.item,

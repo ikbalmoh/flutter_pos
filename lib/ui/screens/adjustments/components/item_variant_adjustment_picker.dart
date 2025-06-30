@@ -53,7 +53,7 @@ class _ItemVariantAdjustmentPickerState
     });
   }
 
-  void onChangeVariantQty(int idVariant, int qty) {
+  void onChangeVariantQty(int idVariant, double qty) {
     int existIdx = selectedVariants.indexWhere((v) => v.idVariant == idVariant);
     if (existIdx < 0) {
       return;
@@ -177,7 +177,7 @@ class VariantItem extends StatelessWidget {
   final ItemVariantAdjustment variant;
   final bool selected;
   final Function(ItemVariantAdjustment) onSelect;
-  final Function(int) onChangeQty;
+  final Function(double) onChangeQty;
 
   @override
   Widget build(BuildContext context) {
@@ -220,8 +220,7 @@ class VariantItem extends StatelessWidget {
                   ),
                 ),
                 selected
-                    ? QtyEditor(
-                        qty: variant.stockItem.toInt(), onChange: onChangeQty)
+                    ? QtyEditor(qty: variant.stockItem, onChange: onChangeQty)
                     : StockBadge(
                         stockItem: variant.stockItem,
                         stockControl: true,

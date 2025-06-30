@@ -31,14 +31,14 @@ class Receiving extends _$Receiving {
     );
   }
 
-  int itemQtyReceived(String idItem, {int? variantId}) {
-    int? receiveQty = state.items
+  double itemQtyReceived(String idItem, {int? variantId}) {
+    double? receiveQty = state.items
         .firstWhereOrNull((i) => i.itemId == idItem && i.variantId == variantId)
         ?.qtyReceive;
     return receiveQty ?? 0;
   }
 
-  void receiveItem(PurchaseItem item, {required int qtyReceive}) {
+  void receiveItem(PurchaseItem item, {required double qtyReceive}) {
     int existItemIndex = state.items.indexWhere(
         (i) => i.itemId == item.itemId && i.variantId == item.variantId);
     if (existItemIndex >= 0) {

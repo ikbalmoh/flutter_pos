@@ -79,11 +79,12 @@ class _SelectFloorMenuState extends ConsumerState<SelectFloorMenu> {
                     children: [
                       Text('total_x'.tr(args: ['floor'.tr()])),
                       QtyEditor(
-                        qty: ref.watch(tableConfigProvider).value?.totalFloor ??
-                            1,
+                        qty:
+                            (ref.watch(tableConfigProvider).value?.totalFloor ??
+                                1).toDouble(),
                         onChange: (total) => ref
                             .read(tableConfigProvider.notifier)
-                            .setTotalFloor(total),
+                            .setTotalFloor(total.toInt()),
                         min: 1,
                         keyboard: false,
                       )

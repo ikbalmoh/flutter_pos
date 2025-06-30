@@ -41,7 +41,10 @@ class _CartItemState extends State<CartItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.item.quantity.toString(),
+                CurrencyFormat.currency(
+                  widget.item.quantity,
+                  symbol: false,
+                ),
                 style:
                     textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
               ),

@@ -29,7 +29,7 @@ class CartPromotion with _$CartPromotion {
     List<String>? requirementProductId,
     bool? kelipatan,
     int? requirementProductType,
-    int? requirementQuantity,
+    double? requirementQuantity,
     double? requirementMinimumOrder,
   }) = _CartPromotion;
 

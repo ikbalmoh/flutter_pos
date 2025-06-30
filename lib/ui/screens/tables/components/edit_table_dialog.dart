@@ -101,11 +101,11 @@ class _EditTableDialogState extends ConsumerState<EditTableDialog> {
                         style: labelStyle,
                       ),
                       QtyEditor(
-                          qty: capacity,
+                          qty: capacity.toDouble(),
                           min: 1,
                           onChange: (value) {
                             setState(() {
-                              capacity = value;
+                              capacity = value.toInt();
                             });
                           }),
                     ],

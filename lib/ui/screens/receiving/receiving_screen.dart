@@ -544,7 +544,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                                     itemCount: value.items.length,
                                     itemBuilder: (context, index) {
                                       PurchaseItem item = value.items[index];
-                                      int receiveQty = ref
+                                      double receiveQty = ref
                                           .watch(receivingProvider.notifier)
                                           .itemQtyReceived(item.itemId,
                                               variantId: item.variantId);

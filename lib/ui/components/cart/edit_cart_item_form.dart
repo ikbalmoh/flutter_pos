@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:selleri/data/models/item_cart.dart';
 import 'package:selleri/data/models/outlet_config.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
+import 'package:selleri/providers/outlet/outlet_provider.dart';
 import 'package:selleri/ui/components/generic/discount_type_toggle.dart';
 import 'package:selleri/ui/components/generic/qty_editor.dart';
 import 'package:selleri/ui/components/pic_picker.dart';
@@ -34,7 +35,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
 
   late double price;
   late double discount;
-  late int qty;
+  late double qty;
   late bool discountIsPercent;
   String? picDetailId;
   String? picName;
@@ -152,6 +153,10 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
     if (widget.item.variantName != '') {
       itemName += ' - ${widget.item.variantName}';
     }
+
+    final outletState = ref.watch(outletProvider).value as OutletSelected;
+    final outletConfig = outletState.config;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       height: (MediaQuery.of(context).size.height *
@@ -299,7 +304,9 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                                   setState(() {
                                     qty = value;
                                   });
-                                }),
+                                },
+                                decimalDigit: outletConfig.decimalPlaces ?? 0,
+                              ),
                       ],
                     ),
                   ),

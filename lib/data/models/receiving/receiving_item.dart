@@ -13,9 +13,9 @@ class ReceivingItem with _$ReceivingItem {
     String? barcode,
     String? skuNumber,
     required String itemName,
-    required int qtyRequest,
-    required int qtyReceived,
-    required int qtyReceive,
+    required double qtyRequest,
+    required double qtyReceived,
+    required double qtyReceive,
     required double price,
   }) = _ReceivingItem;
 

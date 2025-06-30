@@ -108,7 +108,7 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
                           style: labelStyle,
                         ),
                         QtyEditor(
-                            qty: qty.toInt(),
+                            qty: qty,
                             onChange: (value) {
                               setState(() {
                                 qty = value.toDouble();

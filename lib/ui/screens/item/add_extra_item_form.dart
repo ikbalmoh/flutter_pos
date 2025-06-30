@@ -30,7 +30,7 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
   double itemSellingPrice = 0;
   double itemPurchasePrice = 0;
   double initialStock = 1;
-  int qty = 1;
+  double qty = 1;
 
   void resetForm() {
     _formKey.currentState!.reset();

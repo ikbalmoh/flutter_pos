@@ -8,7 +8,7 @@ class ItemList extends StatelessWidget {
   final ItemAdjustment item;
   final Function(ItemAdjustment) onAddToCart;
   final Function(ItemAdjustment) showVariants;
-  final int qtyOnCart;
+  final double qtyOnCart;
 
   const ItemList({
     required this.item,
@@ -23,8 +23,9 @@ class ItemList extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: InkWell(
-        onTap: () =>
-            item.variants != null && item.variants!.isNotEmpty ? showVariants(item) : onAddToCart(item),
+        onTap: () => item.variants != null && item.variants!.isNotEmpty
+            ? showVariants(item)
+            : onAddToCart(item),
         child: Material(
           color: Colors.white,
           shape: RoundedRectangleBorder(

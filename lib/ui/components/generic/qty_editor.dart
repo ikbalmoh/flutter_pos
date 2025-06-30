@@ -1,14 +1,18 @@
+import 'dart:math';
+
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:selleri/utils/formater.dart';
 
 class QtyEditor extends StatefulWidget {
-  final int qty;
+  final double qty;
   final int? min;
   final int? max;
   final bool? keyboard;
-  final Function(int) onChange;
+  final int decimalDigit;
+  final Function(double) onChange;
 
   const QtyEditor({
     super.key,
@@ -17,6 +21,7 @@ class QtyEditor extends StatefulWidget {
     this.keyboard,
     this.min,
     this.max,
+    this.decimalDigit = 0,
   });
 
   @override
@@ -26,10 +31,15 @@ class QtyEditor extends StatefulWidget {
 class _QtyEditorState extends State<QtyEditor> {
   TextEditingController qtyController = TextEditingController();
   double qty = 0;
-  final _qtyFormater = CurrencyFormat.currencyInput();
+  CurrencyTextInputFormatter _qtyFormater =
+      CurrencyFormat.currencyInput(decimalDigit: 0);
 
   @override
   void initState() {
+    if (widget.decimalDigit > 0) {
+      _qtyFormater =
+          CurrencyFormat.currencyInput(decimalDigit: widget.decimalDigit);
+    }
     super.initState();
     setState(() {
       qty = widget.qty.toDouble();
@@ -37,7 +47,7 @@ class _QtyEditorState extends State<QtyEditor> {
     qtyController.text = _qtyFormater.formatDouble(widget.qty.toDouble());
   }
 
-  void onChangeQty(value) {
+  void onChangeQty(_) {
     double value = _qtyFormater.getUnformattedValue().toDouble();
     if (widget.max != null && value > widget.max!) {
       value = widget.max!.toDouble();
@@ -45,11 +55,13 @@ class _QtyEditorState extends State<QtyEditor> {
     setState(() {
       qty = value;
     });
-    widget.onChange(value.toInt());
+    widget.onChange(value);
   }
 
   void onIncreaseQty(bool increase) {
-    double value = increase ? qty + 1 : qty - 1;
+    double newQty =
+        widget.decimalDigit > 0 ? 1 / pow(10, widget.decimalDigit) : 1;
+    double value = increase ? qty + newQty : qty - newQty;
     if ((widget.min != null && value < widget.min!) ||
         widget.max != null && value > widget.max!) {
       return;
@@ -58,7 +70,7 @@ class _QtyEditorState extends State<QtyEditor> {
       qty = value;
     });
     qtyController.text = CurrencyFormat.currency(value, symbol: false);
-    widget.onChange(value.toInt());
+    widget.onChange(value);
   }
 
   @override

@@ -6,7 +6,7 @@ import 'package:selleri/data/models/receiving/purchase_item.dart';
 class PurchaseItemList extends StatelessWidget {
   final PurchaseItem item;
   final Function(PurchaseItem) onReceive;
-  final int receiveQty;
+  final double receiveQty;
   final String type;
 
   const PurchaseItemList({

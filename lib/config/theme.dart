@@ -172,13 +172,13 @@ ThemeData appTheme(BuildContext context) {
     bottomSheetTheme: const BottomSheetThemeData(
       surfaceTintColor: Colors.white,
     ),
-    cardTheme: const CardTheme(
+    cardTheme: const CardThemeData(
       surfaceTintColor: Colors.white,
     ),
     popupMenuTheme: const PopupMenuThemeData(
       surfaceTintColor: Colors.white,
     ),
-    dialogTheme: const DialogTheme(
+    dialogTheme: const DialogThemeData(
       backgroundColor: Colors.white,
     ),
   );

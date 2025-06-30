@@ -39,7 +39,7 @@ class PurchaseInfo extends _$PurchaseInfo {
     }
   }
 
-  void receiveItem(String itemId, {required int qtyReceive, int? variantId}) {
+  void receiveItem(String itemId, {required double qtyReceive, int? variantId}) {
     final item = state.value?.items.firstWhereOrNull(
         (i) => i.itemId == itemId && i.variantId == variantId);
     if (item != null) {

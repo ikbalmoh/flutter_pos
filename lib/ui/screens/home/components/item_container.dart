@@ -190,7 +190,7 @@ class ItemContainer extends ConsumerWidget {
                     itemCount: value.length,
                     itemBuilder: (context, index) {
                       final Item item = value[index];
-                      int qtyOnCart = ref
+                      double qtyOnCart = ref
                           .read(cartProvider.notifier)
                           .qtyOnCart(item.idItem);
                       return ShopItem(
@@ -212,7 +212,7 @@ class ItemContainer extends ConsumerWidget {
                     itemCount: value.length,
                     itemBuilder: (context, index) {
                       final item = value[index];
-                      int qtyOnCart = ref
+                      double qtyOnCart = ref
                           .read(cartProvider.notifier)
                           .qtyOnCart(item.idItem);
                       return ShopItemList(

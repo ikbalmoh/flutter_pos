@@ -131,7 +131,7 @@ class ItemContainer extends ConsumerWidget {
                           return const ItemGridSkeleton();
                         }
                         final ItemAdjustment item = data.data![index];
-                        int qtyOnCart = ref
+                        double qtyOnCart = ref
                             .read(cartProvider.notifier)
                             .qtyOnCart(item.idItem);
                         return ItemGrid(
@@ -175,7 +175,7 @@ class ItemContainer extends ConsumerWidget {
                           return const ItemListSkeleton(leading: false);
                         }
                         final item = data.data![index];
-                        int qtyOnCart = ref
+                        double qtyOnCart = ref
                             .read(cartProvider.notifier)
                             .qtyOnCart(item.idItem);
                         return ItemList(

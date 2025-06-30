@@ -115,7 +115,7 @@ class Cart extends _$Cart {
       );
     }
     double itemStock = variant?.stockItem ?? item.stockItem;
-    int onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
+    double onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
     if (onCartQty > 0) {
       return updateQty(item.idItem, idVariant: variant?.idVariant);
     }
@@ -259,7 +259,8 @@ class Cart extends _$Cart {
         ]);
       }
 
-      int quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
+      double quantity =
+          increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
       double finalPrice = itemCart.price - itemCart.discountTotal;
       items[index] =
           itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
@@ -344,8 +345,8 @@ class Cart extends _$Cart {
     return true;
   }
 
-  int qtyOnCart(String idItem, {int? idVariant}) {
-    List<int> qtyItems = state.items
+  double qtyOnCart(String idItem, {int? idVariant}) {
+    List<double> qtyItems = state.items
         .where((i) => i.idItem == idItem && i.idVariant == idVariant)
         .map((i) => i.quantity)
         .toList();
@@ -734,13 +735,14 @@ class Cart extends _$Cart {
 
           items[itemIdx] = itemCart;
         }
-        int rewardQty = promo.rewardQty ?? 1;
-        final int itemPromoQty = eligibleItems
+        double rewardQty = promo.rewardQty?.toDouble() ?? 1;
+        final double itemPromoQty = eligibleItems
             .map((item) => item.quantity)
             .reduce((value, total) => value + total);
 
         if (promo.kelipatan == true) {
-          rewardQty = (rewardQty * itemPromoQty) ~/ promo.requirementQuantity!;
+          rewardQty = ((rewardQty * itemPromoQty) ~/
+              promo.requirementQuantity!.toDouble()) as double;
         }
         ItemCart rewardItem = ItemCart.asReward(
           reward.item!,

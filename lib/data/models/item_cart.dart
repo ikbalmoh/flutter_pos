@@ -33,7 +33,7 @@ class ItemCart with _$ItemCart {
     required double price,
     double? purchasePrice,
     @JsonKey(fromJson: Converters.dynamicToBool) required bool manualDiscount,
-    required int quantity,
+    required double quantity,
     required double discount,
     @JsonKey(fromJson: Converters.dynamicToBool)
     required bool discountIsPercent,
@@ -60,7 +60,7 @@ class ItemCart with _$ItemCart {
     bool discountIsPercent = true;
     double discount = 0;
     double discountTotal = 0;
-    int quantity = itemCart.quantity;
+    double quantity = itemCart.quantity;
     double itemPrice = itemCart.price;
     double total = itemPrice * quantity;
 
@@ -74,15 +74,15 @@ class ItemCart with _$ItemCart {
       if (!isReward && promotion.type != 1) {
         discountIsPercent = promotion.discountType == true;
         discount = promotion.rewardNominal;
-        int requirementQty = promotion.requirementQuantity ?? 1;
-        int rewardQuantity = 1;
+        double requirementQty = promotion.requirementQuantity ?? 1;
+        double rewardQuantity = 1;
         discountTotal = discount;
         if (discountIsPercent) {
           discountTotal = itemPrice * (discount / 100);
           rewardQuantity = requirementQty * (quantity ~/ requirementQty);
         } else {
           if (quantity > requirementQty) {
-            rewardQuantity = quantity ~/ requirementQty;
+            rewardQuantity = (quantity ~/ requirementQty).toDouble();
           }
         }
         discountTotal *= rewardQuantity;
@@ -116,7 +116,7 @@ class ItemCart with _$ItemCart {
     Item item, {
     ItemVariant? variant,
     Promotion? promotion,
-    int quantity = 1,
+    double quantity = 1,
   }) {
     String identifier = item.idItem;
     String itemName = item.itemName;

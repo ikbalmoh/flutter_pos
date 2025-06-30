@@ -8,7 +8,7 @@ class ItemGrid extends StatelessWidget {
   final Function(ItemAdjustment) onAddToCart;
   final Function(ItemAdjustment) showVariants;
   final Function(String) addQty;
-  final int qtyOnCart;
+  final double qtyOnCart;
 
   const ItemGrid({
     required this.item,

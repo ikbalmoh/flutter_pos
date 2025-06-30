@@ -20,7 +20,7 @@ class ReceiveItemForm extends ConsumerStatefulWidget {
 }
 
 class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
-  late int qty;
+  late double qty;
 
   @override
   void initState() {
@@ -113,7 +113,7 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
                           style: labelStyle,
                         ),
                         QtyEditor(
-                            qty: qty.toInt(),
+                            qty: qty,
                             onChange: (value) {
                               setState(() {
                                 qty = value;
