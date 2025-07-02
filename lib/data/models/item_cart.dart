@@ -74,7 +74,7 @@ class ItemCart with _$ItemCart {
       if (!isReward && promotion.type != 1) {
         discountIsPercent = promotion.discountType == true;
         discount = promotion.rewardNominal;
-        double requirementQty = promotion.requirementQuantity ?? 1;
+        double requirementQty = promotion.requirementQuantity?.toDouble() ?? 1;
         double rewardQuantity = 1;
         discountTotal = discount;
         if (discountIsPercent) {

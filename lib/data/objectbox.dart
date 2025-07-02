@@ -97,12 +97,14 @@ class ObjectBox {
                   .containsElement(items[0].idVariant!.toString())
               : Promotion_.requirementProductId
                   .containsElement(items[0].idItem))
-          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity));
+          .and(Promotion_.requirementQuantity
+              .lessOrEqual(items[0].quantity.toInt()));
 
       Condition<Promotion> requirementCategoryIds = (Promotion_
           .requirementProductId
           .containsElement(items[0].idCategory ?? '')
-          .and(Promotion_.requirementQuantity.lessOrEqual(items[0].quantity)));
+          .and(Promotion_.requirementQuantity
+              .lessOrEqual(items[0].quantity.toInt())));
 
       for (var i = 1; i < items.length; i++) {
         ItemCart itemCart = items[i];
@@ -113,7 +115,8 @@ class ObjectBox {
                   : Promotion_.requirementProductId
                       .containsElement(itemCart.idItem))
               .and(
-            Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity),
+            Promotion_.requirementQuantity
+                .lessOrEqual(itemCart.quantity.toInt()),
           ),
         );
 
@@ -124,15 +127,16 @@ class ObjectBox {
                   : Promotion_.requirementProductId
                       .containsElement(itemCart.idItem))
               .and(
-            Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity),
+            Promotion_.requirementQuantity
+                .lessOrEqual(itemCart.quantity.toInt()),
           ),
         );
 
         requirementCategoryIds = requirementCategoryIds.or((Promotion_
                 .requirementProductId
                 .containsElement(itemCart.idCategory ?? ''))
-            .and(
-                Promotion_.requirementQuantity.lessOrEqual(itemCart.quantity)));
+            .and(Promotion_.requirementQuantity
+                .lessOrEqual(itemCart.quantity.toInt())));
       }
 
       Condition<Promotion> requirementProductQuery = Promotion_

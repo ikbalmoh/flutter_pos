@@ -17,13 +17,13 @@ class Promotion {
 
   final String name;
   int type;
-  double? requirementQuantity;
+  int? requirementQuantity;
   double? requirementMinimumOrder;
   int? rewardType;
   int? rewardProductType;
   String? rewardProductId;
   int? rewardVariantId;
-  double? rewardQty;
+  int? rewardQty;
   @JsonKey(fromJson: Converters.dynamicToBool)
   bool? discountType;
   double rewardNominal;

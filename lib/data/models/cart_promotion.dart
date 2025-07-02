@@ -45,7 +45,7 @@ class CartPromotion with _$CartPromotion {
         discountIsPercent: data.discountType == true ? true : false,
         discountNominal: data.rewardNominal,
         discountValue: data.rewardNominal,
-        requirementQuantity: data.requirementQuantity,
+        requirementQuantity: data.requirementQuantity?.toDouble(),
         requirementProductId: data.requirementProductId,
         requirementProductType: data.requirementProductType,
         requirementMinimumOrder: data.requirementMinimumOrder,

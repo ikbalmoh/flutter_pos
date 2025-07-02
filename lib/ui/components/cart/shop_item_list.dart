@@ -70,7 +70,7 @@ class ShopItemList extends StatelessWidget {
                         ),
                         margin: const EdgeInsets.only(right: 10),
                         child: Text(
-                          qtyOnCart.toString(),
+                          CurrencyFormat.currency(qtyOnCart, symbol: false),
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall

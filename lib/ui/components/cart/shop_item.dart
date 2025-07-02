@@ -174,7 +174,7 @@ class ShopItem extends StatelessWidget {
                         horizontal: 10,
                       ),
                       child: Text(
-                        qtyOnCart.toString(),
+                        CurrencyFormat.currency(qtyOnCart, symbol: false),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.white, fontWeight: FontWeight.w700),
                       ),
