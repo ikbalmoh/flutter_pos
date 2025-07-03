@@ -45,7 +45,7 @@ class PromotionItems extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  '${CurrencyFormat.currency(promo.discountValue, minus: true, symbol: !promo.discountIsPercent)} ${promo.discountIsPercent ? '%' : ''}',
+                  CurrencyFormat.currency(promo.discountValue, minus: true),
                   textAlign: TextAlign.right,
                   style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600, color: Colors.red.shade600),
