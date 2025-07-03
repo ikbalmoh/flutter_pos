@@ -741,8 +741,8 @@ class Cart extends _$Cart {
             .reduce((value, total) => value + total);
 
         if (promo.kelipatan == true) {
-          rewardQty = ((rewardQty * itemPromoQty) ~/
-              promo.requirementQuantity!.toDouble()) as double;
+          rewardQty = ((rewardQty * itemPromoQty) ~/ promo.requirementQuantity!)
+              .toDouble();
         }
         ItemCart rewardItem = ItemCart.asReward(
           reward.item!,

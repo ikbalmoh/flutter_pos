@@ -35,33 +35,38 @@ class _CartActionsState extends ConsumerState<CartActions> {
     setState(() {
       isLoading = true;
     });
-    final promotions = ref.read(promotionsProvider);
-    final appliedPromotions = ref.read(cartProvider).promotions;
-    if (promotions.isNotEmpty && appliedPromotions.isEmpty) {
-      List<Promotion>? promotions = await showModalBottomSheet(
-          backgroundColor: Colors.white,
-          isScrollControlled: true,
-          context: context,
-          isDismissible: false,
-          builder: (context) {
-            return CartPromotionsList(
-                confirmText: 'continue_without_promo'.tr());
-          });
+    try {
+      final promotions = ref.read(promotionsProvider);
+      final appliedPromotions = ref.read(cartProvider).promotions;
+      if (promotions.isNotEmpty && appliedPromotions.isEmpty) {
+        List<Promotion>? promotions = await showModalBottomSheet(
+            backgroundColor: Colors.white,
+            isScrollControlled: true,
+            context: context,
+            isDismissible: false,
+            builder: (context) {
+              return CartPromotionsList(
+                  confirmText: 'continue_without_promo'.tr());
+            });
 
-      log('promotions $promotions');
+        log('promotions $promotions');
 
-      if (promotions != null) {
-        ref.read(cartProvider.notifier).applyPromotions(promotions);
-        if (context.mounted) {
-          context.push(Routes.checkout);
+        if (promotions != null) {
+          ref.read(cartProvider.notifier).applyPromotions(promotions);
+          if (context.mounted) {
+            context.push(Routes.checkout);
+          }
         }
+      } else {
+        context.push(Routes.checkout);
       }
-    } else {
-      context.push(Routes.checkout);
+    } catch (e) {
+      AppAlert.toast(e.toString());
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   void onCheckout(BuildContext context) async {

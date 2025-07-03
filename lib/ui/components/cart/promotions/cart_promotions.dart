@@ -6,6 +6,7 @@ import 'package:selleri/data/models/promotion.dart';
 import 'package:selleri/providers/cart/cart_provider.dart';
 import 'package:selleri/providers/promotion/promotions_provider.dart';
 import 'package:selleri/ui/components/cart/promotions/cart_promotions_list.dart';
+import 'package:selleri/utils/app_alert.dart';
 
 class CartPromotions extends ConsumerWidget {
   const CartPromotions({
@@ -17,16 +18,20 @@ class CartPromotions extends ConsumerWidget {
     final List<Promotion> promotions = ref.watch(promotionsProvider);
 
     void onViewPromotions() async {
-      List<Promotion>? promotions = await showModalBottomSheet(
-          backgroundColor: Colors.white,
-          isScrollControlled: true,
-          context: context,
-          builder: (context) {
-            return const CartPromotionsList();
-          });
+      try {
+        List<Promotion>? promotions = await showModalBottomSheet(
+            backgroundColor: Colors.white,
+            isScrollControlled: true,
+            context: context,
+            builder: (context) {
+              return const CartPromotionsList();
+            });
 
-      if (promotions != null) {
-        ref.read(cartProvider.notifier).applyPromotions(promotions);
+        if (promotions != null) {
+          ref.read(cartProvider.notifier).applyPromotions(promotions);
+        }
+      } catch (e) {
+        AppAlert.toast(e.toString());
       }
     }
 
