@@ -48,7 +48,7 @@ Future initServices() async {
   if (defaultTargetPlatform == TargetPlatform.android) {
     AndroidDeviceInfo deviceInfo = await deviceInfoPlugin.androidInfo;
     deviceId = deviceInfo.fingerprint;
-    deviceName = deviceInfo.device;
+    deviceName = deviceInfo.model;
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
     IosDeviceInfo deviceInfo = await deviceInfoPlugin.iosInfo;
     deviceName = deviceInfo.name;
