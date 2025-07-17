@@ -65,7 +65,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
         await ref.read(outletProvider.notifier).refreshConfig();
       }
       if (selected['items'] == true || selected['promotions'] == true) {
-        await ref.read(itemsStreamProvider().notifier).loadItems(
+        await ref.read(itemsProvider().notifier).loadItems(
               refresh: true,
               fullSync: true,
               progressCallback: (progress) => setState(() {
@@ -73,7 +73,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
               }),
             );
       } else if (selected['categories'] == true) {
-        await ref.read(itemsStreamProvider().notifier).syncCategories();
+        await ref.read(itemsProvider().notifier).syncCategories();
       }
       AppAlert.toast('synced'.tr());
       setState(() {

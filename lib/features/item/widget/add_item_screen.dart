@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/features/item/model/category.dart';
+import 'package:selleri/features/item/model/category.dart' as model;
 import 'package:selleri/features/item/model/item_attribute_variant.dart';
 import 'package:selleri/features/item/provider/category_provider.dart';
 import 'package:selleri/features/item/widget/add_variant_form.dart';
@@ -31,7 +31,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   final _skuController = TextEditingController();
   final _barcodeController = TextEditingController();
 
-  Category? category;
+  model.Category? category;
   double? itemPrice;
   double? initialStock;
   double? hppItem;
@@ -274,13 +274,13 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                           Divider(
                             color: Colors.blueGrey.shade50,
                           ),
-                          DropdownButton<Category>(
+                          DropdownButton<model.Category>(
                             items: ref
-                                .watch(categoriesStreamProvider)
+                                .watch(categoryProvider())
                                 .value
-                                ?.map<DropdownMenuItem<Category>>(
-                                    (Category category) {
-                              return DropdownMenuItem<Category>(
+                                ?.map<DropdownMenuItem<model.Category>>(
+                                    (model.Category category) {
+                              return DropdownMenuItem<model.Category>(
                                 value: category,
                                 child: Text(category.categoryName),
                               );

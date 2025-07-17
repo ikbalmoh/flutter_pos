@@ -47,7 +47,7 @@ class Outlet extends _$Outlet {
 
       state = AsyncData(progress.copyWith(config: true));
 
-      await ref.read(itemsStreamProvider().notifier).loadItems(
+      await ref.read(itemsProvider().notifier).loadItems(
             refresh: true,
             fullSync: false,
             progressCallback: (status) {

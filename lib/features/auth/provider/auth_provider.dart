@@ -76,7 +76,7 @@ class Auth extends _$Auth {
     Future.delayed(const Duration(seconds: 1), () async {
       await ref.read(outletProvider.notifier).clearOutlet();
       objectBox.clearAll();
-      ref.invalidate(itemsStreamProvider);
+      ref.invalidate(itemsProvider);
       ref.invalidate(cartProvider);
       ref.invalidate(outletProvider);
       ref.invalidate(shiftProvider);

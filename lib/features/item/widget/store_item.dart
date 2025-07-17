@@ -42,7 +42,7 @@ class _StoreItemState extends ConsumerState<StoreItem> {
     try {
       log('store item: ${widget.itemPayload}\n${widget.attributes}');
       Item item = await ref
-          .read(ItemsStreamProvider().notifier)
+          .read(itemsProvider().notifier)
           .storeItem(widget.itemPayload, widget.attributes);
       setState(() {
         status = Status.success;

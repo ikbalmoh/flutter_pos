@@ -53,9 +53,8 @@ class _AddBarcodeItemState extends ConsumerState<AddBarcodeItem> {
     ]));
   }
 
-  bool isAvailable() => ref
-      .read(itemsStreamProvider().notifier)
-      .isScannedItemStockAvailable(result);
+  bool isAvailable() =>
+      ref.read(itemsProvider().notifier).isScannedItemStockAvailable(result);
 
   @override
   Widget build(BuildContext context) {

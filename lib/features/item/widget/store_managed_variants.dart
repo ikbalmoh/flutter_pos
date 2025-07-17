@@ -41,7 +41,7 @@ class _StoreManagedVariantsState extends ConsumerState<StoreManagedVariants> {
     try {
       log('update variants: ${widget.attributes}');
       await ref
-          .read(ItemsStreamProvider().notifier)
+          .read(itemsProvider().notifier)
           .updateVariants(widget.idItem, widget.attributes);
       setState(() {
         status = Status.success;

@@ -17,7 +17,7 @@ import 'package:selleri/shared/utils/app_alert.dart';
 part 'item_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class ItemsStream extends _$ItemsStream {
+class Items extends _$Items {
   @override
   Stream<List<Item>> build({
     String idCategory = '',

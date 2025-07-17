@@ -96,7 +96,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
 
   Future<void> refreshData() async {
     await ref.read(outletProvider.notifier).refreshConfig();
-    await ref.read(itemsStreamProvider().notifier).syncItems();
+    await ref.read(itemsProvider().notifier).syncItems();
     return;
   }
 
@@ -145,7 +145,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
     ScanItemResult result = objectBox.getItemByBarcode(barcode);
     if (result.item != null) {
       final isStockAvailable = ref
-          .read(ItemsStreamProvider().notifier)
+          .read(itemsProvider().notifier)
           .isScannedItemStockAvailable(result);
       if (isStockAvailable == false) {
         AppAlert.confirm(

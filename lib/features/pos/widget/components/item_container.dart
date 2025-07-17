@@ -133,7 +133,7 @@ class ItemContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items = ref.watch(itemsStreamProvider(
+    final items = ref.watch(itemsProvider(
       idCategory: idCategory,
       search: search,
       filterStock: filterStock,

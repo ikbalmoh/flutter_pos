@@ -83,7 +83,7 @@ class Fcm extends _$Fcm {
         await ref.read(itemRepositoryProvider).fetchCategoris();
       }
       if (sources.contains('items') || sources.contains('promotions')) {
-        await ref.read(itemsStreamProvider().notifier).syncItems();
+        await ref.read(itemsProvider().notifier).syncItems();
       }
       if (sources.contains('config')) {
         final only = configOnly ?? [];
@@ -121,7 +121,7 @@ class Fcm extends _$Fcm {
           // sync items
           if (jsonData.isNotEmpty) {
             ref
-                .read(itemsStreamProvider().notifier)
+                .read(itemsProvider().notifier)
                 .saveJsonItems(jsonData, showUpdateMessage: true);
           }
           break;
