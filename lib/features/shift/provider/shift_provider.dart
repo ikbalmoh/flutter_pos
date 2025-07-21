@@ -127,7 +127,7 @@ class Shift extends _$Shift {
         size: printer.size,
         cut: printer.cut,
       );
-      ref.read(printerProvider.notifier).print(receipt);
+      await ref.read(printerProvider.notifier).print(receipt);
     } catch (e, stackTrace) {
       log('PRINT SHIFT ERROR: $e => $stackTrace');
       if (throwError == true) {

@@ -401,9 +401,14 @@ class Printer {
 
     if (attributes != null) {
       if (isValidBase64(attributes.imageBase64)) {
-        final Uint8List imgBytes =
-            const Base64Decoder().convert(attributes.imageBase64!);
-        img = decodeImage(imgBytes);
+        try {
+          final Uint8List imgBytes =
+              const Base64Decoder().convert(attributes.imageBase64!);
+          img = decodeImage(imgBytes);
+        } catch (e) {
+          log('Cannot decode header image: $e');
+          log('${attributes.imageBase64}');
+        }
       }
       headers = GeneralFormater.stripHtmlIfNeeded(attributes.headers ?? '');
     }

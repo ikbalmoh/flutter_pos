@@ -129,6 +129,7 @@ class Printer extends _$Printer {
       log('PRINTING COMPLETE');
     } catch (e, stackTrace) {
       log('PRINT FAILED: $e => $stackTrace');
+      rethrow;
     }
   }
 
