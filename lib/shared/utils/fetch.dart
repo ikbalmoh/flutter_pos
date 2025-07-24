@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/constants/store_key.dart';
@@ -78,10 +77,6 @@ class CustomInterceptors extends Interceptor {
         requestOptions: response.requestOptions,
         response: response,
       );
-    }
-    if (kDebugMode) {
-      print('[${response.statusCode}] ${response.realUri}');
-      log('${response.data}');
     }
     super.onResponse(response, handler);
   }

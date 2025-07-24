@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -69,8 +68,13 @@ class ItemRepository implements ItemRepositoryProtocol {
   }
 
   @override
-  Future<List<Item>> fetchItems(
-      {String? idCategory, bool? fromLastSync, bool? fullSync = false}) async {
+  Future<List<Item>> fetchItems({
+    String? idCategory,
+    bool? fromLastSync,
+    bool? fullSync = false,
+    List<Item> prevItems = const [],
+    int? page = 1,
+  }) async {
     const storage = FlutterSecureStorage();
 
     int? lastUpdate;
@@ -92,27 +96,36 @@ class ItemRepository implements ItemRepositoryProtocol {
       if (outlet == null) {
         return [];
       }
-      final data = await api.items(outlet.idOutlet,
-          idCategory: idCategory, lastUpdate: lastUpdate, fullSync: fullSync);
-      List<Item> items = [];
-      for (var i = 0; i < List.from(data['data']).length; i++) {
-        var json = data['data'][i];
-        try {
-          final item = Item.fromJsonData(json);
-          items.add(item);
-        } on Error catch (e, stackTrace) {
-          if (kDebugMode) {
-            log('LOAD ITEM ERROR: $json\n=> $e\n=> $stackTrace');
-          } else {
-            rethrow;
-          }
-        }
+      List<Item> items = List.from(prevItems);
+      final data = await api.items(
+        outlet.idOutlet,
+        idCategory: idCategory,
+        lastUpdate: lastUpdate,
+        fullSync: fullSync,
+        page: page,
+      );
+      if (data == null) {
+        return items;
+      }
+      if (data.data != null && data.data!.isNotEmpty) {
+        items.addAll(data.data!.toList());
+      }
+      if (data.currentPage < data.lastPage) {
+        return fetchItems(
+          idCategory: idCategory,
+          fromLastSync: fromLastSync,
+          fullSync: fullSync,
+          prevItems: items,
+          page: data.currentPage + 1,
+        );
       }
       return items;
     } on DioException catch (e) {
       throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);
+    } catch (e) {
+      rethrow;
     } finally {
       storage.write(
         key: syncKey,

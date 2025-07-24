@@ -364,11 +364,11 @@ class ObjectBox {
 
   void putItems(List<Item> items) async {
     try {
+      List<int> ids = itemBox.putMany(items);
       if (kDebugMode) {
-        print('PUT ITEMS');
+        print('PUT ${ids.length} ITEMS');
         log('$items');
       }
-      List<int> ids = itemBox.putMany(items);
       List<ItemVariant> itemVariants = [];
       List<int> removeVariants = [];
       for (var item in items) {
@@ -416,9 +416,6 @@ class ObjectBox {
       }
       if (itemPackages.isNotEmpty) {
         putItemPackages(itemPackages);
-      }
-      if (kDebugMode) {
-        print('ITEMS HAS BEEN STORED: $ids');
       }
     } catch (e, stackTrace) {
       if (kDebugMode) {

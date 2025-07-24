@@ -51,7 +51,6 @@ class Outlet extends _$Outlet {
             refresh: true,
             fullSync: false,
             progressCallback: (status) {
-              log('LOAD OUTLET STATUS: $status');
               state = AsyncData(status);
             },
           );

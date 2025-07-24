@@ -90,12 +90,30 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 17.5, vertical: 15),
-                    child: Text(
-                        ref.watch(outletProvider).value is OutletLoading
-                            ? "preparing_outlet".tr()
-                            : "select_outlet".tr(),
-                        style: textTheme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w500)),
+                    child: ref.watch(outletProvider).value is OutletLoading
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "preparing_outlet".tr(),
+                                  style: textTheme.bodyLarge
+                                      ?.copyWith(fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 15,
+                                height: 15,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                ),
+                              )
+                            ],
+                          )
+                        : Text(
+                            'select_outlet'.tr(),
+                            style: textTheme.bodyLarge
+                                ?.copyWith(fontWeight: FontWeight.w500),
+                          ),
                   ),
                   SizedBox(
                     height: height * 0.4,

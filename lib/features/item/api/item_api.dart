@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
+import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'package:selleri/shared/utils/fetch.dart';
@@ -18,12 +19,19 @@ class ItemApi {
     return res.data;
   }
 
-  Future items(String idOutlet,
-      {String? idCategory, int? lastUpdate, bool? fullSync}) async {
+  Future<Pagination<Item>?> items(
+    String idOutlet, {
+    String? idCategory,
+    int? lastUpdate,
+    bool? fullSync,
+    int? page = 1,
+  }) async {
     Map<String, dynamic> query = {
       'is_app': 1,
       'id_outlet': idOutlet,
       'last_update': lastUpdate,
+      'page': page,
+      'per_page': 20
     };
     if (fullSync == true) {
       query['full_sync'] = true;
@@ -32,7 +40,13 @@ class ItemApi {
       query['id_category'] = idCategory;
     }
     final res = await api.get(ApiUrl.listItems, queryParameters: query);
-    return res.data;
+    if (res.data['data'] != null && res.data['data']['data'] != null) {
+      final pagination = Pagination<Item>.fromJson(res.data['data'], (item) {
+        return Item.fromJsonData(item as Map<String, dynamic>);
+      });
+      return pagination;
+    }
+    return null;
   }
 
   Future<Item> storeItem(Map<String, dynamic> item) async {
