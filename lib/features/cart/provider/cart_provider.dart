@@ -21,6 +21,7 @@ import 'package:selleri/features/promotion/model/promotion.dart';
 import 'package:selleri/features/table/model/table.dart';
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
+import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
@@ -446,6 +447,8 @@ class Cart extends _$Cart {
       if (res.isEmpty) {
         throw 'transaction_error'.tr();
       }
+
+      ref.invalidate(transactionsProvider);
     } catch (e) {
       rethrow;
     }

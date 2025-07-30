@@ -13,9 +13,11 @@ import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
 class StoreTransaction extends ConsumerStatefulWidget {
-  const StoreTransaction({super.key, this.printKitchen});
+  const StoreTransaction(
+      {super.key, this.printKitchen, required this.isPartialPayment});
 
   final bool? printKitchen;
+  final bool isPartialPayment;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -108,10 +110,12 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
               ? TransactionSuccess(
                   onReset: resetCart,
                   onViewReceipt: onViewReceipt,
+                  isPartialPayment: widget.isPartialPayment,
                 )
               : TransactionError(
                   onRetry: submitTransaction,
                   onReset: resetCart,
+                  isPartialPayment: widget.isPartialPayment,
                   error: error,
                 ),
     );
@@ -121,9 +125,12 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
 class TransactionSuccess extends ConsumerWidget {
   final Function() onReset;
   final Function() onViewReceipt;
+  final bool isPartialPayment;
+
   const TransactionSuccess({
     required this.onReset,
     required this.onViewReceipt,
+    required this.isPartialPayment,
     super.key,
   });
 
@@ -173,7 +180,7 @@ class TransactionSuccess extends ConsumerWidget {
                   ),
                 ),
                 child: Text(
-                  'new_transaction'.tr(),
+                  isPartialPayment ? 'back'.tr() : 'new_transaction'.tr(),
                 ),
               ),
             ),
@@ -187,9 +194,15 @@ class TransactionSuccess extends ConsumerWidget {
 class TransactionError extends StatelessWidget {
   final Function() onReset;
   final Function() onRetry;
+  final bool isPartialPayment;
   final String? error;
+
   const TransactionError(
-      {required this.onRetry, this.error, super.key, required this.onReset});
+      {required this.onRetry,
+      this.error,
+      super.key,
+      required this.onReset,
+      required this.isPartialPayment});
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +232,8 @@ class TransactionError extends StatelessWidget {
               style:
                   TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
               onPressed: onReset,
-              child: Text('new_transaction'.tr()),
+              child:
+                  Text(isPartialPayment ? 'back'.tr() : 'new_transaction'.tr()),
             ),
             const SizedBox(width: 15),
             Expanded(

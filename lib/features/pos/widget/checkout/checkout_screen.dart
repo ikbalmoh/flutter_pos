@@ -15,9 +15,9 @@ import 'package:selleri/shared/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
-  const CheckoutScreen({this.isPartialPayment, super.key});
+  const CheckoutScreen({required this.isPartialPayment, super.key});
 
-  final bool? isPartialPayment;
+  final bool isPartialPayment;
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -48,7 +48,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.white,
       useSafeArea: true,
-      builder: (context) => const ConfirmStoreTransaction(),
+      builder: (context) => ConfirmStoreTransaction(
+        isPartialPayment: widget.isPartialPayment,
+      ),
     );
   }
 
@@ -73,7 +75,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         backgroundColor:
             cart.totalPayment >= cart.grandTotal ? Colors.teal : Colors.red,
       ),
-      onPressed: ((isPartialEnabled && cart.totalPayment < cart.grandTotal) ||
+      onPressed: (isPartialEnabled ||
               cart.totalPayment >= cart.grandTotal ||
               cart.grandTotal == 0)
           ? onConfirmStoreTransaction

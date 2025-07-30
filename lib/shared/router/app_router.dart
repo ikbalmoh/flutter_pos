@@ -96,7 +96,9 @@ GoRouter router(Ref ref) {
         GoRoute(
           name: Routes.checkout,
           path: Routes.checkout,
-          builder: (context, state) => const CheckoutScreen(),
+          builder: (context, state) => const CheckoutScreen(
+            isPartialPayment: false,
+          ),
         ),
         GoRoute(
           name: Routes.promotions,

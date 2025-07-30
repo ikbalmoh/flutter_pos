@@ -19,7 +19,9 @@ import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
 class ConfirmStoreTransaction extends ConsumerStatefulWidget {
-  const ConfirmStoreTransaction({super.key});
+  const ConfirmStoreTransaction({super.key, required this.isPartialPayment});
+
+  final bool isPartialPayment;
 
   @override
   ConsumerState<ConfirmStoreTransaction> createState() =>
@@ -122,6 +124,7 @@ class _ConfirmStoreTransactionState
         builder: (context) => PopScope(
           canPop: false,
           child: StoreTransaction(
+            isPartialPayment: widget.isPartialPayment,
             printKitchen: hasTableAddon == true ? printKitchen : false,
           ),
         ),
