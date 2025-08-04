@@ -56,3 +56,5 @@ app.*.map.json
 # firebase
 firebase.json
 firepit-log.txt
+
+android/app/.cxx

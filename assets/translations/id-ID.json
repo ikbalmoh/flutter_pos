@@ -372,5 +372,6 @@
   "card_id_number": "Nomor ID Kartu",
   "province": "Provinsi",
   "city": "Kota",
-  "district": "Kecamatan"
+  "district": "Kecamatan",
+  "back": "Kembali"
 }
