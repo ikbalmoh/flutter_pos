@@ -250,6 +250,22 @@ class Printer {
             ),
           ]);
         }
+        // insufficient_payment
+        if (cart.totalPayment < cart.grandTotal) {
+          bytes += generator.row([
+            PosColumn(
+              text: 'insufficient_payment'.tr(),
+              width: 7,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text: CurrencyFormat.currency(cart.grandTotal - cart.totalPayment,
+                  symbol: false),
+              width: 5,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
         // Change
         bytes += generator.hr();
         bytes += generator.row([
