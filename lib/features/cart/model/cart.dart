@@ -65,6 +65,7 @@ class Cart with _$Cart {
     String? promoCode,
     @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
     List<CustomerGroup>? customerGroup,
+    bool? isOffline,
   }) = _Cart;
 
   factory Cart.initial() => Cart(

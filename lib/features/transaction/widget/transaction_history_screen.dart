@@ -294,7 +294,7 @@ class _TransactionHistoryScreenState
                                           child: Center(
                                             child: Text(
                                               'x_data_displayed'.tr(
-                                                args: [data.total.toString()],
+                                                args: ['all'.tr()],
                                               ),
                                               style: Theme.of(context)
                                                   .textTheme

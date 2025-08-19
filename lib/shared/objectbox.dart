@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,6 +11,7 @@ import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/item/model/item_package.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
+import 'package:selleri/features/transaction/model/offline_transaction.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -24,6 +27,7 @@ class ObjectBox {
   late final Box<ItemPackage> itemPackageBox;
   late final Box<Promotion> promotionBox;
   late final Box<CustomerGroup> customerGroupBox;
+  late final Box<OfflineTransaction> transactionBox;
 
   ObjectBox._create(this.store) {
     categoryBox = Box<Category>(store);
@@ -32,6 +36,7 @@ class ObjectBox {
     itemPackageBox = Box<ItemPackage>(store);
     promotionBox = Box<Promotion>(store);
     customerGroupBox = Box<CustomerGroup>(store);
+    transactionBox = Box<OfflineTransaction>(store);
   }
 
   static Future<ObjectBox> create() async {
@@ -474,12 +479,41 @@ class ObjectBox {
     log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
   }
 
+  void putTransaction(Cart transaction) {
+    transactionBox.put(OfflineTransaction(
+      id: 0,
+      transactionNo: transaction.transactionNo,
+      shiftId: transaction.shiftId,
+      transaction: jsonEncode(transaction.copyWith(isOffline: true).toJson()),
+    ));
+    log('Transaction Stored: $transaction');
+  }
+
+  List<Cart> getOfflineTransactions() {
+    List<OfflineTransaction> offline = transactionBox.query().build().find();
+    List<Cart> transactions = [];
+    for (var i = 0; i < offline.length; i++) {
+      Cart cart = Cart.fromJson(jsonDecode(offline[i].transaction));
+      transactions.add(cart);
+    }
+    return transactions;
+  }
+
+  Future<void> deleteOfflineTransactions(List<String> idTransactions) async {
+    int ids = await transactionBox
+        .query(OfflineTransaction_.transactionNo.oneOf(idTransactions))
+        .build()
+        .removeAsync();
+    log('removed $idTransactions => $ids');
+  }
+
   void clearAll() {
     categoryBox.removeAll();
     itemBox.removeAll();
     itemVariantBox.removeAll();
     itemPackageBox.removeAll();
     promotionBox.removeAll();
+    transactionBox.removeAll();
   }
 }
 

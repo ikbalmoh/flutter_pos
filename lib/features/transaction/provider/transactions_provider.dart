@@ -4,12 +4,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
+import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
 
@@ -20,11 +22,19 @@ class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
     try {
+      final offlineTransactions = ref.watch(offlineTransactionsProvider);
+      storeTransaction();
       final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId = ref.watch(shiftProvider).value?.id;
-      final transactions = await api.transactions(
+      Pagination<Cart> transactions = await api.transactions(
           idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
+      if (transactions.data != null) {
+        await objectBox.deleteOfflineTransactions(
+            transactions.data!.map((tr) => tr.transactionNo).toList());
+      }
+      transactions = transactions
+          .copyWith(data: [...offlineTransactions, ...transactions.data!]);
       return transactions;
     } catch (e, stackTrace) {
       log('LIST TRANSCATION ERROR: $e\n=> $stackTrace');
@@ -65,6 +75,18 @@ class Transactions extends _$Transactions {
     } catch (e, trace) {
       log('Load Transaction Error: $e\n$trace');
       state = AsyncError(e, trace);
+    }
+  }
+
+  Future<void> storeTransaction() async {
+    try {
+      // TODO store transaction to API
+      // final res = await api.storeTransaction(transaction);
+
+      log('STORED TRANSACTION');
+      ref.invalidateSelf();
+    } catch (e) {
+      rethrow;
     }
   }
 
