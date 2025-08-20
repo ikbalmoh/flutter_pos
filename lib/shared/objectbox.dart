@@ -479,32 +479,50 @@ class ObjectBox {
     log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
   }
 
-  void putTransaction(Cart transaction) {
-    transactionBox.put(OfflineTransaction(
-      id: 0,
-      transactionNo: transaction.transactionNo,
-      shiftId: transaction.shiftId,
-      transaction: jsonEncode(transaction.copyWith(isOffline: true).toJson()),
-    ));
-    log('Transaction Stored: $transaction');
-  }
-
-  List<Cart> getOfflineTransactions() {
-    List<OfflineTransaction> offline = transactionBox.query().build().find();
-    List<Cart> transactions = [];
-    for (var i = 0; i < offline.length; i++) {
-      Cart cart = Cart.fromJson(jsonDecode(offline[i].transaction));
-      transactions.add(cart);
+  Future<void> putTransaction(Cart transaction) async {
+    try {
+      await transactionBox.putAsync(OfflineTransaction(
+        id: 0,
+        transactionNo: transaction.transactionNo,
+        shiftId: transaction.shiftId,
+        transaction: jsonEncode(transaction.copyWith(isOffline: true).toJson()),
+      ));
+      log('Transaction Stored: $transaction');
+    } catch (e) {
+      log('Error storing transaction: $e');
+      rethrow;
     }
-    return transactions;
   }
 
-  Future<void> deleteOfflineTransactions(List<String> idTransactions) async {
-    int ids = await transactionBox
+  Stream<List<OfflineTransaction>> getOfflineTransactions({
+    String? shiftId,
+    String? transactionNo,
+  }) {
+    Condition<OfflineTransaction> condition =
+        OfflineTransaction_.id.greaterThan(0);
+    if (shiftId != null && shiftId.isNotEmpty) {
+      condition.and(
+        OfflineTransaction_.shiftId.equals(shiftId),
+      );
+    }
+    if (transactionNo != null && transactionNo.isNotEmpty) {
+      condition.and(
+        OfflineTransaction_.transactionNo
+            .contains(transactionNo, caseSensitive: false),
+      );
+    }
+    log(condition.toString());
+    final builder = transactionBox.query(condition)
+      ..order(OfflineTransaction_.id);
+    return builder.watch(triggerImmediately: true).map((query) => query.find());
+  }
+
+  Future<int> deleteOfflineTransactions(List<String> idTransactions) async {
+    int removed = await transactionBox
         .query(OfflineTransaction_.transactionNo.oneOf(idTransactions))
         .build()
         .removeAsync();
-    log('removed $idTransactions => $ids');
+    return removed;
   }
 
   void clearAll() {

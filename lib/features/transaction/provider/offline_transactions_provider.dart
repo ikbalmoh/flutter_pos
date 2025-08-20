@@ -1,8 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'dart:convert';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
-import 'package:selleri/features/cart/provider/cart_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
 
 part 'offline_transactions_provider.g.dart';
@@ -10,25 +9,29 @@ part 'offline_transactions_provider.g.dart';
 @riverpod
 class OfflineTransactions extends _$OfflineTransactions {
   @override
-  List<model.Cart> build() {
-    final offlineTransactions = objectBox.getOfflineTransactions();
-
-    return offlineTransactions;
+  Future<List<model.Cart>> build(
+      {String? shiftId, String? transactioNo}) async {
+    final offlineStream = objectBox.getOfflineTransactions(
+        shiftId: shiftId, transactionNo: transactioNo);
+    final offline = await offlineStream.first;
+    List<model.Cart> transactions = [];
+    for (var i = 0; i < offline.length; i++) {
+      model.Cart cart = model.Cart.fromJson(jsonDecode(offline[i].transaction));
+      transactions.add(cart);
+    }
+    return transactions;
   }
 
-  Future<void> store() async {
+  Future<void> store(model.Cart transaction) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final shift = ref.read(shiftProvider).value;
-    if (shift == null) {
-      throw 'shift_not_opened'.tr();
+    await objectBox.putTransaction(transaction);
+    ref.invalidateSelf();
+  }
+
+  Future<void> delete(List<String> transactionNos) async {
+    int total = await objectBox.deleteOfflineTransactions(transactionNos);
+    if (total > 0) {
+      ref.invalidateSelf();
     }
-
-    final cart = ref.read(cartProvider);
-    final transaction = cart.copyWith(
-      shiftId: shift.id,
-    );
-
-    objectBox.putTransaction(transaction);
-    state = [...state, transaction];
   }
 }

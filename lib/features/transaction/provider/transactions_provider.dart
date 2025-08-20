@@ -11,7 +11,6 @@ import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
-import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
 
@@ -22,19 +21,23 @@ class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
     try {
-      final offlineTransactions = ref.watch(offlineTransactionsProvider);
-      storeTransaction();
       final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId = ref.watch(shiftProvider).value?.id;
       Pagination<Cart> transactions = await api.transactions(
           idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
       if (transactions.data != null) {
-        await objectBox.deleteOfflineTransactions(
-            transactions.data!.map((tr) => tr.transactionNo).toList());
+        await ref
+            .read(offlineTransactionsProvider().notifier)
+            .delete(transactions.data!.map((tr) => tr.transactionNo).toList());
       }
-      transactions = transactions
-          .copyWith(data: [...offlineTransactions, ...transactions.data!]);
+      final offlineTransactions = ref.read(offlineTransactionsProvider()).value;
+      log('OFFLINE TRANSACTION: $offlineTransactions');
+      if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
+        transactions = transactions.copyWith(
+          data: [...offlineTransactions, ...transactions.data!],
+        );
+      }
       return transactions;
     } catch (e, stackTrace) {
       log('LIST TRANSCATION ERROR: $e\n=> $stackTrace');
@@ -59,7 +62,7 @@ class Transactions extends _$Transactions {
       if (currentShift == true) {
         shiftId = ref.read(shiftProvider).value?.id;
       }
-      var customers = await api.transactions(
+      var transactions = await api.transactions(
         page: page,
         q: search,
         idOutlet: outlet.outlet.idOutlet,
@@ -67,26 +70,23 @@ class Transactions extends _$Transactions {
         table: table,
       );
       List<Cart> data = List.from(state.value?.data as Iterable<Cart>);
-      if (page > 1) {
-        data = data..addAll(customers.data as Iterable<Cart>);
-        customers = customers.copyWith(data: data, loading: false);
+      if (page == 1) {
+        final offlineTransactions =
+            ref.read(offlineTransactionsProvider()).value;
+        log('OFFLINE TRANSACTION: $offlineTransactions');
+        if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
+          transactions = transactions.copyWith(
+            data: [...offlineTransactions, ...transactions.data!],
+          );
+        }
+      } else {
+        data = data..addAll(transactions.data as Iterable<Cart>);
+        transactions = transactions.copyWith(data: data, loading: false);
       }
-      state = AsyncData(customers);
+      state = AsyncData(transactions);
     } catch (e, trace) {
       log('Load Transaction Error: $e\n$trace');
       state = AsyncError(e, trace);
-    }
-  }
-
-  Future<void> storeTransaction() async {
-    try {
-      // TODO store transaction to API
-      // final res = await api.storeTransaction(transaction);
-
-      log('STORED TRANSACTION');
-      ref.invalidateSelf();
-    } catch (e) {
-      rethrow;
     }
   }
 
@@ -153,7 +153,6 @@ class Transactions extends _$Transactions {
   Future<Cart> cancelTransaction(Cart cart,
       {required String deleteReason}) async {
     try {
-      final api = ref.watch(transactionApiProvider);
       final userId =
           (ref.read(authProvider).value as Authenticated).user.user.idUser;
 
@@ -164,11 +163,7 @@ class Transactions extends _$Transactions {
 
       log('DELETE TRANSACTION: $transaction');
 
-      final res = await api.storeTransaction(transaction);
-
-      if (res.isEmpty) {
-        throw Exception('transaction_error'.tr());
-      }
+      await ref.read(offlineTransactionsProvider().notifier).store(transaction);
 
       final index = state.value?.data!
           .indexWhere((t) => t.idTransaction == transaction.idTransaction);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart' hide SearchBar;
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/item/model/item.dart';
+import 'package:selleri/features/pos/provider/pos_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -170,6 +171,8 @@ class _PosScreenState extends ConsumerState<PosScreen>
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletProvider);
     final cart = ref.watch(cartProvider);
+
+    ref.read(posProvider.notifier).build();
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 

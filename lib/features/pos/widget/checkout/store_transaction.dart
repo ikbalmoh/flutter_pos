@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/features/pos/provider/pos_provider.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/shared/widget/generic/loading_placeholder.dart';
@@ -76,7 +77,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       });
     }
     try {
-      // await ref.read(offlineTransactionsProvider.notifier).store();
+      await ref.read(posProvider.notifier).store();
       setState(() {
         status = Status.success;
       });

@@ -27,7 +27,7 @@ class App extends ConsumerWidget {
     }
 
     final router = ref.watch(routerProvider);
-    ref.watch(fcmProvider);
+    ref.read(fcmProvider.notifier).build();
 
     final outlet = ref.watch(outletProvider).value;
     if (outlet is OutletSelected) {

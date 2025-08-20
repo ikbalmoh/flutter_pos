@@ -13,9 +13,14 @@ class TransactionApi {
 
   TransactionApi({required this.api});
 
-  Future<List<dynamic>> storeTransaction(Cart cart) async {
+  Future<List<dynamic>> storeTransaction(List<Cart> transactions) async {
     try {
-      final FormData formData = await cart.toTransactionFormData();
+      final transactionJsons =
+          transactions.map((tr) => tr.toTransactionPayload()).toList();
+      final FormData formData = FormData.fromMap(
+        {"transactions": transactionJsons},
+        ListFormat.multiCompatible,
+      );
       log('TRANSACTION FIELDS: ${formData.fields}');
       log('TRANSACTION FILES: ${formData.files}');
       final res = await api.post(
@@ -126,5 +131,6 @@ class TransactionApi {
 
 final transactionApiProvider = Provider<TransactionApi>((ref) {
   final api = ref.watch(apiProvider);
-  return TransactionApi(api: api);
+  final transactionApi = TransactionApi(api: api);
+  return transactionApi;
 });
