@@ -479,7 +479,7 @@ class ObjectBox {
     log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
   }
 
-  Future<void> putTransaction(Cart transaction) async {
+  Future<List<Cart>> putTransaction(Cart transaction) async {
     try {
       await transactionBox.putAsync(OfflineTransaction(
         id: 0,
@@ -488,16 +488,17 @@ class ObjectBox {
         transaction: jsonEncode(transaction.copyWith(isOffline: true).toJson()),
       ));
       log('Transaction Stored: $transaction');
+      return offlineTransactions();
     } catch (e) {
       log('Error storing transaction: $e');
       rethrow;
     }
   }
 
-  Stream<List<OfflineTransaction>> getOfflineTransactions({
+  Future<List<Cart>> offlineTransactions({
     String? shiftId,
     String? transactionNo,
-  }) {
+  }) async {
     Condition<OfflineTransaction> condition =
         OfflineTransaction_.id.greaterThan(0);
     if (shiftId != null && shiftId.isNotEmpty) {
@@ -511,10 +512,14 @@ class ObjectBox {
             .contains(transactionNo, caseSensitive: false),
       );
     }
-    log(condition.toString());
-    final builder = transactionBox.query(condition)
-      ..order(OfflineTransaction_.id);
-    return builder.watch(triggerImmediately: true).map((query) => query.find());
+    final builder = transactionBox.query();
+    final offlineTransactions = await builder.build().findAsync();
+    List<Cart> transactions = [];
+    for (var i = 0; i < offlineTransactions.length; i++) {
+      Cart cart = Cart.fromJson(jsonDecode(offlineTransactions[i].transaction));
+      transactions.add(cart);
+    }
+    return transactions;
   }
 
   Future<int> deleteOfflineTransactions(List<String> idTransactions) async {

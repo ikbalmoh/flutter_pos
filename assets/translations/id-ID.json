@@ -373,5 +373,6 @@
   "province": "Provinsi",
   "city": "Kota",
   "district": "Kecamatan",
-  "back": "Kembali"
+  "back": "Kembali",
+  "no_connections": "Tidak ada koneksi"
 }

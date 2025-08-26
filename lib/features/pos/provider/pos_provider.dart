@@ -17,30 +17,28 @@ class Pos extends _$Pos {
   @override
   Future<bool> build() async {
     final offline = ref.watch(offlineTransactionsProvider()).value;
-    sync(offline);
+    log('SYNC TRANSACTIONS: $offline');
+    if (offline != null && offline.isNotEmpty) {
+      sync(offline);
+    }
     return true;
   }
 
-  Future<void> sync(List<Cart>? offline) async {
-    if (offline == null || offline.isEmpty) {
-      return;
-    }
-
+  Future<void> sync(List<Cart> offline) async {
     // if (state.isLoading) {
     //   log('SYNCINC STILL RUNNING');
     //   return;
     // }
 
-    log('SYNCINC TRANSACTIONS: $offline');
     // ignore: avoid_manual_providers_as_generated_provider_dependency
     return ref.read(transactionApiProvider).storeTransaction(offline).then((_) {
       ref
           .read(offlineTransactionsProvider().notifier)
           .delete(offline.map((e) => e.transactionNo).toList());
       state = const AsyncData(true);
-    }).catchError((e) {
-      log('SYNC TRANSACTION FAILED: $e');
-      state = AsyncError(e, StackTrace.current);
+    }).catchError((e, st) {
+      log('SYNC TRANSACTIONS FAILED: $e => $st');
+      state = AsyncError(e, st);
     });
   }
 
@@ -53,9 +51,9 @@ class Pos extends _$Pos {
     final cart = ref.read(cart_provider.cartProvider);
     final transaction = cart.copyWith(shiftId: shift.id, isOffline: true);
 
-    await ref
-        .read(offlineTransactionsProvider(shiftId: shift.id).notifier)
-        .store(transaction);
+    await ref.read(offlineTransactionsProvider().notifier).store(transaction);
+
+    ref.invalidateSelf();
     ref.invalidate(transactionsProvider);
   }
 }

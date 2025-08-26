@@ -20,6 +20,7 @@ part 'transactions_provider.g.dart';
 class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
+    final offlineTransactions = ref.read(offlineTransactionsProvider()).value;
     try {
       final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
@@ -32,7 +33,6 @@ class Transactions extends _$Transactions {
             .delete(transactions.data!.map((tr) => tr.transactionNo).toList());
       }
       final offlineTransactions = ref.read(offlineTransactionsProvider()).value;
-      log('OFFLINE TRANSACTION: $offlineTransactions');
       if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
         transactions = transactions.copyWith(
           data: [...offlineTransactions, ...transactions.data!],
@@ -41,7 +41,12 @@ class Transactions extends _$Transactions {
       return transactions;
     } catch (e, stackTrace) {
       log('LIST TRANSCATION ERROR: $e\n=> $stackTrace');
-      rethrow;
+      return Pagination(
+        currentPage: 0,
+        lastPage: 0,
+        total: offlineTransactions?.length ?? 0,
+        data: offlineTransactions,
+      );
     }
   }
 
@@ -73,7 +78,7 @@ class Transactions extends _$Transactions {
       if (page == 1) {
         final offlineTransactions =
             ref.read(offlineTransactionsProvider()).value;
-        log('OFFLINE TRANSACTION: $offlineTransactions');
+        log('OFFLINE TRANSACTIONS: $offlineTransactions');
         if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
           transactions = transactions.copyWith(
             data: [...offlineTransactions, ...transactions.data!],

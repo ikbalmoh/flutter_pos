@@ -73,6 +73,9 @@ class DateTimeFormater {
   }
 
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
+    if (value.toString().length == 10) {
+      value *= 1000; // Convert seconds to milliseconds
+    }
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(value);
     return dateToString(dateTime, format: format);
   }

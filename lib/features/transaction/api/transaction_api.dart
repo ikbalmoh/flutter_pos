@@ -15,13 +15,13 @@ class TransactionApi {
 
   Future<List<dynamic>> storeTransaction(List<Cart> transactions) async {
     try {
-      final transactionJsons =
-          transactions.map((tr) => tr.toTransactionPayload()).toList();
+      final List<Map<String, dynamic>> transactionJsons = await Future.wait(
+          transactions.map((tr) => tr.toTransactionPayload()));
       final FormData formData = FormData.fromMap(
         {"transactions": transactionJsons},
         ListFormat.multiCompatible,
       );
-      log('TRANSACTION FIELDS: ${formData.fields}');
+      log('TRANSACTION FIELDS: $transactionJsons');
       log('TRANSACTION FILES: ${formData.files}');
       final res = await api.post(
         ApiUrl.transaction,

@@ -16,6 +16,7 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/features/cart/widget/components/add_barcode_item.dart';
+import 'package:selleri/shared/widget/connection_baner_widget.dart';
 import 'package:selleri/shared/widget/update_patcher.dart';
 import 'package:selleri/features/cart/widget/cart_screen.dart';
 import 'package:selleri/features/pos/widget/components/bottom_action.dart';
@@ -191,6 +192,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
+            ConnectionBanerWidget(),
             !isTablet ? HoldedBaner(cart: cart) : Container(),
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),

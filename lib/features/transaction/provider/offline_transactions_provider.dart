@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
@@ -6,26 +7,28 @@ import 'package:selleri/shared/objectbox.dart';
 
 part 'offline_transactions_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class OfflineTransactions extends _$OfflineTransactions {
   @override
   Future<List<model.Cart>> build(
       {String? shiftId, String? transactioNo}) async {
-    final offlineStream = objectBox.getOfflineTransactions(
-        shiftId: shiftId, transactionNo: transactioNo);
-    final offline = await offlineStream.first;
-    List<model.Cart> transactions = [];
-    for (var i = 0; i < offline.length; i++) {
-      model.Cart cart = model.Cart.fromJson(jsonDecode(offline[i].transaction));
-      transactions.add(cart);
-    }
+    final transactions = await objectBox.offlineTransactions();
+    log('OFFLINE TRANSACTIONS: ${transactions.map((tr) => tr.transactionNo).toList()}');
     return transactions;
   }
 
   Future<void> store(model.Cart transaction) async {
+    final List<model.Cart> currentTransactions = state.value ?? [];
     await Future.delayed(const Duration(milliseconds: 500));
-    await objectBox.putTransaction(transaction);
-    ref.invalidateSelf();
+    try {
+      final stored = await objectBox.putTransaction(transaction);
+      log('New Offline $stored');
+      state = AsyncData(stored);
+    } catch (e) {
+      log('Error storing offline transaction: $e');
+      state = AsyncData(currentTransactions);
+      throw 'Failed to store offline transaction: $e';
+    }
   }
 
   Future<void> delete(List<String> transactionNos) async {
