@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart'
@@ -9,6 +10,7 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 
 part 'pos_provider.g.dart';
 
@@ -17,29 +19,39 @@ class Pos extends _$Pos {
   @override
   Future<bool> build() async {
     final offline = ref.watch(offlineTransactionsProvider()).value;
-    log('SYNC TRANSACTIONS: $offline');
-    if (offline != null && offline.isNotEmpty) {
-      sync(offline);
+    final connection = ref.watch(connectivityStatusProvider);
+
+    debugPrint(
+        'SYNC TRANSACTIONS\nconnection => $connection\ntransaction => ${offline?.map((tr) => tr.transactionNo).toList()}');
+    if (connection == ConnectivityState.connected &&
+        offline != null &&
+        offline.isNotEmpty) {
+      sync();
     }
     return true;
   }
 
-  Future<void> sync(List<Cart> offline) async {
-    // if (state.isLoading) {
-    //   log('SYNCINC STILL RUNNING');
-    //   return;
-    // }
-
-    // ignore: avoid_manual_providers_as_generated_provider_dependency
-    return ref.read(transactionApiProvider).storeTransaction(offline).then((_) {
-      ref
-          .read(offlineTransactionsProvider().notifier)
-          .delete(offline.map((e) => e.transactionNo).toList());
+  Future<void> sync() async {
+    try {
+      final transactions = ref.read(offlineTransactionsProvider()).value;
+      if (transactions == null || transactions.isEmpty) {
+        return;
+      }
+      final syncedTransactions =
+          // ignore: avoid_manual_providers_as_generated_provider_dependency
+          await ref.read(transactionApiProvider).storeTransaction(transactions);
+      debugPrint('TRANSACTION SYNCED: $syncedTransactions');
+      if (syncedTransactions.isNotEmpty) {
+        ref.read(offlineTransactionsProvider().notifier).delete(
+            syncedTransactions
+                .map((transaction) => transaction.transactionNo)
+                .toList());
+      }
       state = const AsyncData(true);
-    }).catchError((e, st) {
-      log('SYNC TRANSACTIONS FAILED: $e => $st');
-      state = AsyncError(e, st);
-    });
+    } catch (e, st) {
+      debugPrint('SYNC FAILED: $e => $st');
+      state = AsyncData(false);
+    }
   }
 
   Future<void> store() async {

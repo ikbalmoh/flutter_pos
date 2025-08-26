@@ -1,8 +1,7 @@
-import 'dart:convert';
-import 'dart:developer';
-
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
+import 'package:selleri/features/pos/provider/pos_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
 
 part 'offline_transactions_provider.g.dart';
@@ -13,7 +12,8 @@ class OfflineTransactions extends _$OfflineTransactions {
   Future<List<model.Cart>> build(
       {String? shiftId, String? transactioNo}) async {
     final transactions = await objectBox.offlineTransactions();
-    log('OFFLINE TRANSACTIONS: ${transactions.map((tr) => tr.transactionNo).toList()}');
+    debugPrint(
+        'OFFLINE TRANSACTIONS UPDATED: ${transactions.map((tr) => tr.transactionNo).toList()}');
     return transactions;
   }
 
@@ -22,19 +22,20 @@ class OfflineTransactions extends _$OfflineTransactions {
     await Future.delayed(const Duration(milliseconds: 500));
     try {
       final stored = await objectBox.putTransaction(transaction);
-      log('New Offline $stored');
+      debugPrint('OFFLINE TRANSACTION STORED $stored');
       state = AsyncData(stored);
+      ref.invalidate(offlineTransactionsProvider);
+      ref.read(posProvider.notifier).sync();
     } catch (e) {
-      log('Error storing offline transaction: $e');
+      debugPrint('Error storing offline transaction: $e');
       state = AsyncData(currentTransactions);
       throw 'Failed to store offline transaction: $e';
     }
   }
 
   Future<void> delete(List<String> transactionNos) async {
-    int total = await objectBox.deleteOfflineTransactions(transactionNos);
-    if (total > 0) {
-      ref.invalidateSelf();
-    }
+    await objectBox.deleteOfflineTransactions(transactionNos);
+    ref.invalidateSelf();
+    ref.invalidate(offlineTransactionsProvider);
   }
 }

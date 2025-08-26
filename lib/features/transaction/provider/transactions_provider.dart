@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
@@ -78,7 +79,6 @@ class Transactions extends _$Transactions {
       if (page == 1) {
         final offlineTransactions =
             ref.read(offlineTransactionsProvider()).value;
-        log('OFFLINE TRANSACTIONS: $offlineTransactions');
         if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
           transactions = transactions.copyWith(
             data: [...offlineTransactions, ...transactions.data!],

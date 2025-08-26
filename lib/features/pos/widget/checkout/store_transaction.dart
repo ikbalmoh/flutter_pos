@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/pos/provider/pos_provider.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
-import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/shared/widget/generic/loading_placeholder.dart';
 import 'package:selleri/features/pos/widget/checkout/transaction_receipt.dart';
 import 'package:selleri/shared/utils/app_alert.dart';

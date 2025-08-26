@@ -13,7 +13,7 @@ class TransactionApi {
 
   TransactionApi({required this.api});
 
-  Future<List<dynamic>> storeTransaction(List<Cart> transactions) async {
+  Future<List<Cart>> storeTransaction(List<Cart> transactions) async {
     try {
       final List<Map<String, dynamic>> transactionJsons = await Future.wait(
           transactions.map((tr) => tr.toTransactionPayload()));
@@ -31,7 +31,9 @@ class TransactionApi {
         ),
       );
 
-      return res.data['data'];
+      return List<Map<String, dynamic>>.from(res.data['data'])
+          .map((transaction) => Cart.fromTransaction(transaction))
+          .toList();
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {
