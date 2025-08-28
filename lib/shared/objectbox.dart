@@ -481,8 +481,14 @@ class ObjectBox {
 
   Future<List<Cart>> putTransaction(Cart transaction) async {
     try {
+      final ids = transactionBox
+          .query(OfflineTransaction_.transactionNo
+              .equals(transaction.transactionNo))
+          .build()
+          .findIds();
+      final int id = ids.isEmpty ? 0 : ids.first;
       await transactionBox.putAsync(OfflineTransaction(
-        id: 0,
+        id: id,
         transactionNo: transaction.transactionNo,
         shiftId: transaction.shiftId,
         transaction: jsonEncode(transaction.copyWith(isOffline: true).toJson()),
