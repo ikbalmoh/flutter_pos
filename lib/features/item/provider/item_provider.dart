@@ -12,6 +12,7 @@ import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/item/repository/item_repository.dart';
 import 'package:selleri/features/outlet/provider/outlet_state.dart';
 import 'package:selleri/features/promotion/provider/promotions_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 
 part 'item_provider.g.dart';
@@ -155,6 +156,10 @@ class Items extends _$Items {
   }
 
   Future<void> syncItems() async {
+    final connection = ref.read(connectivityStatusProvider);
+    if (connection == ConnectivityState.disconnected) {
+      return;
+    }
     if (objectBox.categoryBox.isEmpty()) {
       await loadItems(progressCallback: (status) {
         log('SYNC ITEMS PROGRESS: $status');
