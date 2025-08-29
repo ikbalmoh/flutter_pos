@@ -7,6 +7,8 @@ part 'company.g.dart';
 
 @freezed
 class Company with _$Company {
+  const Company._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory Company({
     required String idCompany,

@@ -9,6 +9,8 @@ part 'user.freezed.dart';
 
 @freezed
 class User with _$User {
+  const User._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory User({
     required UserAccount user,
@@ -27,6 +29,8 @@ class User with _$User {
 
 @freezed
 class UserAccount with _$UserAccount {
+  const UserAccount._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory UserAccount({
     required String idUser,

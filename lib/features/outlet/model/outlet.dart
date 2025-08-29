@@ -7,6 +7,8 @@ part 'outlet.g.dart';
 
 @freezed
 class Outlet with _$Outlet {
+  const Outlet._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory Outlet({
     required String idOutlet,

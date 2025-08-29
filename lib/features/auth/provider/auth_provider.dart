@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/repository/auth_repository.dart';
@@ -35,7 +36,8 @@ class Auth extends _$Auth {
       return Initialized();
     } on DioException {
       return Initialized();
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('Auth initialization failed; $e\n$st');
       return Initialized();
     }
   }

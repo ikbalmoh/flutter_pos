@@ -28,11 +28,6 @@ class Transactions extends _$Transactions {
       String? shiftId = ref.watch(shiftProvider).value?.id;
       Pagination<Cart> transactions = await api.transactions(
           idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
-      if (transactions.data != null) {
-        await ref
-            .read(offlineTransactionsProvider().notifier)
-            .delete(transactions.data!.map((tr) => tr.transactionNo).toList());
-      }
       final offlineTransactions = ref.read(offlineTransactionsProvider()).value;
       if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
         transactions = transactions.copyWith(
