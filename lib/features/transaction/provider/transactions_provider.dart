@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
@@ -21,17 +20,24 @@ part 'transactions_provider.g.dart';
 class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
-    final offlineTransactions = ref.read(offlineTransactionsProvider()).value;
+    final offlineTransactions =
+        ref.read(offlineTransactionsProvider()).value ?? [];
     try {
       final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId = ref.watch(shiftProvider).value?.id;
       Pagination<Cart> transactions = await api.transactions(
           idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
-      final offlineTransactions = ref.read(offlineTransactionsProvider()).value;
-      if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
+      if (offlineTransactions.isNotEmpty) {
+        List<String> offlineTransactionNsNo =
+            offlineTransactions.map((t) => t.transactionNo).toList();
+        List<Cart> transactionsData = List<Cart>.from(transactions.data ?? []);
+
+        transactionsData.removeWhere(
+            (t) => offlineTransactionNsNo.contains(t.transactionNo));
+
         transactions = transactions.copyWith(
-          data: [...offlineTransactions, ...transactions.data!],
+          data: transactionsData,
         );
       }
       return transactions;
@@ -40,7 +46,7 @@ class Transactions extends _$Transactions {
       return Pagination(
         currentPage: 0,
         lastPage: 0,
-        total: offlineTransactions?.length ?? 0,
+        total: offlineTransactions.length,
         data: offlineTransactions,
       );
     }
@@ -73,10 +79,18 @@ class Transactions extends _$Transactions {
       List<Cart> data = List.from(state.value?.data as Iterable<Cart>);
       if (page == 1) {
         final offlineTransactions =
-            ref.read(offlineTransactionsProvider()).value;
-        if (offlineTransactions != null && offlineTransactions.isNotEmpty) {
+            ref.read(offlineTransactionsProvider()).value ?? [];
+        if (offlineTransactions.isNotEmpty) {
+          List<String> offlineTransactionNsNo =
+              offlineTransactions.map((t) => t.transactionNo).toList();
+          List<Cart> transactionsData =
+              List<Cart>.from(transactions.data ?? []);
+
+          transactionsData.removeWhere(
+              (t) => offlineTransactionNsNo.contains(t.transactionNo));
+
           transactions = transactions.copyWith(
-            data: [...offlineTransactions, ...transactions.data!],
+            data: transactionsData,
           );
         }
       } else {

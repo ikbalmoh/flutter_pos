@@ -10,7 +10,6 @@ import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/table/model/table.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
-import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';

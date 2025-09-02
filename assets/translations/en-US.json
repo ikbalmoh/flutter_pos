@@ -373,5 +373,6 @@
   "city": "City",
   "district": "District",
   "back": "Back",
-  "no_connections": "No Connections"
+  "no_connections": "No Connections",
+  "no_connections_instruction": "Please check your connections and try again"
 }
