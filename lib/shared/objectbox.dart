@@ -491,7 +491,16 @@ class ObjectBox {
         id: id,
         transactionNo: transaction.transactionNo,
         shiftId: transaction.shiftId,
-        transaction: jsonEncode(transaction.copyWith(isOffline: true).toJson()),
+        transaction: jsonEncode(transaction
+            .copyWith(
+              isOffline: true,
+              payments: transaction.payments
+                  .map(
+                    (p) => p.copyWith(createdAt: p.createdAt ?? DateTime.now()),
+                  )
+                  .toList(),
+            )
+            .toJson()),
       ));
       log('Transaction Stored: $transaction');
       return offlineTransactions();

@@ -12,6 +12,7 @@ class ConnectionBanerWidget extends ConsumerWidget {
             ConnectivityState.disconnected
         ? Container(
             width: double.maxFinite,
+            height: 30,
             padding: const EdgeInsets.symmetric(vertical: 5),
             color: Colors.red,
             child: Center(

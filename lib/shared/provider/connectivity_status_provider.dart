@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/utils/connectivity_checker.dart';
 
@@ -21,6 +22,7 @@ class ConnectivityStatus extends _$ConnectivityStatus {
 
   watchConnection() {
     _connectivityService.connectionChange.listen((isConnected) {
+      debugPrint('ConnectivityState $isConnected');
       state = isConnected
           ? ConnectivityState.connected
           : ConnectivityState.disconnected;

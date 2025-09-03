@@ -1,9 +1,6 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart'
     as cart_provider;
 import 'package:selleri/features/shift/provider/shift_provider.dart';
@@ -61,7 +58,10 @@ class Pos extends _$Pos {
     }
 
     final cart = ref.read(cart_provider.cartProvider);
-    final transaction = cart.copyWith(shiftId: shift.id, isOffline: true);
+    final transaction = cart.copyWith(
+      shiftId: shift.id,
+      isOffline: true,
+    );
 
     await ref.read(offlineTransactionsProvider().notifier).store(transaction);
 

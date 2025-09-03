@@ -13,6 +13,7 @@ import 'package:selleri/features/cart/widget/components/order_summary/order_summ
 import 'package:selleri/features/pos/widget/checkout/payment/payment.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/shared/widget/connection_baner_widget.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({required this.isPartialPayment, super.key});
@@ -237,6 +238,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  ConnectionBanerWidget(),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Padding(

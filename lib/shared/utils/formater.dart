@@ -73,10 +73,20 @@ class DateTimeFormater {
   }
 
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
-    if (value.toString().length == 10) {
-      value *= 1000; // Convert seconds to milliseconds
+    int msValue;
+
+    if (value < 10000000000) {
+      // It's in seconds → convert to milliseconds
+      msValue = value * 1000;
+    } else if (value < 10000000000000) {
+      // It's already milliseconds
+      msValue = value;
+    } else {
+      // It's in microseconds → convert to milliseconds
+      msValue = (value / 1000).round();
     }
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(value);
+
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(msValue * 1000);
     return dateToString(dateTime, format: format);
   }
 

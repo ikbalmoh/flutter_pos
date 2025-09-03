@@ -16,47 +16,22 @@ import 'package:selleri/shared/utils/printer.dart' as util;
 
 part 'transactions_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
-    final offlineTransactions =
-        ref.read(offlineTransactionsProvider()).value ?? [];
-    try {
-      final api = ref.watch(transactionApiProvider);
-      final outlet = ref.read(outletProvider).value as OutletSelected;
-      String? shiftId = ref.watch(shiftProvider).value?.id;
-      Pagination<Cart> transactions = await api.transactions(
-          idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
-      if (offlineTransactions.isNotEmpty) {
-        List<String> offlineTransactionNsNo =
-            offlineTransactions.map((t) => t.transactionNo).toList();
-        List<Cart> transactionsData = List<Cart>.from(transactions.data ?? []);
-
-        transactionsData.removeWhere(
-            (t) => offlineTransactionNsNo.contains(t.transactionNo));
-
-        transactions = transactions.copyWith(
-          data: transactionsData,
-        );
-      }
-      return transactions;
-    } catch (e, stackTrace) {
-      log('LIST TRANSCATION ERROR: $e\n=> $stackTrace');
-      return Pagination(
-        currentPage: 0,
-        lastPage: 0,
-        total: offlineTransactions.length,
-        data: offlineTransactions,
-      );
-    }
+    loadTransactions(page: 1, currentShift: true);
+    return future;
   }
 
-  Future<void> loadTransactions(
-      {int page = 1,
-      String search = '',
-      bool? currentShift = false,
-      String? table}) async {
+  Future<void> loadTransactions({
+    int page = 1,
+    String search = '',
+    bool? currentShift = false,
+    String? table,
+  }) async {
+    final offlineTransactions =
+        ref.read(offlineTransactionsProvider()).value ?? [];
     if (page == 1) {
       state = const AsyncLoading();
     } else {
@@ -76,7 +51,8 @@ class Transactions extends _$Transactions {
         shiftId: shiftId,
         table: table,
       );
-      List<Cart> data = List.from(state.value?.data as Iterable<Cart>);
+      List<Cart> data =
+          state.hasValue ? List.from(state.value?.data as Iterable<Cart>) : [];
       if (page == 1) {
         final offlineTransactions =
             ref.read(offlineTransactionsProvider()).value ?? [];
@@ -100,7 +76,12 @@ class Transactions extends _$Transactions {
       state = AsyncData(transactions);
     } catch (e, trace) {
       log('Load Transaction Error: $e\n$trace');
-      state = AsyncError(e, trace);
+      state = AsyncData(Pagination(
+        currentPage: 0,
+        lastPage: 0,
+        total: offlineTransactions.length,
+        data: offlineTransactions,
+      ));
     }
   }
 

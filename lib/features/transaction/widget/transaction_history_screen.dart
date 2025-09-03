@@ -13,6 +13,7 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
+import 'package:selleri/shared/widget/connection_baner_widget.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
 import 'package:selleri/shared/widget/search_app_bar.dart';
@@ -277,6 +278,7 @@ class _TransactionHistoryScreenState
                       ),
               child: Column(
                 children: [
+                  ConnectionBanerWidget(),
                   transactionFilter(isTablet),
                   Expanded(
                     child: ref.watch(transactionsProvider).when(

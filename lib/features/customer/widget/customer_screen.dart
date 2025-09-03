@@ -217,9 +217,12 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                           ],
                         ),
                       ),
-                error: (e, stack) => ErrorHandler(
-                  error: e.toString(),
-                  stackTrace: stack.toString(),
+                error: (e, stack) => SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: ErrorHandler(
+                    error: e.toString(),
+                    stackTrace: stack.toString(),
+                  ),
                 ),
                 loading: () => ListView.builder(
                   itemCount: 10,
