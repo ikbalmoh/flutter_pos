@@ -29,22 +29,28 @@ class Cart with _$Cart {
     String? outletName,
     String? idTransaction,
     required String shiftId,
-    required double subtotal,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double subtotal,
     @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool discIsPercent,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double discOverall,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double discOverallTotal,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double discPromotionsTotal,
-    required double total,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double total,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool ppnIsInclude,
-    required double ppn,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double ppn,
     String? taxName,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double ppnTotal,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble)
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double roundingValue,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double grandTotal,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double totalPayment,
-    required double change,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double change,
     String? idCustomer,
     String? customerName,
     String? notes,
