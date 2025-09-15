@@ -37,12 +37,13 @@ class Pos extends _$Pos {
       final syncedTransactions =
           // ignore: avoid_manual_providers_as_generated_provider_dependency
           await ref.read(transactionApiProvider).storeTransaction(transactions);
-      debugPrint('TRANSACTION SYNCED: $syncedTransactions');
+      debugPrint('TRANSACTIONS TO SYNC: $syncedTransactions');
       if (syncedTransactions.isNotEmpty) {
-        ref.read(offlineTransactionsProvider().notifier).delete(
-            syncedTransactions
-                .map((transaction) => transaction.transactionNo)
-                .toList());
+        final ids = syncedTransactions
+            .map((transaction) => transaction.transactionNo)
+            .toList();
+        debugPrint('delete transactions $ids');
+        ref.read(offlineTransactionsProvider().notifier).delete(ids);
       }
       state = const AsyncData(true);
     } catch (e, st) {

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/cart/model/cart_holded.dart';
@@ -21,8 +22,10 @@ class TransactionApi {
         {"transactions": transactionJsons},
         ListFormat.multiCompatible,
       );
-      log('TRANSACTION FIELDS: $transactionJsons');
-      log('TRANSACTION FILES: ${formData.files}');
+      log('TRANSACTIONS TO STORE: $transactionJsons');
+      if (formData.files.isNotEmpty) {
+        log('TRANSACTION FILES: ${formData.files}');
+      }
       final res = await api.post(
         ApiUrl.transaction,
         data: formData,
@@ -30,6 +33,8 @@ class TransactionApi {
           contentType: Headers.multipartFormDataContentType,
         ),
       );
+
+      debugPrint('TRANSACTIONS STORED ${res.data}');
 
       return List<Map<String, dynamic>>.from(res.data['data'])
           .map((transaction) => Cart.fromTransaction(transaction))

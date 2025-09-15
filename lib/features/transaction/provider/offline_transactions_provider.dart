@@ -25,7 +25,7 @@ class OfflineTransactions extends _$OfflineTransactions {
       debugPrint('OFFLINE TRANSACTION STORED $stored');
       state = AsyncData(stored);
       ref.invalidate(offlineTransactionsProvider);
-      ref.read(posProvider.notifier).sync();
+      // ref.read(posProvider.notifier).sync();
     } catch (e) {
       debugPrint('Error storing offline transaction: $e');
       state = AsyncData(currentTransactions);

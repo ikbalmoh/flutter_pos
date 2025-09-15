@@ -50,6 +50,13 @@ class ModelConverter {
     return value?.toString();
   }
 
+  static String nullableToString(dynamic value) {
+    if (value == null) {
+      return '';
+    }
+    return value.toString();
+  }
+
   static DateTime? timeStampToDateTime(Timestamp? value) {
     if (value == null) {
       return null;

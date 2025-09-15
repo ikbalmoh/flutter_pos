@@ -82,6 +82,19 @@ class ShopItem extends StatelessWidget {
                                       backgroundColor: Colors.blueGrey.shade300,
                                     ),
                                   ),
+                                  errorWidget: (context, url, error) => Center(
+                                    child: Text(
+                                      item.itemName
+                                          .substring(0, 3)
+                                          .toUpperCase(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall
+                                          ?.copyWith(
+                                            color: Colors.grey.shade400,
+                                          ),
+                                    ),
+                                  ),
                                 ),
                               )
                             : Center(

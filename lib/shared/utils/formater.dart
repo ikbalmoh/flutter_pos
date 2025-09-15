@@ -69,30 +69,24 @@ class DateTimeFormater {
     } else if (value is DateTime) {
       result = value.millisecondsSinceEpoch;
     }
+    if (result.toString().length < 13) {
+      result = result * 1000;
+    }
     return result;
   }
 
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
-    int msValue;
-
-    if (value < 10000000000) {
-      // It's in seconds → convert to milliseconds
-      msValue = value * 1000;
-    } else if (value < 10000000000000) {
-      // It's already milliseconds
-      msValue = value;
-    } else {
-      // It's in microseconds → convert to milliseconds
-      msValue = (value / 1000).round();
-    }
-
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(msValue * 1000);
+    int ms = value;
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(ms);
     return dateToString(dateTime, format: format);
   }
 
-  static int unixServer(dynamic value) {
+  static int msTosecond(dynamic value) {
     if (value is num) {
-      return (value / 1000).floor();
+      if (value.toString().length == 13) {
+        return (value / 1000).floor();
+      }
+      return value.toInt();
     }
     return (DateTime.now().millisecondsSinceEpoch / 1000).floor();
   }

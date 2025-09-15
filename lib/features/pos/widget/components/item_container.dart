@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -140,10 +141,10 @@ class ItemContainer extends ConsumerWidget {
     ));
 
     return LayoutBuilder(builder: (context, constraints) {
-      final width = constraints.maxWidth;
-      final int gridColumn = width > 510
+      final breakpoints = ResponsiveBreakpoints.of(context);
+      final int gridColumn = breakpoints.largerOrEqualTo(DESKTOP)
           ? 4
-          : width > 400
+          : breakpoints.largerOrEqualTo(TABLET)
               ? 3
               : 2;
       return switch (items) {
