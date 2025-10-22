@@ -126,7 +126,7 @@ class Cart extends _$Cart {
     String identifier =
         '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
     String itemName = item.itemName;
-    double itemPrice = item.itemPrice;
+    double itemPrice = variant?.itemPrice ?? item.itemPrice;
 
     if (item.isPackage) {
       final emptyItems = getEmptyItemPackages(item.packageItems);
