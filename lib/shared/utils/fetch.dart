@@ -41,6 +41,8 @@ class CustomInterceptors extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    options.receiveTimeout = Duration(seconds: 120);
+
     String? deviceId = await storage.read(key: StoreKey.device.name);
     options.headers['device'] = deviceId;
     options.headers['is-app'] = 1;
