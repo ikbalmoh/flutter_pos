@@ -375,5 +375,6 @@
   "district": "Kecamatan",
   "back": "Kembali",
   "no_connections": "Tidak ada koneksi",
-  "no_connections_instruction": "Periksa konkesi Anda dan coba lagi"
+  "no_connections_instruction": "Periksa konkesi Anda dan coba lagi",
+  "all_transactions_synced": "Semua transaksi tersinkron"
 }

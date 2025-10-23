@@ -10,8 +10,10 @@ import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/table/model/table.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
+import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/connection_baner_widget.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
@@ -247,6 +249,7 @@ class _TransactionHistoryScreenState
                     },
                     icon: const Icon(Icons.menu));
               }),
+              actionsPadding: const EdgeInsets.only(right: 5),
               actions: [
                 isTablet
                     ? Container()
@@ -262,6 +265,34 @@ class _TransactionHistoryScreenState
                   onPressed: showSalesReportDownloader,
                   icon: const Icon(CupertinoIcons.doc_chart),
                 ),
+                ref.watch(offlineTransactionsProvider).when(
+                      data: (data) => data.isNotEmpty
+                          ? IconButton(
+                              tooltip: 'sync'.tr(),
+                              onPressed: () => ref
+                                  .read(offlineTransactionsProvider.notifier)
+                                  .sync(),
+                              icon: Icon(Icons.cloud_upload_outlined),
+                            )
+                          : IconButton(
+                              onPressed: () {
+                                AppAlert.toast('all_transactions_synced'.tr());
+                              },
+                              color: Colors.green,
+                              icon: Icon(Icons.cloud_done_outlined),
+                            ),
+                      error: (error, st) => Container(),
+                      loading: () => IconButton(
+                        onPressed: null,
+                        icon: SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1,
+                          ),
+                        ),
+                      ),
+                    )
               ],
             ),
       drawer: const AppDrawer(),

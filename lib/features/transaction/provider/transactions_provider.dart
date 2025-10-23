@@ -31,7 +31,7 @@ class Transactions extends _$Transactions {
     String? table,
   }) async {
     final offlineTransactions =
-        ref.read(offlineTransactionsProvider()).value ?? [];
+        ref.read(offlineTransactionsProvider).value ?? [];
     if (page == 1) {
       state = const AsyncLoading();
     } else {
@@ -55,7 +55,7 @@ class Transactions extends _$Transactions {
           state.hasValue ? List.from(state.value?.data as Iterable<Cart>) : [];
       if (page == 1) {
         final offlineTransactions =
-            ref.read(offlineTransactionsProvider()).value ?? [];
+            ref.read(offlineTransactionsProvider).value ?? [];
         if (offlineTransactions.isNotEmpty) {
           List<String> offlineTransactionNsNo =
               offlineTransactions.map((t) => t.transactionNo).toList();
@@ -158,7 +158,7 @@ class Transactions extends _$Transactions {
 
       log('DELETE TRANSACTION: $transaction');
 
-      await ref.read(offlineTransactionsProvider().notifier).store(transaction);
+      await ref.read(offlineTransactionsProvider.notifier).store(transaction);
 
       final index = state.value?.data!
           .indexWhere((t) => t.idTransaction == transaction.idTransaction);

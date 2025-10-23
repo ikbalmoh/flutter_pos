@@ -15,7 +15,7 @@ part 'pos_provider.g.dart';
 class Pos extends _$Pos {
   @override
   Future<bool> build() async {
-    final offline = ref.watch(offlineTransactionsProvider()).value;
+    final offline = ref.watch(offlineTransactionsProvider).value;
     final connection = ref.watch(connectivityStatusProvider);
 
     debugPrint(
@@ -30,7 +30,7 @@ class Pos extends _$Pos {
 
   Future<void> sync() async {
     try {
-      final transactions = ref.read(offlineTransactionsProvider()).value;
+      final transactions = ref.read(offlineTransactionsProvider).value;
       if (transactions == null || transactions.isEmpty) {
         return;
       }
@@ -43,7 +43,7 @@ class Pos extends _$Pos {
             .map((transaction) => transaction.transactionNo)
             .toList();
         debugPrint('delete transactions $ids');
-        ref.read(offlineTransactionsProvider().notifier).delete(ids);
+        ref.read(offlineTransactionsProvider.notifier).delete(ids);
       }
       state = const AsyncData(true);
     } catch (e, st) {
@@ -64,7 +64,7 @@ class Pos extends _$Pos {
       isOffline: true,
     );
 
-    await ref.read(offlineTransactionsProvider().notifier).store(transaction);
+    await ref.read(offlineTransactionsProvider.notifier).store(transaction);
 
     ref.invalidateSelf();
     ref.invalidate(transactionsProvider);
