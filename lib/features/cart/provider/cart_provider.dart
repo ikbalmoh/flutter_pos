@@ -117,6 +117,7 @@ class Cart extends _$Cart {
     }
     double itemStock = variant?.stockItem ?? item.stockItem;
     double onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
+    log('addToCart [$onCartQty] ${item.idItem} - $variant');
     if (onCartQty > 0) {
       return updateQty(item.idItem, idVariant: variant?.idVariant);
     }
@@ -125,6 +126,10 @@ class Cart extends _$Cart {
     }
     String identifier =
         '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
+    if (variant != null) {
+      identifier += '-${variant.idVariant}';
+    }
+
     String itemName = item.itemName;
     double itemPrice = variant?.itemPrice ?? item.itemPrice;
 
@@ -174,9 +179,8 @@ class Cart extends _$Cart {
           .toList(),
     );
 
-    if (kDebugMode) {
-      log('ADD TO CART: $itemCart');
-    }
+    debugPrint(
+        'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
     state = state.copyWith(items: items);
