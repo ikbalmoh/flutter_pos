@@ -24,7 +24,7 @@ definitions:
       android_signing:
         - selleri_release_keystore
       ios_signing:
-        distribution_type: development
+        distribution_type: app_store
         bundle_identifier: com.dgti.selleri
   scripts:
     - &get_flavor
