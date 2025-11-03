@@ -96,7 +96,6 @@ class ItemRepository implements ItemRepositoryProtocol {
       if (outlet == null) {
         return [];
       }
-      List<Item> items = List.from(prevItems);
       final data = await api.items(
         outlet.idOutlet,
         idCategory: idCategory,
@@ -104,23 +103,21 @@ class ItemRepository implements ItemRepositoryProtocol {
         fullSync: fullSync,
         page: page,
       );
-      if (data == null) {
-        return items;
-      }
-      if (data.data != null && data.data!.isNotEmpty) {
-        items.addAll(data.data!.toList());
-      }
-      if (data.currentPage < data.lastPage) {
-        return fetchItems(
-          idCategory: idCategory,
-          fromLastSync: fromLastSync,
-          fullSync: fullSync,
-          prevItems: items,
-          page: data.currentPage + 1,
-        );
-      }
-      return items;
-    } on DioException catch (e) {
+      // if (data.data != null && data.data!.isNotEmpty) {
+      //   items.addAll(data.data!.toList());
+      // }
+      // if (data.currentPage < data.lastPage) {
+      //   return fetchItems(
+      //     idCategory: idCategory,
+      //     fromLastSync: fromLastSync,
+      //     fullSync: fullSync,
+      //     prevItems: items,
+      //     page: data.currentPage + 1,
+      //   );
+      // }
+      return data;
+    } on DioException catch (e, st) {
+      log('fetchItems Error: $st');
       throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);
