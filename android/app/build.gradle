@@ -34,8 +34,9 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.dgti.selleri"
-    compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 36
+    // compileSdk = 36
+    ndkVersion "29.0.13113456 rc1"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -53,7 +54,7 @@ android {
 
     defaultConfig {
         applicationId "com.dgti.selleri"
-        minSdkVersion 23
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -61,6 +62,11 @@ android {
             debugSymbolLevel 'FULL'
         }
         multiDexEnabled true
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+            }
+        }
     }
 
     signingConfigs {
