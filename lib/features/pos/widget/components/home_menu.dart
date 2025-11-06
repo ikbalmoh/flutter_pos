@@ -72,7 +72,8 @@ class HomeMenu extends ConsumerWidget {
         elevation: WidgetStateProperty.all<double>(15),
         shadowColor: WidgetStateProperty.all<Color>(Colors.grey.shade50),
       ),
-      alignmentOffset: Offset(-170, -10),
+      alignmentOffset:
+          Offset(ref.watch(shiftProvider).value == null ? 0 : -160, -10),
       builder:
           (BuildContext context, MenuController controller, Widget? child) {
         return IconButton(

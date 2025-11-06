@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:selleri/features/cart/model/cart_holded.dart';
 import 'package:selleri/features/cart/model/cart_payment.dart';
 import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
@@ -114,6 +115,8 @@ class Cart with _$Cart {
           ? List<Map<String, dynamic>>.from(item['details'])
           : [];
       item['identifier'] = item['id_item'];
+      item['vehicle'] =
+          item['vehicle'] != null ? CartHolded.fromJson(item['vehicle']) : null;
       item['is_package'] = details.isNotEmpty;
       item['details'] = details.map((detail) {
         return {
