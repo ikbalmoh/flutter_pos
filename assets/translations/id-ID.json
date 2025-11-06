@@ -373,5 +373,7 @@
   "province": "Provinsi",
   "city": "Kota",
   "district": "Kecamatan",
-  "back": "Kembali"
+  "back": "Kembali",
+  "select_vehicle": "Pilih Kendaraan",
+  "without_vehicle": "Tanpa Kendaraan"
 }

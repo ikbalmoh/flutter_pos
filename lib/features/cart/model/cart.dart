@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:selleri/features/cart/model/cart_payment.dart';
 import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
+import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
@@ -71,6 +72,7 @@ class Cart with _$Cart {
     String? promoCode,
     @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
     List<CustomerGroup>? customerGroup,
+    CustomerVehicle? vehicle,
   }) = _Cart;
 
   factory Cart.initial() => Cart(
@@ -197,6 +199,7 @@ class Cart with _$Cart {
       "images": dataImages,
       "person_in_charge": personInCharge,
       "tables": tables,
+      "vehicle_id": vehicle?.idVehicle,
     };
     if (deletedAt != null) {
       jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);

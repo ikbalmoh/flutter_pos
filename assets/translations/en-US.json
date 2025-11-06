@@ -372,5 +372,7 @@
   "province": "Province",
   "city": "City",
   "district": "District",
-  "back": "Back"
+  "back": "Back",
+  "select_vehicle": "Select Vehicle",
+  "without_vehicle": "Without Vehicle"
 }

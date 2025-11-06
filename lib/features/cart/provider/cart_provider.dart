@@ -11,6 +11,7 @@ import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
 import 'package:selleri/features/customer/model/customer.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
+import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/item/model/item_cart_detail.dart';
@@ -360,11 +361,12 @@ class Cart extends _$Cart {
         : 0;
   }
 
-  void selectCustomer(Customer customer) {
+  void selectCustomer(Customer customer, {CustomerVehicle? vehicle}) {
     state = state.copyWith(
       customerName: customer.customerName,
       idCustomer: customer.idCustomer,
       customerGroup: customer.groups,
+      vehicle: vehicle,
     );
     applyPromotions([]);
   }
