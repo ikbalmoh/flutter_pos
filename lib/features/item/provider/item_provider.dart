@@ -42,7 +42,6 @@ class Items extends _$Items {
     bool fullSync = false,
     required Function(OutletLoading progress) progressCallback,
   }) async {
-    log('LOAD ITEMS: $refresh');
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
     var progress = OutletLoading(
@@ -73,55 +72,40 @@ class Items extends _$Items {
 
     if (refresh || objectBox.itemBox.isEmpty()) {
       // Track loading status for each category
-      Map<String, bool> categoryLoadingStatus = {
-        for (var category in categories) category.categoryName: false
-      };
+      // Map<String, bool> categoryLoadingStatus = {
+      //   for (var category in categories) category.categoryName: false
+      // };
 
-      // Create a list of futures for concurrent loading
-      List<Future<void>> loadItemCategories = categories.map((category) async {
-        categoryLoadingStatus[category.categoryName] = false;
-        progress = progress.copyWith(
-          items: categories
-              .map((e) => LoadItemStatus(
-                    category: e.categoryName,
-                    isLoaded: categoryLoadingStatus[e.categoryName] ?? false,
-                  ))
-              .toList(),
-        );
+      progress = progress.copyWith(
+        items: categories
+            .map((e) => LoadItemStatus(
+                  category: e.categoryName,
+                  isLoaded: false,
+                ))
+            .toList(),
+      );
 
-        progressCallback(progress);
+      progressCallback(progress);
 
-        final DateTime startLoad = DateTime.now();
-        List<Item> items = await itemRepository.fetchItems(
-          idCategory: category.idCategory,
-          fullSync: fullSync,
-        );
-        final DateTime startSave = DateTime.now();
-        objectBox.putItems(items);
-        final DateTime endSave = DateTime.now();
-        log('${items.length} ITEMS LOADED\n => Category: ${category.categoryName}\n => Load : ${startSave.difference(startLoad).inMilliseconds}ms\n => Save : ${endSave.difference(startSave).inMilliseconds}ms');
+      final DateTime startLoad = DateTime.now();
+      List<Item> items = await itemRepository.fetchItems(
+        fullSync: fullSync,
+      );
+      final DateTime startSave = DateTime.now();
+      objectBox.putItems(items);
+      final DateTime endSave = DateTime.now();
+      log('${items.length} ITEMS LOADED\n => Load : ${startSave.difference(startLoad).inMilliseconds}ms\n => Save : ${endSave.difference(startSave).inMilliseconds}ms');
 
-        // Update progress to show this category is loaded
-        categoryLoadingStatus[category.categoryName] = true;
-        progress = progress.copyWith(
-          items: categories
-              .map((e) => LoadItemStatus(
-                    category: e.categoryName,
-                    isLoaded: categoryLoadingStatus[e.categoryName] ?? false,
-                  ))
-              .toList(),
-        );
+      progress = progress.copyWith(
+        items: categories
+            .map((e) => LoadItemStatus(
+                  category: e.categoryName,
+                  isLoaded: true,
+                ))
+            .toList(),
+      );
 
-        progressCallback(progress);
-      }).toList();
-
-      try {
-        // Wait for all items to load concurrently
-        await Future.wait(loadItemCategories);
-      } catch (e) {
-        log('Error loading items: $e');
-        rethrow;
-      }
+      progressCallback(progress);
     } else {
       await syncItems();
     }

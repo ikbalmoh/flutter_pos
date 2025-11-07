@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:selleri/features/cart/model/cart_holded.dart';
 import 'package:selleri/features/cart/model/cart_payment.dart';
 import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
+import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
@@ -29,22 +31,28 @@ class Cart with _$Cart {
     String? outletName,
     String? idTransaction,
     required String shiftId,
-    required double subtotal,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double subtotal,
     @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool discIsPercent,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double discOverall,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double discOverallTotal,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double discPromotionsTotal,
-    required double total,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double total,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool ppnIsInclude,
-    required double ppn,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double ppn,
     String? taxName,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double ppnTotal,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble)
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double roundingValue,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double grandTotal,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double totalPayment,
-    required double change,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double change,
     String? idCustomer,
     String? customerName,
     String? notes,
@@ -65,6 +73,7 @@ class Cart with _$Cart {
     String? promoCode,
     @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
     List<CustomerGroup>? customerGroup,
+    CustomerVehicle? vehicle,
   }) = _Cart;
 
   factory Cart.initial() => Cart(
@@ -106,6 +115,8 @@ class Cart with _$Cart {
           ? List<Map<String, dynamic>>.from(item['details'])
           : [];
       item['identifier'] = item['id_item'];
+      item['vehicle'] =
+          item['vehicle'] != null ? CartHolded.fromJson(item['vehicle']) : null;
       item['is_package'] = details.isNotEmpty;
       item['details'] = details.map((detail) {
         return {
@@ -191,6 +202,7 @@ class Cart with _$Cart {
       "images": dataImages,
       "person_in_charge": personInCharge,
       "tables": tables,
+      "vehicle_id": vehicle?.idVehicle,
     };
     if (deletedAt != null) {
       jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);

@@ -86,9 +86,11 @@ class Printer {
       bytes += generator.text('No: ${cart.transactionNo}');
       bytes += generator.text('${'cashier'.tr()}: ${cart.createdName ?? '-'}');
       bytes += generator.text(
-          'Date: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
-      bytes +=
-          generator.text('${'customer'.tr()}: ${cart.customerName ?? '-'}');
+          '${'date'.tr()}: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
+      bytes += generator.text('${'customer'.tr()}: ${[
+        cart.customerName,
+        cart.vehicle?.licensePlate
+      ].whereType<String>().join(' - ')}');
       if (cart.tables != null && cart.tables!.isNotEmpty) {
         bytes += generator
             .text('${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}');
@@ -245,6 +247,22 @@ class Printer {
             PosColumn(
               text:
                   CurrencyFormat.currency(payment.paymentValue, symbol: false),
+              width: 5,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
+        // insufficient_payment
+        if (cart.totalPayment < cart.grandTotal) {
+          bytes += generator.row([
+            PosColumn(
+              text: 'insufficient_payment'.tr(),
+              width: 7,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text: CurrencyFormat.currency(cart.grandTotal - cart.totalPayment,
+                  symbol: false),
               width: 5,
               styles: const PosStyles(align: PosAlign.right),
             ),

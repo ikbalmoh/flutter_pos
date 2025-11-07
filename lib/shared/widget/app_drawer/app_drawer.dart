@@ -15,6 +15,7 @@ class AppDrawer extends ConsumerWidget {
     final outlet = ref.watch(outletProvider).value as OutletSelected;
     return Drawer(
       backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       child: ListView(
         padding: EdgeInsets.zero,
         children: [

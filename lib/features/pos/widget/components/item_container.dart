@@ -40,6 +40,9 @@ class ItemContainer extends ConsumerWidget {
       required List<ItemVariant> variants,
       ItemVariant? variant}) async {
     try {
+      debugPrint(
+          'onAddToCart: item: ${item.itemName} => variants: ${variants.map((v) => '${v.id} - ${v.variantName}')} => variant: ${variant?.variantName}');
+
       if (variant != null) {
         await ref.read(cartProvider.notifier).addToCart(item, variant: variant);
       } else if (variants.isNotEmpty) {

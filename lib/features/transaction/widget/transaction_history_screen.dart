@@ -11,6 +11,7 @@ import 'package:selleri/features/table/model/table.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
+import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
@@ -18,7 +19,6 @@ import 'package:selleri/shared/widget/search_app_bar.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_report_downloader.dart';
 import 'package:selleri/features/table/widget/table_selector.dart';
 import 'package:selleri/features/transaction/widget/transaction_detail_screen.dart';
-import 'package:selleri/shared/utils/formater.dart';
 
 class TransactionHistoryScreen extends ConsumerStatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -309,73 +309,26 @@ class _TransactionHistoryScreenState
                                       return const ItemListSkeleton();
                                     }
                                     Cart cart = data.data![idx];
-                                    return ListTile(
-                                      tileColor:
-                                          viewTransaction?.idTransaction ==
-                                                  cart.idTransaction
-                                              ? Colors.grey.shade100
-                                              : Colors.white,
-                                      title: Text(cart.transactionNo),
-                                      trailing: Text(
-                                        CurrencyFormat.currency(
-                                          cart.grandTotal,
-                                          symbol: true,
-                                        ),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
-                                      ),
-                                      leading: cart.deletedAt != null
-                                          ? const Icon(
-                                              CupertinoIcons.xmark_circle_fill,
-                                              color: Colors.red,
-                                            )
-                                          : cart.totalPayment < cart.grandTotal
-                                              ? Icon(
-                                                  CupertinoIcons
-                                                      .exclamationmark_circle_fill,
-                                                  color: Colors.amber.shade600,
-                                                )
-                                              : const Icon(
-                                                  CupertinoIcons
-                                                      .checkmark_alt_circle_fill,
-                                                  color: Colors.green,
-                                                ),
-                                      shape: Border(
-                                        bottom: BorderSide(
-                                          width: 0.5,
-                                          color: Colors.blueGrey.shade50,
-                                        ),
-                                      ),
-                                      titleTextStyle: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                      subtitleTextStyle: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                              color: Colors.grey.shade600),
-                                      subtitle: Text(
-                                        DateTimeFormater.msToString(
-                                            cart.transactionDate,
-                                            format: 'd MMM y HH:mm'),
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          viewTransaction = cart;
+                                    return TransactionItem(
+                                        cart: cart,
+                                        isActive:
+                                            viewTransaction?.idTransaction ==
+                                                cart.idTransaction,
+                                        onTap: () {
+                                          setState(() {
+                                            viewTransaction = cart;
+                                          });
+                                          if (!isTablet) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TransactionDetailScreen(
+                                                        cart: cart),
+                                              ),
+                                            );
+                                          }
                                         });
-                                        if (!isTablet) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TransactionDetailScreen(
-                                                      cart: cart),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    );
                                   },
                                   itemCount: data.data!.length + 1,
                                 )

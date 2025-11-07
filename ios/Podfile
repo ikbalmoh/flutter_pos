@@ -1,4 +1,4 @@
-# $FirebaseSDKVersion = '10.29.0'
+$FirebaseSDKVersion = '11.8.0'
 # Uncomment this line to define a global platform for your project
 platform :ios, '15.5'
 
@@ -49,6 +49,7 @@ post_install do |installer|
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'PERMISSION_BLUETOOTH=1',
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
     ]
     end
   end

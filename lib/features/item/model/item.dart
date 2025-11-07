@@ -20,13 +20,16 @@ class Item with _$Item {
     @Default(0) @Id() int id,
     @Index() required String idItem,
     required String itemName,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double itemPrice,
-    required bool isActive,
-    required bool obsolete,
-    required bool isPackage,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool isActive,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool obsolete,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool isPackage,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool manualDiscount,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool isManualPrice,
-    required bool stockControl,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool stockControl,
     required String idCategory,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double stockItem,

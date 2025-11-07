@@ -11,6 +11,7 @@ import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
 import 'package:selleri/features/customer/model/customer.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
+import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/item/model/item_cart_detail.dart';
@@ -117,6 +118,7 @@ class Cart extends _$Cart {
     }
     double itemStock = variant?.stockItem ?? item.stockItem;
     double onCartQty = qtyOnCart(item.idItem, idVariant: variant?.idVariant);
+    log('addToCart [$onCartQty] ${item.idItem} - $variant');
     if (onCartQty > 0) {
       return updateQty(item.idItem, idVariant: variant?.idVariant);
     }
@@ -125,8 +127,12 @@ class Cart extends _$Cart {
     }
     String identifier =
         '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
+    if (variant != null) {
+      identifier += '-${variant.idVariant}';
+    }
+
     String itemName = item.itemName;
-    double itemPrice = item.itemPrice;
+    double itemPrice = variant?.itemPrice ?? item.itemPrice;
 
     if (item.isPackage) {
       final emptyItems = getEmptyItemPackages(item.packageItems);
@@ -174,9 +180,8 @@ class Cart extends _$Cart {
           .toList(),
     );
 
-    if (kDebugMode) {
-      log('ADD TO CART: $itemCart');
-    }
+    debugPrint(
+        'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
     state = state.copyWith(items: items);
@@ -356,11 +361,12 @@ class Cart extends _$Cart {
         : 0;
   }
 
-  void selectCustomer(Customer customer) {
+  void selectCustomer(Customer customer, {CustomerVehicle? vehicle}) {
     state = state.copyWith(
       customerName: customer.customerName,
       idCustomer: customer.idCustomer,
       customerGroup: customer.groups,
+      vehicle: vehicle,
     );
     applyPromotions([]);
   }

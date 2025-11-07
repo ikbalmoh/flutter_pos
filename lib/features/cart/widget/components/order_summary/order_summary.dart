@@ -61,7 +61,10 @@ class OrderSummary extends StatelessWidget {
                 textAlign: TextAlign.left,
               ),
               Text(
-                '${'customer'.tr()}: ${cart.customerName ?? '-'}',
+                '${'customer'.tr()}: ${[
+                  cart.customerName,
+                  cart.vehicle?.licensePlate
+                ].whereType<String>().join(' - ')}',
                 textAlign: TextAlign.left,
               ),
               if (cart.tables != null && cart.tables!.isNotEmpty)

@@ -280,6 +280,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
                             focusSearch.requestFocus();
                           },
                           icon: const Icon(CupertinoIcons.search),
+                          visualDensity: VisualDensity.comfortable,
                         ),
                         IconButton(
                           tooltip: 'filter_items'.tr(),
@@ -291,10 +292,12 @@ class _PosScreenState extends ConsumerState<PosScreen>
                                 : Colors.transparent,
                             child: const Icon(Icons.filter_list_rounded),
                           ),
+                          visualDensity: VisualDensity.comfortable,
                         ),
                       ],
                 const HomeMenu()
               ],
+              actionsPadding: const EdgeInsets.only(right: 10),
             ),
       body: Stack(
         children: [
