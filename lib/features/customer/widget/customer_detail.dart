@@ -183,7 +183,8 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                           minTileHeight: 0,
                         );
                       }
-                      final vehicle = widget.customer.vehicles![idx - 1];
+                      final vehicle = widget
+                          .customer.vehicles![idx - (vehicleEnabled ? 1 : 0)];
                       return ListTile(
                         onTap: () => setState(() {
                           selectedVehicle = vehicle;
