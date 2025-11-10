@@ -2,6 +2,7 @@ import 'package:selleri/shared/objectbox.dart' show objectBox;
 // ignore: unnecessary_import
 import 'package:objectbox/objectbox.dart';
 import 'package:selleri/objectbox.g.dart';
+import 'package:selleri/shared/utils/formater.dart';
 import 'item_variant.dart';
 import 'item_package.dart';
 import '../../../shared/utils/model_converter.dart';
@@ -12,8 +13,6 @@ part 'item.g.dart';
 
 @Freezed(addImplicitFinal: false)
 class Item with _$Item {
-  const Item._();
-
   @Entity(uid: 1396131410230828223, realClass: Item)
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory Item({
@@ -37,6 +36,9 @@ class Item with _$Item {
     String? barcode,
     String? categoryName,
     String? image,
+    @Property(type: PropertyType.date)
+    @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+    DateTime? expiredDate,
     @Property(type: PropertyType.dateNano) DateTime? lastAdjustment,
     required List<String> promotions,
     List<String>? packageCategories,
@@ -76,6 +78,11 @@ class Item with _$Item {
     }).toList();
     return _$ItemFromJson(json);
   }
+
+  const Item._();
+
+  bool isExpired() =>
+      expiredDate != null ? DateTime.now().isAfter(expiredDate!) : false;
 }
 
 class VariantRelToManyConverter
