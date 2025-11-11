@@ -106,23 +106,32 @@ class ItemContainer extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 10,
                     children: [
-                      Icon(
-                        CupertinoIcons.calendar,
-                        color: Colors.red,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(
+                          CupertinoIcons.calendar,
+                          color: Colors.red,
+                        ),
                       ),
-                      Text(
-                        'item_expired'.tr(),
-                        style:
-                            Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                      Expanded(
+                        child: Text(
+                          'item_expired'.tr(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Text(
                     'continue_select_item'.tr(),
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
