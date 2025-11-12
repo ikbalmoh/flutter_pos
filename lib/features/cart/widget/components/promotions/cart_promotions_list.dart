@@ -184,8 +184,10 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                     : Container(),
                 SizedBox(width: widget.withCancelButton != false ? 15 : 0),
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: selected.isEmpty ? Colors.teal.shade50 : Colors.teal.shade500,
+                      foregroundColor: selected.isNotEmpty ? Colors.white : Colors.teal,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),

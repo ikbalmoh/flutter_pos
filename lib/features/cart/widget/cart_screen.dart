@@ -8,6 +8,7 @@ import 'package:selleri/features/cart/widget/components/cart_item.dart';
 import 'package:selleri/features/cart/widget/components/cart_actions.dart';
 import 'package:selleri/features/cart/widget/components/edit_cart_item_form.dart';
 import 'package:selleri/features/pos/widget/components/holded_baner.dart';
+import 'package:selleri/shared/router/routes.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -67,16 +68,71 @@ class CartScreen extends ConsumerWidget {
         leading:
             asWidget == true ? const Icon(CupertinoIcons.shopping_cart) : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
-        actions: cart.holdAt != null
-            ? [
-                IconButton(
-                    onPressed: () => confirmDeleteTransaction(context),
-                    icon: const Icon(
-                      CupertinoIcons.trash,
-                      color: Colors.red,
-                    ))
-              ]
-            : [],
+        actionsPadding: EdgeInsets.only(right: 10),
+        actions: [
+          TextButton.icon(
+            style: TextButton.styleFrom(
+                backgroundColor: cart.idCustomer != null
+                    ? Colors.teal.shade50.withValues(alpha: .4)
+                    : Colors.white,
+                foregroundColor: cart.idCustomer != null
+                    ? Colors.teal
+                    : Colors.grey.shade700,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.only(
+                    right: cart.idCustomer != null ? 0 : 10, left: 10)),
+            onPressed: () => context.push(Routes.customers),
+            icon: Icon(cart.vehicle != null ? Icons.drive_eta_rounded : Icons.person),
+            label: cart.idCustomer != null
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 15,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(cart.customerName!.trim()),
+                          if (cart.vehicle != null)
+                            Text(
+                              cart.vehicle!.licensePlate,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: Colors.teal.shade400),
+                            )
+                        ],
+                      ),
+                      IconButton(
+                          style: IconButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            overlayColor: Colors.red,
+                          ),
+                          onPressed: () => ref
+                              .read(cartProvider.notifier)
+                              .selectCustomer(null),
+                          icon: Icon(
+                            Icons.clear,
+                            color: Colors.red,
+                          )),
+                    ],
+                  )
+                : Text('walk_in'.tr()),
+          ),
+          if (cart.holdAt != null)
+            IconButton(
+              onPressed: () => confirmDeleteTransaction(context),
+              icon: const Icon(
+                CupertinoIcons.trash,
+              ),
+              color: Colors.red,
+              iconSize: 18,
+              tooltip: 'delete_transaction'.tr(),
+              visualDensity: VisualDensity.compact,
+            )
+        ],
       ),
       body: cart.items.isNotEmpty
           ? Column(

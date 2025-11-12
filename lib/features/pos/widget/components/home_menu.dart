@@ -116,7 +116,26 @@ class HomeMenu extends ConsumerWidget {
                         ? Colors.blueGrey.shade500
                         : Colors.green.shade600,
                   ),
-                  style: menuStyle,
+                  trailingIcon: cart.idCustomer != null
+                      ? IconButton(
+                          onPressed: () => ref.read(cartProvider.notifier).selectCustomer(null),
+                          icon: Icon(Icons.clear),
+                          iconSize: 20,
+                          color: Colors.red,
+                          visualDensity: VisualDensity.compact,
+                          splashColor: Colors.red.shade50,
+                          tooltip: 'unselect'.tr(),
+                        )
+                      : null,
+                  style: menuStyle.copyWith(
+                    padding: WidgetStateProperty.all<EdgeInsets?>(
+                      EdgeInsets.only(left: 15, right: 5),
+                    ),
+                    backgroundColor: WidgetStateProperty.all<Color>(
+                        cart.idCustomer != null
+                            ? Colors.teal.shade50.withValues(alpha: .5)
+                            : Colors.white),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,

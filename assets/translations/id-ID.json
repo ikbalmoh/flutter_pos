@@ -374,9 +374,9 @@
   "city": "Kota",
   "district": "Kecamatan",
   "back": "Kembali",
-  "select_vehicle": "Pilih Kendaraan",
   "without_vehicle": "Tanpa Kendaraan",
   "item_expired": "Item Sudah Tidak Berlaku (expired)",
   "continue_select_item": "Apakah anda ingin tetap menambahkan ke keranjang?",
-  "walk_in": "Walk In"
+  "walk_in": "Walk In",
+  "unselect": "Batalkan Pilihan"
 }

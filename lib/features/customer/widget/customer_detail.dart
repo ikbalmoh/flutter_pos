@@ -147,7 +147,7 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                     padding: const EdgeInsets.only(
                         left: 15, right: 15, top: 15, bottom: 8),
                     child: Text(vehicleEnabled
-                        ? 'select_vehicle'.tr()
+                        ? 'select_x'.tr(args: ['vehicle'.tr()])
                         : 'vehicle'.tr()),
                   ),
                   ListView.builder(
