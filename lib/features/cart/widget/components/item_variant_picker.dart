@@ -200,7 +200,7 @@ class VariantItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color textColor = selected ? Colors.teal : Colors.black;
-    final bool isAvailable = stockControl ? variant.stockItem > 1 : true;
+    final bool isAvailable = stockControl ? variant.stockItem > 0 : true;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
