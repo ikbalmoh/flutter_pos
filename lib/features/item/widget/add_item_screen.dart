@@ -10,6 +10,7 @@ import 'package:selleri/features/item/provider/category_provider.dart';
 import 'package:selleri/features/item/widget/add_variant_form.dart';
 import 'package:selleri/features/item/widget/store_item.dart';
 import 'package:selleri/shared/utils/formater.dart';
+import 'package:selleri/shared/widget/generic/date_input.dart';
 
 class AddItemScreen extends ConsumerStatefulWidget {
   const AddItemScreen({super.key});
@@ -35,6 +36,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   double? itemPrice;
   double? initialStock;
   double? hppItem;
+  DateTime? expiredDate;
   List<AttributeVariant> attributes = [];
 
   void resetForm() {
@@ -45,6 +47,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     _hppItemController.text = '';
     _skuController.text = '';
     _barcodeController.text = '';
+    expiredDate = null;
     setState(() {
       category = null;
       itemPrice = null;
@@ -70,6 +73,9 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       'barcode': _barcodeController.text,
       'min_stock': 0,
       'initial_stock': initialStock,
+      'expired_date': expiredDate != null
+          ? DateTimeFormater.dateToString(expiredDate!, format: 'y-MM-dd')
+          : null,
     };
 
     final isStored = await showModalBottomSheet(
@@ -419,7 +425,19 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                             ),
                             controller: _barcodeController,
                           ),
-                          const SizedBox(height: 15),
+                          SizedBox(height: 15),
+                          DateInput(
+                            label: 'expired_date'.tr(),
+                            value: expiredDate,
+                            onChange: (date) => setState(() {
+                              expiredDate = date;
+                            }),
+                            firstDate:
+                                DateTime.now().subtract(Duration(days: 360)),
+                            lastDate: DateTime.now().add(
+                              Duration(days: 360 * 10),
+                            ),
+                          )
                         ],
                       ),
                     ),

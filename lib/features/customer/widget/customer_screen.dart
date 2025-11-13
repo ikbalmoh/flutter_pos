@@ -92,6 +92,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedCustomer = ref.watch(cartProvider).idCustomer;
+    final selectedVehicle = ref.watch(cartProvider).vehicle;
 
     void onSelectCustomer(customer, {CustomerVehicle? vehicle}) {
       while (context.canPop() == true) {
@@ -111,6 +112,8 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
           customer: customer,
           onSelect: onSelectCustomer,
           onEdit: onEditCustomer,
+          isSelected: selectedCustomer == customer.idCustomer,
+          vehicle: selectedVehicle,
         ),
       );
     }

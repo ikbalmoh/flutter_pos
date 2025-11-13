@@ -87,10 +87,10 @@ class Printer {
       bytes += generator.text('${'cashier'.tr()}: ${cart.createdName ?? '-'}');
       bytes += generator.text(
           '${'date'.tr()}: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
-      bytes += generator.text('${'customer'.tr()}: ${[
-        cart.customerName,
-        cart.vehicle?.licensePlate
-      ].whereType<String>().join(' - ')}');
+      bytes += generator.text('${'customer'.tr()}: ${cart.idCustomer != null ? [
+          cart.customerName,
+          cart.vehicle?.licensePlate
+        ].whereType<String>().join(' - ') : 'walk_in'.tr()}');
       if (cart.tables != null && cart.tables!.isNotEmpty) {
         bytes += generator
             .text('${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}');

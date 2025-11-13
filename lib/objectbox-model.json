@@ -345,7 +345,7 @@
     },
     {
       "id": "10:1396131410230828223",
-      "lastPropertyId": "19:3044086744002932845",
+      "lastPropertyId": "20:4794699778428741817",
       "name": "Item",
       "properties": [
         {
@@ -445,6 +445,11 @@
           "id": "19:3044086744002932845",
           "name": "packageCategories",
           "type": 30
+        },
+        {
+          "id": "20:4794699778428741817",
+          "name": "expiredDate",
+          "type": 10
         }
       ],
       "relations": [

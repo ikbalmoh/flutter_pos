@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:selleri/features/cart/widget/components/expired_badge.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/cart/widget/components/promotions/promotion_badge.dart';
 import 'package:selleri/features/cart/widget/components/stock_badge.dart';
@@ -67,24 +68,20 @@ class ShopItem extends StatelessWidget {
                           const BorderRadius.vertical(top: Radius.circular(10)),
                       color: Colors.grey.shade200,
                     ),
-                    child: Stack(
-                      children: [
-                        item.image != null && item.image != ''
-                            ? ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(10)),
-                                child: CachedNetworkImage(
-                                  imageUrl: item.image!,
-                                  width: double.maxFinite,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(
-                                    child: CircularProgressIndicator(
-                                      backgroundColor: Colors.blueGrey.shade300,
-                                    ),
-                                  ),
+                    child: item.image != null && item.image != ''
+                        ? ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(10)),
+                            child: CachedNetworkImage(
+                              imageUrl: item.image!,
+                              width: double.maxFinite,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  backgroundColor: Colors.blueGrey.shade300,
                                 ),
-                              )
-                            : Center(
+                              ),
+                              errorWidget: (context, url, error) => Center(
                                 child: Text(
                                   item.itemName.substring(0, 3).toUpperCase(),
                                   style: Theme.of(context)
@@ -95,27 +92,19 @@ class ShopItem extends StatelessWidget {
                                       ),
                                 ),
                               ),
-                        Positioned(
-                          bottom: 5,
-                          left: 5,
-                          child: Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: 5,
-                            direction: Axis.horizontal,
-                            children: [
-                              StockBadge(
-                                stockItem: item.stockItem,
-                                stockControl: item.stockControl,
-                                packageItems: item.packageItems,
-                              ),
-                              hasPromotions
-                                  ? const PromotionBadge()
-                                  : Container(),
-                            ],
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              item.itemName.substring(0, 3).toUpperCase(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall
+                                  ?.copyWith(
+                                    color: Colors.grey.shade400,
+                                  ),
+                            ),
                           ),
-                        )
-                      ],
-                    ),
                   ),
                 ),
                 Container(
@@ -153,6 +142,27 @@ class ShopItem extends StatelessWidget {
                               ],
                             )
                           : Text(CurrencyFormat.currency(item.itemPrice)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          spacing: 5,
+                          direction: Axis.horizontal,
+                          children: [
+                            StockBadge(
+                              stockItem: item.stockItem,
+                              stockControl: item.stockControl,
+                              packageItems: item.packageItems,
+                            ),
+                            if (hasPromotions) PromotionBadge(),
+                            if (item.expiredDate != null)
+                              ExpiredBadge(
+                                expiredDate: item.expiredDate!,
+                                isExpired: item.isExpired(),
+                              )
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 )

@@ -373,6 +373,9 @@
   "city": "City",
   "district": "District",
   "back": "Back",
-  "select_vehicle": "Select Vehicle",
-  "without_vehicle": "Without Vehicle"
+  "without_vehicle": "Without Vehicle",
+  "item_expired": "This Item Has Been Expired",
+  "continue_select_item": "Do you still want to add this item to the shopping cart?",
+  "walk_in": "Walk In",
+  "unselect": "Unselect"
 }

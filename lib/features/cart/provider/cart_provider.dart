@@ -361,11 +361,11 @@ class Cart extends _$Cart {
         : 0;
   }
 
-  void selectCustomer(Customer customer, {CustomerVehicle? vehicle}) {
+  void selectCustomer(Customer? customer, {CustomerVehicle? vehicle}) {
     state = state.copyWith(
-      customerName: customer.customerName,
-      idCustomer: customer.idCustomer,
-      customerGroup: customer.groups,
+      customerName: customer?.customerName,
+      idCustomer: customer?.idCustomer,
+      customerGroup: customer?.groups,
       vehicle: vehicle,
     );
     applyPromotions([]);

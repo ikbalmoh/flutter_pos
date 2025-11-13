@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -314,20 +315,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                           ),
                                     ),
                                   ),
-                                  TextButton.icon(
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Colors.teal.shade50,
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 15),
+                                  if (Platform.isAndroid)
+                                    TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Colors.teal.shade50,
+                                        padding: const EdgeInsets.only(
+                                            left: 20, right: 15),
+                                      ),
+                                      onPressed: onTapRegister,
+                                      icon: Icon(CupertinoIcons.chevron_right),
+                                      iconAlignment: IconAlignment.end,
+                                      label: Text(
+                                        'register'.tr(),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                    onPressed: onTapRegister,
-                                    icon: Icon(CupertinoIcons.chevron_right),
-                                    iconAlignment: IconAlignment.end,
-                                    label: Text(
-                                      'register'.tr(),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
                                 ],
                               )
                             : SizedBox(
