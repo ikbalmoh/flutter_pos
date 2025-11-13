@@ -332,23 +332,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ),
                                 ],
                               )
-                            : SizedBox(
-                                width: double.maxFinite,
-                                child: TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.teal.shade50,
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 15),
-                                  ),
-                                  onPressed: onTapRegister,
-                                  icon: Icon(CupertinoIcons.chevron_right),
-                                  iconAlignment: IconAlignment.end,
-                                  label: Text(
-                                    'register'.tr(),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
+                            : Platform.isAndroid
+                                ? SizedBox(
+                                    width: double.maxFinite,
+                                    child: TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Colors.teal.shade50,
+                                        padding: const EdgeInsets.only(
+                                            left: 20, right: 15),
+                                      ),
+                                      onPressed: onTapRegister,
+                                      icon: Icon(CupertinoIcons.chevron_right),
+                                      iconAlignment: IconAlignment.end,
+                                      label: Text(
+                                        'register'.tr(),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
                       ],
                     ),
                   ),
