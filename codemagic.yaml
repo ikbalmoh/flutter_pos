@@ -233,7 +233,7 @@ workflows:
       events:
         - tag
       tag_patterns:
-        - pattern: "v*"
+        - pattern: "v/*"
           include: true
     scripts:
       - *extract_version
@@ -270,7 +270,7 @@ workflows:
       events:
         - tag
       tag_patterns:
-        - pattern: "v*"
+        - pattern: "v/*"
           include: true
     scripts:
       - *extract_version
