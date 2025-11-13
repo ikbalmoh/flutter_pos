@@ -102,13 +102,11 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                         widget.item.itemName,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      if (widget.item.expiredDate != null)
-                        ExpiredBadge(
-                          expiredDate: widget.item.expiredDate!,
-                          isExpired: widget.item.isExpired(),
-                          padding: EdgeInsets.all(0),
-                          showLabel: true,
-                        )
+                      ExpiredBadge(
+                        item: widget.item,
+                        padding: EdgeInsets.all(0),
+                        showLabel: true,
+                      )
                     ],
                   ),
                 ),

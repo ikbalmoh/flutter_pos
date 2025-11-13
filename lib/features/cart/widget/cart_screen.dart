@@ -62,11 +62,19 @@ class CartScreen extends ConsumerWidget {
         automaticallyImplyLeading: asWidget != true,
         title: Text(
           'cart'.tr(),
-          style:
-              TextStyle(color: asWidget == true ? Colors.black87 : Colors.teal),
+          style: asWidget == true
+              ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  )
+              : null,
         ),
-        leading:
-            asWidget == true ? const Icon(CupertinoIcons.shopping_cart) : null,
+        leading: asWidget == true
+            ? const Icon(
+                CupertinoIcons.shopping_cart,
+                size: 20,
+              )
+            : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
         actionsPadding: EdgeInsets.only(right: 10),
         actions: [
@@ -82,7 +90,8 @@ class CartScreen extends ConsumerWidget {
                 padding: EdgeInsets.only(
                     right: cart.idCustomer != null ? 0 : 10, left: 10)),
             onPressed: () => context.push(Routes.customers),
-            icon: Icon(cart.vehicle != null ? Icons.drive_eta_rounded : Icons.person),
+            icon: Icon(
+                cart.vehicle != null ? Icons.drive_eta_rounded : Icons.person),
             label: cart.idCustomer != null
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,

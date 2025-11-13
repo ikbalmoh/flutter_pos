@@ -377,5 +377,7 @@
   "item_expired": "This Item Has Been Expired",
   "continue_select_item": "Do you still want to add this item to the shopping cart?",
   "walk_in": "Walk In",
-  "unselect": "Unselect"
+  "unselect": "Unselect",
+  "package": "Package",
+  "x_items_expired": "{} items expired"
 }

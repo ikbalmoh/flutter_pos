@@ -1,16 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:selleri/features/cart/widget/components/expired_package_badge.dart';
 import 'package:selleri/features/item/model/item.dart';
-import 'package:selleri/shared/utils/formater.dart';
 
-class ExpiredBadge extends StatelessWidget {
-  const ExpiredBadge({
+class ExpiredPackageBadge extends StatelessWidget {
+  const ExpiredPackageBadge({
     super.key,
+    required this.item,
     this.padding,
     this.showLabel,
-    required this.item,
   });
 
   final Item item;
@@ -19,14 +17,8 @@ class ExpiredBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isExpired = item.isExpired();
-    DateTime? expiredDate = item.expiredDate;
-
-    if (item.isPackage) {
-      return ExpiredPackageBadge(item: item);
-    }
-
-    if (expiredDate == null) {
+    bool isExpired = item.hasExpiredItems();
+    if (!isExpired) {
       return SizedBox.shrink();
     }
     return Container(
@@ -47,13 +39,7 @@ class ExpiredBadge extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            isExpired
-                ? 'expired'.tr()
-                : [
-                    if (showLabel == true) 'expired'.tr(),
-                    DateTimeFormater.dateToString(expiredDate,
-                        format: 'dd MMM y')
-                  ].join(' '),
+            'x_items_expired'.tr(args: [item.totalExpiredItems().toString()]),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color:
                       isExpired ? Colors.red.shade500 : Colors.orange.shade600,

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
@@ -17,6 +18,8 @@ class HomeMenu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(TABLET);
+
     final outlet = ref.watch(outletProvider).value as OutletSelected;
 
     final cart = ref.watch(cartProvider);
@@ -89,7 +92,7 @@ class HomeMenu extends ConsumerWidget {
             backgroundColor: ref.watch(printerProvider).value != null
                 ? Colors.transparent
                 : Colors.red.shade600,
-            child: cart.idCustomer != null
+            child: !isTablet && cart.idCustomer != null
                 ? Icon(
                     cart.vehicle != null
                         ? Icons.drive_eta_rounded
@@ -106,49 +109,53 @@ class HomeMenu extends ConsumerWidget {
         ...ref.watch(shiftProvider).value == null
             ? []
             : [
-                MenuItemButton(
-                  onPressed: () => context.push(Routes.customers),
-                  leadingIcon: Icon(
-                    cart.vehicle != null
-                        ? Icons.drive_eta_rounded
-                        : Icons.person,
-                    color: cart.idCustomer == null
-                        ? Colors.blueGrey.shade500
-                        : Colors.green.shade600,
-                  ),
-                  trailingIcon: cart.idCustomer != null
-                      ? IconButton(
-                          onPressed: () => ref.read(cartProvider.notifier).selectCustomer(null),
-                          icon: Icon(Icons.clear),
-                          iconSize: 20,
-                          color: Colors.red,
-                          visualDensity: VisualDensity.compact,
-                          splashColor: Colors.red.shade50,
-                          tooltip: 'unselect'.tr(),
-                        )
-                      : null,
-                  style: menuStyle.copyWith(
-                    padding: WidgetStateProperty.all<EdgeInsets?>(
-                      EdgeInsets.only(left: 15, right: 5),
+                if (!isTablet)
+                  MenuItemButton(
+                    onPressed: () => context.push(Routes.customers),
+                    leadingIcon: Icon(
+                      cart.vehicle != null
+                          ? Icons.drive_eta_rounded
+                          : Icons.person,
+                      color: cart.idCustomer == null
+                          ? Colors.blueGrey.shade500
+                          : Colors.green.shade600,
                     ),
-                    backgroundColor: WidgetStateProperty.all<Color>(
-                        cart.idCustomer != null
-                            ? Colors.teal.shade50.withValues(alpha: .5)
-                            : Colors.white),
+                    trailingIcon: cart.idCustomer != null
+                        ? IconButton(
+                            onPressed: () => ref
+                                .read(cartProvider.notifier)
+                                .selectCustomer(null),
+                            icon: Icon(Icons.clear),
+                            iconSize: 20,
+                            color: Colors.red,
+                            visualDensity: VisualDensity.compact,
+                            splashColor: Colors.red.shade50,
+                            tooltip: 'unselect'.tr(),
+                          )
+                        : null,
+                    style: menuStyle.copyWith(
+                      padding: WidgetStateProperty.all<EdgeInsets?>(
+                        EdgeInsets.only(left: 15, right: 5),
+                      ),
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                          cart.idCustomer != null
+                              ? Colors.teal.shade50.withValues(alpha: .5)
+                              : Colors.white),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(cart.customerName?.trim() ??
+                            'select_customer'.tr()),
+                        if (cart.vehicle != null)
+                          Text(
+                            cart.vehicle!.licensePlate,
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(cart.customerName?.trim() ?? 'select_customer'.tr()),
-                      if (cart.vehicle != null)
-                        Text(
-                          cart.vehicle!.licensePlate,
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                    ],
-                  ),
-                ),
                 if (outlet.config.addOns!.contains("table"))
                   MenuItemButton(
                     onPressed: () => context.push(Routes.tables),

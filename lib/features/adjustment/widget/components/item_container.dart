@@ -77,9 +77,9 @@ class ItemContainer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(builder: (context, constraints) {
       final width = constraints.maxWidth;
-      final int gridColumn = width > 510
+      final int gridColumn = width > 700
           ? 4
-          : width > 400
+          : width > 460
               ? 3
               : 2;
       return ref.watch(adjustmentItemsProvider).when(

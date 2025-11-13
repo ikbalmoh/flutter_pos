@@ -20,7 +20,7 @@ class StockBadge extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     bool isPackage = packageItems?.isNotEmpty ?? false;
     return !stockControl || isPackage
-        ? Container()
+        ? SizedBox.shrink()
         : stockItem <= 0
             ? Container(
                 decoration: BoxDecoration(
