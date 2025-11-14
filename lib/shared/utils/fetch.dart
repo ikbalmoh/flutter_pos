@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:selleri/features/auth/repository/token_repository.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/auth/model/token.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer';
 import 'package:package_info_plus/package_info_plus.dart';
+
+const storage = FlutterSecureStorage();
 
 Dio fetch() {
   final baseOption = BaseOptions(
@@ -40,8 +41,7 @@ class CustomInterceptors extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? deviceId = prefs.getString(StoreKey.device.name);
+    String? deviceId = await storage.read(key: StoreKey.device.name);
     options.headers['device'] = deviceId;
     options.headers['is-app'] = 1;
 
@@ -51,13 +51,13 @@ class CustomInterceptors extends Interceptor {
     // User agent
     options.headers['User-Agent'] = 'okhttp/3.12.1';
 
-    String? tokenString = prefs.getString(StoreKey.token.name);
+    String? tokenString = await storage.read(key: StoreKey.token.name);
     if (tokenString != null) {
       final Token token = Token.fromJson(json.decode(tokenString));
       options.headers['Authorization'] = 'Bearer ${token.accessToken}';
     }
 
-    String? outletString = prefs.getString(StoreKey.outlet.name);
+    String? outletString = await storage.read(key: StoreKey.outlet.name);
     if (outletString != null) {
       final jsonOutlet = json.decode(outletString);
       final outlet = Outlet.fromJson(jsonOutlet);
@@ -92,7 +92,7 @@ class CustomInterceptors extends Interceptor {
 
     if (err.response?.statusCode == 401) {
       // Sign out
-      await TokenRepository().removeToken();
+      storage.delete(key: StoreKey.token.name);
       log('Expired Session!');
       if (onSessionExpired != null) {
         onSessionExpired!();
