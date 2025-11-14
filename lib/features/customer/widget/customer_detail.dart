@@ -33,7 +33,10 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
   @override
   void initState() {
     setState(() {
-      selectedVehicle = widget.vehicle;
+      selectedVehicle = widget.vehicle != null &&
+              widget.customer.vehicles?.contains(widget.vehicle) == true
+          ? widget.vehicle
+          : null;
     });
     super.initState();
   }
@@ -142,13 +145,11 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                             : '-'),
                   ],
                 ),
-                if (widget.customer.vehicles?.isNotEmpty == true) ...[
+                if (vehicleEnabled) ...[
                   Padding(
                     padding: const EdgeInsets.only(
                         left: 15, right: 15, top: 15, bottom: 8),
-                    child: Text(vehicleEnabled
-                        ? 'select_x'.tr(args: ['vehicle'.tr()])
-                        : 'vehicle'.tr()),
+                    child: Text('select_x'.tr(args: ['vehicle'.tr()])),
                   ),
                   ListView.builder(
                     shrinkWrap: true,
