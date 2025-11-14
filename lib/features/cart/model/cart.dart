@@ -130,6 +130,7 @@ class Cart with _$Cart {
     }
     data['promotions'] = data['promotions'] ?? [];
     data['vouchers'] = data['vouchers'] ?? [];
+    data['vehicle'] = data['vehicle'] is Map ? data['vehicle'] : null;
     return Cart.fromJson(data);
   }
 
