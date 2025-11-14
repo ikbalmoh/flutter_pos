@@ -135,50 +135,6 @@ definitions:
       name: Shorebird patch iOS
       script: shorebird patch ios --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --export-options-plist=/Users/builder/export_options.plist
 
-    - &upload_dsym_to_firebase
-      name: Upload dSYM to Firebase Crashlytics
-      script: |
-        echo "Uploading dSYM files to Firebase Crashlytics..."
-
-        UPLOAD_SYMBOLS_PATH="$CM_BUILD_DIR/ios/Pods/FirebaseCrashlytics/upload-symbols"
-        DSYM_FOLDER="$CM_BUILD_DIR/build/ios/archive/Runner.xcarchive/dSYMs"
-
-        # Validate upload-symbols exists
-        if [ ! -f "$UPLOAD_SYMBOLS_PATH" ]; then
-          echo "❌ Error: upload-symbols script not found!"
-          exit 1
-        fi
-
-        # Validate dSYM folder exists
-        if [ ! -d "$DSYM_FOLDER" ]; then
-          echo "❌ Error: No dSYM folder found at $DSYM_FOLDER"
-          exit 1
-        fi
-
-        UPLOAD_SUCCESS=true
-
-        while IFS= read -r -d '' dsym; do
-          echo "Uploading $dsym..."
-
-          "$UPLOAD_SYMBOLS_PATH" \
-            -gsp "$CM_BUILD_DIR/ios/Runner/GoogleService-Info.plist" \
-            -p ios "$dsym"
-
-          if [ $? -ne 0 ]; then
-            echo "❌ Upload failed for $dsym"
-            UPLOAD_SUCCESS=false
-            break
-          fi
-        done < <(find "$DSYM_FOLDER" -name "*.dSYM" -print0)
-
-        if [ "$UPLOAD_SUCCESS" = false ]; then
-          echo "❌ Some dSYM uploads failed."
-          exit 1
-        fi
-
-        echo "✅ dSYM upload finished."
-
-
   publishing_notifications: &publishing_notifications
     email:
       recipients:
@@ -234,7 +190,6 @@ workflows:
       - *setup_local_properties
       - *xcode_project_use_profiles
       - *shorebird_ios_release
-      - *upload_dsym_to_firebase
 
     artifacts:
       - build/ios/ipa/*.ipa
@@ -308,7 +263,6 @@ workflows:
       - *setup_local_properties
       - *xcode_project_use_profiles
       - *shorebird_ios_release_stage
-      - *upload_dsym_to_firebase
 
     artifacts:
       - build/**/outputs/**/mapping.txt
