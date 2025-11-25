@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:selleri/features/table/model/table.dart';
@@ -61,7 +63,7 @@ class Tables extends _$Tables {
     String collectionPath =
         '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables';
 
-    db
+    await db
         .collection(collectionPath)
         .where('used_by', isEqualTo: transactionNo)
         .get()
@@ -76,6 +78,7 @@ class Tables extends _$Tables {
           .collection(collectionPath)
           .doc(table.id)
           .update({"used_by": transactionNo, "used_from": DateTime.now()});
+      log('TABLE marked $transactionNo => ${table.id}');
     }
   }
 

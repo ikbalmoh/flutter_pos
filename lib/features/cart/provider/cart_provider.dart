@@ -519,7 +519,6 @@ class Cart extends _$Cart {
     model.Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
     log('hold cart ${cart.transactionNo} ${cart.idTransaction}');
-    return;
     final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
       await api.updateHoldTransaction(cart.idTransaction!, cart);

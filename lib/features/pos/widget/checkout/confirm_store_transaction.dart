@@ -13,7 +13,6 @@ import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/pos/widget/select_table.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
-import 'package:selleri/shared/router/routes.dart';
 import 'package:selleri/shared/widget/generic/picked_image.dart';
 import 'package:selleri/shared/widget/pic/pic_picker.dart';
 import 'package:selleri/features/pos/widget/checkout/store_transaction.dart';
@@ -421,7 +420,9 @@ class _ConfirmStoreTransactionState
                     ),
                   ),
                 ],
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     shape: const RoundedRectangleBorder(

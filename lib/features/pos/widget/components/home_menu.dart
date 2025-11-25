@@ -31,6 +31,7 @@ class HomeMenu extends ConsumerWidget {
           isDismissible: false,
           enableDrag: false,
           isScrollControlled: true,
+          backgroundColor: Colors.white,
           builder: (context) {
             return HoldForm(
               onHolded: () {
