@@ -11,7 +11,9 @@ import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
+import 'package:selleri/features/pos/widget/select_table.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
+import 'package:selleri/shared/router/routes.dart';
 import 'package:selleri/shared/widget/generic/picked_image.dart';
 import 'package:selleri/shared/widget/pic/pic_picker.dart';
 import 'package:selleri/features/pos/widget/checkout/store_transaction.dart';
@@ -378,64 +380,66 @@ class _ConfirmStoreTransactionState
               ],
             ),
           )),
-          isKeyboardVisible
-              ? Container()
-              : Column(
-                  spacing: 15,
-                  children: [
-                    hasTableAddon == true
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: 10,
-                              children: [
-                                Icon(
-                                  Icons.restaurant,
-                                  color: Colors.grey.shade700,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'print_kitchen'.tr(),
-                                    style: textTheme.bodyLarge,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 35,
-                                  width: 45,
-                                  child: FittedBox(
-                                    fit: BoxFit.fill,
-                                    child: Switch(
-                                      value: printKitchen,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          printKitchen = value;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
+          if (!isKeyboardVisible)
+            Column(
+              spacing: 5,
+              children: [
+                if (hasTableAddon == true) ...[
+                  SelectTable(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 10,
+                      children: [
+                        Icon(
+                          Icons.restaurant,
+                          color: Colors.grey.shade700,
+                        ),
+                        Expanded(
+                          child: Text(
+                            'print_kitchen'.tr(),
+                            style: textTheme.bodyLarge,
                           ),
                         ),
-                      ),
-                      onPressed: isPartialPayment ||
-                              cart.totalPayment >= cart.grandTotal ||
-                              cart.grandTotal == 0
-                          ? () => onSubmit(context)
-                          : null,
-                      child: Text('finish'.tr()),
+                        SizedBox(
+                          height: 35,
+                          width: 45,
+                          child: FittedBox(
+                            fit: BoxFit.fill,
+                            child: Switch(
+                              value: printKitchen,
+                              onChanged: (value) {
+                                setState(() {
+                                  printKitchen = value;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                )
+                  ),
+                ],
+                SizedBox(height: 10,),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                    ),
+                  ),
+                  onPressed: isPartialPayment ||
+                          cart.totalPayment >= cart.grandTotal ||
+                          cart.grandTotal == 0
+                      ? () => onSubmit(context)
+                      : null,
+                  child: Text('finish'.tr()),
+                ),
+                SizedBox(height: 2),
+              ],
+            )
         ],
       ),
     );

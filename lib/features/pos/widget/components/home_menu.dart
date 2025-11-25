@@ -156,22 +156,6 @@ class HomeMenu extends ConsumerWidget {
                       ],
                     ),
                   ),
-                if (outlet.config.addOns!.contains("table"))
-                  MenuItemButton(
-                    onPressed: () => context.push(Routes.tables),
-                    leadingIcon: Icon(
-                      CupertinoIcons.square_grid_3x2,
-                      color: cart.tables == null || cart.tables!.isEmpty
-                          ? Colors.blueGrey.shade500
-                          : Colors.green.shade600,
-                    ),
-                    style: menuStyle,
-                    child: Text(
-                      cart.tables == null || cart.tables!.isEmpty
-                          ? 'select_x'.tr(args: ['table'.tr()])
-                          : cart.tables!.join(','),
-                    ),
-                  ),
                 if (outlet.config.extraItem == true)
                   MenuItemButton(
                     onPressed: showAddExtraItem,
@@ -203,6 +187,22 @@ class HomeMenu extends ConsumerWidget {
                   style: menuStyle,
                   child: Text('holded_transactions'.tr()),
                 ),
+                if (outlet.config.addOns!.contains("table"))
+                  MenuItemButton(
+                    onPressed: () => context.push(Routes.tables),
+                    leadingIcon: Icon(
+                      CupertinoIcons.square_grid_3x2,
+                      color: cart.tables == null || cart.tables!.isEmpty
+                          ? Colors.blueGrey.shade500
+                          : Colors.green.shade600,
+                    ),
+                    style: menuStyle,
+                    child: Text(
+                      cart.tables == null || cart.tables!.isEmpty
+                          ? 'table'.tr()
+                          : cart.tables!.join(','),
+                    ),
+                  ),
                 MenuItemButton(
                   onPressed: () => context.push(Routes.promotions),
                   leadingIcon: Icon(

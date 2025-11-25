@@ -114,6 +114,18 @@ class Tables extends _$Tables {
     db.collection(collectionPath).doc(table.id).update({"used_by": null});
   }
 
+  void clearTables(List<String> tableIds) {
+    final authState = ref.read(authProvider).value as Authenticated;
+    final outletState = ref.read(outletProvider).value as OutletSelected;
+
+    String collectionPath =
+        '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables';
+
+    for (var id in tableIds) {
+      db.collection(collectionPath).doc(id).update({"used_by": null});
+    }
+  }
+
   void editTable(String id, {required int capacity}) {
     final authState = ref.read(authProvider).value as Authenticated;
     final outletState = ref.read(outletProvider).value as OutletSelected;

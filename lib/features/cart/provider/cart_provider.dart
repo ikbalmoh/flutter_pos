@@ -518,6 +518,8 @@ class Cart extends _$Cart {
   Future<void> holdCart({required String note, bool createNew = false}) async {
     model.Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
+    log('hold cart ${cart.transactionNo} ${cart.idTransaction}');
+    return;
     final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
       await api.updateHoldTransaction(cart.idTransaction!, cart);
@@ -938,5 +940,11 @@ class Cart extends _$Cart {
       tables: tables.map((table) => table.name).toList(),
     );
     ref.read(tablesProvider().notifier).markTables(state.transactionNo, tables);
+  }
+
+  void clearTables() {
+    final tables = state.tables ?? [];
+    state = state.copyWith(tables: []);
+    ref.read(tablesProvider().notifier).clearTables(tables);
   }
 }

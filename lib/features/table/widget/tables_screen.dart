@@ -145,7 +145,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
-        title: Text('select_x'.tr(args: ['table'.tr()])),
+        title: Text('table'.tr()),
         elevation: 5,
         actions: isTablet
             ? []
