@@ -117,15 +117,31 @@ class Tables extends _$Tables {
     db.collection(collectionPath).doc(table.id).update({"used_by": null});
   }
 
-  void clearTables(List<String> tableIds) {
-    final authState = ref.read(authProvider).value as Authenticated;
-    final outletState = ref.read(outletProvider).value as OutletSelected;
+  void clearTables(List<String> tableIds) async {
+    try {
+      log('clear tables $tableIds');
+      final authState = ref.read(authProvider).value as Authenticated;
+      final outletState = ref.read(outletProvider).value as OutletSelected;
 
-    String collectionPath =
-        '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables';
+      final WriteBatch batch = db.batch();
 
-    for (var id in tableIds) {
-      db.collection(collectionPath).doc(id).update({"used_by": null});
+      String collectionPath =
+          '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables';
+
+      final snapshot = await db
+          .collection(collectionPath)
+          .where('name', whereIn: tableIds)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        batch.update(db.collection(collectionPath).doc(doc.id),
+            {'used_by': null, 'updatedAt': FieldValue.serverTimestamp()});
+      }
+
+      await batch.commit();
+      log('Successfully cleared tables in a single batch.');
+    } catch (e) {
+      log('Error clearing tables: $e');
     }
   }
 
