@@ -106,34 +106,6 @@ class SelectTableSheet extends ConsumerWidget {
               ],
             ),
           ),
-          Material(
-            borderRadius: BorderRadius.circular(10),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              onTap: () {
-                context.pop();
-                onPickTable(table);
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.check,
-                      color: Colors.blue,
-                    ),
-                    Expanded(
-                        child: Text('use_table_x'.tr(args: ['']),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.blue)))
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
           table.usedBy != null && table.usedBy != ''
               ? Material(
                   borderRadius: BorderRadius.circular(10),
@@ -161,7 +133,31 @@ class SelectTableSheet extends ConsumerWidget {
                     ),
                   ),
                 )
-              : Container(),
+              : Material(
+                  borderRadius: BorderRadius.circular(10),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      context.pop();
+                      onPickTable(table);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.check,
+                            color: Colors.blue,
+                          ),
+                          Expanded(
+                              child: Text('use_table_x'.tr(args: ['']),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.blue)))
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
           SizedBox(
             height: 5,
           ),
