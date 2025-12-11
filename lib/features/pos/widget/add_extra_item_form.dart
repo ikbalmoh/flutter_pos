@@ -86,7 +86,7 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
 
     return SizedBox(
       height: (MediaQuery.of(context).size.height *
-          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.6)),
+          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.9 : 0.6)),
       child: Form(
         key: _formKey,
         child: Column(
@@ -122,7 +122,7 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
                 ],
               ),
             ),
-            Expanded(
+            Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(10).copyWith(
                     bottom: MediaQuery.of(context).viewInsets.bottom + 10),

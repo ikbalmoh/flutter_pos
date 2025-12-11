@@ -97,6 +97,7 @@ class _ConfirmStoreTransactionState
           backgroundColor: Colors.white,
           context: context,
           enableDrag: true,
+          useSafeArea: true,
           builder: (context) {
             return const PicPicker();
           });
@@ -122,6 +123,7 @@ class _ConfirmStoreTransactionState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) => PopScope(
           canPop: false,
           child: StoreTransaction(
@@ -152,296 +154,298 @@ class _ConfirmStoreTransactionState
     bool? hasTableAddon = outletConfig.addOns?.contains('table');
     bool isPartialPayment = outletConfig.partialPayment ?? false;
 
-    return Container(
-      height: height,
-      padding: EdgeInsets.only(
-        top: 10,
-        left: 15,
-        right: 15,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 15,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(bottom: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
-                ),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'finish_x'.tr(args: ['transaction'.tr()]),
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                IconButton(
-                  onPressed: () => context.pop(),
-                  icon: const Icon(CupertinoIcons.xmark),
-                )
-              ],
-            ),
-          ),
-          Expanded(
-              child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              children: [
-                cart.totalPayment < cart.grandTotal
-                    ? Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.amber.shade300,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(CupertinoIcons.info),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                                child:
-                                    Text('insufficient_payment_warning'.tr()))
-                          ],
-                        ),
-                      )
-                    : Container(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            right: BorderSide(
-                              width: 1,
-                              color: Colors.grey.shade200,
-                            ),
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 15),
-                        child: Column(
-                          children: [
-                            Text(
-                              'total_transaction'.tr(args: ['']),
-                              style: textTheme.titleSmall
-                                  ?.copyWith(color: Colors.grey.shade700),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              CurrencyFormat.currency(cart.grandTotal),
-                              style: textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 15),
-                        child: Column(
-                          children: [
-                            Text(
-                              'payment_amount'.tr(args: ['']),
-                              style: textTheme.titleSmall
-                                  ?.copyWith(color: Colors.grey.shade700),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              CurrencyFormat.currency(cart.totalPayment),
-                              style: textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: cart.totalPayment >= cart.grandTotal
-                                      ? Colors.green.shade700
-                                      : Colors.red),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Divider(
-                  height: 1,
-                  color: Colors.grey.shade200,
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  controller: noteController,
-                  decoration: InputDecoration(
-                    label: Text(
-                      'add'.tr(args: ['note'.tr()]),
-                      style: labelStyle,
-                    ),
-                    alignLabelWithHint: true,
-                    filled: true,
-                    fillColor: Colors.grey.shade200,
-                    contentPadding: const EdgeInsets.all(10),
-                    focusColor: Colors.teal,
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                      color: Colors.grey.shade200,
-                      width: 1,
-                    )),
-                    focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                      color: Colors.teal,
-                      width: 1,
-                    )),
+    return SafeArea(
+      child: Container(
+        height: height,
+        padding: EdgeInsets.only(
+          top: 10,
+          left: 15,
+          right: 15,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(bottom: 5),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 0.5,
+                    color: Colors.blueGrey.shade100,
                   ),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'finish_x'.tr(args: ['transaction'.tr()]),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  IconButton(
+                    onPressed: () => context.pop(),
+                    icon: const Icon(CupertinoIcons.xmark),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+                child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                children: [
+                  cart.totalPayment < cart.grandTotal
+                      ? Container(
+                          margin: const EdgeInsets.only(bottom: 20),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.amber.shade300,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(CupertinoIcons.info),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              Expanded(
+                                  child:
+                                      Text('insufficient_payment_warning'.tr()))
+                            ],
+                          ),
+                        )
+                      : Container(),
+                  Row(
                     children: [
-                      Text(
-                        'attachments'.tr(),
-                        style: labelStyle,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Wrap(
-                        children: List.generate(images.length, (index) {
-                          XFile image = images[index];
-                          return PickedImage(
-                            source: image.path,
-                            sourceType: SourceType.path,
-                            onDelete: () => onDeleteImage(index),
-                          );
-                        }),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          TextButton.icon(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blueGrey.shade600,
-                              backgroundColor: Colors.blueGrey.shade50,
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              right: BorderSide(
+                                width: 1,
+                                color: Colors.grey.shade200,
+                              ),
                             ),
-                            icon: const Icon(
-                              CupertinoIcons.camera_fill,
-                              size: 18,
-                            ),
-                            onPressed: () =>
-                                pickImage(source: ImageSource.camera),
-                            label: Text('photo'.tr()),
                           ),
-                          const SizedBox(
-                            width: 10,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 15),
+                          child: Column(
+                            children: [
+                              Text(
+                                'total_transaction'.tr(args: ['']),
+                                style: textTheme.titleSmall
+                                    ?.copyWith(color: Colors.grey.shade700),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                CurrencyFormat.currency(cart.grandTotal),
+                                style: textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal,
+                                ),
+                              )
+                            ],
                           ),
-                          TextButton.icon(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blueGrey.shade600,
-                              backgroundColor: Colors.blueGrey.shade50,
-                            ),
-                            icon: const Icon(
-                              CupertinoIcons.photo_fill_on_rectangle_fill,
-                              size: 18,
-                            ),
-                            onPressed: pickImage,
-                            label: Text('image'.tr()),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 15),
+                          child: Column(
+                            children: [
+                              Text(
+                                'payment_amount'.tr(args: ['']),
+                                style: textTheme.titleSmall
+                                    ?.copyWith(color: Colors.grey.shade700),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                CurrencyFormat.currency(cart.totalPayment),
+                                style: textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: cart.totalPayment >= cart.grandTotal
+                                        ? Colors.green.shade700
+                                        : Colors.red),
+                              )
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          )),
-          if (!isKeyboardVisible)
-            Column(
-              spacing: 5,
-              children: [
-                if (hasTableAddon == true) ...[
-                  SelectTable(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Divider(
+                    height: 1,
+                    color: Colors.grey.shade200,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    controller: noteController,
+                    decoration: InputDecoration(
+                      label: Text(
+                        'add'.tr(args: ['note'.tr()]),
+                        style: labelStyle,
+                      ),
+                      alignLabelWithHint: true,
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      contentPadding: const EdgeInsets.all(10),
+                      focusColor: Colors.teal,
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                        color: Colors.grey.shade200,
+                        width: 1,
+                      )),
+                      focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                        color: Colors.teal,
+                        width: 1,
+                      )),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 10,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.restaurant,
-                          color: Colors.grey.shade700,
+                        Text(
+                          'attachments'.tr(),
+                          style: labelStyle,
                         ),
-                        Expanded(
-                          child: Text(
-                            'print_kitchen'.tr(),
-                            style: textTheme.bodyLarge,
-                          ),
+                        const SizedBox(
+                          height: 10,
                         ),
-                        SizedBox(
-                          height: 35,
-                          width: 45,
-                          child: FittedBox(
-                            fit: BoxFit.fill,
-                            child: Switch(
-                              value: printKitchen,
-                              onChanged: (value) {
-                                setState(() {
-                                  printKitchen = value;
-                                });
-                              },
+                        Wrap(
+                          children: List.generate(images.length, (index) {
+                            XFile image = images[index];
+                            return PickedImage(
+                              source: image.path,
+                              sourceType: SourceType.path,
+                              onDelete: () => onDeleteImage(index),
+                            );
+                          }),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            TextButton.icon(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.blueGrey.shade600,
+                                backgroundColor: Colors.blueGrey.shade50,
+                              ),
+                              icon: const Icon(
+                                CupertinoIcons.camera_fill,
+                                size: 18,
+                              ),
+                              onPressed: () =>
+                                  pickImage(source: ImageSource.camera),
+                              label: Text('photo'.tr()),
                             ),
-                          ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            TextButton.icon(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.blueGrey.shade600,
+                                backgroundColor: Colors.blueGrey.shade50,
+                              ),
+                              icon: const Icon(
+                                CupertinoIcons.photo_fill_on_rectangle_fill,
+                                size: 18,
+                              ),
+                              onPressed: pickImage,
+                              label: Text('image'.tr()),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ],
-                SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30),
+              ),
+            )),
+            if (!isKeyboardVisible)
+              Column(
+                spacing: 5,
+                children: [
+                  if (hasTableAddon == true) ...[
+                    SelectTable(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 10,
+                        children: [
+                          Icon(
+                            Icons.restaurant,
+                            color: Colors.grey.shade700,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'print_kitchen'.tr(),
+                              style: textTheme.bodyLarge,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 35,
+                            width: 45,
+                            child: FittedBox(
+                              fit: BoxFit.fill,
+                              child: Switch(
+                                value: printKitchen,
+                                onChanged: (value) {
+                                  setState(() {
+                                    printKitchen = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                  ],
+                  SizedBox(
+                    height: 10,
                   ),
-                  onPressed: isPartialPayment ||
-                          cart.totalPayment >= cart.grandTotal ||
-                          cart.grandTotal == 0
-                      ? () => onSubmit(context)
-                      : null,
-                  child: Text('finish'.tr()),
-                ),
-                SizedBox(height: 2),
-              ],
-            )
-        ],
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30),
+                        ),
+                      ),
+                    ),
+                    onPressed: isPartialPayment ||
+                            cart.totalPayment >= cart.grandTotal ||
+                            cart.grandTotal == 0
+                        ? () => onSubmit(context)
+                        : null,
+                    child: Text('finish'.tr()),
+                  ),
+                  SizedBox(height: 2),
+                ],
+              )
+          ],
+        ),
       ),
     );
   }

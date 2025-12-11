@@ -50,6 +50,7 @@ class HomeMenu extends ConsumerWidget {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) => const AddExtraItemForm(),
       );
     }
