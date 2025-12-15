@@ -136,7 +136,7 @@ class AdjustmentCart extends ConsumerWidget {
                                               Row(
                                                 children: [
                                                   Text(
-                                                    "${'system'.tr()}: ${CurrencyFormat.currency(item.qtySystem, symbol: false)}",
+                                                    "${'system'.tr()}: ${CurrencyFormat.currency(item.qtySystem, symbol: false, minus: true)}",
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .titleSmall
@@ -146,7 +146,7 @@ class AdjustmentCart extends ConsumerWidget {
                                                   ),
                                                   const SizedBox(width: 10),
                                                   Text(
-                                                    "${'different'.tr()}: ${CurrencyFormat.currency(item.qtyDiff, symbol: false)}",
+                                                    "${'different'.tr()}: ${CurrencyFormat.currency(item.qtyDiff, symbol: false, minus: true)}",
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .titleSmall

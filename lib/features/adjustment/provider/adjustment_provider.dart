@@ -30,7 +30,7 @@ class Adjustment extends _$Adjustment {
           variantName: variant.variantName,
           qtyActual: variant.qtyActual,
           qtySystem: variant.qtySystem,
-          qtyDiff: variant.qtyDiff,
+          qtyDiff: variant.qtyDiff.toDouble(),
         );
         if (itemIdx >= 0) {
           items[itemIdx] = itemVariant;

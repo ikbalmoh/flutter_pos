@@ -321,7 +321,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                                             padding: const EdgeInsets.only(
                                                 top: 5, right: 15, left: 15),
                                             child: Text(
-                                              '${'different'.tr()} ${CurrencyFormat.currency(diffAmount())}',
+                                              '${'different'.tr()} ${CurrencyFormat.currency(diffAmount(), minus: false)}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall

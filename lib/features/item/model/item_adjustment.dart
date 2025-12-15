@@ -29,7 +29,7 @@ class ItemAdjustment with _$ItemAdjustment {
     required double? qtySystem,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double? qtyActual,
-    @JsonKey(fromJson: ModelConverter.dynamicToInt) required int? qtyDiff,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double? qtyDiff,
     @JsonKey(
       fromJson: DateTimeFormater.stringToDateTime,
     )
