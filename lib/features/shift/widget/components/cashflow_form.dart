@@ -205,338 +205,340 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
       canPop: !isLoading,
       child: isLoading
           ? const LoadingPlaceholder()
-          : SizedBox(
-              height: MediaQuery.of(context).size.height *
-                  (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.7),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(
-                        top: 20, left: 15, right: 15, bottom: 10),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          width: 0.5,
-                          color: Colors.blueGrey.shade100,
+          : SafeArea(
+            child: SizedBox(
+                height: MediaQuery.of(context).size.height *
+                    (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.7),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(
+                          top: 20, left: 15, right: 15, bottom: 10),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 0.5,
+                            color: Colors.blueGrey.shade100,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            (widget.cashflow == null ? 'add' : 'edit')
+                                .tr(args: ['cashflow'.tr()]),
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          GestureDetector(
+                            onTap: () => context.pop(),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.grey,
+                              size: 18,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 15),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  ButtonSelection(
+                                    color: Colors.red,
+                                    label: 'expense'.tr(),
+                                    onSelect: () => onChangeCashflowType(1),
+                                    selected: status == 1,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  ButtonSelection(
+                                    color: Colors.green,
+                                    label: 'income'.tr(),
+                                    onSelect: () => onChangeCashflowType(2),
+                                    selected: status == 2,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  ButtonSelection(
+                                    color: Colors.blue,
+                                    label: 'deposit'.tr(),
+                                    onSelect: () => onChangeCashflowType(3),
+                                    selected: status == 3,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 15),
+                              padding: const EdgeInsets.symmetric(vertical: 0),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                bottom: BorderSide(
+                                  width: 1,
+                                  color: Colors.blueGrey.shade100,
+                                ),
+                              )),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'date'.tr(),
+                                    style: labelStyle,
+                                  ),
+                                  TextButton.icon(
+                                    style: TextButton.styleFrom(
+                                        foregroundColor: Colors.blue.shade600),
+                                    icon: const Icon(
+                                      Icons.calendar_month,
+                                      size: 18,
+                                    ),
+                                    onPressed: pickCashflowDate,
+                                    label: Text(DateTimeFormater.dateToString(
+                                        transDate,
+                                        format: 'd MMM y')),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            outletConfig.addOns != null &&
+                                    outletConfig.addOns!.contains('accounting')
+                                ? Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 15),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 0),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                      bottom: BorderSide(
+                                        width: 1,
+                                        color: Colors.blueGrey.shade100,
+                                      ),
+                                    )),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'account'.tr(),
+                                          style: labelStyle,
+                                        ),
+                                        DropdownButton<Akun>(
+                                          dropdownColor: Colors.white,
+                                          value: account,
+                                          hint: Text('select_x'
+                                              .tr(args: ['account'.tr()])),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              account = value;
+                                            });
+                                          },
+                                          items: accountList
+                                              .map<DropdownMenuItem<Akun>>(
+                                                  (Akun akun) {
+                                            return DropdownMenuItem<Akun>(
+                                              value: akun,
+                                              child: Text(akun.namaAkun),
+                                            );
+                                          }).toList(),
+                                          underline: const SizedBox(),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: TextFormField(
+                                inputFormatters: <TextInputFormatter>[
+                                  _amountFormater
+                                ],
+                                initialValue: amount != null
+                                    ? _amountFormater.formatDouble(amount!)
+                                    : '',
+                                onChanged: (value) {
+                                  setState(() {
+                                    amount = _amountFormater
+                                        .getUnformattedValue()
+                                        .toDouble();
+                                  });
+                                },
+                                textAlign: TextAlign.right,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 0, bottom: 15, right: 0),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  label: Text(
+                                    'amount'.tr(),
+                                    style: labelStyle,
+                                  ),
+                                  prefix: Text(
+                                    'amount'.tr(),
+                                    style: labelStyle,
+                                  ),
+                                  alignLabelWithHint: true,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: TextFormField(
+                                initialValue: descriptions,
+                                onChanged: (value) => setState(() {
+                                  descriptions = value;
+                                }),
+                                decoration: InputDecoration(
+                                  label: Text(
+                                    'description'.tr(),
+                                    style: labelStyle,
+                                  ),
+                                  hintText: 'add'.tr(args: ['description'.tr()]),
+                                  alignLabelWithHint: true,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'attachments'.tr(),
+                                    style: labelStyle,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Wrap(
+                                    children: [
+                                      ...List.generate(prevImages.length,
+                                          (index) {
+                                        return PickedImage(
+                                          source: prevImages[index].uri,
+                                          sourceType: SourceType.uri,
+                                          onDelete: () => onRemovePrevImage(
+                                              prevImages[index].id),
+                                        );
+                                      }),
+                                      ...List.generate(images.length, (index) {
+                                        XFile image = images[index];
+                                        return PickedImage(
+                                          source: image.path,
+                                          sourceType: SourceType.path,
+                                          onDelete: () => onDeleteImage(index),
+                                        );
+                                      })
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      TextButton.icon(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Colors.blueGrey.shade600,
+                                          backgroundColor:
+                                              Colors.blueGrey.shade50,
+                                        ),
+                                        icon: const Icon(
+                                          CupertinoIcons.camera_fill,
+                                          size: 18,
+                                        ),
+                                        onPressed: () =>
+                                            pickImage(source: ImageSource.camera),
+                                        label: Text('photo'.tr()),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      TextButton.icon(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor:
+                                              Colors.blueGrey.shade600,
+                                          backgroundColor:
+                                              Colors.blueGrey.shade50,
+                                        ),
+                                        icon: const Icon(
+                                          CupertinoIcons
+                                              .photo_fill_on_rectangle_fill,
+                                          size: 18,
+                                        ),
+                                        onPressed: pickImage,
+                                        label: Text('image'.tr()),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          (widget.cashflow == null ? 'add' : 'edit')
-                              .tr(args: ['cashflow'.tr()]),
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        GestureDetector(
-                          onTap: () => context.pop(),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.grey,
-                            size: 18,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15)
+                          .copyWith(bottom: 20),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 15),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                ButtonSelection(
-                                  color: Colors.red,
-                                  label: 'expense'.tr(),
-                                  onSelect: () => onChangeCashflowType(1),
-                                  selected: status == 1,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ButtonSelection(
-                                  color: Colors.green,
-                                  label: 'income'.tr(),
-                                  onSelect: () => onChangeCashflowType(2),
-                                  selected: status == 2,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ButtonSelection(
-                                  color: Colors.blue,
-                                  label: 'deposit'.tr(),
-                                  onSelect: () => onChangeCashflowType(3),
-                                  selected: status == 3,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 15),
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            decoration: BoxDecoration(
-                                border: Border(
-                              bottom: BorderSide(
-                                width: 1,
-                                color: Colors.blueGrey.shade100,
-                              ),
-                            )),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'date'.tr(),
-                                  style: labelStyle,
-                                ),
-                                TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.blue.shade600),
-                                  icon: const Icon(
-                                    Icons.calendar_month,
-                                    size: 18,
-                                  ),
-                                  onPressed: pickCashflowDate,
-                                  label: Text(DateTimeFormater.dateToString(
-                                      transDate,
-                                      format: 'd MMM y')),
-                                ),
-                              ],
-                            ),
-                          ),
-                          outletConfig.addOns != null &&
-                                  outletConfig.addOns!.contains('accounting')
+                          widget.cashflow != null
                               ? Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 0),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                    bottom: BorderSide(
-                                      width: 1,
-                                      color: Colors.blueGrey.shade100,
-                                    ),
-                                  )),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'account'.tr(),
-                                        style: labelStyle,
-                                      ),
-                                      DropdownButton<Akun>(
-                                        dropdownColor: Colors.white,
-                                        value: account,
-                                        hint: Text('select_x'
-                                            .tr(args: ['account'.tr()])),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            account = value;
-                                          });
-                                        },
-                                        items: accountList
-                                            .map<DropdownMenuItem<Akun>>(
-                                                (Akun akun) {
-                                          return DropdownMenuItem<Akun>(
-                                            value: akun,
-                                            child: Text(akun.namaAkun),
-                                          );
-                                        }).toList(),
-                                        underline: const SizedBox(),
-                                      )
-                                    ],
+                                  margin: const EdgeInsets.only(right: 15),
+                                  child: IconButton(
+                                    style: TextButton.styleFrom(
+                                        foregroundColor: Colors.red),
+                                    onPressed: onDeleteCashflow,
+                                    icon: const Icon(CupertinoIcons.trash),
                                   ),
                                 )
                               : Container(),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: TextFormField(
-                              inputFormatters: <TextInputFormatter>[
-                                _amountFormater
-                              ],
-                              initialValue: amount != null
-                                  ? _amountFormater.formatDouble(amount!)
-                                  : '',
-                              onChanged: (value) {
-                                setState(() {
-                                  amount = _amountFormater
-                                      .getUnformattedValue()
-                                      .toDouble();
-                                });
-                              },
-                              textAlign: TextAlign.right,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.only(
-                                    left: 0, bottom: 15, right: 0),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                                label: Text(
-                                  'amount'.tr(),
-                                  style: labelStyle,
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(30),
+                                  ),
                                 ),
-                                prefix: Text(
-                                  'amount'.tr(),
-                                  style: labelStyle,
-                                ),
-                                alignLabelWithHint: true,
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: TextFormField(
-                              initialValue: descriptions,
-                              onChanged: (value) => setState(() {
-                                descriptions = value;
-                              }),
-                              decoration: InputDecoration(
-                                label: Text(
-                                  'description'.tr(),
-                                  style: labelStyle,
-                                ),
-                                hintText: 'add'.tr(args: ['description'.tr()]),
-                                alignLabelWithHint: true,
+                              onPressed: isLoading ||
+                                      amount == 0 ||
+                                      descriptions == '' ||
+                                      (images.isEmpty && prevImages.isEmpty)
+                                  ? null
+                                  : submitCashflow,
+                              child: Text(
+                                '${widget.cashflow != null ? 'update'.tr() : 'save'.tr()} ${cashflowType()}',
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'attachments'.tr(),
-                                  style: labelStyle,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Wrap(
-                                  children: [
-                                    ...List.generate(prevImages.length,
-                                        (index) {
-                                      return PickedImage(
-                                        source: prevImages[index].uri,
-                                        sourceType: SourceType.uri,
-                                        onDelete: () => onRemovePrevImage(
-                                            prevImages[index].id),
-                                      );
-                                    }),
-                                    ...List.generate(images.length, (index) {
-                                      XFile image = images[index];
-                                      return PickedImage(
-                                        source: image.path,
-                                        sourceType: SourceType.path,
-                                        onDelete: () => onDeleteImage(index),
-                                      );
-                                    })
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    TextButton.icon(
-                                      style: TextButton.styleFrom(
-                                        foregroundColor:
-                                            Colors.blueGrey.shade600,
-                                        backgroundColor:
-                                            Colors.blueGrey.shade50,
-                                      ),
-                                      icon: const Icon(
-                                        CupertinoIcons.camera_fill,
-                                        size: 18,
-                                      ),
-                                      onPressed: () =>
-                                          pickImage(source: ImageSource.camera),
-                                      label: Text('photo'.tr()),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    TextButton.icon(
-                                      style: TextButton.styleFrom(
-                                        foregroundColor:
-                                            Colors.blueGrey.shade600,
-                                        backgroundColor:
-                                            Colors.blueGrey.shade50,
-                                      ),
-                                      icon: const Icon(
-                                        CupertinoIcons
-                                            .photo_fill_on_rectangle_fill,
-                                        size: 18,
-                                      ),
-                                      onPressed: pickImage,
-                                      label: Text('image'.tr()),
-                                    ),
-                                  ],
-                                ),
-                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15)
-                        .copyWith(bottom: 20),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        widget.cashflow != null
-                            ? Container(
-                                margin: const EdgeInsets.only(right: 15),
-                                child: IconButton(
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.red),
-                                  onPressed: onDeleteCashflow,
-                                  icon: const Icon(CupertinoIcons.trash),
-                                ),
-                              )
-                            : Container(),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(30),
-                                ),
-                              ),
-                            ),
-                            onPressed: isLoading ||
-                                    amount == 0 ||
-                                    descriptions == '' ||
-                                    (images.isEmpty && prevImages.isEmpty)
-                                ? null
-                                : submitCashflow,
-                            child: Text(
-                              '${widget.cashflow != null ? 'update'.tr() : 'save'.tr()} ${cashflowType()}',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+          ),
     );
   }
 }

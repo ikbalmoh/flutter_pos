@@ -51,6 +51,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         isScrollControlled: true,
         backgroundColor: Colors.white,
         enableDrag: true,
+        useSafeArea: true,
         builder: (context) {
           return CashflowForm(
             cashflow: cashflow,

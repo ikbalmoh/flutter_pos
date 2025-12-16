@@ -33,7 +33,10 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
   @override
   void initState() {
     setState(() {
-      selectedVehicle = widget.vehicle;
+      selectedVehicle = widget.vehicle != null &&
+              widget.customer.vehicles?.contains(widget.vehicle) == true
+          ? widget.vehicle
+          : null;
     });
     super.initState();
   }
@@ -86,175 +89,175 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
 
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.9,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(
-                top: 10, left: 12.5, right: 12.5, bottom: 10),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-              color: Colors.white,
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(
+                  top: 10, left: 12.5, right: 12.5, bottom: 10),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'customer_detail'.tr(),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                IconButton(
-                  onPressed: () => context.pop(),
-                  icon: const Icon(Icons.close),
-                )
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              // padding: const EdgeInsets.symmetric(horizontal: 15),
-              shrinkWrap: true,
-              children: [
-                Column(
-                  children: [
-                    listTile('customer_code'.tr(), widget.customer.code.trim()),
-                    listTile('customer_name'.tr(),
-                        widget.customer.customerName.trim()),
-                    listTile('group'.tr(), widget.customer.groupNames),
-                    listTile('Email', widget.customer.email),
-                    listTile('phone'.tr(), widget.customer.phoneNumber),
-                    listTile('address'.tr(), widget.customer.address),
-                    listTile('barcode'.tr(), widget.customer.barcode),
-                    listTile(
-                        'expired_date'.tr(),
-                        widget.customer.expiredDate != null
-                            ? widget.customer.expiredDate!
-                            : '-'),
-                  ],
-                ),
-                if (widget.customer.vehicles?.isNotEmpty == true) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 15, right: 15, top: 15, bottom: 8),
-                    child: Text(vehicleEnabled
-                        ? 'select_x'.tr(args: ['vehicle'.tr()])
-                        : 'vehicle'.tr()),
+                color: Colors.white,
+                border: Border(
+                  bottom: BorderSide(
+                    width: 0.5,
+                    color: Colors.blueGrey.shade100,
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(0),
-                    itemBuilder: (context, idx) {
-                      if (idx == 0 && vehicleEnabled) {
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'customer_detail'.tr(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  IconButton(
+                    onPressed: () => context.pop(),
+                    icon: const Icon(Icons.close),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                // padding: const EdgeInsets.symmetric(horizontal: 15),
+                shrinkWrap: true,
+                children: [
+                  Column(
+                    children: [
+                      listTile('customer_code'.tr(), widget.customer.code.trim()),
+                      listTile('customer_name'.tr(),
+                          widget.customer.customerName.trim()),
+                      listTile('group'.tr(), widget.customer.groupNames),
+                      listTile('Email', widget.customer.email),
+                      listTile('phone'.tr(), widget.customer.phoneNumber),
+                      listTile('address'.tr(), widget.customer.address),
+                      listTile('barcode'.tr(), widget.customer.barcode),
+                      listTile(
+                          'expired_date'.tr(),
+                          widget.customer.expiredDate != null
+                              ? widget.customer.expiredDate!
+                              : '-'),
+                    ],
+                  ),
+                  if (vehicleEnabled) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15, right: 15, top: 15, bottom: 8),
+                      child: Text('select_x'.tr(args: ['vehicle'.tr()])),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      itemBuilder: (context, idx) {
+                        if (idx == 0 && vehicleEnabled) {
+                          return ListTile(
+                            onTap: () => setState(() {
+                              selectedVehicle = null;
+                            }),
+                            contentPadding:
+                                EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                            dense: false,
+                            title: Text('without_vehicle'.tr()),
+                            horizontalTitleGap: 10,
+                            leading: Icon(
+                              Icons.person,
+                              size: 20,
+                            ),
+                            trailing: Icon(
+                              selectedVehicle == null
+                                  ? Icons.radio_button_checked
+                                  : Icons.radio_button_off_rounded,
+                              size: 18,
+                              color: selectedVehicle == null
+                                  ? Colors.teal
+                                  : Colors.blueGrey,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            minVerticalPadding: 0,
+                            minTileHeight: 0,
+                          );
+                        }
+                        final vehicle = widget
+                            .customer.vehicles![idx - (vehicleEnabled ? 1 : 0)];
                         return ListTile(
                           onTap: () => setState(() {
-                            selectedVehicle = null;
+                            selectedVehicle = vehicle;
                           }),
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                          dense: false,
-                          title: Text('without_vehicle'.tr()),
+                          dense: true,
+                          title: Text(vehicle.licensePlate),
+                          subtitle: Text(
+                              '${vehicle.vehicleType} - ${vehicle.vehicleBrand}'),
                           horizontalTitleGap: 10,
                           leading: Icon(
-                            Icons.person,
+                            Icons.drive_eta_rounded,
                             size: 20,
                           ),
-                          trailing: Icon(
-                            selectedVehicle == null
-                                ? Icons.radio_button_checked
-                                : Icons.radio_button_off_rounded,
-                            size: 18,
-                            color: selectedVehicle == null
-                                ? Colors.teal
-                                : Colors.blueGrey,
-                          ),
+                          trailing: vehicleEnabled
+                              ? Icon(
+                                  selectedVehicle == vehicle
+                                      ? Icons.radio_button_checked_rounded
+                                      : Icons.radio_button_off_rounded,
+                                  size: 18,
+                                  color: selectedVehicle == vehicle
+                                      ? Colors.teal
+                                      : Colors.blueGrey,
+                                )
+                              : null,
                           visualDensity: VisualDensity.compact,
                           minVerticalPadding: 0,
                           minTileHeight: 0,
                         );
-                      }
-                      final vehicle = widget
-                          .customer.vehicles![idx - (vehicleEnabled ? 1 : 0)];
-                      return ListTile(
-                        onTap: () => setState(() {
-                          selectedVehicle = vehicle;
-                        }),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                        dense: true,
-                        title: Text(vehicle.licensePlate),
-                        subtitle: Text(
-                            '${vehicle.vehicleType} - ${vehicle.vehicleBrand}'),
-                        horizontalTitleGap: 10,
-                        leading: Icon(
-                          Icons.drive_eta_rounded,
-                          size: 20,
-                        ),
-                        trailing: vehicleEnabled
-                            ? Icon(
-                                selectedVehicle == vehicle
-                                    ? Icons.radio_button_checked_rounded
-                                    : Icons.radio_button_off_rounded,
-                                size: 18,
-                                color: selectedVehicle == vehicle
-                                    ? Colors.teal
-                                    : Colors.blueGrey,
-                              )
-                            : null,
-                        visualDensity: VisualDensity.compact,
-                        minVerticalPadding: 0,
-                        minTileHeight: 0,
-                      );
-                    },
-                    itemCount: widget.customer.vehicles!.length +
-                        (vehicleEnabled ? 1 : 0),
-                  )
+                      },
+                      itemCount: widget.customer.vehicles!.length +
+                          (vehicleEnabled ? 1 : 0),
+                    )
+                  ],
                 ],
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
-                ),
               ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.end,
-              spacing: 10,
-              children: [
-                TextButton.icon(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blue.shade700,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    width: 0.5,
+                    color: Colors.blueGrey.shade100,
                   ),
-                  onPressed: () => widget.onEdit(widget.customer),
-                  icon: Icon(
-                    Icons.edit,
-                    color: Colors.blue.shade700,
-                  ),
-                  label: Text('edit'.tr(args: ['customer'.tr()])),
                 ),
-                if (!isExpired) selectButton()
-              ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                spacing: 10,
+                children: [
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue.shade700,
+                    ),
+                    onPressed: () => widget.onEdit(widget.customer),
+                    icon: Icon(
+                      Icons.edit,
+                      color: Colors.blue.shade700,
+                    ),
+                    label: Text('edit'.tr(args: ['customer'.tr()])),
+                  ),
+                  if (!isExpired) selectButton()
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,43 +1,34 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:objectbox/objectbox.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:selleri/features/item/model/item.dart';
+import 'package:selleri/shared/objectbox.dart';
 import '../../../shared/utils/model_converter.dart';
 
+part 'item_package.freezed.dart';
 part 'item_package.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-@Entity(uid: 182247591934260991)
-class ItemPackage {
-  int id;
+@Freezed(addImplicitFinal: false)
+class ItemPackage with _$ItemPackage {
+  const ItemPackage._();
 
-  @Index()
-  String idItemPackage;
-
-  String idItem;
-
-  String itemName;
-  int variantId;
-  int quantityItem;
-
-  @JsonKey(fromJson: ModelConverter.dynamicToDouble)
-  double itemPrice;
-
-  ItemPackage({
-    required this.id,
-    required this.idItemPackage,
-    required this.idItem,
-    required this.itemName,
-    required this.variantId,
-    required this.quantityItem,
-    required this.itemPrice,
-  });
+  @Entity(uid: 182247591934260991, realClass: ItemPackage)
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  factory ItemPackage({
+    @Default(0) @Id() int id,
+    @Index() required String idItemPackage,
+    required String idItem,
+    required String itemName,
+    required int variantId,
+    required int quantityItem,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
+    required double itemPrice,
+  }) = _ItemPackage;
 
   factory ItemPackage.fromJson(Map<String, dynamic> json) =>
       _$ItemPackageFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ItemPackageToJson(this);
+  Item? item() => objectBox.getItem(idItem);
 
-  @override
-  String toString() {
-    return toJson().toString();
-  }
+  DateTime? expiredDate() => item()?.expiredDate;
+  bool isExpired() => item() != null ? item()!.isExpired() : false;
 }

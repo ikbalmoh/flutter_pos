@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:selleri/features/table/model/table.dart';
@@ -61,7 +63,7 @@ class Tables extends _$Tables {
     String collectionPath =
         '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables';
 
-    db
+    await db
         .collection(collectionPath)
         .where('used_by', isEqualTo: transactionNo)
         .get()
@@ -76,6 +78,7 @@ class Tables extends _$Tables {
           .collection(collectionPath)
           .doc(table.id)
           .update({"used_by": transactionNo, "used_from": DateTime.now()});
+      log('TABLE marked $transactionNo => ${table.id}');
     }
   }
 
@@ -112,6 +115,34 @@ class Tables extends _$Tables {
         '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables';
 
     db.collection(collectionPath).doc(table.id).update({"used_by": null});
+  }
+
+  void clearTables(List<String> tableIds) async {
+    try {
+      log('clear tables $tableIds');
+      final authState = ref.read(authProvider).value as Authenticated;
+      final outletState = ref.read(outletProvider).value as OutletSelected;
+
+      final WriteBatch batch = db.batch();
+
+      String collectionPath =
+          '${authState.user.user.company.idCompany}/${outletState.outlet.idOutlet}/tables';
+
+      final snapshot = await db
+          .collection(collectionPath)
+          .where('name', whereIn: tableIds)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        batch.update(db.collection(collectionPath).doc(doc.id),
+            {'used_by': null, 'updatedAt': FieldValue.serverTimestamp()});
+      }
+
+      await batch.commit();
+      log('Successfully cleared tables in a single batch.');
+    } catch (e) {
+      log('Error clearing tables: $e');
+    }
   }
 
   void editTable(String id, {required int capacity}) {

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:selleri/shared/objectbox.dart' show objectBox;
 // ignore: unnecessary_import
 import 'package:objectbox/objectbox.dart';
@@ -70,7 +71,7 @@ class Item with _$Item {
     }).toList();
     json['package_items'] = json['package_items']?.map((package) {
       ItemPackage? existPackage = objectBox.itemPackageBox
-          .query(ItemPackage_.idItem.equals(package['id_item_package']))
+          .query(ItemPackage_.idItemPackage.equals(package['id_item_package']))
           .build()
           .findFirst();
       package['id'] = existPackage?.id ?? 0;
@@ -83,6 +84,42 @@ class Item with _$Item {
 
   bool isExpired() =>
       expiredDate != null ? DateTime.now().isAfter(expiredDate!) : false;
+
+  List<ItemPackage> itemsHasExpiredDate() {
+    if (isPackage && packageItems.isNotEmpty) {
+      final expiredItems =
+          packageItems.where((pkg) => pkg.item()?.expiredDate != null).toList();
+      return expiredItems;
+    }
+    return [];
+  }
+
+  List<ItemPackage> expiredItems() {
+    if (isPackage && packageItems.isNotEmpty) {
+      final expiredItems =
+          packageItems.where((pkg) => pkg.item()?.isExpired() == true).toList();
+      return expiredItems;
+    }
+    return [];
+  }
+
+  int totalExpiredItems() {
+    if (isPackage && packageItems.isNotEmpty) {
+      return packageItems
+          .where((pkg) => pkg.item()?.isExpired() == true)
+          .length;
+    }
+    return 0;
+  }
+
+  bool hasExpiredItems() {
+    if (isPackage && packageItems.isNotEmpty) {
+      final expiredIndex =
+          packageItems.indexWhere((pkg) => pkg.item()?.isExpired() == true);
+      return expiredIndex >= 0;
+    }
+    return isExpired();
+  }
 }
 
 class VariantRelToManyConverter

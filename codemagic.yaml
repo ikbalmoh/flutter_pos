@@ -7,7 +7,7 @@ definitions:
         - firebase_credentials
         - selleri-stage
       vars:
-        FLUTTER_VERSION: "3.35.3"
+        FLUTTER_VERSION: '3.35.3'
       android_signing:
         - selleri_stage_keystore
       ios_signing:
@@ -20,7 +20,7 @@ definitions:
         - firebase_credentials_prod
         - selleri-prod
       vars:
-        FLUTTER_VERSION: "3.35.3"
+        FLUTTER_VERSION: '3.35.3'
       android_signing:
         - selleri_release_keystore
       ios_signing:
@@ -135,25 +135,6 @@ definitions:
       name: Shorebird patch iOS
       script: shorebird patch ios --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --export-options-plist=/Users/builder/export_options.plist
 
-    - &upload_dsym_to_firebase
-      name: Upload dSYM to Firebase Crashlytics
-      script: |
-        echo "Uploading dSYM files to Firebase Crashlytics..."
-
-        UPLOAD_SYMBOLS_PATH="$CM_BUILD_DIR/ios/Pods/FirebaseCrashlytics/upload-symbols"
-
-        if [ ! -f "$UPLOAD_SYMBOLS_PATH" ]; then
-          echo "Error: upload-symbols script not found!"
-          exit 1
-        fi
-
-        find "$CM_BUILD_DIR/build/ios/Release-iphoneos" -name "*.dSYM" -print0 | while IFS= read -r -d '' dsym; do
-          echo "Uploading $dsym"
-          "$UPLOAD_SYMBOLS_PATH" -gsp "$CM_BUILD_DIR/ios/Runner/GoogleService-Info.plist" -p ios "$dsym"
-        done
-
-        echo "✅ dSYM upload finished."
-
   publishing_notifications: &publishing_notifications
     email:
       recipients:
@@ -189,7 +170,7 @@ workflows:
           app_id: 1:107680786292:android:33ce365eb80fcee83cee21
           groups:
             - dgti
-          artifact_type: "apk"
+          artifact_type: 'apk'
       <<: *publishing_notifications
 
   release-prod-ios:
@@ -209,7 +190,6 @@ workflows:
       - *setup_local_properties
       - *xcode_project_use_profiles
       - *shorebird_ios_release
-      - *upload_dsym_to_firebase
 
     artifacts:
       - build/ios/ipa/*.ipa
@@ -233,7 +213,7 @@ workflows:
       events:
         - tag
       tag_patterns:
-        - pattern: "v*"
+        - pattern: 'v/*'
           include: true
     scripts:
       - *extract_version
@@ -258,7 +238,7 @@ workflows:
           app_id: 1:957311922583:android:d61a59e4b45bfdd62794d2
           groups:
             - dgti
-          artifact_type: "apk"
+          artifact_type: 'apk'
       <<: *publishing_notifications
 
   release-staging-ios:
@@ -270,7 +250,7 @@ workflows:
       events:
         - tag
       tag_patterns:
-        - pattern: "v*"
+        - pattern: 'v/*'
           include: true
     scripts:
       - *extract_version
@@ -283,7 +263,6 @@ workflows:
       - *setup_local_properties
       - *xcode_project_use_profiles
       - *shorebird_ios_release_stage
-      - *upload_dsym_to_firebase
 
     artifacts:
       - build/**/outputs/**/mapping.txt

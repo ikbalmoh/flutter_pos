@@ -301,40 +301,42 @@ class _PosScreenState extends ConsumerState<PosScreen>
             ),
       body: Stack(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: refreshData,
-                  child: itemContainer,
+          SafeArea(
+            child: Row(
+              children: [
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: refreshData,
+                    child: itemContainer,
+                  ),
                 ),
-              ),
-              isTablet
-                  ? Container(
-                      width:
-                          ResponsiveBreakpoints.of(context).largerThan(TABLET)
-                              ? 400
-                              : MediaQuery.of(context).size.width * 0.5,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
-                        border: Border(
-                          left: BorderSide(
-                            width: 1,
-                            color: Colors.grey.shade200,
+                isTablet
+                    ? Container(
+                        width:
+                            ResponsiveBreakpoints.of(context).largerThan(TABLET)
+                                ? 400
+                                : MediaQuery.of(context).size.width * 0.5,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          border: Border(
+                            left: BorderSide(
+                              width: 1,
+                              color: Colors.grey.shade200,
+                            ),
                           ),
                         ),
-                      ),
-                      child: Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: const CartScreen(asWidget: true),
-                          )),
-                    )
-                  : Container()
-            ],
+                        child: Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: const CartScreen(asWidget: true),
+                            )),
+                      )
+                    : Container()
+              ],
+            ),
           ),
           const ShiftOverlay(),
           const UpdatePatcher(),

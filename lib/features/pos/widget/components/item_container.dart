@@ -46,7 +46,7 @@ class ItemContainer extends ConsumerWidget {
   }) async {
     try {
       double qtyOnCart = ref.read(cartProvider.notifier).qtyOnCart(item.idItem);
-      if (item.isExpired() && isConfirmed != true && qtyOnCart == 0) {
+      if (item.hasExpiredItems() && isConfirmed != true && qtyOnCart == 0) {
         confirmExpiredItem(
           context,
           ref,
@@ -56,8 +56,10 @@ class ItemContainer extends ConsumerWidget {
         );
         return;
       }
-      debugPrint(
-          'onAddToCart: item: ${item.itemName} => variants: ${variants.map((v) => '${v.id} - ${v.variantName}')} => variant: ${variant?.variantName}');
+      log('onAddToCart: item: ${item.itemName} => variants: ${variants.map((v) => '${v.id} - ${v.variantName}')} => variant: ${variant?.variantName}');
+      if (item.isPackage) {
+        log('item packages: ${item.packageItems}');
+      }
 
       if (variant != null) {
         await ref.read(cartProvider.notifier).addToCart(item, variant: variant);
@@ -119,7 +121,15 @@ class ItemContainer extends ConsumerWidget {
                       ),
                       Expanded(
                         child: Text(
-                          'item_expired'.tr(),
+                          item.isPackage
+                              ? [
+                                  item
+                                      .expiredItems()
+                                      .map((i) => i.itemName)
+                                      .join(', '),
+                                  'expired'.tr()
+                                ].join(' ')
+                              : 'item_expired'.tr(),
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
@@ -246,7 +256,7 @@ class ItemContainer extends ConsumerWidget {
 
     return LayoutBuilder(builder: (context, constraints) {
       final width = constraints.maxWidth;
-      final int gridColumn = width > 600
+      final int gridColumn = width > 700
           ? 4
           : width > 460
               ? 3

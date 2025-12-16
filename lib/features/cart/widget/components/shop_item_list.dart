@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/features/cart/widget/components/expired_badge.dart';
+import 'package:selleri/features/cart/widget/components/package_badge.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/cart/widget/components/promotions/promotion_badge.dart';
 import 'package:selleri/features/cart/widget/components/stock_badge.dart';
@@ -98,17 +99,14 @@ class ShopItemList extends StatelessWidget {
                       Wrap(
                         spacing: 5,
                         children: [
+                          if (item.isPackage) PackageBadge(),
                           if (hasPromotions) PromotionBadge(),
                           StockBadge(
                             stockItem: item.stockItem,
                             stockControl: item.stockControl,
                             packageItems: item.packageItems,
                           ),
-                          if (item.expiredDate != null)
-                            ExpiredBadge(
-                              expiredDate: item.expiredDate!,
-                              isExpired: item.isExpired(),
-                            )
+                          ExpiredBadge(item: item),
                         ],
                       ),
                     ],

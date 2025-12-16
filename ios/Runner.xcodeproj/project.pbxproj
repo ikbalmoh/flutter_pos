@@ -59,6 +59,9 @@
 		5E03D8872CE5B88E005E256A /* GoogleService-Info-Stage.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Stage.plist"; sourceTree = "<group>"; };
 		5E03D8892CE5B899005E256A /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		5E03D88B2CE5B8A2005E256A /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
+		5E1421532EC5CA2A009BA360 /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Dev.xcconfig; path = Flutter/Dev.xcconfig; sourceTree = "<group>"; };
+		5E1421542EC5CA46009BA360 /* Stage.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Stage.xcconfig; path = Flutter/Stage.xcconfig; sourceTree = "<group>"; };
+		5E1421552EC5CA57009BA360 /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Prod.xcconfig; path = Flutter/Prod.xcconfig; sourceTree = "<group>"; };
 		66135325DA518E15D3144292 /* Pods-Runner.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-prod.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-prod.xcconfig"; sourceTree = "<group>"; };
 		70EEA5DA09B1AA843DA0518A /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		726BE1112C3D8CA2C31FF883 /* Pods-Runner.release-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-dev.xcconfig"; sourceTree = "<group>"; };
@@ -174,6 +177,9 @@
 				9740EEB21CF90195004384FC /* Debug.xcconfig */,
 				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
 				9740EEB31CF90195004384FC /* Generated.xcconfig */,
+				5E1421532EC5CA2A009BA360 /* Dev.xcconfig */,
+				5E1421542EC5CA46009BA360 /* Stage.xcconfig */,
+				5E1421552EC5CA57009BA360 /* Prod.xcconfig */,
 			);
 			name = Flutter;
 			sourceTree = "<group>";
@@ -690,7 +696,7 @@
 		};
 		499B8C8B2C12D4200000B2C1 /* Debug-prod */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			baseConfigurationReference = 5E1421552EC5CA57009BA360 /* Prod.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = selleri;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -792,7 +798,7 @@
 		};
 		499B8C8E2C12D44F0000B2C1 /* Release-prod */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = 5E1421552EC5CA57009BA360 /* Prod.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = selleri;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1069,7 +1075,7 @@
 		};
 		CE0FADDA2C13081700E79BC0 /* Debug-dev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			baseConfigurationReference = 5E1421532EC5CA2A009BA360 /* Dev.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = "dev-selleri";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
@@ -1171,7 +1177,7 @@
 		};
 		CE3E47D92C5A3D37006F0EC2 /* Debug-stage */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			baseConfigurationReference = 5E1421542EC5CA46009BA360 /* Stage.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = "dev-selleri";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconStage;
@@ -1268,7 +1274,7 @@
 		};
 		CE3E47DC2C5A3D90006F0EC2 /* Profile-stage */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = 5E1421542EC5CA46009BA360 /* Stage.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = "dev-selleri";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconStage;
@@ -1363,7 +1369,7 @@
 		};
 		CE3E47DF2C5A3D99006F0EC2 /* Profile-prod */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = 5E1421552EC5CA57009BA360 /* Prod.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = selleri;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1461,7 +1467,7 @@
 		};
 		CEC4E4EC2C35471300EDB084 /* Profile-dev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = 5E1421532EC5CA2A009BA360 /* Dev.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = "dev-selleri";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
@@ -1558,7 +1564,7 @@
 		};
 		CEC4E4EF2C3547CA00EDB084 /* Release-dev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = 5E1421532EC5CA2A009BA360 /* Dev.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = "dev-selleri";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
@@ -1656,7 +1662,7 @@
 		};
 		CEC82AE22C5CE39600FEA3A4 /* Release-stage */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = 5E1421542EC5CA46009BA360 /* Stage.xcconfig */;
 			buildSettings = {
 				APP_URL_SCHEME = "dev-selleri";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

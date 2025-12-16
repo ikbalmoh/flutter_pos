@@ -30,6 +30,7 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
 
     setState(() {
       qty = widget.item.qtyActual ?? 0;
+      qtyDiff = widget.item.qtyDiff ?? 0;
     });
 
     noteController.text = widget.item.note ?? '';
@@ -44,10 +45,8 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
   }
 
   void onSave(BuildContext context) async {
-    ItemAdjustment item = widget.item.copyWith(
-        qtyActual: qty,
-        note: noteController.text,
-        qtyDiff: qtyDiff.toInt().abs());
+    ItemAdjustment item = widget.item
+        .copyWith(qtyActual: qty, note: noteController.text, qtyDiff: qtyDiff);
     // Update Item
     ref.read(adjustmentProvider.notifier).addToCart(item);
     context.pop();
@@ -136,8 +135,11 @@ class _AdjustmentItemFormState extends ConsumerState<AdjustmentItemForm> {
                           'different'.tr(),
                           style: labelStyle,
                         ),
-                        Text(CurrencyFormat.currency(qtyDiff.abs(),
-                            symbol: false)),
+                        Text(CurrencyFormat.currency(
+                          qtyDiff,
+                          symbol: false,
+                          minus: true,
+                        )),
                       ],
                     ),
                   ),

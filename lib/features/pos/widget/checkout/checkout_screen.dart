@@ -206,65 +206,67 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               : 'payment_x'.tr(args: [''])),
           elevation: 1,
         ),
-        body: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            isTablet
-                ? Container(
-                    height: MediaQuery.of(context).size.height,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
-                        right: BorderSide(
-                          width: 1,
-                          color: Colors.grey.shade200,
+        body: SafeArea(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              isTablet
+                  ? Container(
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                          right: BorderSide(
+                            width: 1,
+                            color: Colors.grey.shade200,
+                          ),
                         ),
                       ),
-                    ),
-                    width: ResponsiveBreakpoints.of(context)
-                            .largerOrEqualTo(DESKTOP)
-                        ? 400
-                        : MediaQuery.of(context).size.width * 0.5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: cartPreview,
-                    ),
-                  )
-                : Container(),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
+                      width: ResponsiveBreakpoints.of(context)
+                              .largerOrEqualTo(DESKTOP)
+                          ? 400
+                          : MediaQuery.of(context).size.width * 0.5,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                                horizontal: 7.5, vertical: 7.5)
-                            .copyWith(bottom: 15),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            isTablet
-                                ? Container()
-                                : Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: cartPreview,
-                                  ),
-                            const DiscountPromotion(),
-                            paymentDetails
-                          ],
+                        padding: const EdgeInsets.all(5),
+                        child: cartPreview,
+                      ),
+                    )
+                  : Container(),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                                  horizontal: 7.5, vertical: 7.5)
+                              .copyWith(bottom: 15),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              isTablet
+                                  ? Container()
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: cartPreview,
+                                    ),
+                              const DiscountPromotion(),
+                              paymentDetails
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  actions
-                ],
+                    actions
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 }
