@@ -25,6 +25,7 @@ class Printer {
     bool isCopy = false,
     bool isHold = false,
     bool withPrice = true,
+    bool printIncludePpn = false,
   }) async {
     try {
       log('BUILD RECEIPT: $cart\n$outlet\n$attributes');
@@ -204,6 +205,21 @@ class Printer {
               text:
                   '-${CurrencyFormat.currency(cart.discPromotionsTotal, symbol: false)}',
               width: 4,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
+        if (printIncludePpn || cart.ppnIsInclude == false) {
+          // subtotal
+          bytes += generator.row([
+            PosColumn(
+              text: cart.taxName ?? 'tax'.tr(),
+              width: 9,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text: CurrencyFormat.currency(cart.ppnTotal, symbol: false),
+              width: 3,
               styles: const PosStyles(align: PosAlign.right),
             ),
           ]);

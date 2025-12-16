@@ -95,6 +95,7 @@ class Transactions extends _$Transactions {
         isHold: isHold,
         withPrice: withPrice,
         cut: printer.cut,
+        printIncludePpn: outlet.config.printIncludePpn ?? false,
       );
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {

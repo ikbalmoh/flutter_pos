@@ -478,12 +478,15 @@ class Cart extends _$Cart {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
           outlet.config.attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(state,
-          outlet: outlet.outlet,
-          attributes: attributeReceipts,
-          size: printer.size,
-          isCopy: printCounter > 1,
-          cut: printer.cut);
+      final receipt = await util.Printer.buildReceiptBytes(
+        state,
+        outlet: outlet.outlet,
+        attributes: attributeReceipts,
+        size: printer.size,
+        isCopy: printCounter > 1,
+        cut: printer.cut,
+        printIncludePpn: outlet.config.printIncludePpn ?? false,
+      );
       await ref.read(printerProvider.notifier).print(receipt);
       if (withKitchen == true) {
         await printKitchen();

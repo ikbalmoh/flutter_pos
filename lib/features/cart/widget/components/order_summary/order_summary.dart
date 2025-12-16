@@ -35,14 +35,13 @@ class OrderSummary extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        withAttribute == true
-            ? Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 10),
-                child: ReceiptHeader(
-                  outletState: outletState,
-                ),
-              )
-            : Container(),
+        if (withAttribute == true)
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 10),
+            child: ReceiptHeader(
+              outletState: outletState,
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
@@ -133,20 +132,16 @@ class OrderSummary extends StatelessWidget {
                       '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
                   value: -cart.discOverallTotal,
                 ),
-          cart.discPromotionsTotal > 0
-              ? TwoColumn(
-                  label: 'promotions'.tr(),
-                  value: cart.discPromotionsTotal,
-                )
-              : Container(),
-          taxable
-              ? cart.ppnTotal > 0
-                  ? TwoColumn(
-                      label: cart.taxName ?? 'tax'.tr(),
-                      value: cart.ppnTotal,
-                    )
-                  : Container()
-              : Container(),
+          if (cart.discPromotionsTotal > 0)
+            TwoColumn(
+              label: 'promotions'.tr(),
+              value: cart.discPromotionsTotal,
+            ),
+          if (outletState.config.printIncludePpn == true || !cart.ppnIsInclude)
+            TwoColumn(
+              label: cart.taxName ?? 'tax'.tr(),
+              value: cart.ppnTotal,
+            ),
           TwoColumn(
             label: 'Total',
             value: cart.total,
@@ -241,28 +236,27 @@ class OrderSummary extends StatelessWidget {
             valueStyle:
                 textTheme.bodyLarge?.copyWith(color: Colors.green.shade700),
           ),
-          cart.totalPayment < cart.grandTotal
-              ? TwoColumn(
-                  label: 'insufficient_payment'.tr(),
-                  value: cart.grandTotal - cart.totalPayment,
-                  labelStyle: textTheme.bodyLarge?.copyWith(
-                      color: Colors.black87, fontWeight: FontWeight.w700),
-                  valueStyle:
-                      textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
-                )
-              : Container(),
+          if (cart.totalPayment < cart.grandTotal)
+            TwoColumn(
+              label: 'insufficient_payment'.tr(),
+              value: cart.grandTotal - cart.totalPayment,
+              labelStyle: textTheme.bodyLarge?.copyWith(
+                  color: Colors.black87, fontWeight: FontWeight.w700),
+              valueStyle:
+                  textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
+            ),
           TwoColumn(
             label: 'change'.tr(),
             value: cart.change,
           ),
           const SizedBox(height: 10),
-          withAttribute == true && outletState.config.attributeReceipts != null
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 10),
-                  child: ReceiptFooter(
-                      attributeReceipts: outletState.config.attributeReceipts!),
-                )
-              : Container(),
+          if (withAttribute == true &&
+              outletState.config.attributeReceipts != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 10),
+              child: ReceiptFooter(
+                  attributeReceipts: outletState.config.attributeReceipts!),
+            ),
         ],
       ),
     );
