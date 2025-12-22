@@ -103,6 +103,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       isDismissible: false,
       enableDrag: false,
       backgroundColor: Colors.white,
+      useSafeArea: true,
       builder: (context) {
         return VehicleForm();
       },

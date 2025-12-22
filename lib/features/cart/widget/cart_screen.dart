@@ -39,6 +39,7 @@ class CartScreen extends ConsumerWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (BuildContext context) => EditCartItemForm(
           item: item,
           onDelete: () => onDeleteItem(item),

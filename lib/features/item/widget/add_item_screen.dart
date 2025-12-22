@@ -84,6 +84,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
         isScrollControlled: true,
         enableDrag: false,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return StoreItem(
             itemPayload: itemPayload,

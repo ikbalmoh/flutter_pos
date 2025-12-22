@@ -111,6 +111,7 @@ class _TransactionDetailScreenState
         enableDrag: false,
         isDismissible: false,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) {
           return CancelTransactionForm(
             cart: widget.cart,

@@ -65,6 +65,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      useSafeArea: true,
       builder: (context) => CloseShiftForm(
         shift: shiftInfo,
       ),

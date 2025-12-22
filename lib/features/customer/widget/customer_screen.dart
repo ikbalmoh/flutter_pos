@@ -108,6 +108,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (BuildContext context) => CustomerDetail(
           customer: customer,
           onSelect: onSelectCustomer,

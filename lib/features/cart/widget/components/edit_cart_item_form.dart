@@ -128,6 +128,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
         backgroundColor: Colors.white,
         context: context,
         enableDrag: true,
+        useSafeArea: true,
         builder: (context) {
           return PicPicker(
             selected: widget.item.picDetailId,

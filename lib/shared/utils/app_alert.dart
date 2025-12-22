@@ -82,6 +82,7 @@ class AppAlert {
     showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
+        useSafeArea: true,
         builder: (context) {
           return SafeArea(
             child: Padding(

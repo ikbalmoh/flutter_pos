@@ -20,6 +20,7 @@ class DiscountOverallItem extends ConsumerWidget {
           isScrollControlled: true,
           context: context,
           backgroundColor: Colors.white,
+          useSafeArea: true,
           builder: (context) {
             return AddDiscountOverall(ref.read(cartProvider).subtotal);
           });

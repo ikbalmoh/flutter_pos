@@ -28,6 +28,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
       showModalBottomSheet(
           context: context,
           backgroundColor: Colors.white,
+          useSafeArea: true,
           builder: (context) {
             return ConnectPrinter(device: device);
           });

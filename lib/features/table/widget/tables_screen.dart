@@ -89,6 +89,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
     }
     showModalBottomSheet(
         context: context,
+        useSafeArea: true,
         builder: (context) => SelectTableSheet(
               table: table,
               onPickTable: onPickTable,
@@ -154,6 +155,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.white,
+                    useSafeArea: true,
                     builder: (context) => SelectFloorMenu(
                         floor: currentFloor,
                         onChange: (floor) {
@@ -265,7 +267,9 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                   ),
                 ),
                 onRefresh: () {
-                  ref.read(tablesProvider(floor: currentFloor).notifier).build();
+                  ref
+                      .read(tablesProvider(floor: currentFloor).notifier)
+                      .build();
                   return Future.delayed(Durations.medium4);
                 },
               ),

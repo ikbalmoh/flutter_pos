@@ -98,83 +98,86 @@ class ItemContainer extends ConsumerWidget {
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
-          return SizedBox(
-            width: double.maxFinite,
-            child: Padding(
-              padding: const EdgeInsets.all(20).copyWith(bottom: 25),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Icon(
-                          CupertinoIcons.calendar,
-                          color: Colors.red,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          item.isPackage
-                              ? [
-                                  item
-                                      .expiredItems()
-                                      .map((i) => i.itemName)
-                                      .join(', '),
-                                  'expired'.tr()
-                                ].join(' ')
-                              : 'item_expired'.tr(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'continue_select_item'.tr(),
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                          onPressed: () => context.pop(),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.grey.shade500,
+          return SafeArea(
+            child: SizedBox(
+              width: double.maxFinite,
+              child: Padding(
+                padding: const EdgeInsets.all(20).copyWith(bottom: 25),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(
+                            CupertinoIcons.calendar,
+                            color: Colors.red,
                           ),
-                          child: Text('no'.tr())),
-                      TextButton(
-                          onPressed: () {
-                            onAddToCart(context, ref,
-                                item: item,
-                                variants: variants,
-                                isConfirmed: true,
-                                variant: variant);
-                            context.pop();
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.red.shade500,
+                        ),
+                        Expanded(
+                          child: Text(
+                            item.isPackage
+                                ? [
+                                    item
+                                        .expiredItems()
+                                        .map((i) => i.itemName)
+                                        .join(', '),
+                                    'expired'.tr()
+                                  ].join(' ')
+                                : 'item_expired'.tr(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
-                          child: Text('yes'.tr())),
-                    ],
-                  )
-                ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'continue_select_item'.tr(),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.grey.shade600,
+                          ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () => context.pop(),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.grey.shade500,
+                            ),
+                            child: Text('no'.tr())),
+                        TextButton(
+                            onPressed: () {
+                              onAddToCart(context, ref,
+                                  item: item,
+                                  variants: variants,
+                                  isConfirmed: true,
+                                  variant: variant);
+                              context.pop();
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red.shade500,
+                            ),
+                            child: Text('yes'.tr())),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           );

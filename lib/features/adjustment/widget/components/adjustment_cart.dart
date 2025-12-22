@@ -39,6 +39,7 @@ class AdjustmentCart extends ConsumerWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (BuildContext context) => AdjustmentItemForm(
           item: item,
           onDelete: () => onDeleteItem(item),

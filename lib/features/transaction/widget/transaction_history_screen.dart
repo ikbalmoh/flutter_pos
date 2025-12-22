@@ -94,6 +94,7 @@ class _TransactionHistoryScreenState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return const TransactionReportDownloader();
         });

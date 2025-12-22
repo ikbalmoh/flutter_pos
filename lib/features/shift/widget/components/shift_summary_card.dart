@@ -28,6 +28,7 @@ class ShiftSummaryCards extends StatelessWidget {
           isScrollControlled: true,
           enableDrag: true,
           backgroundColor: Colors.white,
+          useSafeArea: true,
           builder: (context) {
             return SalesSummary(
               summary: summary,
@@ -42,7 +43,7 @@ class ShiftSummaryCards extends StatelessWidget {
           isScrollControlled: true,
           enableDrag: true,
           backgroundColor: Colors.white,
-          useSafeArea: false,
+          useSafeArea: true,
           builder: (context) {
             return SoldItems(
               items: items,

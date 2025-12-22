@@ -43,6 +43,7 @@ class ItemContainer extends ConsumerWidget {
         backgroundColor: Colors.white,
         context: context,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) => AdjustmentItemForm(item: item));
   }
 

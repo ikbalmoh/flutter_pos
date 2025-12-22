@@ -35,6 +35,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         isScrollControlled: true,
         context: context,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return AddRounding();
         });

@@ -114,6 +114,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
         backgroundColor: Colors.white,
         isScrollControlled: true,
         context: context,
+        useSafeArea: true,
         builder: (context) {
           return FilterItemsSheet(selected: filterStock);
         });
@@ -132,6 +133,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
       context: context,
       backgroundColor: Colors.white,
       isDismissible: true,
+      useSafeArea: true,
       builder: (context) {
         return AddBarcodeItem(barcode: barcode);
       },

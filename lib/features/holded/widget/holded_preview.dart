@@ -46,6 +46,7 @@ class HoldedPreview extends ConsumerWidget {
           isDismissible: false,
           enableDrag: false,
           isScrollControlled: true,
+          useSafeArea: true,
           builder: (context) {
             return HoldForm(
               onHolded: () => openHoldedTransaction(),
