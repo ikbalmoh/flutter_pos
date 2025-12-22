@@ -65,7 +65,7 @@ class Cart with _$Cart {
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
     required List<CartVoucher> vouchers,
-    List<String>? tables,
+    @JsonKey(fromJson: ModelConverter.toStringList) List<String>? tables,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
     String? deletedBy,

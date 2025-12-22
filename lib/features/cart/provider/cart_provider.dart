@@ -66,7 +66,7 @@ class Cart extends _$Cart {
       }
 
       String? transactionNo =
-          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
+          'BILL-${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
@@ -445,6 +445,7 @@ class Cart extends _$Cart {
       }
 
       final res = await api.storeTransaction(state.copyWith(
+        transactionNo: state.transactionNo.replaceAll('BILL-', '').trim(),
         shiftId: shift.id,
       ));
 
