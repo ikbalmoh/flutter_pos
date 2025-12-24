@@ -213,7 +213,7 @@ class Printer {
           // subtotal
           bytes += generator.row([
             PosColumn(
-              text: cart.taxName ?? 'tax'.tr(),
+              text: 'tax'.tr(),
               width: 9,
               styles: const PosStyles(align: PosAlign.left),
             ),

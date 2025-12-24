@@ -139,7 +139,7 @@ class OrderSummary extends StatelessWidget {
             ),
           if (outletState.config.printIncludePpn == true || !cart.ppnIsInclude)
             TwoColumn(
-              label: cart.taxName ?? 'tax'.tr(),
+              label: 'tax'.tr(),
               value: cart.ppnTotal,
             ),
           TwoColumn(
