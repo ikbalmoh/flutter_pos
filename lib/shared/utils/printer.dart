@@ -119,7 +119,7 @@ class Printer {
             PosColumn(
               text:
                   '${CurrencyFormat.currency(item.quantity, symbol: false)} x ${CurrencyFormat.currency(item.price, symbol: true)}',
-              width: 9,
+              width: 8,
               styles: const PosStyles(align: PosAlign.left),
             ),
             PosColumn(
@@ -127,7 +127,7 @@ class Printer {
                 item.price * item.quantity,
                 symbol: false,
               ),
-              width: 3,
+              width: 4,
               styles: const PosStyles(align: PosAlign.right),
             ),
           ]);
@@ -135,13 +135,13 @@ class Printer {
             bytes += generator.row([
               PosColumn(
                 text: 'discount'.tr(),
-                width: 9,
+                width: 5,
                 styles: const PosStyles(align: PosAlign.left),
               ),
               PosColumn(
                 text:
                     '-${CurrencyFormat.currency(item.discountTotal, symbol: false)}',
-                width: 3,
+                width: 7,
                 styles: const PosStyles(align: PosAlign.right),
               ),
             ]);
@@ -156,12 +156,12 @@ class Printer {
         bytes += generator.row([
           PosColumn(
             text: 'Subtotal',
-            width: 9,
+            width: 5,
             styles: const PosStyles(align: PosAlign.left),
           ),
           PosColumn(
             text: CurrencyFormat.currency(cart.subtotal, symbol: false),
-            width: 3,
+            width: 7,
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
@@ -169,12 +169,12 @@ class Printer {
           bytes += generator.row([
             PosColumn(
               text: '${'voucher'.tr()} (${voucher.code})',
-              width: 9,
+              width: 7,
               styles: const PosStyles(align: PosAlign.left),
             ),
             PosColumn(
               text: '-${CurrencyFormat.currency(voucher.value, symbol: false)}',
-              width: 3,
+              width: 5,
               styles: const PosStyles(align: PosAlign.right),
             ),
           ]);
@@ -214,12 +214,12 @@ class Printer {
           bytes += generator.row([
             PosColumn(
               text: 'tax'.tr(),
-              width: 9,
+              width: 5,
               styles: const PosStyles(align: PosAlign.left),
             ),
             PosColumn(
               text: CurrencyFormat.currency(cart.ppnTotal, symbol: false),
-              width: 3,
+              width: 7,
               styles: const PosStyles(align: PosAlign.right),
             ),
           ]);
@@ -227,12 +227,12 @@ class Printer {
         bytes += generator.row([
           PosColumn(
             text: 'Total',
-            width: 8,
+            width: 5,
             styles: const PosStyles(align: PosAlign.left),
           ),
           PosColumn(
             text: CurrencyFormat.currency(cart.total, symbol: false),
-            width: 4,
+            width: 7,
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
@@ -289,12 +289,12 @@ class Printer {
         bytes += generator.row([
           PosColumn(
             text: 'change'.tr(),
-            width: 8,
+            width: 5,
             styles: const PosStyles(align: PosAlign.left),
           ),
           PosColumn(
             text: CurrencyFormat.currency(cart.change, symbol: false),
-            width: 4,
+            width: 7,
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
