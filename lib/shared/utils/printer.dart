@@ -83,8 +83,12 @@ class Printer {
             linesAfter: 1, styles: const PosStyles(align: PosAlign.center));
       }
 
+      final String transactionNo = isHold
+          ? cart.transactionNo
+          : cart.transactionNo.replaceAll('BILL-', '').trim();
+
       // info
-      bytes += generator.text('No: ${cart.transactionNo}');
+      bytes += generator.text('No: $transactionNo');
       bytes += generator.text('${'cashier'.tr()}: ${cart.createdName ?? '-'}');
       bytes += generator.text(
           '${'date'.tr()}: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
