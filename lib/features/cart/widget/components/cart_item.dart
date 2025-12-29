@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
@@ -59,28 +60,29 @@ class _CartItemState extends State<CartItem> {
                   widget.item.details.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: widget.item.details
-                              .map(
-                                (itemPackage) => Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${itemPackage.quantity} x ',
-                                      style: textTheme.bodySmall
-                                          ?.copyWith(color: Colors.black54),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        itemPackage.name,
-                                        style: textTheme.bodySmall
-                                            ?.copyWith(color: Colors.black54),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .toList(),
+                          children: widget.item.details.map(
+                            (itemPackage) {
+                              Item? item = itemPackage.item();
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${itemPackage.quantity} x ',
+                                    style: textTheme.bodySmall
+                                        ?.copyWith(color: Colors.black54),
+                                  ),
+                                  Text(
+                                    itemPackage.name,
+                                    style: textTheme.bodySmall?.copyWith(
+                                        color: item != null && item.isExpired()
+                                            ? Colors.red
+                                            : Colors.black54),
+                                  ),
+                                ],
+                              );
+                            },
+                          ).toList(),
                         )
                       : Container(),
                   Row(

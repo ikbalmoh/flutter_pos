@@ -138,6 +138,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return ReceiveItemForm(
             item: item,
@@ -180,6 +181,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) {
           return EnterPurchaseItemCode(
               itemName: itemName,

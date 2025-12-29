@@ -43,9 +43,10 @@ class ModelConverter {
     return value;
   }
 
-  static String? dynamicToString(dynamic value) {
+  static String? dynamicToString(dynamic value,
+      {bool? returnEmptyString = false}) {
     if (value == null) {
-      return null;
+      return returnEmptyString == true ? '' : null;
     }
     return value?.toString();
   }
@@ -55,6 +56,16 @@ class ModelConverter {
       return '';
     }
     return value.toString();
+  }
+
+  static List<String> toStringList(dynamic value) {
+    if (value == null) {
+      return [];
+    }
+    if (value is List) {
+      return (value).map((e) => e.toString()).toList();
+    }
+    return [];
   }
 
   static DateTime? timeStampToDateTime(Timestamp? value) {

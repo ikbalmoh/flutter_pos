@@ -13,6 +13,7 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
+import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/connection_baner_widget.dart';
@@ -97,6 +98,7 @@ class _TransactionHistoryScreenState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return const TransactionReportDownloader();
         });
@@ -343,25 +345,25 @@ class _TransactionHistoryScreenState
                                     }
                                     Cart cart = data.data![idx];
                                     return TransactionItem(
-                                      cart: cart,
-                                      onTap: () {
-                                        setState(() {
-                                          viewTransaction = cart;
+                                        cart: cart,
+                                        active:
+                                            viewTransaction?.idTransaction ==
+                                                cart.idTransaction,
+                                        onTap: () {
+                                          setState(() {
+                                            viewTransaction = cart;
+                                          });
+                                          if (!isTablet) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TransactionDetailScreen(
+                                                        cart: cart),
+                                              ),
+                                            );
+                                          }
                                         });
-                                        if (!isTablet) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TransactionDetailScreen(
-                                                      cart: cart),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      active: viewTransaction?.idTransaction ==
-                                          cart.idTransaction,
-                                    );
                                   },
                                   itemCount: data.data!.length + 1,
                                 )

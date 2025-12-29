@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/features/pos/widget/select_table.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
@@ -125,6 +126,8 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                 alignLabelWithHint: true,
               ),
             ),
+            const SizedBox(height: 10),
+            SelectTable(),
             const SizedBox(height: 20),
             Row(
               mainAxisSize: MainAxisSize.max,

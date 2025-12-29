@@ -88,6 +88,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
         backgroundColor: Colors.white,
         isScrollControlled: true,
         context: context,
+        useSafeArea: true,
         builder: (context) {
           return DatePicker(
             initialForm: from,

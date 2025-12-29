@@ -7,7 +7,7 @@ definitions:
         - firebase_credentials
         - selleri-stage
       vars:
-        FLUTTER_VERSION: '3.29.3'
+        FLUTTER_VERSION: '3.35.3'
       android_signing:
         - selleri_stage_keystore
       ios_signing:
@@ -20,26 +20,13 @@ definitions:
         - firebase_credentials_prod
         - selleri-prod
       vars:
-        FLUTTER_VERSION: '3.29.3'
+        FLUTTER_VERSION: '3.35.3'
       android_signing:
         - selleri_release_keystore
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.dgti.selleri
   scripts:
-    - &get_flavor
-      name: Get flavor
-      script: |
-        CURRENT_BRANCH=${CM_BRANCH}
-        if [[ "$CURRENT_BRANCH" == "main" ]]; then
-          FLAVOR="prod"
-        elif [[ "$CURRENT_BRANCH" == "dev" ]]; then
-          FLAVOR="stage"
-        else
-          FLAVOR="dev"
-        fi
-        echo "FLAVOR=$FLAVOR" >> $CM_ENV
-
     - &extract_version
       name: Extract version
       script: |
@@ -222,7 +209,12 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       <<: *stage_env
-
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'v/*'
+          include: true
     scripts:
       - *extract_version
       - *shorebird_install
@@ -254,7 +246,12 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       <<: *stage_env
-
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'v/*'
+          include: true
     scripts:
       - *extract_version
       - *shorebird_install

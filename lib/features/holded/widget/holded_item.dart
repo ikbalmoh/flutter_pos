@@ -34,7 +34,10 @@ class HoldedItem extends StatelessWidget {
           ),
           hold.customerName != null && hold.customerName != ''
               ? Text(
-                  '${'customer'.tr()}: ${hold.customerName}',
+                  '${'customer'.tr()}: ${[
+                    hold.dataHold.customerName,
+                    hold.dataHold.vehicle?.licensePlate
+                  ].whereType<String>().join(' - ')}',
                   style: textTheme.bodySmall?.copyWith(color: Colors.black54),
                 )
               : Container(),

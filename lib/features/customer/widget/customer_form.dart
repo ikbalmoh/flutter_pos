@@ -103,6 +103,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       isDismissible: false,
       enableDrag: false,
       backgroundColor: Colors.white,
+      useSafeArea: true,
       builder: (context) {
         return VehicleForm();
       },
@@ -708,42 +709,44 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
           )
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(10).copyWith(bottom: 80),
-                child: Column(
-                  spacing: 10,
-                  children: [
-                    customerData(),
-                    if (!isTablet) customerMembership(),
-                    if (!isTablet) customerVehicle(),
-                  ],
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(10).copyWith(bottom: 80),
+                  child: Column(
+                    spacing: 10,
+                    children: [
+                      customerData(),
+                      if (!isTablet) customerMembership(),
+                      if (!isTablet) customerVehicle(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            isTablet
-                ? SizedBox(
-                    width: ResponsiveBreakpoints.of(context)
-                            .largerOrEqualTo(DESKTOP)
-                        ? MediaQuery.of(context).size.width - 400
-                        : MediaQuery.of(context).size.width * 0.5,
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Column(
-                        spacing: 10,
-                        children: [customerMembership(), customerVehicle()],
+              isTablet
+                  ? SizedBox(
+                      width: ResponsiveBreakpoints.of(context)
+                              .largerOrEqualTo(DESKTOP)
+                          ? MediaQuery.of(context).size.width - 400
+                          : MediaQuery.of(context).size.width * 0.5,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Column(
+                          spacing: 10,
+                          children: [customerMembership(), customerVehicle()],
+                        ),
                       ),
-                    ),
-                  )
-                : Container()
-          ],
+                    )
+                  : Container()
+            ],
+          ),
         ),
       ),
     );

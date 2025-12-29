@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/shared/utils/model_converter.dart';
 
 import '../../pos/model/payment_method.dart';
 
@@ -16,23 +17,24 @@ class OutletConfig with _$OutletConfig {
     String? locale,
     String? serverTime,
     Subscriptions? subscriptions,
-    bool? offlineTransaction,
-    bool? syncBeforeCloseShift,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? offlineTransaction,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? syncBeforeCloseShift,
     int? maxOffline,
-    bool? saleWithPic,
-    bool? customerTransMandatory,
-    bool? stockMinus,
-    bool? partialPayment,
-    bool? taxable,
-    bool? extraItem,
-    bool? autoShift,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? saleWithPic,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? customerTransMandatory,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? stockMinus,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? partialPayment,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? taxable,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? extraItem,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? autoShift,
     int? decimalPlaces,
     int? defaultOpenAmount,
-    bool? discountOverall,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? discountOverall,
     int? defaultPaper,
-    bool? attachmentShiftMandatory,
-    bool? generateSku,
-    bool? generateBarcode,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? attachmentShiftMandatory,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? generateSku,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? generateBarcode,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? printIncludePpn,
     Tax? tax,
     List<PinSetting>? pinSettings,
     List<UserHasPin>? userHasPin,

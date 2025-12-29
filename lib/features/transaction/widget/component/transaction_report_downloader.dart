@@ -94,73 +94,75 @@ class _TransactionReportDownloaderState
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !downloading,
-      child: Padding(
-        padding: EdgeInsets.only(
-          top: 10,
-          left: 15,
-          right: 15,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 15,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(top: 15, bottom: 15),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: 0.5,
-                    color: Colors.blueGrey.shade100,
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 15,
+            right: 15,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 15, bottom: 15),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: 0.5,
+                      color: Colors.blueGrey.shade100,
+                    ),
                   ),
                 ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'download_n'.tr(args: ['sales_report'.tr()]),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    !downloading
+                        ? GestureDetector(
+                            onTap: () => context.pop(),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.grey,
+                              size: 18,
+                            ),
+                          )
+                        : Container()
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'download_n'.tr(args: ['sales_report'.tr()]),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  !downloading
-                      ? GestureDetector(
-                          onTap: () => context.pop(),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.grey,
-                            size: 18,
-                          ),
-                        )
-                      : Container()
-                ],
+              const SizedBox(height: 20),
+              SfDateRangePicker(
+                backgroundColor: Colors.white,
+                headerStyle: const DateRangePickerHeaderStyle(
+                    backgroundColor: Colors.white),
+                view: DateRangePickerView.month,
+                enableMultiView: false,
+                selectionMode: DateRangePickerSelectionMode.extendableRange,
+                maxDate: DateTime.now(),
+                onSelectionChanged: _onSelectionChanged,
               ),
-            ),
-            const SizedBox(height: 20),
-            SfDateRangePicker(
-              backgroundColor: Colors.white,
-              headerStyle: const DateRangePickerHeaderStyle(
-                  backgroundColor: Colors.white),
-              view: DateRangePickerView.month,
-              enableMultiView: false,
-              selectionMode: DateRangePickerSelectionMode.extendableRange,
-              maxDate: DateTime.now(),
-              onSelectionChanged: _onSelectionChanged,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: from != null && !downloading
-                  ? () => onDownload(context)
-                  : null,
-              label: Text(downloading ? '$progress %' : 'download'.tr()),
-              icon: downloading
-                  ? const SizedBox(
-                      width: 15,
-                      height: 15,
-                      child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 1),
-                    )
-                  : const Icon(Icons.file_download_outlined),
-            )
-          ],
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: from != null && !downloading
+                    ? () => onDownload(context)
+                    : null,
+                label: Text(downloading ? '$progress %' : 'download'.tr()),
+                icon: downloading
+                    ? const SizedBox(
+                        width: 15,
+                        height: 15,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 1),
+                      )
+                    : const Icon(Icons.file_download_outlined),
+              )
+            ],
+          ),
         ),
       ),
     );

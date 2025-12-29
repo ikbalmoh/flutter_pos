@@ -185,6 +185,7 @@ class _AdjustmentHistoryScreenState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return AdjustmentDateFilter(
               from: from, to: to, onSelect: onFilterAdjustmentDate);

@@ -11,6 +11,7 @@ import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
 import 'package:selleri/features/customer/model/customer.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
+import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/item/model/item_cart_detail.dart';
@@ -64,7 +65,7 @@ class Cart extends _$Cart {
       }
 
       String? transactionNo =
-          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
+          'BILL-${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
@@ -359,11 +360,12 @@ class Cart extends _$Cart {
         : 0;
   }
 
-  void selectCustomer(Customer customer) {
+  void selectCustomer(Customer? customer, {CustomerVehicle? vehicle}) {
     state = state.copyWith(
-      customerName: customer.customerName,
-      idCustomer: customer.idCustomer,
-      customerGroup: customer.groups,
+      customerName: customer?.customerName,
+      idCustomer: customer?.idCustomer,
+      customerGroup: customer?.groups,
+      vehicle: vehicle,
     );
     applyPromotions([]);
   }
@@ -432,6 +434,32 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
+  Future<void> storeTransaction() async {
+    try {
+      final api = ref.watch(transactionApiProvider);
+
+      final shift = ref.read(shiftProvider).value;
+      if (shift == null) {
+        throw 'shift_not_opened'.tr();
+      }
+
+      final res = await api.storeTransaction(state.copyWith(
+        transactionNo: state.transactionNo.replaceAll('BILL-', '').trim(),
+        shiftId: shift.id,
+      ));
+
+      log('TRANSACTIONS: $res');
+
+      if (res.isEmpty) {
+        throw 'transaction_error'.tr();
+      }
+
+      ref.invalidate(transactionsProvider);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> printReceipt(
       {int printCounter = 1, bool? withKitchen = false}) async {
     try {
@@ -450,12 +478,15 @@ class Cart extends _$Cart {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
           outlet.config.attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(state,
-          outlet: outlet.outlet,
-          attributes: attributeReceipts,
-          size: printer.size,
-          isCopy: printCounter > 1,
-          cut: printer.cut);
+      final receipt = await util.Printer.buildReceiptBytes(
+        state,
+        outlet: outlet.outlet,
+        attributes: attributeReceipts,
+        size: printer.size,
+        isCopy: printCounter > 1,
+        cut: printer.cut,
+        printIncludePpn: outlet.config.printIncludePpn ?? false,
+      );
       await ref.read(printerProvider.notifier).print(receipt);
       if (withKitchen == true) {
         await printKitchen();
@@ -490,6 +521,7 @@ class Cart extends _$Cart {
   Future<void> holdCart({required String note, bool createNew = false}) async {
     model.Cart cart =
         state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
+    log('hold cart ${cart.transactionNo} ${cart.idTransaction}');
     final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
       await api.updateHoldTransaction(cart.idTransaction!, cart);
@@ -910,5 +942,11 @@ class Cart extends _$Cart {
       tables: tables.map((table) => table.name).toList(),
     );
     ref.read(tablesProvider().notifier).markTables(state.transactionNo, tables);
+  }
+
+  void clearTables() {
+    final tables = state.tables ?? [];
+    state = state.copyWith(tables: []);
+    ref.read(tablesProvider().notifier).clearTables(tables);
   }
 }

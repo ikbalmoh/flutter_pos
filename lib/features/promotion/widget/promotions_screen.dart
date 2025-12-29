@@ -55,6 +55,7 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
     final int? selectedType = await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) {
           return PromotionTypeFilter(selected: type);
         });
@@ -73,6 +74,7 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
         backgroundColor: Colors.white,
         isScrollControlled: true,
         context: context,
+        useSafeArea: true,
         builder: (context) {
           return DatePicker(
             initialForm: range?.startDate,

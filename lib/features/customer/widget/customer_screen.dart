@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/customer/model/customer.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/features/customer/provider/customer_list_provider.dart';
 import 'package:selleri/features/customer/widget/customer_form.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
@@ -91,12 +92,15 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedCustomer = ref.watch(cartProvider).idCustomer;
+    final selectedVehicle = ref.watch(cartProvider).vehicle;
 
-    void onSelectCustomer(customer) {
+    void onSelectCustomer(customer, {CustomerVehicle? vehicle}) {
       while (context.canPop() == true) {
         context.pop();
       }
-      ref.read(cartProvider.notifier).selectCustomer(customer);
+      ref
+          .read(cartProvider.notifier)
+          .selectCustomer(customer, vehicle: vehicle);
     }
 
     void showCustomerSheet(Customer customer) {
@@ -104,10 +108,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (BuildContext context) => CustomerDetail(
           customer: customer,
           onSelect: onSelectCustomer,
           onEdit: onEditCustomer,
+          isSelected: selectedCustomer == customer.idCustomer,
+          vehicle: selectedVehicle,
         ),
       );
     }

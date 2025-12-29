@@ -18,8 +18,8 @@ Dio fetch() {
     baseUrl: dotenv.env['HOST']!,
     contentType: Headers.jsonContentType,
     validateStatus: (int? status) => status != null,
-    connectTimeout: Duration(seconds: 60),
-    receiveTimeout: Duration(seconds: 60),
+    connectTimeout: Duration(minutes: 10),
+    receiveTimeout: Duration(minutes: 10),
   );
 
   Dio dio = Dio(baseOption);

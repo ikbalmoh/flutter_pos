@@ -42,6 +42,7 @@ class ReceivingCart extends ConsumerWidget {
         backgroundColor: Colors.white,
         isDismissible: false,
         enableDrag: false,
+        useSafeArea: true,
         builder: (context) => DraggableScrollableSheet(
           builder: (context, controller) => SubmitReceivingSheet(
             scrollController: controller,
@@ -66,6 +67,7 @@ class ReceivingCart extends ConsumerWidget {
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.white,
+          useSafeArea: true,
           builder: (context) {
             return ReceiveItemForm(
               item: PurchaseItem.fromReceivingItem(item),

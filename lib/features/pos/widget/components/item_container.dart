@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -36,13 +37,30 @@ class ItemContainer extends ConsumerWidget {
     super.key,
   });
 
-  void onAddToCart(BuildContext context, WidgetRef ref,
-      {required Item item,
-      required List<ItemVariant> variants,
-      ItemVariant? variant}) async {
+  void onAddToCart(
+    BuildContext context,
+    WidgetRef ref, {
+    required Item item,
+    required List<ItemVariant> variants,
+    ItemVariant? variant,
+    bool? isConfirmed = false,
+  }) async {
     try {
-      debugPrint(
-          'onAddToCart: item: ${item.itemName} => variants: ${variants.map((v) => '${v.id} - ${v.variantName}')} => variant: ${variant?.variantName}');
+      double qtyOnCart = ref.read(cartProvider.notifier).qtyOnCart(item.idItem);
+      if (item.hasExpiredItems() && isConfirmed != true && qtyOnCart == 0) {
+        confirmExpiredItem(
+          context,
+          ref,
+          item: item,
+          variants: variants,
+          variant: variant,
+        );
+        return;
+      }
+      log('onAddToCart: item: ${item.itemName} => variants: ${variants.map((v) => '${v.id} - ${v.variantName}')} => variant: ${variant?.variantName}');
+      if (item.isPackage) {
+        log('item packages: ${item.packageItems}');
+      }
 
       if (variant != null) {
         await ref.read(cartProvider.notifier).addToCart(item, variant: variant);
@@ -68,6 +86,103 @@ class ItemContainer extends ConsumerWidget {
         AppAlert.snackbar(e.toString());
       }
     }
+  }
+
+  void confirmExpiredItem(
+    BuildContext context,
+    WidgetRef ref, {
+    required Item item,
+    required List<ItemVariant> variants,
+    ItemVariant? variant,
+    bool? isConfirmed = false,
+  }) async {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        useSafeArea: true,
+        builder: (context) {
+          return SafeArea(
+            child: SizedBox(
+              width: double.maxFinite,
+              child: Padding(
+                padding: const EdgeInsets.all(20).copyWith(bottom: 25),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(
+                            CupertinoIcons.calendar,
+                            color: Colors.red,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            item.isPackage
+                                ? [
+                                    item
+                                        .expiredItems()
+                                        .map((i) => i.itemName)
+                                        .join(', '),
+                                    'expired'.tr()
+                                  ].join(' ')
+                                : 'item_expired'.tr(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'continue_select_item'.tr(),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.grey.shade600,
+                          ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () => context.pop(),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.grey.shade500,
+                            ),
+                            child: Text('no'.tr())),
+                        TextButton(
+                            onPressed: () {
+                              onAddToCart(context, ref,
+                                  item: item,
+                                  variants: variants,
+                                  isConfirmed: true,
+                                  variant: variant);
+                              context.pop();
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red.shade500,
+                            ),
+                            child: Text('yes'.tr())),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   void showVariants(BuildContext context, Item item, WidgetRef ref) {
@@ -187,6 +302,7 @@ class ItemContainer extends ConsumerWidget {
                       crossAxisCount: gridColumn,
                       mainAxisSpacing: 7.5,
                       crossAxisSpacing: 8,
+                      childAspectRatio: 0.85,
                     ),
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(7.5),

@@ -41,6 +41,7 @@ class _ManageItemVariantsScreenState
       backgroundColor: Colors.white,
       isDismissible: true,
       context: context,
+      useSafeArea: true,
       builder: (context) {
         return EditVariantForm(variant: variant);
       },
