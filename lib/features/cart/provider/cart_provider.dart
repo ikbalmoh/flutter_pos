@@ -66,7 +66,7 @@ class Cart extends _$Cart {
       }
 
       String? transactionNo =
-          'BILL-${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
+          '${outletState.outlet.outletCode}-${authState.user.user.idUser.substring(9, 13)}-${(DateTime.now().millisecondsSinceEpoch / 1000).floor()}';
 
       final tax = outletState.config.tax;
       final taxable = outletState.config.taxable ?? false;
@@ -444,8 +444,11 @@ class Cart extends _$Cart {
         throw 'shift_not_opened'.tr();
       }
 
+      final String transactionNo =
+          state.transactionNo.replaceFirst('BILL-', '').trim();
+
       final res = await api.storeTransaction(state.copyWith(
-        transactionNo: state.transactionNo.replaceAll('BILL-', '').trim(),
+        transactionNo: transactionNo,
         shiftId: shift.id,
       ));
 
@@ -454,6 +457,11 @@ class Cart extends _$Cart {
       if (res.isEmpty) {
         throw 'transaction_error'.tr();
       }
+
+      state = state.copyWith(
+        transactionNo: transactionNo,
+        shiftId: shift.id,
+      );
 
       ref.invalidate(transactionsProvider);
     } catch (e) {
@@ -520,8 +528,14 @@ class Cart extends _$Cart {
   }
 
   Future<void> holdCart({required String note, bool createNew = false}) async {
-    model.Cart cart =
-        state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
+    model.Cart cart = state.copyWith(
+      transactionNo: state.transactionNo.startsWith('BILL-')
+          ? state.transactionNo
+          : 'BILL-${state.transactionNo}',
+      holdAt: DateTime.now(),
+      description: note,
+      isApp: true,
+    );
     log('hold cart ${cart.transactionNo} ${cart.idTransaction}');
     final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
