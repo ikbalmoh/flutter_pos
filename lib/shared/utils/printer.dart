@@ -85,7 +85,7 @@ class Printer {
 
       final String transactionNo = isHold
           ? cart.transactionNo
-          : cart.transactionNo.replaceAll('BILL-', '').trim();
+          : cart.transactionNo.replaceFirst('BILL-', '').trim();
 
       // info
       bytes += generator.text('No: $transactionNo');
