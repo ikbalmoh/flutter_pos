@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -19,7 +20,7 @@ class InternetConnectivityChecker {
   void _initialize() {
     _connectivity.onConnectivityChanged.listen(
       (List<ConnectivityResult> result) {
-        debugPrint('Connection Change: $result');
+        log('Connection Change: $result');
         _checkInternetConnection();
       },
     );
@@ -29,13 +30,13 @@ class InternetConnectivityChecker {
     try {
       final result = await InternetAddress.lookup('google.com');
       hasConnection = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-      debugPrint('Internet Connection: $hasConnection');
+      log('Internet Connection: $hasConnection');
     } on SocketException {
       hasConnection = false;
-      debugPrint('Internet Connection: $hasConnection');
+      log('Internet Connection: $hasConnection');
     }
     _connectionChangeController.add(hasConnection);
-    debugPrint('Emitting connection status: $hasConnection');
+    log('Emitting connection status: $hasConnection');
   }
 
   void dispose() {

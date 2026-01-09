@@ -37,7 +37,7 @@ class Auth extends _$Auth {
     } on DioException {
       return Initialized();
     } catch (e, st) {
-      debugPrint('Auth initialization failed; $e\n$st');
+      log('Auth initialization failed; $e\n$st');
       return Initialized();
     }
   }

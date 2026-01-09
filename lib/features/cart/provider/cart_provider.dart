@@ -22,6 +22,7 @@ import 'package:selleri/features/promotion/model/promotion.dart';
 import 'package:selleri/features/table/model/table.dart';
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
+import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
@@ -179,7 +180,7 @@ class Cart extends _$Cart {
           .toList(),
     );
 
-    debugPrint(
+    log(
         'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
@@ -446,10 +447,12 @@ class Cart extends _$Cart {
       final String transactionNo =
           state.transactionNo.replaceFirst('BILL-', '').trim();
 
-      final res = await api.storeTransaction(state.copyWith(
-        transactionNo: transactionNo,
-        shiftId: shift.id,
-      ));
+      final res = await api.storeTransaction([
+        state.copyWith(
+          transactionNo: transactionNo,
+          shiftId: shift.id,
+        )
+      ]);
 
       log('TRANSACTIONS: $res');
 

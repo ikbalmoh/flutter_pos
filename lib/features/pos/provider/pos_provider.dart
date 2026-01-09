@@ -1,5 +1,6 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart'
     as cart_provider;
@@ -18,7 +19,7 @@ class Pos extends _$Pos {
     final offline = ref.watch(offlineTransactionsProvider).value;
     final connection = ref.watch(connectivityStatusProvider);
 
-    debugPrint(
+    log(
         'SYNC TRANSACTIONS\nconnection => $connection\ntransaction => ${offline?.map((tr) => tr.transactionNo).toList()}');
     if (connection == ConnectivityState.connected &&
         offline != null &&
@@ -37,17 +38,17 @@ class Pos extends _$Pos {
       final syncedTransactions =
           // ignore: avoid_manual_providers_as_generated_provider_dependency
           await ref.read(transactionApiProvider).storeTransaction(transactions);
-      debugPrint('TRANSACTIONS TO SYNC: $syncedTransactions');
+      log('TRANSACTIONS TO SYNC: $syncedTransactions');
       if (syncedTransactions.isNotEmpty) {
         final ids = syncedTransactions
             .map((transaction) => transaction.transactionNo)
             .toList();
-        debugPrint('delete transactions $ids');
+        log('delete transactions $ids');
         ref.read(offlineTransactionsProvider.notifier).delete(ids);
       }
       state = const AsyncData(true);
     } catch (e, st) {
-      debugPrint('SYNC FAILED: $e => $st');
+      log('SYNC FAILED: $e => $st');
       state = AsyncData(false);
     }
   }

@@ -34,7 +34,7 @@ class TransactionApi {
         ),
       );
 
-      debugPrint('TRANSACTIONS STORED ${res.data}');
+      log('TRANSACTIONS STORED ${res.data}');
 
       return List<Map<String, dynamic>>.from(res.data['data'])
           .map((transaction) => Cart.fromTransaction(transaction))

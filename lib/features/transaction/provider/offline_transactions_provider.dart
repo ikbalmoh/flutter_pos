@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
@@ -11,7 +13,7 @@ class OfflineTransactions extends _$OfflineTransactions {
   @override
   Future<List<model.Cart>> build() async {
     final transactions = await objectBox.offlineTransactions();
-    debugPrint(
+    log(
         'OFFLINE TRANSACTIONS UPDATED: ${transactions.map((tr) => tr.transactionNo).toList()}');
     return transactions;
   }
@@ -22,12 +24,12 @@ class OfflineTransactions extends _$OfflineTransactions {
     await Future.delayed(const Duration(milliseconds: 500));
     try {
       final stored = await objectBox.putTransaction(transaction);
-      debugPrint('OFFLINE TRANSACTION STORED $stored');
+      log('OFFLINE TRANSACTION STORED $stored');
       state = AsyncData(stored);
-      ref.invalidateSelf();
+      // ref.invalidateSelf();
       // ref.read(posProvider.notifier).sync();
     } catch (e) {
-      debugPrint('Error storing offline transaction: $e');
+      log('Error storing offline transaction: $e');
       state = AsyncData(currentTransactions);
       throw 'Failed to store offline transaction: $e';
     }
@@ -43,17 +45,17 @@ class OfflineTransactions extends _$OfflineTransactions {
       final syncedTransactions =
           // ignore: avoid_manual_providers_as_generated_provider_dependency
           await ref.read(transactionApiProvider).storeTransaction(transactions);
-      debugPrint('TRANSACTIONS TO SYNC: $syncedTransactions');
+      log('TRANSACTIONS TO SYNC: $syncedTransactions');
       if (syncedTransactions.isNotEmpty) {
         final ids = syncedTransactions
             .map((transaction) => transaction.transactionNo)
             .toList();
-        debugPrint('delete transactions $ids');
+        log('delete transactions $ids');
         ref.read(offlineTransactionsProvider.notifier).delete(ids);
       }
       ref.invalidateSelf();
     } catch (e, st) {
-      debugPrint('SYNC FAILED: $e => $st');
+      log('SYNC FAILED: $e => $st');
       ref.invalidateSelf();
     }
   }

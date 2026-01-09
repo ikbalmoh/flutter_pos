@@ -68,7 +68,7 @@ class AuthRepository implements AuthRepositoryProtocol {
     if (userString != null) {
       final jsonUser = json.decode(userString);
       final user = User.fromJson(jsonUser);
-      debugPrint('Offline User: $userString');
+      log('Offline User: $userString');
       return user;
     }
 
@@ -77,13 +77,13 @@ class AuthRepository implements AuthRepositoryProtocol {
     try {
       final json = await api.user();
       final user = User.fromJson(json);
-      debugPrint('Online User: ${user.toString()}');
+      log('Online User: ${user.toString()}');
       await storage.write(key: StoreKey.user.name, value: user.toString());
       return user;
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {
-      debugPrint('fetch user failed: $e');
+      log('fetch user failed: $e');
       storage.delete(key: StoreKey.user.name);
       rethrow;
     }

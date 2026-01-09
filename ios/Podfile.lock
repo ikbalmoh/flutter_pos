@@ -381,8 +381,8 @@ CHECKOUT OPTIONS:
     :tag: 11.8.0
 
 SPEC CHECKSUMS:
-  camera_avfoundation: 04b44aeb14070126c6529e5ab82cc7c9fca107cf
-  cloud_firestore: e61acbf808607d2c88ee32b00cd3aec027b38b3c
+  camera_avfoundation: 5675ca25298b6f81fa0a325188e7df62cc217741
+  cloud_firestore: 05fef0cab6366ba2f0e1c0ffb993736ceed4cf89
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Firebase: d80354ed7f6df5f9aca55e9eb47cc4b634735eaf
