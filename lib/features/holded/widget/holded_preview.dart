@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:selleri/features/cart/model/cart_holded.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -11,8 +12,10 @@ import 'package:selleri/features/transaction/provider/transactions_provider.dart
 import 'package:selleri/features/cart/widget/components/order_summary/order_summary.dart';
 import 'package:selleri/features/holded/widget/components/hold_form.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
+import 'package:selleri/shared/utils/share_file.dart';
+import 'package:share_plus/share_plus.dart';
 
-class HoldedPreview extends ConsumerWidget {
+class HoldedPreview extends ConsumerStatefulWidget {
   const HoldedPreview(
       {required this.cartHolded,
       this.asWidget,
@@ -24,14 +27,53 @@ class HoldedPreview extends ConsumerWidget {
   final void Function() onDelete;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _HoldedPreviewState();
+}
+
+class _HoldedPreviewState extends ConsumerState<HoldedPreview> {
+  bool sharing = false;
+
+  final GlobalKey summaryContainerKey = GlobalKey();
+  ScreenshotController screenshotController = ScreenshotController();
+
+  void onShareReceipt(BuildContext context) async {
+    setState(() {
+      sharing = true;
+    });
+    try {
+      await ShareFile.shareReceipt(
+        context,
+        containerKey: summaryContainerKey,
+        title: widget.cartHolded.transactionNo,
+        screenshotController: screenshotController,
+        onReadyToShare: () {
+          setState(() {
+            sharing = false;
+          });
+        },
+        onShared: (status) {
+          if (status == ShareResultStatus.success) {
+            AppAlert.toast('receipt_shared'.tr());
+          }
+        },
+      );
+    } catch (e) {
+      setState(() {
+        sharing = false;
+      });
+      AppAlert.toast(e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     OutletState? outletState = ref.watch(outletProvider).value;
 
     OutletConfig? config =
         outletState is OutletSelected ? outletState.config : null;
 
     void openHoldedTransaction() {
-      ref.read(cartProvider.notifier).openHoldedCart(cartHolded);
+      ref.read(cartProvider.notifier).openHoldedCart(widget.cartHolded);
       while (context.canPop()) {
         context.pop();
       }
@@ -61,7 +103,7 @@ class HoldedPreview extends ConsumerWidget {
     void printReceipt({bool withPrice = true}) async {
       try {
         await ref.read(transactionsProvider.notifier).printReceipt(
-              cartHolded.dataHold,
+              widget.cartHolded.dataHold,
               isHold: true,
               withPrice: withPrice,
             );
@@ -125,16 +167,31 @@ class HoldedPreview extends ConsumerWidget {
           });
     }
 
+    Widget deleteButton = IconButton(
+      tooltip: 'delete_x'.tr(args: ['holded_transactions'.tr()]),
+      onPressed: widget.onDelete,
+      icon: const Icon(
+        CupertinoIcons.trash,
+        color: Colors.red,
+      ),
+      constraints: const BoxConstraints(),
+    );
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      appBar: asWidget != true
+      appBar: widget.asWidget != true
           ? AppBar(
-              title: Text(cartHolded.transactionNo),
+              title: Text(widget.cartHolded.transactionNo),
               iconTheme: const IconThemeData(color: Colors.black87),
               titleTextStyle: const TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18),
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+              actions: [
+                deleteButton,
+              ],
+              actionsPadding: const EdgeInsets.only(right: 10),
             )
           : null,
       body: Column(
@@ -144,11 +201,17 @@ class HoldedPreview extends ConsumerWidget {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(10),
-              child: OrderSummary(
-                taxable: config?.taxable ?? false,
-                cart: cartHolded.dataHold,
-                radius: const Radius.circular(5),
-                outletState: ref.watch(outletProvider).value as OutletSelected,
+              child: Screenshot(
+                controller: screenshotController,
+                child: OrderSummary(
+                  key: summaryContainerKey,
+                  withAttribute: true,
+                  taxable: config?.taxable ?? false,
+                  cart: widget.cartHolded.dataHold,
+                  radius: const Radius.circular(5),
+                  outletState:
+                      ref.watch(outletProvider).value as OutletSelected,
+                ),
               ),
             ),
           ),
@@ -157,7 +220,7 @@ class HoldedPreview extends ConsumerWidget {
             color: Colors.white,
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-            margin: asWidget == true
+            margin: widget.asWidget == true
                 ? const EdgeInsets.symmetric(horizontal: 15)
                 : const EdgeInsets.all(0),
             child: Padding(
@@ -167,15 +230,22 @@ class HoldedPreview extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  IconButton(
-                    tooltip: 'delete_x'.tr(args: ['holded_transactions'.tr()]),
-                    onPressed: onDelete,
-                    icon: const Icon(
-                      CupertinoIcons.trash,
-                      color: Colors.red,
-                    ),
-                    constraints: const BoxConstraints(),
-                  ),
+                  if (widget.asWidget == false) deleteButton,
+                  Builder(builder: (context) {
+                    return IconButton(
+                      onPressed: () => onShareReceipt(context),
+                      icon: sharing
+                          ? const SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.black54,
+                              ),
+                            )
+                          : const Icon(Icons.share),
+                    );
+                  }),
                   IconButton(
                     tooltip: 'print_receipt'.tr(),
                     onPressed: onPrintReceipt,
