@@ -23,7 +23,7 @@ class ItemContainer extends ConsumerWidget {
   final String idCategory;
   final String search;
   final FilterStock filterStock;
-  final bool? allowEmptyStock;
+  final bool? allowStockMinus;
   final Function clearSearch;
 
   const ItemContainer({
@@ -32,7 +32,7 @@ class ItemContainer extends ConsumerWidget {
     required this.search,
     required this.filterStock,
     required this.clearSearch,
-    this.allowEmptyStock,
+    this.allowStockMinus,
     super.key,
   });
 

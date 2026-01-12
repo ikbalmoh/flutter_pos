@@ -214,7 +214,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
                   });
                   focusSearch.requestFocus();
                 },
-                allowEmptyStock: outlet.value is OutletSelected
+                allowStockMinus: outlet.value is OutletSelected
                     ? (outlet.value as OutletSelected).config.stockMinus
                     : false,
               ),

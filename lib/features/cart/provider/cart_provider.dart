@@ -122,8 +122,11 @@ class Cart extends _$Cart {
     if (onCartQty > 0) {
       return updateQty(item.idItem, idVariant: variant?.idVariant);
     }
-    if (itemStock < 1 && item.stockControl) {
-      throw 'out_of_stock'.tr();
+    final outletState = ref.read(outletProvider).value as OutletSelected;
+    if (outletState.config.stockMinus != true) {
+      if (itemStock < 1 && item.stockControl) {
+        throw 'out_of_stock'.tr();
+      }
     }
     String identifier =
         '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
@@ -231,52 +234,53 @@ class Cart extends _$Cart {
     final index = state.items
         .indexWhere((i) => i.idItem == idItem && i.idVariant == idVariant);
 
-    if (index > -1) {
-      final outlet = ref.read(outletProvider).value as OutletSelected;
+    if (index < 0) {
+      return;
+    }
 
-      List<ItemCart> items = [...state.items];
-      ItemCart itemCart = items[index];
+    List<ItemCart> items = [...state.items];
+    ItemCart itemCart = items[index];
 
-      Item? item = objectBox.getItem(idItem);
+    Item? item = objectBox.getItem(idItem);
 
-      if (item == null) {
-        throw 'x_not_found'.tr(args: ['item'.tr()]);
-      }
+    if (item == null) {
+      throw 'x_not_found'.tr(args: ['item'.tr()]);
+    }
 
-      List<CartPromotion> promotions = List.from(state.promotions);
-      if (itemCart.promotion != null) {
-        itemCart = itemCart.copyWith(
-          discount: 0,
-          discountTotal: 0,
-        );
-      }
+    List<CartPromotion> promotions = List.from(state.promotions);
+    if (itemCart.promotion != null) {
+      itemCart = itemCart.copyWith(
+        discount: 0,
+        discountTotal: 0,
+      );
+    }
 
-      ItemVariant? itemVariant = idVariant == null
-          ? null
-          : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
+    ItemVariant? itemVariant = idVariant == null
+        ? null
+        : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
 
-      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+    double itemStock = itemVariant?.stockItem ?? item.stockItem;
 
-      if (item.stockControl &&
-          outlet.config.stockMinus == false &&
-          itemCart.quantity + 1 > itemStock) {
+    final outlet = ref.read(outletProvider).value as OutletSelected;
+
+    if (outlet.config.stockMinus != true) {
+      if (item.stockControl && itemCart.quantity + 1 > itemStock) {
         throw 'max_qty_x'.tr(args: [
           CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
         ]);
       }
+    }
 
-      double quantity =
-          increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
-      double finalPrice = itemCart.price - itemCart.discountTotal;
-      items[index] =
-          itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
-      state = state.copyWith(
-          items: items, roundingValue: 0, promotions: promotions);
-      if (itemCart.promotion != null) {
-        removePromotion(itemCart.promotion!.promotionId);
-      } else {
-        calculateCart();
-      }
+    double quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
+    double finalPrice = itemCart.price - itemCart.discountTotal;
+    items[index] =
+        itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
+    state =
+        state.copyWith(items: items, roundingValue: 0, promotions: promotions);
+    if (itemCart.promotion != null) {
+      removePromotion(itemCart.promotion!.promotionId);
+    } else {
+      calculateCart();
     }
   }
 
