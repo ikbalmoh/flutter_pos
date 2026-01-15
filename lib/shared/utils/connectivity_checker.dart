@@ -24,16 +24,20 @@ class InternetConnectivityChecker {
         _checkInternetConnection();
       },
     );
+    // Initial check
+    _checkInternetConnection();
   }
 
   Future<void> _checkInternetConnection() async {
     try {
-      final result = await InternetAddress.lookup('google.com');
-      hasConnection = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-      log('Internet Connection: $hasConnection');
-    } on SocketException {
+      final result = await InternetAddress.lookup('google.com').timeout(const Duration(seconds: 5));
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        hasConnection = true;
+      } else {
+        hasConnection = false;
+      }
+    } catch (_) {
       hasConnection = false;
-      log('Internet Connection: $hasConnection');
     }
     _connectionChangeController.add(hasConnection);
     log('Emitting connection status: $hasConnection');

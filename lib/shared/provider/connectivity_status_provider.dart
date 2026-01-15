@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/utils/connectivity_checker.dart';
 
@@ -11,23 +10,26 @@ enum ConnectivityState {
   connected,
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ConnectivityStatus extends _$ConnectivityStatus {
-  final InternetConnectivityChecker _connectivityService =
-      InternetConnectivityChecker();
+  InternetConnectivityChecker? _connectivityService;
 
   @override
   ConnectivityState build() {
-    watchConnection();
-    return ConnectivityState.connected;
-  }
-
-  watchConnection() {
-    _connectivityService.connectionChange.listen((isConnected) {
-      log('ConnectivityState $isConnected');
+    _connectivityService = InternetConnectivityChecker();
+    
+    final subscription = _connectivityService!.connectionChange.listen((isConnected) {
+      log('ConnectivityState changed: $isConnected');
       state = isConnected
           ? ConnectivityState.connected
           : ConnectivityState.disconnected;
     });
+
+    ref.onDispose(() {
+      subscription.cancel();
+      _connectivityService?.dispose();
+    });
+
+    return ConnectivityState.connected;
   }
 }

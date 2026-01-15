@@ -273,7 +273,10 @@ class _TransactionHistoryScreenState
                               onPressed: () => ref
                                   .read(offlineTransactionsProvider.notifier)
                                   .sync(),
-                              icon: Icon(Icons.cloud_upload_outlined),
+                              icon: Badge(
+                                label: Text(data.length.toString()),
+                                child: Icon(Icons.cloud_upload_outlined),
+                              ),
                             )
                           : IconButton(
                               onPressed: () {

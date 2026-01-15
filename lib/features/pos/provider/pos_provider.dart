@@ -5,7 +5,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart'
     as cart_provider;
 import 'package:selleri/features/shift/provider/shift_provider.dart';
-import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
@@ -16,41 +15,21 @@ part 'pos_provider.g.dart';
 class Pos extends _$Pos {
   @override
   Future<bool> build() async {
-    final offline = ref.watch(offlineTransactionsProvider).value;
+    final offlineState = ref.watch(offlineTransactionsProvider);
     final connection = ref.watch(connectivityStatusProvider);
+
+    if (offlineState.isLoading) return false;
+
+    final offline = offlineState.value;
 
     log(
         'SYNC TRANSACTIONS\nconnection => $connection\ntransaction => ${offline?.map((tr) => tr.transactionNo).toList()}');
-    if (connection == ConnectivityState.connected &&
-        offline != null &&
-        offline.isNotEmpty) {
-      sync();
-    }
+
     return true;
   }
 
   Future<void> sync() async {
-    try {
-      final transactions = ref.read(offlineTransactionsProvider).value;
-      if (transactions == null || transactions.isEmpty) {
-        return;
-      }
-      final syncedTransactions =
-          // ignore: avoid_manual_providers_as_generated_provider_dependency
-          await ref.read(transactionApiProvider).storeTransaction(transactions);
-      log('TRANSACTIONS TO SYNC: $syncedTransactions');
-      if (syncedTransactions.isNotEmpty) {
-        final ids = syncedTransactions
-            .map((transaction) => transaction.transactionNo)
-            .toList();
-        log('delete transactions $ids');
-        ref.read(offlineTransactionsProvider.notifier).delete(ids);
-      }
-      state = const AsyncData(true);
-    } catch (e, st) {
-      log('SYNC FAILED: $e => $st');
-      state = AsyncData(false);
-    }
+    await ref.read(offlineTransactionsProvider.notifier).sync();
   }
 
   Future<void> store() async {
@@ -67,7 +46,6 @@ class Pos extends _$Pos {
 
     await ref.read(offlineTransactionsProvider.notifier).store(transaction);
 
-    ref.invalidateSelf();
     ref.invalidate(transactionsProvider);
   }
 }

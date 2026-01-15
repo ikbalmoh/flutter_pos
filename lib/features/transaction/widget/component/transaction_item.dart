@@ -4,11 +4,12 @@ import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
 class TransactionItem extends StatelessWidget {
-  const TransactionItem(
-      {super.key,
-      required this.cart,
-      required this.active,
-      required this.onTap});
+  const TransactionItem({
+    super.key,
+    required this.cart,
+    required this.active,
+    required this.onTap,
+  });
 
   final Cart cart;
   final bool active;

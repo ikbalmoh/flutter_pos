@@ -105,6 +105,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
 
   Future<void> loadShift() async {
     await refreshData();
+    if (!mounted) return;
     final currentShift = ref.read(shiftProvider).value;
     if (currentShift == null) {
       ref.read(shiftProvider.notifier).initShift();

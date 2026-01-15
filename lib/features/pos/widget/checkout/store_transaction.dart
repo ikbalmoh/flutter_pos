@@ -35,7 +35,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    submitTransaction();
+    Future.microtask(() => submitTransaction());
     super.initState();
   }
 
