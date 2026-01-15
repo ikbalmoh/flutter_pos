@@ -31,6 +31,7 @@ class CartScreen extends ConsumerWidget {
           confirmLabel: 'delete'.tr(),
           danger: true, onConfirm: () async {
         await ref.read(cartProvider.notifier).removeItem(item.identifier!);
+        if (!context.mounted) return;
       });
     }
 

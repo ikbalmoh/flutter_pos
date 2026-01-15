@@ -86,6 +86,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
+    if (!mounted) return;
     if (!isAuthorize) {
       return;
     }

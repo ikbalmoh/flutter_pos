@@ -39,6 +39,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
     final tables = cart.tables != null && cart.tables!.isNotEmpty
         ? await ref.read(tablesProvider().notifier).getTables(cart.tables!)
         : [];
+    if (!mounted) return;
     setState(() {
       selected = List.from(tables);
       currentFloor = tables.isNotEmpty ? tables[0].floor! : 1;

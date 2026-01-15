@@ -383,5 +383,6 @@
   "walk_in": "Walk In",
   "unselect": "Batalkan Pilihan",
   "package": "Paket",
-  "x_items_expired": "{} item kadaluarsa"
+  "x_items_expired": "{} item kadaluarsa",
+  "stock_control": "Kontrol Stok"
 }

@@ -382,5 +382,6 @@
   "walk_in": "Walk In",
   "unselect": "Unselect",
   "package": "Package",
-  "x_items_expired": "{} items expired"
+  "x_items_expired": "{} items expired",
+  "stock_control": "Stock Control"
 }

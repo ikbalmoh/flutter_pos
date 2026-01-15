@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:selleri/shared/objectbox.dart' show objectBox;
 // ignore: unnecessary_import
 import 'package:objectbox/objectbox.dart';

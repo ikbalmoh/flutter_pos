@@ -39,6 +39,8 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   DateTime? expiredDate;
   List<AttributeVariant> attributes = [];
 
+  bool stockControl = false;
+
   void resetForm() {
     _formKey.currentState!.reset();
     _itemNameController.text = '';
@@ -72,6 +74,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       'sku': _skuController.text,
       'barcode': _barcodeController.text,
       'min_stock': 0,
+      'stock_control': stockControl ? 1 : 0,
       'initial_stock': initialStock,
       'expired_date': expiredDate != null
           ? DateTimeFormater.dateToString(expiredDate!, format: 'y-MM-dd')
@@ -349,59 +352,92 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               return null;
                             },
                           ),
-                          TextFormField(
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.only(
-                                  left: 0, top: 10, bottom: 5, right: 0),
-                              label: Text(
-                                'initial_stock'.tr(),
-                                style: labelStyle,
-                              ),
-                              alignLabelWithHint: true,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                Expanded(
+                                  child: Text('stock_control'.tr(),
+                                      style: labelStyle),
+                                ),
+                                SizedBox(
+                                  height: 35,
+                                  width: 45,
+                                  child: FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: Switch(
+                                      value: stockControl,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          stockControl = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            controller: _initialStockController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'enter_x'
-                                    .tr(args: ['initial_stock'.tr()]);
-                              }
-                              return null;
-                            },
-                            inputFormatters: <TextInputFormatter>[
-                              _stockFormater
-                            ],
-                            onChanged: (value) => setState(() {
-                              initialStock = _stockFormater
-                                  .getUnformattedValue()
-                                  .toDouble();
-                            }),
                           ),
-                          TextFormField(
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.only(
-                                  left: 0, top: 10, bottom: 5, right: 0),
-                              label: Text(
-                                'cost_price'.tr(),
-                                style: labelStyle,
+                          if (stockControl)
+                            TextFormField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 0, top: 10, bottom: 5, right: 0),
+                                label: Text(
+                                  'initial_stock'.tr(),
+                                  style: labelStyle,
+                                ),
+                                alignLabelWithHint: true,
                               ),
-                              alignLabelWithHint: true,
+                              controller: _initialStockController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'enter_x'
+                                      .tr(args: ['initial_stock'.tr()]);
+                                }
+                                return null;
+                              },
+                              inputFormatters: <TextInputFormatter>[
+                                _stockFormater
+                              ],
+                              onChanged: (value) => setState(() {
+                                initialStock = _stockFormater
+                                    .getUnformattedValue()
+                                    .toDouble();
+                              }),
                             ),
-                            onChanged: (value) => setState(() {
-                              hppItem =
-                                  _hppFormater.getUnformattedValue().toDouble();
-                            }),
-                            inputFormatters: <TextInputFormatter>[_hppFormater],
-                            controller: _hppItemController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'enter_x'
-                                    .tr(args: ['initial_stock'.tr()]);
-                              }
-                              return null;
-                            },
-                          ),
+                          if (stockControl)
+                            TextFormField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 0, top: 10, bottom: 5, right: 0),
+                                label: Text(
+                                  'cost_price'.tr(),
+                                  style: labelStyle,
+                                ),
+                                alignLabelWithHint: true,
+                              ),
+                              onChanged: (value) => setState(() {
+                                hppItem = _hppFormater
+                                    .getUnformattedValue()
+                                    .toDouble();
+                              }),
+                              inputFormatters: <TextInputFormatter>[
+                                _hppFormater
+                              ],
+                              controller: _hppItemController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'enter_x'
+                                      .tr(args: ['initial_stock'.tr()]);
+                                }
+                                return null;
+                              },
+                            ),
                           TextFormField(
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
