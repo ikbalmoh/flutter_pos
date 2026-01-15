@@ -57,7 +57,9 @@ class _HoldedPreviewState extends ConsumerState<HoldedPreview> {
           }
         },
       );
+      if (!mounted) return;
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         sharing = false;
       });

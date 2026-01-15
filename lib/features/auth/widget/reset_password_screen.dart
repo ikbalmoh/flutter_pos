@@ -34,6 +34,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             _emailController.text,
           );
 
+      if (!mounted) return;
+
       if (!status) {
         throw 'reset_password_failed'.tr();
       }

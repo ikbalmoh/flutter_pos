@@ -63,6 +63,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
     try {
       if (selected['config'] == true) {
         await ref.read(outletProvider.notifier).refreshConfig();
+        if (!mounted) return;
       }
       if (selected['items'] == true || selected['promotions'] == true) {
         await ref.read(itemsProvider().notifier).loadItems(
@@ -72,8 +73,10 @@ class _SyncDataState extends ConsumerState<SyncData> {
                 syncStatus = progress.message ?? '';
               }),
             );
+        if (!mounted) return;
       } else if (selected['categories'] == true) {
         await ref.read(itemsProvider().notifier).syncCategories();
+        if (!mounted) return;
       }
       AppAlert.toast('synced'.tr());
       setState(() {

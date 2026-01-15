@@ -76,6 +76,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
     }
     try {
       await ref.read(cartProvider.notifier).storeTransaction();
+      if (!mounted) return;
       setState(() {
         status = Status.success;
       });

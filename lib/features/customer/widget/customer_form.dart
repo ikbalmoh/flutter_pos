@@ -153,6 +153,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
         await ref.read(customerListProvider.notifier).submitNewCustomer(data);
       } else {
         await AuthorizationHelper.authorize('edit-customer');
+        if (!mounted) return;
         await ref
             .read(customerListProvider.notifier)
             .updateCustomer(widget.customer!.idCustomer, payload: data);

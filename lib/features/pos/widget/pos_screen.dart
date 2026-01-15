@@ -96,6 +96,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
 
   Future<void> refreshData() async {
     await ref.read(outletProvider.notifier).refreshConfig();
+    if (!mounted) return;
     await ref.read(itemsProvider().notifier).syncItems();
     return;
   }
@@ -138,6 +139,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
         return AddBarcodeItem(barcode: barcode);
       },
     );
+    if (!mounted) return;
     cb();
   }
 

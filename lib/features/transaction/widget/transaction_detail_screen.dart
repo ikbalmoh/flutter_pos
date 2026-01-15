@@ -59,7 +59,9 @@ class _TransactionDetailScreenState
           }
         },
       );
+      if (!mounted) return;
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         sharing = false;
       });
@@ -118,7 +120,9 @@ class _TransactionDetailScreenState
         ),
       ),
     );
+    if (!mounted) return;
     Future.delayed(const Duration(microseconds: 200), () {
+      if (!mounted) return;
       ref.read(cartProvider.notifier).reopen(prevCart);
     });
   }
