@@ -134,7 +134,8 @@ class _TransactionDetailScreenState
         .watch(transactionsProvider)
         .value
         ?.data!
-        .firstWhere((cart) => cart.transactionNo == widget.cart.transactionNo);
+        .where((cart) => cart.transactionNo == widget.cart.transactionNo)
+        .firstOrNull;
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(TABLET);
 

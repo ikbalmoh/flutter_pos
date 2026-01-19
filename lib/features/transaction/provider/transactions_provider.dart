@@ -11,15 +11,17 @@ import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
 
 part 'transactions_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: false)
 class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
+    ref.watch(connectivityStatusProvider);
     loadTransactions(page: 1, currentShift: true);
     return future;
   }

@@ -15,12 +15,6 @@ class OfflineTransactions extends _$OfflineTransactions {
   Future<List<model.Cart>> build() async {
     final transactions = await objectBox.offlineTransactions();
 
-    ref.listen(connectivityStatusProvider, (prev, next) {
-      if (next == ConnectivityState.connected) {
-        Future.microtask(() => sync());
-      }
-    });
-
     log(
         'OFFLINE TRANSACTIONS UPDATED: ${transactions.map((tr) => tr.transactionNo).toList()}');
     return transactions;
@@ -33,7 +27,6 @@ class OfflineTransactions extends _$OfflineTransactions {
       final stored = await objectBox.putTransaction(transaction);
       log('OFFLINE TRANSACTION STORED $stored');
       state = AsyncData(stored);
-      Future.microtask(() => sync());
     } catch (e) {
       log('Error storing offline transaction: $e');
       state = AsyncData(currentTransactions);

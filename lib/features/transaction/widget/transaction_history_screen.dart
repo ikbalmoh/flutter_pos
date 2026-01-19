@@ -13,6 +13,7 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/connection_baner_widget.dart';
@@ -267,24 +268,33 @@ class _TransactionHistoryScreenState
                   icon: const Icon(CupertinoIcons.doc_chart),
                 ),
                 ref.watch(offlineTransactionsProvider).when(
-                      data: (data) => data.isNotEmpty
+                      data: (data) => ref.watch(connectivityStatusProvider) ==
+                              ConnectivityState.disconnected
                           ? IconButton(
-                              tooltip: 'sync'.tr(),
-                              onPressed: () => ref
-                                  .read(offlineTransactionsProvider.notifier)
-                                  .sync(),
-                              icon: Badge(
-                                label: Text(data.length.toString()),
-                                child: Icon(Icons.cloud_upload_outlined),
-                              ),
+                              onPressed: null,
+                              icon: Icon(Icons.cloud_off),
+                              tooltip: 'no_connection'.tr(),
                             )
-                          : IconButton(
-                              onPressed: () {
-                                AppAlert.toast('all_transactions_synced'.tr());
-                              },
-                              color: Colors.green,
-                              icon: Icon(Icons.cloud_done_outlined),
-                            ),
+                          : data.isNotEmpty
+                              ? IconButton(
+                                  tooltip: 'sync'.tr(),
+                                  onPressed: () => ref
+                                      .read(
+                                          offlineTransactionsProvider.notifier)
+                                      .sync(),
+                                  icon: Badge(
+                                    label: Text(data.length.toString()),
+                                    child: Icon(Icons.cloud_upload_outlined),
+                                  ),
+                                )
+                              : IconButton(
+                                  onPressed: () {
+                                    AppAlert.toast(
+                                        'all_transactions_synced'.tr());
+                                  },
+                                  color: Colors.green,
+                                  icon: Icon(Icons.cloud_done_outlined),
+                                ),
                       error: (error, st) => Container(),
                       loading: () => IconButton(
                         onPressed: null,
