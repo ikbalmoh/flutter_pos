@@ -1,11 +1,13 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
+import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
+import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
-
-import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 
 part 'offline_transactions_provider.g.dart';
 
@@ -13,20 +15,35 @@ part 'offline_transactions_provider.g.dart';
 class OfflineTransactions extends _$OfflineTransactions {
   @override
   Future<List<model.Cart>> build() async {
-    final transactions = await objectBox.offlineTransactions();
+    final offlineTransactions = await objectBox.offlineTransactions();
 
-    log(
-        'OFFLINE TRANSACTIONS UPDATED: ${transactions.map((tr) => tr.transactionNo).toList()}');
-    return transactions;
+    return offlineTransactions;
+  }
+
+  Future<void> storeCurrentTransaction() async {
+    final shift = ref.read(shiftProvider).value;
+    if (shift == null) {
+      throw 'shift_not_opened'.tr();
+    }
+
+    final cart = ref.read(cartProvider);
+    final transaction = cart.copyWith(
+      shiftId: shift.id,
+      isOffline: true,
+    );
+
+    await store(transaction);
   }
 
   Future<void> store(model.Cart transaction) async {
+    transaction = transaction.copyWith(isOffline: true);
+
     final List<model.Cart> currentTransactions = state.value ?? [];
     await Future.delayed(const Duration(milliseconds: 500));
     try {
       final stored = await objectBox.putTransaction(transaction);
-      log('OFFLINE TRANSACTION STORED $stored');
       state = AsyncData(stored);
+      ref.read(transactionsProvider.notifier).appendTransaction(transaction);
     } catch (e) {
       log('Error storing offline transaction: $e');
       state = AsyncData(currentTransactions);
@@ -36,8 +53,6 @@ class OfflineTransactions extends _$OfflineTransactions {
 
   Future<void> sync() async {
     if (state.isLoading) return;
-    final connection = ref.read(connectivityStatusProvider);
-    if (connection != ConnectivityState.connected) return;
 
     final transactions = state.value;
     state = const AsyncLoading();
@@ -48,13 +63,17 @@ class OfflineTransactions extends _$OfflineTransactions {
       final syncedTransactions =
           // ignore: avoid_manual_providers_as_generated_provider_dependency
           await ref.read(transactionApiProvider).storeTransaction(transactions);
-      log('TRANSACTIONS TO SYNC: $syncedTransactions');
+
+      log('TRANSACTIONS SYNCED: $syncedTransactions');
       if (syncedTransactions.isNotEmpty) {
         final ids = syncedTransactions
             .map((transaction) => transaction.transactionNo)
             .toList();
         log('delete transactions $ids');
         await objectBox.deleteOfflineTransactions(ids);
+        ref
+            .read(transactionsProvider.notifier)
+            .updateTransactions(syncedTransactions);
       }
       ref.invalidateSelf();
     } catch (e, st) {

@@ -373,7 +373,7 @@
   "city": "City",
   "district": "District",
   "back": "Back",
-  "no_connections": "No Connections",
+  "no_connections": "Offline",
   "no_connections_instruction": "Please check your connections and try again",
   "all_transactions_synced": "All transactions synced",
   "without_vehicle": "Without Vehicle",

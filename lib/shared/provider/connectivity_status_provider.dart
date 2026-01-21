@@ -14,15 +14,19 @@ enum ConnectivityState {
 class ConnectivityStatus extends _$ConnectivityStatus {
   InternetConnectivityChecker? _connectivityService;
 
+  static ConnectivityState current = ConnectivityState.connected;
+
   @override
   ConnectivityState build() {
     _connectivityService = InternetConnectivityChecker();
     
     final subscription = _connectivityService!.connectionChange.listen((isConnected) {
       log('ConnectivityState changed: $isConnected');
-      state = isConnected
+      final newState = isConnected
           ? ConnectivityState.connected
           : ConnectivityState.disconnected;
+      state = newState;
+      current = newState;
     });
 
     ref.onDispose(() {

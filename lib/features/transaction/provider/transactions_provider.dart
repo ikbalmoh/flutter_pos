@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart';
@@ -21,8 +22,10 @@ part 'transactions_provider.g.dart';
 class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
-    ref.watch(connectivityStatusProvider);
-    loadTransactions(page: 1, currentShift: true);
+    loadTransactions(
+      page: 1,
+      currentShift: true,
+    );
     return future;
   }
 
@@ -32,20 +35,48 @@ class Transactions extends _$Transactions {
     bool? currentShift = false,
     String? table,
   }) async {
-    final offlineTransactions =
-        ref.read(offlineTransactionsProvider).value ?? [];
     if (page == 1) {
       state = const AsyncLoading();
     } else {
       state = AsyncData(state.value!.copyWith(loading: true));
     }
-    final api = ref.watch(transactionApiProvider);
+
+    List<Cart> transactionsData =
+        await ref.read(offlineTransactionsProvider.future) ?? [];
+    log('Offline Transactions: ${transactionsData.map((tr) => tr.transactionNo).toList()}');
+
+    final connection = ref.read(connectivityStatusProvider);
+
+    if (state.hasValue &&
+        state.value?.data != null &&
+        state.value?.data!.isNotEmpty == true) {
+      final offlineTransactionNos =
+          transactionsData.map((tr) => tr.transactionNo).toList();
+      List<Cart> prevTransactions =
+          List.from(state.value?.data as Iterable<Cart>);
+
+      prevTransactions = prevTransactions
+        ..removeWhere(
+          (tr) =>
+              offlineTransactionNos.contains(tr.transactionNo) ||
+              tr.isOffline == true,
+        );
+
+      transactionsData += prevTransactions;
+    }
+
     try {
+      if (connection == ConnectivityState.disconnected) {
+        throw 'disconnected';
+      }
+
+      final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId;
       if (currentShift == true) {
         shiftId = ref.read(shiftProvider).value?.id;
       }
+
       var transactions = await api.transactions(
         page: page,
         q: search,
@@ -53,37 +84,31 @@ class Transactions extends _$Transactions {
         shiftId: shiftId,
         table: table,
       );
-      List<Cart> data =
-          state.hasValue ? List.from(state.value?.data as Iterable<Cart>) : [];
+
       if (page == 1) {
-        final offlineTransactions =
-            ref.read(offlineTransactionsProvider).value ?? [];
-        if (offlineTransactions.isNotEmpty) {
-          List<String> offlineTransactionNsNo =
-              offlineTransactions.map((t) => t.transactionNo).toList();
-          List<Cart> transactionsData =
-              List<Cart>.from(transactions.data ?? []);
+        transactionsData += (transactions.data ?? []);
 
-          transactionsData.removeWhere(
-              (t) => offlineTransactionNsNo.contains(t.transactionNo));
-
-          transactions = transactions.copyWith(
-            data: transactionsData,
-          );
-        }
+        transactions = transactions.copyWith(
+          data: transactionsData,
+        );
       } else {
-        data = data..addAll(transactions.data as Iterable<Cart>);
-        transactions = transactions.copyWith(data: data, loading: false);
+        transactionsData.addAll(transactions.data as Iterable<Cart>);
+        transactions =
+            transactions.copyWith(data: transactionsData, loading: false);
       }
       state = AsyncData(transactions);
-    } catch (e, trace) {
-      log('Load Transaction Error: $e\n$trace');
-      state = AsyncData(Pagination(
-        currentPage: 0,
-        lastPage: 0,
-        total: offlineTransactions.length,
-        data: offlineTransactions,
-      ));
+    } on DioException catch (e, stack) {
+      log('Load Transaction Network Error: $e\n$stack');
+      rethrow;
+    } catch (e) {
+      state = AsyncData(
+        Pagination(
+          currentPage: 0,
+          lastPage: 0,
+          total: transactionsData.length,
+          data: transactionsData,
+        ),
+      );
     }
   }
 
@@ -179,5 +204,35 @@ class Transactions extends _$Transactions {
       log('CANCEL TRANSACTION ERROR: $e');
       throw Exception(e);
     }
+  }
+
+  void appendTransaction(Cart transaction) {
+    if (state.value == null) {
+      return;
+    }
+    state = AsyncData(
+      state.value!.copyWith(
+        data: [transaction] + (state.value?.data ?? []),
+      ),
+    );
+  }
+
+  void updateTransactions(List<Cart> transactions) {
+    if (state.value == null) {
+      return;
+    }
+    state = AsyncData(
+      state.value!.copyWith(
+        data: (state.value?.data ?? [])
+            .map(
+              (t) => transactions
+                      .any((tr) => tr.transactionNo == t.transactionNo)
+                  ? transactions
+                      .firstWhere((tr) => tr.transactionNo == t.transactionNo)
+                  : t,
+            )
+            .toList(),
+      ),
+    );
   }
 }

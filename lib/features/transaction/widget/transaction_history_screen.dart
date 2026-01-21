@@ -3,7 +3,8 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart' hide Table;
-import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart' hide Table, AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart.dart';
@@ -272,7 +273,10 @@ class _TransactionHistoryScreenState
                               ConnectivityState.disconnected
                           ? IconButton(
                               onPressed: null,
-                              icon: Icon(Icons.cloud_off),
+                              icon: Badge(
+                                label: Text(data.length.toString()),
+                                child: Icon(Icons.cloud_off_rounded),
+                              ),
                               tooltip: 'no_connection'.tr(),
                             )
                           : data.isNotEmpty
@@ -323,7 +327,6 @@ class _TransactionHistoryScreenState
                       ),
               child: Column(
                 children: [
-                  ConnectionBanerWidget(),
                   transactionFilter(isTablet),
                   Expanded(
                     child: ref.watch(transactionsProvider).when(

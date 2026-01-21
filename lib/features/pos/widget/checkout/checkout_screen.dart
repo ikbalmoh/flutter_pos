@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';

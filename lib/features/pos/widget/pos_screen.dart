@@ -3,11 +3,11 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' hide SearchBar;
+import 'package:flutter/material.dart' hide SearchBar, AppBar;
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:selleri/features/item/model/item.dart';
-import 'package:selleri/features/pos/provider/pos_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -16,7 +16,6 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/features/cart/widget/components/add_barcode_item.dart';
-import 'package:selleri/shared/widget/connection_baner_widget.dart';
 import 'package:selleri/shared/widget/update_patcher.dart';
 import 'package:selleri/features/cart/widget/cart_screen.dart';
 import 'package:selleri/features/pos/widget/components/bottom_action.dart';
@@ -178,8 +177,6 @@ class _PosScreenState extends ConsumerState<PosScreen>
     final outlet = ref.watch(outletProvider);
     final cart = ref.watch(cartProvider);
 
-    ref.read(posProvider.notifier).build();
-
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     var itemContainer = VisibilityDetector(
@@ -197,7 +194,6 @@ class _PosScreenState extends ConsumerState<PosScreen>
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            ConnectionBanerWidget(),
             !isTablet ? HoldedBaner(cart: cart) : Container(),
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),

@@ -3,7 +3,8 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
 import 'package:selleri/features/promotion/provider/promotion_list_provider.dart';

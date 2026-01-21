@@ -43,6 +43,12 @@ class Items extends _$Items {
     bool fullSync = false,
     required Function(OutletLoading progress) progressCallback,
   }) async {
+    final isConnected =
+        ref.read(connectivityStatusProvider) == ConnectivityState.connected;
+    if (!isConnected) {
+      return;
+    }
+
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
     var progress = OutletLoading(

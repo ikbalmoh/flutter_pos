@@ -67,12 +67,12 @@ class Outlet extends _$Outlet {
 
   Future<void> refreshConfig({List<String>? only = const []}) async {
     try {
-      log('SYNC CONFIG: $only');
       final connection = ref.read(connectivityStatusProvider);
       if (connection == ConnectivityState.disconnected ||
           state.value! is OutletSelected) {
         return;
       }
+      log('SYNC CONFIG: $only');
       final outletState = state.value as OutletSelected;
       state = AsyncData(OutletSelected(
         outlet: outletState.outlet,

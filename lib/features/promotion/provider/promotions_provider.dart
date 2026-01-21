@@ -8,6 +8,7 @@ import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/promotion/repository/promotion_repository.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
 part 'promotions_provider.g.dart';
@@ -21,6 +22,11 @@ class Promotions extends _$Promotions {
   }
 
   Future<List<Promotion>> loadPromotions() async {
+    final isConnected =
+        ref.read(connectivityStatusProvider) == ConnectivityState.connected;
+    if (!isConnected) {
+      return objectBox.promotionsStream().first;
+    }
     log('Load Promotions');
     final PromotionRepository promotionRepository =
         ref.read(promotionRepositoryProvider);

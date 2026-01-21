@@ -14,15 +14,25 @@ class ConnectionBanerWidget extends ConsumerWidget {
             width: double.maxFinite,
             height: 30,
             padding: const EdgeInsets.symmetric(vertical: 5),
-            color: Colors.red,
-            child: Center(
-              child: Text(
-                'no_connections'.tr(),
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(color: Colors.white),
-              ),
+            color: Colors.red.shade500.withValues(alpha: 0.2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 10,
+              children: [
+                Icon(
+                  Icons.cloud_off_rounded,
+                  color: Colors.red,
+                  size: 14,
+                ),
+                Text(
+                  'no_connections'.tr(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium
+                      ?.copyWith(color: Colors.red),
+                ),
+              ],
             ),
           )
         : Container();
