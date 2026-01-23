@@ -49,6 +49,8 @@ class Items extends _$Items {
       return;
     }
 
+    log('LOAD ITEMS started');
+
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
     var progress = OutletLoading(
@@ -150,9 +152,11 @@ class Items extends _$Items {
     if (connection == ConnectivityState.disconnected) {
       return;
     }
-    if (objectBox.categoryBox.isEmpty()) {
+    final categories = await objectBox.categoryBox.getAllAsync();
+    log('categories: ${categories.length}');
+    if (categories.isEmpty || state.value == null || state.value!.isEmpty) {
       await loadItems(progressCallback: (status) {
-        log('SYNC ITEMS PROGRESS: $status');
+        log('SYNC ITEMS PROGRESS: loaded ${status.items?.length} items');
       });
     } else {
       log('SYNC ITEMS');
