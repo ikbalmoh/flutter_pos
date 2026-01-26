@@ -374,7 +374,8 @@
   "city": "Kota",
   "district": "Kecamatan",
   "back": "Kembali",
-  "no_connections": "Offline",
+  "no_connections": "Tidak Ada Konkesi",
+  "offline": "Perangkat Offline",
   "no_connections_instruction": "Periksa konkesi Anda dan coba lagi",
   "all_transactions_synced": "Semua transaksi tersinkron",
   "without_vehicle": "Tanpa Kendaraan",
@@ -384,5 +385,8 @@
   "unselect": "Batalkan Pilihan",
   "package": "Paket",
   "x_items_expired": "{} item kadaluarsa",
-  "stock_control": "Kontrol Stok"
+  "stock_control": "Kontrol Stok",
+  "hello": "Halo",
+  "connect_internet_to_open_shift": "Sambungkan internet untuk membuka shift",
+  "connect_internet_to_load_transactions": "Sambungkan internet untuk memuat transaksi"
 }

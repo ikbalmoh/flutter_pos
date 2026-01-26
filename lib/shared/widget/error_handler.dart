@@ -2,19 +2,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/shared/exeptions/offline_exeption.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 
 class ErrorHandler extends ConsumerWidget {
   const ErrorHandler({super.key, this.error, this.stackTrace, this.onRetry});
 
-  final String? error;
+  final Object? error;
   final String? stackTrace;
   final Function()? onRetry;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isOffline =
-        ref.watch(connectivityStatusProvider) != ConnectivityState.connected;
+    final isOffline = error is OfflineException ||
+        ref.read(connectivityStatusProvider) != ConnectivityState.connected;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20).copyWith(top: 80),
@@ -28,13 +29,13 @@ class ErrorHandler extends ConsumerWidget {
                 ? CupertinoIcons.wifi_slash
                 : CupertinoIcons.exclamationmark_circle,
             size: 80,
-            color: Colors.red.shade300,
+            color: Colors.grey.shade400,
           ),
           const SizedBox(
             height: 40,
           ),
           Text(
-            isOffline ? 'no_connections'.tr() : error ?? 'something_wrong'.tr(),
+            isOffline ? 'offline'.tr() : 'something_wrong'.tr(),
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme

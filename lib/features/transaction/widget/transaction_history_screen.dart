@@ -17,7 +17,6 @@ import 'package:selleri/features/transaction/widget/component/transaction_item.d
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
-import 'package:selleri/shared/widget/connection_baner_widget.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
 import 'package:selleri/shared/widget/search_app_bar.dart';
@@ -225,6 +224,9 @@ class _TransactionHistoryScreenState
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
+    final isOffline =
+        ref.watch(connectivityStatusProvider) == ConnectivityState.disconnected;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: searchVisible
@@ -299,7 +301,9 @@ class _TransactionHistoryScreenState
                                   color: Colors.green,
                                   icon: Icon(Icons.cloud_done_outlined),
                                 ),
-                      error: (error, st) => Container(),
+                      error: (error, st) => ErrorHandler(
+                        error: error,
+                      ),
                       loading: () => IconButton(
                         onPressed: null,
                         icon: SizedBox(
@@ -388,20 +392,29 @@ class _TransactionHistoryScreenState
                                     mainAxisSize: MainAxisSize.max,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
+                                    spacing: 15,
                                     children: [
+                                      Icon(
+                                        isOffline
+                                            ? Icons.cloud_off_rounded
+                                            : Icons.folder_open_rounded,
+                                        color: Colors.grey,
+                                        size: 40,
+                                      ),
                                       Text(
-                                        'no_data'.tr(
+                                        isOffline ? 'connect_internet_to_load_transactions'.tr() : 'no_data'.tr(
                                             args: ['transaction_history'.tr()]),
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodySmall
+                                            .bodyMedium
                                             ?.copyWith(color: Colors.grey),
+                                            textAlign: TextAlign.center,
                                       )
                                     ],
                                   ),
                                 ),
                           error: (e, stack) => ErrorHandler(
-                            error: e.toString(),
+                            error: e,
                             stackTrace: stack.toString(),
                           ),
                           loading: () => ListView.builder(
@@ -444,7 +457,13 @@ class _TransactionHistoryScreenState
                         )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 10,
                           children: [
+                            Icon(
+                              Icons.folder_open_rounded,
+                              size: 40,
+                              color: Colors.blueGrey.shade300,
+                            ),
                             Text(
                               'select_x'.tr(args: ['transaction'.tr()]),
                               style: Theme.of(context)

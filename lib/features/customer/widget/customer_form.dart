@@ -528,7 +528,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                               }).toList(),
                             ),
                       error: (error, stackTrace) => ErrorHandler(
-                        error: error.toString(),
+                        error: error,
                         stackTrace: stackTrace.toString(),
                       ),
                       loading: () => Container(),

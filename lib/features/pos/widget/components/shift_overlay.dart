@@ -34,7 +34,7 @@ class ShiftOverlay extends ConsumerWidget {
             child: Container(
               color: Colors.black12,
               child: ErrorHandler(
-                error: error.toString(),
+                error: error,
                 stackTrace: stackTrace.toString(),
               ),
             ),

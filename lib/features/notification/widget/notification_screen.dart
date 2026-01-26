@@ -86,7 +86,7 @@ class NotificationScreen extends ConsumerWidget {
                   );
                 },
                 error: (error, stackTrace) => ErrorHandler(
-                  error: error.toString(),
+                  error: error,
                   stackTrace: stackTrace.toString(),
                 ),
                 loading: () => ListView.builder(

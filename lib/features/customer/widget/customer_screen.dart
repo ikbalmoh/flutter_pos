@@ -228,7 +228,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                 error: (e, stack) => SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
                   child: ErrorHandler(
-                    error: e.toString(),
+                    error: e,
                     stackTrace: stack.toString(),
                   ),
                 ),

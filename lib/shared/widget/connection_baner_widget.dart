@@ -26,7 +26,7 @@ class ConnectionBanerWidget extends ConsumerWidget {
                   size: 14,
                 ),
                 Text(
-                  'no_connections'.tr(),
+                  'offline'.tr(),
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium

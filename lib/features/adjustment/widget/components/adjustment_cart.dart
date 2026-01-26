@@ -80,6 +80,7 @@ class AdjustmentCart extends ConsumerWidget {
             ? const Icon(CupertinoIcons.list_number_rtl)
             : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
+        hideBottom: asWidget == true,
       ),
       body: isLoading == true || cart.isLoading
           ? ListView.builder(

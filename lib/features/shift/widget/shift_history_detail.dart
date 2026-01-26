@@ -168,7 +168,7 @@ class _ShiftHistoryDetailScreenState
               );
             },
             error: (error, stackTrace) => ErrorHandler(
-              error: error.toString(),
+              error: error,
               stackTrace: stackTrace.toString(),
             ),
             loading: () => const ShiftSkeleon(),

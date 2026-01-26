@@ -257,11 +257,9 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                               ],
                             ),
                           ),
-                    error: (e, stack) => Center(
-                      child: ErrorHandler(
-                        error: e.toString(),
-                        stackTrace: stack.toString(),
-                      ),
+                    error: (e, stack) => ErrorHandler(
+                      error: e,
+                      stackTrace: stack.toString(),
                     ),
                     loading: () => ListView.builder(
                       itemBuilder: (context, _) => const ItemListSkeleton(),

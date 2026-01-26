@@ -566,8 +566,8 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                             error: (error, stackTrace) => Padding(
                               padding: const EdgeInsets.only(top: 100),
                               child: ErrorHandler(
-                                error: 'code_not_found'.tr(),
-                                stackTrace: 'please_scan_another_code'.tr(),
+                                error: error,
+                                stackTrace: stackTrace.toString(),
                               ),
                             ),
                             loading: () => ListView.builder(

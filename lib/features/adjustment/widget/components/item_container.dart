@@ -14,6 +14,7 @@ import 'item_variant_adjustment_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/adjustment/widget/components/item_grid.dart';
 import 'package:selleri/features/adjustment/widget/components/item_list.dart';
+import 'package:selleri/shared/widget/error_handler.dart';
 
 class ItemContainer extends ConsumerWidget {
   final ScrollController? scrollController;
@@ -190,8 +191,9 @@ class ItemContainer extends ConsumerWidget {
                         );
                       },
                     ),
-          error: (e, stack) => Center(
-                child: Text(e.toString()),
+          error: (e, stack) => ErrorHandler(
+                error: e,
+                stackTrace: stack.toString(),
               ),
           loading: () => ListView.builder(
                 itemBuilder: (context, idx) {
