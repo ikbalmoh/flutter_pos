@@ -52,8 +52,7 @@ class Printer {
                 const Base64Decoder().convert(attributes.imageBase64!);
             img = decodeImage(imgBytes);
           } catch (e) {
-            log('Cannot decode header image: $e');
-            log('${attributes.imageBase64}');
+            // Cannot decode header image
           }
         }
         headers = GeneralFormater.stripHtmlIfNeeded(attributes.headers ?? '');
@@ -309,7 +308,7 @@ class Printer {
       if (cart.notes != null && cart.notes!.isNotEmpty) {
         bytes += generator.text(cart.notes!,
             styles: const PosStyles(align: PosAlign.left));
-        bytes += generator.hr(ch: '');
+        bytes += generator.feed(1);
       }
 
       if (isHold) {
