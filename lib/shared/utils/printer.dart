@@ -306,6 +306,12 @@ class Printer {
 
       bytes += generator.hr();
 
+      if (cart.notes != null && cart.notes!.isNotEmpty) {
+        bytes += generator.text(cart.notes!,
+            styles: const PosStyles(align: PosAlign.left));
+        bytes += generator.hr(ch: '');
+      }
+
       if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),
             styles: const PosStyles(
