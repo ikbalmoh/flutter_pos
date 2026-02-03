@@ -57,9 +57,12 @@ class ReceiptFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return attributeReceipts.footers != null
-        ? Text(
-            GeneralFormater.stripHtmlIfNeeded(attributeReceipts.footers ?? ''),
-            textAlign: TextAlign.center,
+        ? Center(
+            child: Text(
+              GeneralFormater.stripHtmlIfNeeded(
+                  attributeReceipts.footers ?? ''),
+              textAlign: TextAlign.center,
+            ),
           )
         : Container();
   }
