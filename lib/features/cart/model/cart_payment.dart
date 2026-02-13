@@ -9,7 +9,12 @@ part 'cart_payment.g.dart';
 class CartPayment with _$CartPayment {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory CartPayment({
-    @JsonKey(fromJson: DateTimeFormater.stringToTimestamp) int? payDate,
+    DateTime? createdAt,
+    @JsonKey(
+      fromJson: DateTimeFormater.stringToTimestamp,
+      toJson: DateTimeFormater.msTosecond,
+    )
+    int? payDate,
     String? id,
     required String paymentMethodId,
     @JsonKey(fromJson: ModelConverter.nullableToString)
@@ -18,7 +23,6 @@ class CartPayment with _$CartPayment {
     String? shiftId,
     String? reference,
     String? createdBy,
-    DateTime? createdAt,
   }) = _CartPayment;
 
   factory CartPayment.fromJson(Map<String, dynamic> json) =>

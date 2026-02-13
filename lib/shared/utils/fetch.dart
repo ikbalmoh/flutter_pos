@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/auth/model/token.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
+import 'package:selleri/shared/exeptions/offline_exeption.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer';
@@ -41,6 +44,8 @@ class CustomInterceptors extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    options.receiveTimeout = Duration(seconds: 120);
+
     String? deviceId = await storage.read(key: StoreKey.device.name);
     options.headers['device'] = deviceId;
     options.headers['is-app'] = 1;
@@ -118,10 +123,21 @@ class CustomInterceptors extends Interceptor {
 final apiProvider = Provider<Dio>((ref) {
   final auth = ref.read(authProvider.notifier);
   final Dio dio = fetch();
+
   ref.onDispose(dio.close);
+
+  final isOffline =
+      ref.read(connectivityStatusProvider) == ConnectivityState.disconnected;
+
+  if (isOffline) {
+    throw OfflineException('no_connections'.tr());
+  }
+
   return dio
     ..interceptors.addAll([
       CustomInterceptors(
-          dio: dio, onSessionExpired: () => auth.logout(skipLogout: true)),
+        dio: dio,
+        onSessionExpired: () => auth.logout(skipLogout: true),
+      ),
     ]);
 });

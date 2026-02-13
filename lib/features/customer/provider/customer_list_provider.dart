@@ -9,7 +9,7 @@ import 'package:selleri/features/cart/provider/cart_provider.dart';
 
 part 'customer_list_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CustomerList extends _$CustomerList {
   @override
   FutureOr<Pagination<Customer>> build() async {
@@ -40,7 +40,9 @@ class CustomerList extends _$CustomerList {
     final api = ref.watch(customerApiProvider);
     try {
       var customers = await api.customers(page: page, search: search);
-      List<Customer> data = List.from(state.value?.data as Iterable<Customer>);
+      List<Customer> data = state.hasValue
+          ? List.from(state.value?.data as Iterable<Customer>)
+          : [];
       if (page > 1) {
         data = data..addAll(customers.data as Iterable<Customer>);
         customers = customers.copyWith(data: data, loading: false);

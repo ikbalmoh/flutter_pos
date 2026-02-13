@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';
@@ -85,49 +86,57 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           '${'pay'.tr().toUpperCase()} ${CurrencyFormat.currency(cart.totalCurrentPayment())}'),
     );
 
-    Widget actions = Card(
+    Widget actions = Container(
       margin: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 0),
-      color: Colors.white,
-      elevation: 5,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17.5),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 7.5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Total',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(
-                      CurrencyFormat.currency(cart.grandTotal),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700, color: Colors.teal),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              widget.isPartialPayment == true
-                  ? buttonPay
-                  : Row(
-                      children: [
-                        const HoldButton(),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          flex: 2,
-                          child: buttonPay,
-                        ),
-                      ],
-                    )
-            ],
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: .2),
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: const Offset(5, -10),
           ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17.5),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 7.5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Text(
+                    CurrencyFormat.currency(cart.grandTotal),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700, color: Colors.teal),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            widget.isPartialPayment == true
+                ? buttonPay
+                : Row(
+                    children: [
+                      const HoldButton(),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        flex: 2,
+                        child: buttonPay,
+                      ),
+                    ],
+                  )
+          ],
         ),
       ),
     );

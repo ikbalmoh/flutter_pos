@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_file/open_file.dart';
+import 'package:selleri/shared/exeptions/offline_exeption.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/router/api_url.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
@@ -43,10 +45,17 @@ class _TransactionReportDownloaderState
       return;
     }
     try {
+      final isOffline = ref.read(connectivityStatusProvider) ==
+          ConnectivityState.disconnected;
+      if (isOffline) {
+        throw OfflineException();
+      }
+
       setState(() {
         downloading = true;
         progress = 0;
       });
+
       final fromDate = DateTimeFormater.dateToString(from!, format: 'y-MM-dd');
       final toDate =
           DateTimeFormater.dateToString(to ?? from!, format: 'y-MM-dd');
@@ -81,7 +90,7 @@ class _TransactionReportDownloaderState
       }
       // ignore: use_build_context_synchronously
       context.pop();
-    } on Exception catch (e) {
+    } catch (e) {
       setState(() {
         downloading = false;
         progress = 0;

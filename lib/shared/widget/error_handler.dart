@@ -1,45 +1,55 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/shared/exeptions/offline_exeption.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 
-class ErrorHandler extends StatelessWidget {
+class ErrorHandler extends ConsumerWidget {
   const ErrorHandler({super.key, this.error, this.stackTrace, this.onRetry});
 
-  final String? error;
+  final Object? error;
   final String? stackTrace;
   final Function()? onRetry;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isOffline = error is OfflineException ||
+        ref.read(connectivityStatusProvider) != ConnectivityState.connected;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20).copyWith(top: 80),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: [
-          const Icon(
-            CupertinoIcons.exclamationmark_circle,
+          Icon(
+            isOffline
+                ? CupertinoIcons.wifi_slash
+                : CupertinoIcons.exclamationmark_circle,
             size: 80,
-            color: Colors.red,
+            color: Colors.grey.shade400,
           ),
           const SizedBox(
-            height: 20,
+            height: 40,
           ),
           Text(
-            error ?? 'something_wrong'.tr(),
+            isOffline ? 'offline'.tr() : 'something_wrong'.tr(),
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
-                ?.copyWith(color: Colors.red),
+                ?.copyWith(color: Colors.grey.shade600),
           ),
           const SizedBox(
             height: 10,
           ),
-          stackTrace != null
+          isOffline || stackTrace != null
               ? Text(
-                  stackTrace.toString(),
+                  isOffline
+                      ? 'no_connections_instruction'.tr()
+                      : stackTrace.toString(),
                   style: Theme.of(context)
                       .textTheme
                       .bodySmall

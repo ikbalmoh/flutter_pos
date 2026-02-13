@@ -136,7 +136,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                                     return buildOutletLists(context, data);
                                   },
                                   error: (error, stack) => ErrorHandler(
-                                    error: error.toString(),
+                                    error: error,
                                     stackTrace: stack.toString(),
                                     onRetry: () => ref
                                         .read(outletListProvider.notifier)
@@ -175,7 +175,10 @@ class CompanyIcon extends ConsumerWidget {
     final authState = ref.watch(authProvider);
 
     return authState.when(
-        error: (e, stack) => Container(),
+        error: (e, stack) => ErrorHandler(
+          error: e,
+          stackTrace: stack.toString(),
+        ),
         data: (s) {
           if (s is Authenticated) {
             return Column(

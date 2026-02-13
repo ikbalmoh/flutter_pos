@@ -218,7 +218,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                     );
                   },
                   error: (error, stackTrace) => ErrorHandler(
-                    error: error.toString(),
+                    error: error,
                     stackTrace: stackTrace.toString(),
                   ),
                   loading: () => ShiftSkeleon(isTablet: isTablet),

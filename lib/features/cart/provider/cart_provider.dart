@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model show Cart;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -183,7 +182,7 @@ class Cart extends _$Cart {
           .toList(),
     );
 
-    debugPrint(
+    log(
         'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
@@ -451,10 +450,12 @@ class Cart extends _$Cart {
       final String transactionNo =
           state.transactionNo.replaceFirst('BILL-', '').trim();
 
-      final res = await api.storeTransaction(state.copyWith(
-        transactionNo: transactionNo,
-        shiftId: shift.id,
-      ));
+      final res = await api.storeTransaction([
+        state.copyWith(
+          transactionNo: transactionNo,
+          shiftId: shift.id,
+        )
+      ]);
 
       log('TRANSACTIONS: $res');
 

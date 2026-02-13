@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -61,6 +62,7 @@ class CartScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        hideBottom: asWidget == true,
         automaticallyImplyLeading: asWidget != true,
         title: Text(
           'cart'.tr(),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/shift/widget/components/open_shift_button.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 
 class ShiftInactive extends ConsumerWidget {
   const ShiftInactive({super.key});
@@ -11,6 +12,9 @@ class ShiftInactive extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
     final authState = ref.watch(authProvider).value;
+    final isOffline =
+        ref.watch(connectivityStatusProvider) == ConnectivityState.disconnected;
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       color: Colors.white,
@@ -22,7 +26,7 @@ class ShiftInactive extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.store,
+            isOffline ? Icons.wifi_off : Icons.store,
             size: 60,
             color: Colors.blueGrey.shade300,
           ),
@@ -30,7 +34,7 @@ class ShiftInactive extends ConsumerWidget {
             height: 25,
           ),
           Text(
-            'Hi, ${authState is Authenticated ? authState.user.user.name : ''}!',
+            '${'hello'.tr()}, ${authState is Authenticated ? authState.user.user.name : ''}!',
             style: textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
@@ -38,7 +42,9 @@ class ShiftInactive extends ConsumerWidget {
             height: 10,
           ),
           Text(
-            'please_open_shift'.tr(),
+            isOffline
+                ? 'connect_internet_to_open_shift'.tr()
+                : 'please_open_shift'.tr(),
             textAlign: TextAlign.center,
             style:
                 textTheme.titleSmall?.copyWith(color: Colors.blueGrey.shade700),
