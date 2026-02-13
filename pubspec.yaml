@@ -1,17 +1,18 @@
 name: selleri
-description: "Selleri POS"
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+description: 'Selleri POS'
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.4.0+17
+version: 2.5.0+26
 
 environment:
-  sdk: ">=3.2.1 <4.0.0"
+  sdk: '>=3.2.1 <4.0.0'
 
 dependencies:
   cached_network_image: ^3.3.1
   camera: ^0.11.1
   cloud_firestore: ^6.1.0
   collection: ^1.18.0
+  connectivity_plus: ^6.1.5
   cupertino_icons: ^1.0.8
   currency_text_input_formatter: ^2.2.3
   device_info_plus: ^11.2.2
@@ -56,6 +57,7 @@ dependencies:
   riverpod_annotation: ^2.3.5
   screenshot: ^3.0.0
   share_plus: ^10.0.0
+  shared_preferences: ^2.5.3
   shorebird_code_push: ^2.0.3
   super_tooltip: ^2.0.9
   syncfusion_flutter_datepicker: ^28.2.4

@@ -31,6 +31,7 @@ class _CancelTransactionFormState extends ConsumerState<CancelTransactionForm> {
     reasonFocusNode.unfocus();
     final isAuthorized =
         await AuthorizationHelper.authorize('void-transaction');
+    if (!mounted) return;
     if (!isAuthorized) {
       return;
     }

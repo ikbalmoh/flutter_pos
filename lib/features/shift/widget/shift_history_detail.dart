@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/shift/provider/detail_shift_info_provider.dart';
@@ -167,7 +168,7 @@ class _ShiftHistoryDetailScreenState
               );
             },
             error: (error, stackTrace) => ErrorHandler(
-              error: error.toString(),
+              error: error,
               stackTrace: stackTrace.toString(),
             ),
             loading: () => const ShiftSkeleon(),

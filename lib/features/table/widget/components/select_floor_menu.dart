@@ -39,89 +39,91 @@ class _SelectFloorMenuState extends ConsumerState<SelectFloorMenu> {
   @override
   Widget build(BuildContext context) {
     final config = ref.watch(tableConfigProvider);
-    return Card(
-      color: Colors.white,
-      elevation: 0,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 17, right: 10, top: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'select_x'.tr(args: ['floor'.tr()]),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+    return SafeArea(
+      child: Card(
+        color: Colors.white,
+        elevation: 0,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 17, right: 10, top: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'select_x'.tr(args: ['floor'.tr()]),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => setState(() {
-                    settingVisible = !settingVisible;
-                  }),
-                  icon: Icon(Icons.settings),
-                  tooltip: 'setting'.tr(),
-                )
-              ],
+                  IconButton(
+                    onPressed: () => setState(() {
+                      settingVisible = !settingVisible;
+                    }),
+                    icon: Icon(Icons.settings),
+                    tooltip: 'setting'.tr(),
+                  )
+                ],
+              ),
             ),
-          ),
-          settingVisible
-              ? Container(
-                  color: Colors.grey.shade100,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('total_x'.tr(args: ['floor'.tr()])),
-                      QtyEditor(
-                        qty:
-                            (ref.watch(tableConfigProvider).value?.totalFloor ??
-                                    1)
-                                .toDouble(),
-                        onChange: (total) => ref
-                            .read(tableConfigProvider.notifier)
-                            .setTotalFloor(total.toInt()),
-                        min: 1,
-                        keyboard: false,
-                      )
-                    ],
+            settingVisible
+                ? Container(
+                    color: Colors.grey.shade100,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('total_x'.tr(args: ['floor'.tr()])),
+                        QtyEditor(
+                          qty:
+                              (ref.watch(tableConfigProvider).value?.totalFloor ??
+                                      1)
+                                  .toDouble(),
+                          onChange: (total) => ref
+                              .read(tableConfigProvider.notifier)
+                              .setTotalFloor(total.toInt()),
+                          min: 1,
+                          keyboard: false,
+                        )
+                      ],
+                    ),
+                  )
+                : Container(),
+            ListView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 15,
+              ),
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: config.value?.totalFloor ?? 1,
+              itemBuilder: (context, index) {
+                final floor = index + 1;
+                return ListTile(
+                  onTap: () => onSelectFloor(floor),
+                  tileColor:
+                      selected == floor ? Colors.blue.shade700 : Colors.white,
+                  textColor:
+                      selected == floor ? Colors.white : Colors.grey.shade700,
+                  iconColor:
+                      selected == floor ? Colors.white : Colors.grey.shade700,
+                  title: Text('${'floor'.tr()} $floor'),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  trailing: const Icon(
+                    CupertinoIcons.chevron_right,
+                    size: 16,
                   ),
-                )
-              : Container(),
-          ListView.builder(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(
-              vertical: 15,
-              horizontal: 15,
+                );
+              },
             ),
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: config.value?.totalFloor ?? 1,
-            itemBuilder: (context, index) {
-              final floor = index + 1;
-              return ListTile(
-                onTap: () => onSelectFloor(floor),
-                tileColor:
-                    selected == floor ? Colors.blue.shade700 : Colors.white,
-                textColor:
-                    selected == floor ? Colors.white : Colors.grey.shade700,
-                iconColor:
-                    selected == floor ? Colors.white : Colors.grey.shade700,
-                title: Text('${'floor'.tr()} $floor'),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                trailing: const Icon(
-                  CupertinoIcons.chevron_right,
-                  size: 16,
-                ),
-              );
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

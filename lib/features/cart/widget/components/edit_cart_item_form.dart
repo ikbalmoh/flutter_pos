@@ -111,6 +111,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
       if (price != widget.item.price || discount != widget.item.discount) {
         final isAuthorized =
             await AuthorizationHelper.authorize('change-discount-price');
+        if (!mounted) return;
         if (!isAuthorized) {
           return;
         }
@@ -128,6 +129,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
         backgroundColor: Colors.white,
         context: context,
         enableDrag: true,
+        useSafeArea: true,
         builder: (context) {
           return PicPicker(
             selected: widget.item.picDetailId,

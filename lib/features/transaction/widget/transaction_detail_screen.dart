@@ -1,11 +1,10 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pdf/pdf.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';
@@ -17,11 +16,10 @@ import 'package:selleri/features/cart/widget/components/cancel_transaction_form.
 import 'package:selleri/features/cart/widget/components/order_summary/order_summary.dart';
 import 'package:selleri/features/pos/widget/checkout/checkout_screen.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
-import 'package:selleri/shared/utils/file_download.dart';
 import 'package:selleri/shared/utils/formater.dart';
+import 'package:selleri/shared/utils/share_file.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 class TransactionDetailScreen extends ConsumerStatefulWidget {
   final model.Cart cart;
@@ -45,39 +43,31 @@ class _TransactionDetailScreenState
     setState(() {
       sharing = true;
     });
-    final shareButtonBox = context.findRenderObject() as RenderBox?;
-    final summaryContainerBox =
-        summaryContainerKey.currentContext!.findRenderObject() as RenderBox?;
-
-    final Size contentSize = summaryContainerBox!.size;
-
-    final String title = 'Receipt ${widget.cart.transactionNo}';
-    final path = await FileDownload().localPath;
-    screenshotController.capture().then((imageBytes) async {
-      pw.Document pdf = pw.Document(title: title);
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat(contentSize.width, contentSize.height),
-          build: (context) {
-            return pw.Center(child: pw.Image(pw.MemoryImage(imageBytes!)));
-          },
-        ),
+    try {
+      await ShareFile.shareReceipt(
+        context,
+        containerKey: summaryContainerKey,
+        title: widget.cart.transactionNo,
+        screenshotController: screenshotController,
+        onReadyToShare: () {
+          setState(() {
+            sharing = false;
+          });
+        },
+        onShared: (status) {
+          if (status == ShareResultStatus.success) {
+            AppAlert.toast('receipt_shared'.tr());
+          }
+        },
       );
-      final fileName = 'receipt-${widget.cart.transactionNo}.pdf';
-      final filePath = '$path/$fileName';
-      await File(filePath).writeAsBytes(await pdf.save());
-      final xFile = XFile(filePath);
+      if (!mounted) return;
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
         sharing = false;
       });
-      final shareResult = await Share.shareXFiles([xFile],
-          subject: title,
-          sharePositionOrigin:
-              shareButtonBox!.localToGlobal(Offset.zero) & shareButtonBox.size);
-      if (shareResult.status == ShareResultStatus.success) {
-        AppAlert.toast('receipt_shared'.tr());
-      }
-    });
+      AppAlert.toast(e.toString());
+    }
   }
 
   void onPrintReceipt(BuildContext context) async {
@@ -111,6 +101,7 @@ class _TransactionDetailScreenState
         enableDrag: false,
         isDismissible: false,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) {
           return CancelTransactionForm(
             cart: widget.cart,
@@ -130,7 +121,9 @@ class _TransactionDetailScreenState
         ),
       ),
     );
+    if (!mounted) return;
     Future.delayed(const Duration(microseconds: 200), () {
+      if (!mounted) return;
       ref.read(cartProvider.notifier).reopen(prevCart);
     });
   }
@@ -142,7 +135,8 @@ class _TransactionDetailScreenState
         .watch(transactionsProvider)
         .value
         ?.data!
-        .firstWhere((cart) => cart.transactionNo == widget.cart.transactionNo);
+        .where((cart) => cart.transactionNo == widget.cart.transactionNo)
+        .firstOrNull;
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(TABLET);
 
@@ -218,158 +212,164 @@ class _TransactionDetailScreenState
       ),
       body: transaction == null
           ? Container()
-          : Column(
-              children: [
-                transaction.deletedAt != null
-                    ? Container(
-                        color: Colors.red.shade500,
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'canceled'.tr(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(color: Colors.white),
-                            ),
-                            Text(
-                              DateTimeFormater.dateToString(
-                                  transaction.deletedAt!,
-                                  format: 'dd MMM y HH:mm'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      )
-                    : transaction.totalPayment < transaction.grandTotal
-                        ? Container(
-                            color: Colors.amber.shade600,
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'insufficient_payment'.tr(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(color: Colors.white),
-                                ),
-                                Text(
-                                  CurrencyFormat.currency(
-                                      transaction.grandTotal -
-                                          transaction.totalPayment),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 15),
-                    child: SizedBox(
-                      width: isTablet ? 400 : double.infinity,
-                      child: Screenshot(
-                        controller: screenshotController,
-                        child: OrderSummary(
-                          taxable: config.taxable ?? false,
-                          key: summaryContainerKey,
-                          radius: const Radius.circular(5),
-                          cart: transaction,
-                          withAttribute: true,
-                          outletState: outletState,
+          : SafeArea(
+              child: Column(
+                children: [
+                  transaction.deletedAt != null
+                      ? Container(
+                          color: Colors.red.shade500,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'canceled'.tr(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: Colors.white),
+                              ),
+                              Text(
+                                DateTimeFormater.dateToString(
+                                    transaction.deletedAt!,
+                                    format: 'dd MMM y HH:mm'),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        )
+                      : transaction.totalPayment < transaction.grandTotal
+                          ? Container(
+                              color: Colors.amber.shade600,
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'insufficient_payment'.tr(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(color: Colors.white),
+                                  ),
+                                  Text(
+                                    CurrencyFormat.currency(
+                                        transaction.grandTotal -
+                                            transaction.totalPayment),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 15),
+                      child: SizedBox(
+                        width: isTablet ? 400 : double.infinity,
+                        child: Screenshot(
+                          controller: screenshotController,
+                          child: OrderSummary(
+                            taxable: config.taxable ?? false,
+                            key: summaryContainerKey,
+                            radius: const Radius.circular(5),
+                            cart: transaction,
+                            withAttribute: true,
+                            outletState: outletState,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                widget.cart.deletedAt == null
-                    ? Container(
-                        color: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 15),
-                        child: Row(
-                          children: [
-                            Builder(builder: (context) {
-                              return IconButton(
-                                onPressed: () => onShareReceipt(context),
-                                icon: sharing
-                                    ? const SizedBox(
-                                        width: 25,
-                                        height: 25,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.black54,
-                                        ),
-                                      )
-                                    : const Icon(Icons.share),
-                              );
-                            }),
-                            hasTableAddon == true
-                                ? IconButton(
-                                    tooltip: 'print_kitchen'.tr(),
-                                    onPressed: () => onPrintKitchen(context),
-                                    icon: Icon(Icons.restaurant_outlined))
-                                : Container(),
-                            const SizedBox(width: 10),
-                            !isTablet &&
-                                    currentShift != null &&
-                                    widget.cart.totalPayment <
-                                        widget.cart.grandTotal
-                                ? IconButton(
-                                    onPressed: () => onPrintReceipt(context),
-                                    icon: const Icon(CupertinoIcons.printer),
-                                    tooltip: 'print'.tr(),
-                                  )
-                                : Expanded(
-                                    flex: 1,
-                                    child: ElevatedButton.icon(
+                  widget.cart.deletedAt == null
+                      ? Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 15),
+                          child: Row(
+                            children: [
+                              Builder(builder: (context) {
+                                return IconButton(
+                                  onPressed: () => onShareReceipt(context),
+                                  icon: sharing
+                                      ? const SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.black54,
+                                          ),
+                                        )
+                                      : const Icon(Icons.share),
+                                );
+                              }),
+                              hasTableAddon == true
+                                  ? IconButton(
+                                      tooltip: 'print_kitchen'.tr(),
+                                      onPressed: () => onPrintKitchen(context),
+                                      icon: Icon(Icons.restaurant_outlined))
+                                  : Container(),
+                              const SizedBox(width: 10),
+                              !isTablet &&
+                                      currentShift != null &&
+                                      widget.cart.totalPayment <
+                                          widget.cart.grandTotal
+                                  ? IconButton(
                                       onPressed: () => onPrintReceipt(context),
                                       icon: const Icon(CupertinoIcons.printer),
-                                      label: Text('print'.tr()),
-                                    ),
-                                  ),
-                            currentShift != null &&
-                                    widget.cart.totalPayment <
-                                        widget.cart.grandTotal
-                                ? Expanded(
-                                    flex: 2,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 15),
+                                      tooltip: 'print'.tr(),
+                                    )
+                                  : Expanded(
+                                      flex: 1,
                                       child: ElevatedButton.icon(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                        ),
                                         onPressed: () =>
-                                            onContinuePayment(context),
-                                        icon: const Icon(
-                                            CupertinoIcons.creditcard_fill),
-                                        label: Text('pay'.tr()),
+                                            onPrintReceipt(context),
+                                        icon:
+                                            const Icon(CupertinoIcons.printer),
+                                        label: Text('print'.tr()),
                                       ),
                                     ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      )
-                    : Container()
-              ],
+                              currentShift != null &&
+                                      widget.cart.totalPayment <
+                                          widget.cart.grandTotal
+                                  ? Expanded(
+                                      flex: 2,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 15),
+                                        child: ElevatedButton.icon(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue,
+                                          ),
+                                          onPressed: () =>
+                                              onContinuePayment(context),
+                                          icon: const Icon(
+                                              CupertinoIcons.creditcard_fill),
+                                          label: Text('pay'.tr()),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          ),
+                        )
+                      : Container()
+                ],
+              ),
             ),
     );
   }

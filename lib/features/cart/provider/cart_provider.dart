@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model show Cart;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -122,8 +121,11 @@ class Cart extends _$Cart {
     if (onCartQty > 0) {
       return updateQty(item.idItem, idVariant: variant?.idVariant);
     }
-    if (itemStock < 1 && item.stockControl) {
-      throw 'out_of_stock'.tr();
+    final outletState = ref.read(outletProvider).value as OutletSelected;
+    if (outletState.config.stockMinus != true) {
+      if (itemStock < 1 && item.stockControl) {
+        throw 'out_of_stock'.tr();
+      }
     }
     String identifier =
         '${item.idItem}-${DateTime.now().millisecondsSinceEpoch}';
@@ -180,7 +182,7 @@ class Cart extends _$Cart {
           .toList(),
     );
 
-    debugPrint(
+    log(
         'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
@@ -231,52 +233,53 @@ class Cart extends _$Cart {
     final index = state.items
         .indexWhere((i) => i.idItem == idItem && i.idVariant == idVariant);
 
-    if (index > -1) {
-      final outlet = ref.read(outletProvider).value as OutletSelected;
+    if (index < 0) {
+      return;
+    }
 
-      List<ItemCart> items = [...state.items];
-      ItemCart itemCart = items[index];
+    List<ItemCart> items = [...state.items];
+    ItemCart itemCart = items[index];
 
-      Item? item = objectBox.getItem(idItem);
+    Item? item = objectBox.getItem(idItem);
 
-      if (item == null) {
-        throw 'x_not_found'.tr(args: ['item'.tr()]);
-      }
+    if (item == null) {
+      throw 'x_not_found'.tr(args: ['item'.tr()]);
+    }
 
-      List<CartPromotion> promotions = List.from(state.promotions);
-      if (itemCart.promotion != null) {
-        itemCart = itemCart.copyWith(
-          discount: 0,
-          discountTotal: 0,
-        );
-      }
+    List<CartPromotion> promotions = List.from(state.promotions);
+    if (itemCart.promotion != null) {
+      itemCart = itemCart.copyWith(
+        discount: 0,
+        discountTotal: 0,
+      );
+    }
 
-      ItemVariant? itemVariant = idVariant == null
-          ? null
-          : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
+    ItemVariant? itemVariant = idVariant == null
+        ? null
+        : objectBox.getItemVariant(idItem: idItem, variantId: idVariant);
 
-      double itemStock = itemVariant?.stockItem ?? item.stockItem;
+    double itemStock = itemVariant?.stockItem ?? item.stockItem;
 
-      if (item.stockControl &&
-          outlet.config.stockMinus == false &&
-          itemCart.quantity + 1 > itemStock) {
+    final outlet = ref.read(outletProvider).value as OutletSelected;
+
+    if (outlet.config.stockMinus != true) {
+      if (item.stockControl && itemCart.quantity + 1 > itemStock) {
         throw 'max_qty_x'.tr(args: [
           CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
         ]);
       }
+    }
 
-      double quantity =
-          increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
-      double finalPrice = itemCart.price - itemCart.discountTotal;
-      items[index] =
-          itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
-      state = state.copyWith(
-          items: items, roundingValue: 0, promotions: promotions);
-      if (itemCart.promotion != null) {
-        removePromotion(itemCart.promotion!.promotionId);
-      } else {
-        calculateCart();
-      }
+    double quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
+    double finalPrice = itemCart.price - itemCart.discountTotal;
+    items[index] =
+        itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
+    state =
+        state.copyWith(items: items, roundingValue: 0, promotions: promotions);
+    if (itemCart.promotion != null) {
+      removePromotion(itemCart.promotion!.promotionId);
+    } else {
+      calculateCart();
     }
   }
 
@@ -361,11 +364,11 @@ class Cart extends _$Cart {
         : 0;
   }
 
-  void selectCustomer(Customer customer, {CustomerVehicle? vehicle}) {
+  void selectCustomer(Customer? customer, {CustomerVehicle? vehicle}) {
     state = state.copyWith(
-      customerName: customer.customerName,
-      idCustomer: customer.idCustomer,
-      customerGroup: customer.groups,
+      customerName: customer?.customerName,
+      idCustomer: customer?.idCustomer,
+      customerGroup: customer?.groups,
       vehicle: vehicle,
     );
     applyPromotions([]);
@@ -444,15 +447,26 @@ class Cart extends _$Cart {
         throw 'shift_not_opened'.tr();
       }
 
-      final res = await api.storeTransaction(state.copyWith(
-        shiftId: shift.id,
-      ));
+      final String transactionNo =
+          state.transactionNo.replaceFirst('BILL-', '').trim();
+
+      final res = await api.storeTransaction([
+        state.copyWith(
+          transactionNo: transactionNo,
+          shiftId: shift.id,
+        )
+      ]);
 
       log('TRANSACTIONS: $res');
 
       if (res.isEmpty) {
         throw 'transaction_error'.tr();
       }
+
+      state = state.copyWith(
+        transactionNo: transactionNo,
+        shiftId: shift.id,
+      );
 
       ref.invalidate(transactionsProvider);
     } catch (e) {
@@ -478,12 +492,15 @@ class Cart extends _$Cart {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
           outlet.config.attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(state,
-          outlet: outlet.outlet,
-          attributes: attributeReceipts,
-          size: printer.size,
-          isCopy: printCounter > 1,
-          cut: printer.cut);
+      final receipt = await util.Printer.buildReceiptBytes(
+        state,
+        outlet: outlet.outlet,
+        attributes: attributeReceipts,
+        size: printer.size,
+        isCopy: printCounter > 1,
+        cut: printer.cut,
+        printIncludePpn: outlet.config.printIncludePpn ?? false,
+      );
       await ref.read(printerProvider.notifier).print(receipt);
       if (withKitchen == true) {
         await printKitchen();
@@ -516,8 +533,15 @@ class Cart extends _$Cart {
   }
 
   Future<void> holdCart({required String note, bool createNew = false}) async {
-    model.Cart cart =
-        state.copyWith(holdAt: DateTime.now(), description: note, isApp: true);
+    model.Cart cart = state.copyWith(
+      transactionNo: state.transactionNo.startsWith('BILL-')
+          ? state.transactionNo
+          : 'BILL-${state.transactionNo}',
+      holdAt: DateTime.now(),
+      description: note,
+      isApp: true,
+    );
+    log('hold cart ${cart.transactionNo} ${cart.idTransaction}');
     final api = ref.watch(transactionApiProvider);
     if (cart.idTransaction != null) {
       await api.updateHoldTransaction(cart.idTransaction!, cart);
@@ -938,5 +962,11 @@ class Cart extends _$Cart {
       tables: tables.map((table) => table.name).toList(),
     );
     ref.read(tablesProvider().notifier).markTables(state.transactionNo, tables);
+  }
+
+  void clearTables() {
+    final tables = state.tables ?? [];
+    state = state.copyWith(tables: []);
+    ref.read(tablesProvider().notifier).clearTables(tables);
   }
 }

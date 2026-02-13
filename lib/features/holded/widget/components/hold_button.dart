@@ -15,6 +15,7 @@ class HoldButton extends ConsumerWidget {
         isDismissible: false,
         enableDrag: false,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) {
           return const HoldForm();
         },

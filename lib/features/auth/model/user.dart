@@ -1,73 +1,49 @@
 import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../outlet/model/outlet.dart';
 import 'company.dart';
 
-class User {
-  UserAccount user;
-  Map<dynamic, dynamic> accountConfig;
-  List<String> permissions;
+part 'user.g.dart';
+part 'user.freezed.dart';
 
-  User({
-    required this.user,
-    required this.accountConfig,
-    required this.permissions,
-  });
+@freezed
+class User with _$User {
+  const User._();
 
-  User.fromJson(Map<dynamic, dynamic> json)
-      : user = UserAccount.fromJson(json['user']),
-        accountConfig = json['account_config'],
-        permissions = List<String>.from(json['permissions'].map((p) => p));
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  factory User({
+    required UserAccount user,
+    required Map<dynamic, dynamic> accountConfig,
+    required List<String> permissions,
+  }) = _User;
 
-  Map<String, dynamic> toJson() => {
-        'user': user.toJson(),
-        'account_config': accountConfig,
-        'permissions': permissions
-      };
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   @override
   String toString() {
-    return "{user: $user, account_config: $accountConfig, permissions: $permissions}";
+    final jsonToken = toJson();
+    return json.encode(jsonToken);
   }
 }
 
-class UserAccount {
-  String idUser;
-  String name;
-  String username;
-  String email;
-  List<String> roles;
-  Company company;
-  List<Outlet>? outlet;
+@freezed
+class UserAccount with _$UserAccount {
+  const UserAccount._();
 
-  UserAccount({
-    required this.idUser,
-    required this.name,
-    required this.username,
-    required this.email,
-    required this.roles,
-    required this.company,
-    this.outlet,
-  });
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  factory UserAccount({
+    required String idUser,
+    required String name,
+    required String username,
+    required String email,
+    required List<String> roles,
+    required Company company,
+    List<Outlet>? outlet,
+  }) = _UserAccount;
 
-  UserAccount.fromJson(Map<dynamic, dynamic> json)
-      : idUser = json['id_user'],
-        name = json['name'],
-        username = json['username'],
-        email = json['email'],
-        roles = List<String>.from(json['roles']?.map((x) => x)),
-        company = Company.fromJson(json['company']),
-        outlet =
-            List<Outlet>.from(json['outlet'].map((x) => Outlet.fromJson(x)));
-
-  Map<String, dynamic> toJson() => {
-        'id_user': idUser,
-        'name': name,
-        'username': username,
-        'email': email,
-        'roles': jsonEncode(roles),
-        'company': company.toJson(),
-        'outlet': outlet?.map((o) => o.toJson()).toList()
-      };
+  factory UserAccount.fromJson(Map<String, dynamic> json) =>
+      _$UserAccountFromJson(json);
 
   @override
   String toString() {

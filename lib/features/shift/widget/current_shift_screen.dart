@@ -51,6 +51,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         isScrollControlled: true,
         backgroundColor: Colors.white,
         enableDrag: true,
+        useSafeArea: true,
         builder: (context) {
           return CashflowForm(
             cashflow: cashflow,
@@ -64,6 +65,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
+      useSafeArea: true,
       builder: (context) => CloseShiftForm(
         shift: shiftInfo,
       ),
@@ -216,7 +218,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                     );
                   },
                   error: (error, stackTrace) => ErrorHandler(
-                    error: error.toString(),
+                    error: error,
                     stackTrace: stackTrace.toString(),
                   ),
                   loading: () => ShiftSkeleon(isTablet: isTablet),

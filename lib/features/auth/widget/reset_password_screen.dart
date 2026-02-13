@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -33,6 +34,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       final status = await ref.read(authProvider.notifier).resetPassword(
             _emailController.text,
           );
+
+      if (!mounted) return;
 
       if (!status) {
         throw 'reset_password_failed'.tr();

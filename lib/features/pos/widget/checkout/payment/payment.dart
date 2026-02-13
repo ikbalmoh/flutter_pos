@@ -78,6 +78,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
         backgroundColor: Colors.white,
         context: context,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (BuildContext context) {
           return PaymentForm(
             method: method,

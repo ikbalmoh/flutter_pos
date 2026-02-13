@@ -25,6 +25,7 @@ class Printer {
     bool isCopy = false,
     bool isHold = false,
     bool withPrice = true,
+    bool printIncludePpn = false,
   }) async {
     try {
       log('BUILD RECEIPT: $cart\n$outlet\n$attributes');
@@ -51,8 +52,7 @@ class Printer {
                 const Base64Decoder().convert(attributes.imageBase64!);
             img = decodeImage(imgBytes);
           } catch (e) {
-            log('Cannot decode header image: $e');
-            log('${attributes.imageBase64}');
+            // Cannot decode header image
           }
         }
         headers = GeneralFormater.stripHtmlIfNeeded(attributes.headers ?? '');
@@ -82,15 +82,19 @@ class Printer {
             linesAfter: 1, styles: const PosStyles(align: PosAlign.center));
       }
 
+      final String transactionNo = isHold
+          ? cart.transactionNo
+          : cart.transactionNo.replaceFirst('BILL-', '').trim();
+
       // info
-      bytes += generator.text('No: ${cart.transactionNo}');
+      bytes += generator.text('No: $transactionNo');
       bytes += generator.text('${'cashier'.tr()}: ${cart.createdName ?? '-'}');
       bytes += generator.text(
           '${'date'.tr()}: ${cart.transactionDate > 0 ? DateTimeFormater.msToString(cart.transactionDate, format: 'dd/MM/y HH:mm') : ''}');
-      bytes += generator.text('${'customer'.tr()}: ${[
-        cart.customerName,
-        cart.vehicle?.licensePlate
-      ].whereType<String>().join(' - ')}');
+      bytes += generator.text('${'customer'.tr()}: ${cart.idCustomer != null ? [
+          cart.customerName,
+          cart.vehicle?.licensePlate
+        ].whereType<String>().join(' - ') : 'walk_in'.tr()}');
       if (cart.tables != null && cart.tables!.isNotEmpty) {
         bytes += generator
             .text('${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}');
@@ -118,7 +122,7 @@ class Printer {
             PosColumn(
               text:
                   '${CurrencyFormat.currency(item.quantity, symbol: false)} x ${CurrencyFormat.currency(item.price, symbol: true)}',
-              width: 9,
+              width: 8,
               styles: const PosStyles(align: PosAlign.left),
             ),
             PosColumn(
@@ -126,7 +130,7 @@ class Printer {
                 item.price * item.quantity,
                 symbol: false,
               ),
-              width: 3,
+              width: 4,
               styles: const PosStyles(align: PosAlign.right),
             ),
           ]);
@@ -134,13 +138,13 @@ class Printer {
             bytes += generator.row([
               PosColumn(
                 text: 'discount'.tr(),
-                width: 9,
+                width: 5,
                 styles: const PosStyles(align: PosAlign.left),
               ),
               PosColumn(
                 text:
                     '-${CurrencyFormat.currency(item.discountTotal, symbol: false)}',
-                width: 3,
+                width: 7,
                 styles: const PosStyles(align: PosAlign.right),
               ),
             ]);
@@ -155,12 +159,12 @@ class Printer {
         bytes += generator.row([
           PosColumn(
             text: 'Subtotal',
-            width: 9,
+            width: 5,
             styles: const PosStyles(align: PosAlign.left),
           ),
           PosColumn(
             text: CurrencyFormat.currency(cart.subtotal, symbol: false),
-            width: 3,
+            width: 7,
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
@@ -168,12 +172,12 @@ class Printer {
           bytes += generator.row([
             PosColumn(
               text: '${'voucher'.tr()} (${voucher.code})',
-              width: 9,
+              width: 7,
               styles: const PosStyles(align: PosAlign.left),
             ),
             PosColumn(
               text: '-${CurrencyFormat.currency(voucher.value, symbol: false)}',
-              width: 3,
+              width: 5,
               styles: const PosStyles(align: PosAlign.right),
             ),
           ]);
@@ -208,15 +212,30 @@ class Printer {
             ),
           ]);
         }
+        if (printIncludePpn || cart.ppnIsInclude == false) {
+          // subtotal
+          bytes += generator.row([
+            PosColumn(
+              text: 'tax'.tr(),
+              width: 5,
+              styles: const PosStyles(align: PosAlign.left),
+            ),
+            PosColumn(
+              text: CurrencyFormat.currency(cart.ppnTotal, symbol: false),
+              width: 7,
+              styles: const PosStyles(align: PosAlign.right),
+            ),
+          ]);
+        }
         bytes += generator.row([
           PosColumn(
             text: 'Total',
-            width: 8,
+            width: 5,
             styles: const PosStyles(align: PosAlign.left),
           ),
           PosColumn(
             text: CurrencyFormat.currency(cart.total, symbol: false),
-            width: 4,
+            width: 7,
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
@@ -273,18 +292,24 @@ class Printer {
         bytes += generator.row([
           PosColumn(
             text: 'change'.tr(),
-            width: 8,
+            width: 5,
             styles: const PosStyles(align: PosAlign.left),
           ),
           PosColumn(
             text: CurrencyFormat.currency(cart.change, symbol: false),
-            width: 4,
+            width: 7,
             styles: const PosStyles(align: PosAlign.right),
           ),
         ]);
       }
 
       bytes += generator.hr();
+
+      if (cart.notes != null && cart.notes!.isNotEmpty) {
+        bytes += generator.text(cart.notes!,
+            styles: const PosStyles(align: PosAlign.left));
+        bytes += generator.feed(1);
+      }
 
       if (isHold) {
         bytes += generator.text('holded_transactions'.tr(),

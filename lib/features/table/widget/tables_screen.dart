@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart' hide Table;
-import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart' hide Table, AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -39,6 +40,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
     final tables = cart.tables != null && cart.tables!.isNotEmpty
         ? await ref.read(tablesProvider().notifier).getTables(cart.tables!)
         : [];
+    if (!mounted) return;
     setState(() {
       selected = List.from(tables);
       currentFloor = tables.isNotEmpty ? tables[0].floor! : 1;
@@ -89,6 +91,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
     }
     showModalBottomSheet(
         context: context,
+        useSafeArea: true,
         builder: (context) => SelectTableSheet(
               table: table,
               onPickTable: onPickTable,
@@ -145,7 +148,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
-        title: Text('select_x'.tr(args: ['table'.tr()])),
+        title: Text('table'.tr()),
         elevation: 5,
         actions: isTablet
             ? []
@@ -154,6 +157,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.white,
+                    useSafeArea: true,
                     builder: (context) => SelectFloorMenu(
                         floor: currentFloor,
                         onChange: (floor) {
@@ -176,100 +180,104 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
                 SizedBox(width: 10)
               ],
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          isTablet
-              ? Container(
-                  padding: const EdgeInsets.all(10).copyWith(right: 0),
-                  width: 350,
-                  child: SelectFloorMenu(
-                    floor: currentFloor,
-                    onChange: onSelectFloor,
-                  ),
-                )
-              : Container(),
-          Expanded(
-            child: RefreshIndicator(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 0,
-                  color: Colors.white,
-                  surfaceTintColor: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: LayoutBuilder(builder: (context, constraints) {
-                      final width = constraints.maxWidth;
-                      final int gridColumn = width > 800
-                          ? 6
-                          : width > 600
-                              ? 5
-                              : width > 400
-                                  ? 4
-                                  : 3;
-                      return switch (
-                          ref.watch(tablesProvider(floor: currentFloor))) {
-                        AsyncData(:final value) => GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: gridColumn,
-                              mainAxisSpacing: 10,
-                              crossAxisSpacing: 10,
+      body: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            isTablet
+                ? Container(
+                    padding: const EdgeInsets.all(10).copyWith(right: 0),
+                    width: 350,
+                    child: SelectFloorMenu(
+                      floor: currentFloor,
+                      onChange: onSelectFloor,
+                    ),
+                  )
+                : Container(),
+            Expanded(
+              child: RefreshIndicator(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        final width = constraints.maxWidth;
+                        final int gridColumn = width > 800
+                            ? 6
+                            : width > 600
+                                ? 5
+                                : width > 400
+                                    ? 4
+                                    : 3;
+                        return switch (
+                            ref.watch(tablesProvider(floor: currentFloor))) {
+                          AsyncData(:final value) => GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: gridColumn,
+                                mainAxisSpacing: 10,
+                                crossAxisSpacing: 10,
+                              ),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(10),
+                              controller: scrollController,
+                              itemCount: value.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == value.length) {
+                                  return newTable();
+                                }
+                                var table = value[index];
+                                return TableItem(
+                                  table: table,
+                                  selected: selectedIndex.contains(table.id),
+                                  onSelect: (tbl) => onSelectTable(table),
+                                );
+                              },
                             ),
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(10),
-                            controller: scrollController,
-                            itemCount: value.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == value.length) {
-                                return newTable();
-                              }
-                              var table = value[index];
-                              return TableItem(
-                                table: table,
-                                selected: selectedIndex.contains(table.id),
-                                onSelect: (tbl) => onSelectTable(table),
-                              );
-                            },
-                          ),
-                        AsyncError(:final error, :final stackTrace) =>
-                          ErrorHandler(
-                            error: error.toString(),
-                            stackTrace: stackTrace.toString(),
-                          ),
-                        _ => GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: gridColumn,
-                              mainAxisSpacing: 10,
-                              crossAxisSpacing: 10,
+                          AsyncError(:final error, :final stackTrace) =>
+                            ErrorHandler(
+                              error: error.toString(),
+                              stackTrace: stackTrace.toString(),
                             ),
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(10),
-                            controller: scrollController,
-                            itemCount: 12,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(10)),
-                              );
-                            },
-                          ),
-                      };
-                    }),
+                          _ => GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: gridColumn,
+                                mainAxisSpacing: 10,
+                                crossAxisSpacing: 10,
+                              ),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(10),
+                              controller: scrollController,
+                              itemCount: 12,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(10)),
+                                );
+                              },
+                            ),
+                        };
+                      }),
+                    ),
                   ),
                 ),
+                onRefresh: () {
+                  ref
+                      .read(tablesProvider(floor: currentFloor).notifier)
+                      .build();
+                  return Future.delayed(Durations.medium4);
+                },
               ),
-              onRefresh: () {
-                ref.read(tablesProvider(floor: currentFloor).notifier).build();
-                return Future.delayed(Durations.medium4);
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: onSubmit,

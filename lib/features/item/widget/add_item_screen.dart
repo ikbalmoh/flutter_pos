@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter/services.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:selleri/features/item/provider/category_provider.dart';
 import 'package:selleri/features/item/widget/add_variant_form.dart';
 import 'package:selleri/features/item/widget/store_item.dart';
 import 'package:selleri/shared/utils/formater.dart';
+import 'package:selleri/shared/widget/generic/date_input.dart';
 
 class AddItemScreen extends ConsumerStatefulWidget {
   const AddItemScreen({super.key});
@@ -35,7 +37,10 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
   double? itemPrice;
   double? initialStock;
   double? hppItem;
+  DateTime? expiredDate;
   List<AttributeVariant> attributes = [];
+
+  bool stockControl = false;
 
   void resetForm() {
     _formKey.currentState!.reset();
@@ -45,6 +50,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     _hppItemController.text = '';
     _skuController.text = '';
     _barcodeController.text = '';
+    expiredDate = null;
     setState(() {
       category = null;
       itemPrice = null;
@@ -69,7 +75,11 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       'sku': _skuController.text,
       'barcode': _barcodeController.text,
       'min_stock': 0,
+      'stock_control': stockControl ? 1 : 0,
       'initial_stock': initialStock,
+      'expired_date': expiredDate != null
+          ? DateTimeFormater.dateToString(expiredDate!, format: 'y-MM-dd')
+          : null,
     };
 
     final isStored = await showModalBottomSheet(
@@ -78,6 +88,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
         isScrollControlled: true,
         enableDrag: false,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return StoreItem(
             itemPayload: itemPayload,
@@ -342,59 +353,92 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               return null;
                             },
                           ),
-                          TextFormField(
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.only(
-                                  left: 0, top: 10, bottom: 5, right: 0),
-                              label: Text(
-                                'initial_stock'.tr(),
-                                style: labelStyle,
-                              ),
-                              alignLabelWithHint: true,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                Expanded(
+                                  child: Text('stock_control'.tr(),
+                                      style: labelStyle),
+                                ),
+                                SizedBox(
+                                  height: 35,
+                                  width: 45,
+                                  child: FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: Switch(
+                                      value: stockControl,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          stockControl = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            controller: _initialStockController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'enter_x'
-                                    .tr(args: ['initial_stock'.tr()]);
-                              }
-                              return null;
-                            },
-                            inputFormatters: <TextInputFormatter>[
-                              _stockFormater
-                            ],
-                            onChanged: (value) => setState(() {
-                              initialStock = _stockFormater
-                                  .getUnformattedValue()
-                                  .toDouble();
-                            }),
                           ),
-                          TextFormField(
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.only(
-                                  left: 0, top: 10, bottom: 5, right: 0),
-                              label: Text(
-                                'cost_price'.tr(),
-                                style: labelStyle,
+                          if (stockControl)
+                            TextFormField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 0, top: 10, bottom: 5, right: 0),
+                                label: Text(
+                                  'initial_stock'.tr(),
+                                  style: labelStyle,
+                                ),
+                                alignLabelWithHint: true,
                               ),
-                              alignLabelWithHint: true,
+                              controller: _initialStockController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'enter_x'
+                                      .tr(args: ['initial_stock'.tr()]);
+                                }
+                                return null;
+                              },
+                              inputFormatters: <TextInputFormatter>[
+                                _stockFormater
+                              ],
+                              onChanged: (value) => setState(() {
+                                initialStock = _stockFormater
+                                    .getUnformattedValue()
+                                    .toDouble();
+                              }),
                             ),
-                            onChanged: (value) => setState(() {
-                              hppItem =
-                                  _hppFormater.getUnformattedValue().toDouble();
-                            }),
-                            inputFormatters: <TextInputFormatter>[_hppFormater],
-                            controller: _hppItemController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'enter_x'
-                                    .tr(args: ['initial_stock'.tr()]);
-                              }
-                              return null;
-                            },
-                          ),
+                          if (stockControl)
+                            TextFormField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 0, top: 10, bottom: 5, right: 0),
+                                label: Text(
+                                  'cost_price'.tr(),
+                                  style: labelStyle,
+                                ),
+                                alignLabelWithHint: true,
+                              ),
+                              onChanged: (value) => setState(() {
+                                hppItem = _hppFormater
+                                    .getUnformattedValue()
+                                    .toDouble();
+                              }),
+                              inputFormatters: <TextInputFormatter>[
+                                _hppFormater
+                              ],
+                              controller: _hppItemController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'enter_x'
+                                      .tr(args: ['initial_stock'.tr()]);
+                                }
+                                return null;
+                              },
+                            ),
                           TextFormField(
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
@@ -419,7 +463,19 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                             ),
                             controller: _barcodeController,
                           ),
-                          const SizedBox(height: 15),
+                          SizedBox(height: 15),
+                          DateInput(
+                            label: 'expired_date'.tr(),
+                            value: expiredDate,
+                            onChange: (date) => setState(() {
+                              expiredDate = date;
+                            }),
+                            firstDate:
+                                DateTime.now().subtract(Duration(days: 360)),
+                            lastDate: DateTime.now().add(
+                              Duration(days: 360 * 10),
+                            ),
+                          )
                         ],
                       ),
                     ),

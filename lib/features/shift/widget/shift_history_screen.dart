@@ -88,6 +88,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
         backgroundColor: Colors.white,
         isScrollControlled: true,
         context: context,
+        useSafeArea: true,
         builder: (context) {
           return DatePicker(
             initialForm: from,
@@ -355,7 +356,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                                     ],
                                   ),
                             error: (e, stack) => ErrorHandler(
-                              error: e.toString(),
+                              error: e,
                               stackTrace: stack.toString(),
                             ),
                             loading: () => ListView.builder(

@@ -17,6 +17,7 @@ class FastMovingItemBanner extends ConsumerWidget {
     void showItemList() {
       showModalBottomSheet(
         context: context,
+        useSafeArea: true,
         builder: (context) => DraggableScrollableSheet(
           builder: (context, controller) => FastMovingItems(
             scrollController: controller,

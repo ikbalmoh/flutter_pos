@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -8,6 +9,7 @@ import 'package:selleri/features/cart/widget/components/cart_item.dart';
 import 'package:selleri/features/cart/widget/components/cart_actions.dart';
 import 'package:selleri/features/cart/widget/components/edit_cart_item_form.dart';
 import 'package:selleri/features/pos/widget/components/holded_baner.dart';
+import 'package:selleri/shared/router/routes.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,6 +32,7 @@ class CartScreen extends ConsumerWidget {
           confirmLabel: 'delete'.tr(),
           danger: true, onConfirm: () async {
         await ref.read(cartProvider.notifier).removeItem(item.identifier!);
+        if (!context.mounted) return;
       });
     }
 
@@ -38,6 +41,7 @@ class CartScreen extends ConsumerWidget {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (BuildContext context) => EditCartItemForm(
           item: item,
           onDelete: () => onDeleteItem(item),
@@ -58,25 +62,90 @@ class CartScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
+        hideBottom: asWidget == true,
         automaticallyImplyLeading: asWidget != true,
         title: Text(
           'cart'.tr(),
-          style:
-              TextStyle(color: asWidget == true ? Colors.black87 : Colors.teal),
+          style: asWidget == true
+              ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  )
+              : null,
         ),
-        leading:
-            asWidget == true ? const Icon(CupertinoIcons.shopping_cart) : null,
+        leading: asWidget == true
+            ? const Icon(
+                CupertinoIcons.shopping_cart,
+                size: 20,
+              )
+            : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
-        actions: cart.holdAt != null
-            ? [
-                IconButton(
-                    onPressed: () => confirmDeleteTransaction(context),
-                    icon: const Icon(
-                      CupertinoIcons.trash,
-                      color: Colors.red,
-                    ))
-              ]
-            : [],
+        actionsPadding: EdgeInsets.only(right: 10),
+        actions: [
+          TextButton.icon(
+            style: TextButton.styleFrom(
+                backgroundColor: cart.idCustomer != null
+                    ? Colors.teal.shade50.withValues(alpha: .4)
+                    : Colors.white,
+                foregroundColor: cart.idCustomer != null
+                    ? Colors.teal
+                    : Colors.grey.shade700,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.only(
+                    right: cart.idCustomer != null ? 0 : 10, left: 10)),
+            onPressed: () => context.push(Routes.customers),
+            icon: Icon(
+                cart.vehicle != null ? Icons.drive_eta_rounded : Icons.person),
+            label: cart.idCustomer != null
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 15,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(cart.customerName!.trim()),
+                          if (cart.vehicle != null)
+                            Text(
+                              cart.vehicle!.licensePlate,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: Colors.teal.shade400),
+                            )
+                        ],
+                      ),
+                      IconButton(
+                          style: IconButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            overlayColor: Colors.red,
+                          ),
+                          onPressed: () => ref
+                              .read(cartProvider.notifier)
+                              .selectCustomer(null),
+                          icon: Icon(
+                            Icons.clear,
+                            color: Colors.red,
+                          )),
+                    ],
+                  )
+                : Text('walk_in'.tr()),
+          ),
+          if (cart.holdAt != null)
+            IconButton(
+              onPressed: () => confirmDeleteTransaction(context),
+              icon: const Icon(
+                CupertinoIcons.trash,
+              ),
+              color: Colors.red,
+              iconSize: 18,
+              tooltip: 'delete_transaction'.tr(),
+              visualDensity: VisualDensity.compact,
+            )
+        ],
       ),
       body: cart.items.isNotEmpty
           ? Column(

@@ -69,17 +69,24 @@ class DateTimeFormater {
     } else if (value is DateTime) {
       result = value.millisecondsSinceEpoch;
     }
+    if (result.toString().length < 13) {
+      result = result * 1000;
+    }
     return result;
   }
 
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(value);
+    int ms = value;
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(ms);
     return dateToString(dateTime, format: format);
   }
 
-  static int unixServer(dynamic value) {
+  static int msTosecond(dynamic value) {
     if (value is num) {
-      return (value / 1000).floor();
+      if (value.toString().length == 13) {
+        return (value / 1000).floor();
+      }
+      return value.toInt();
     }
     return (DateTime.now().millisecondsSinceEpoch / 1000).floor();
   }

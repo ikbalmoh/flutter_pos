@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
@@ -73,13 +74,12 @@ class AccountInformation extends ConsumerWidget {
                 ),
                 ListTile(
                   title: Text('company_email'.tr()),
-                  subtitle:
-                      Text(authState.user.user.company.companyEmail ?? ''),
+                  subtitle: Text(authState.user.user.company.companyEmail),
                   tileColor: Colors.white,
                   trailing: IconButton(
                     padding: EdgeInsets.zero,
                     onPressed: () => Helpers.copy(
-                        authState.user.user.company.companyEmail ?? '',
+                        authState.user.user.company.companyEmail,
                         message: 'x_copied'.tr(args: ['company_email'.tr()])),
                     icon: Icon(
                       Icons.copy,

@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/customer/model/customer.dart';
@@ -92,6 +93,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedCustomer = ref.watch(cartProvider).idCustomer;
+    final selectedVehicle = ref.watch(cartProvider).vehicle;
 
     void onSelectCustomer(customer, {CustomerVehicle? vehicle}) {
       while (context.canPop() == true) {
@@ -107,10 +109,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (BuildContext context) => CustomerDetail(
           customer: customer,
           onSelect: onSelectCustomer,
           onEdit: onEditCustomer,
+          isSelected: selectedCustomer == customer.idCustomer,
+          vehicle: selectedVehicle,
         ),
       );
     }
@@ -220,9 +225,12 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                           ],
                         ),
                       ),
-                error: (e, stack) => ErrorHandler(
-                  error: e.toString(),
-                  stackTrace: stack.toString(),
+                error: (e, stack) => SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: ErrorHandler(
+                    error: e,
+                    stackTrace: stack.toString(),
+                  ),
                 ),
                 loading: () => ListView.builder(
                   itemCount: 10,

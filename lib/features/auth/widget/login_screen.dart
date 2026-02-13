@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -50,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     PackageInfo.fromPlatform().then((packageInfo) {
       log('INFO: $packageInfo');
       setState(() {
-        buildNumber = packageInfo.version;
+        buildNumber = '${packageInfo.version}(${packageInfo.buildNumber})';
       });
     });
     shorebirdCodePush.readCurrentPatch().then((currentPatch) {
@@ -294,27 +295,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               context.pushNamed(Routes.resetPassword),
                           child: Text('forgot_password'.tr()),
                         ),
-                        isTablet
-                            ? Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                spacing: 0,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 5),
-                                    child: Text(
-                                      'no_account'.tr(),
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: Colors.grey,
-                                          ),
+                        if (Platform.isAndroid)
+                          isTablet
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  spacing: 0,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        'no_account'.tr(),
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Colors.grey,
+                                            ),
+                                      ),
                                     ),
-                                  ),
-                                  TextButton.icon(
+                                    TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Colors.teal.shade50,
+                                        padding: const EdgeInsets.only(
+                                            left: 20, right: 15),
+                                      ),
+                                      onPressed: onTapRegister,
+                                      icon: Icon(CupertinoIcons.chevron_right),
+                                      iconAlignment: IconAlignment.end,
+                                      label: Text(
+                                        'register'.tr(),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox(
+                                  width: double.maxFinite,
+                                  child: TextButton.icon(
                                     style: TextButton.styleFrom(
                                       backgroundColor: Colors.teal.shade50,
                                       padding: const EdgeInsets.only(
@@ -328,25 +348,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
-                                ],
-                              )
-                            : SizedBox(
-                                width: double.maxFinite,
-                                child: TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.teal.shade50,
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 15),
-                                  ),
-                                  onPressed: onTapRegister,
-                                  icon: Icon(CupertinoIcons.chevron_right),
-                                  iconAlignment: IconAlignment.end,
-                                  label: Text(
-                                    'register'.tr(),
-                                    textAlign: TextAlign.center,
-                                  ),
                                 ),
-                              ),
                       ],
                     ),
                   ),
@@ -356,7 +358,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 height: 30,
               ),
               Text(
-                'v$buildNumber-$patch',
+                'v$buildNumber${patch > 0 ? '-$patch' : ''}',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.white,

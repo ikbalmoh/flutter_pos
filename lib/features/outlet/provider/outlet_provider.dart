@@ -6,6 +6,7 @@ import 'package:selleri/features/outlet/model/outlet.dart' as model;
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
 import 'package:selleri/features/item/provider/item_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -66,25 +67,28 @@ class Outlet extends _$Outlet {
 
   Future<void> refreshConfig({List<String>? only = const []}) async {
     try {
-      log('SYNC CONFIG: $only');
-      if (state.value is OutletSelected) {
-        final outletState = state.value as OutletSelected;
-        state = AsyncData(OutletSelected(
-          outlet: outletState.outlet,
-          config: outletState.config,
-          isSyncing: true,
-        ));
-        final config = await _outletRepository.fetchOutletConfig(
-          outletState.outlet.idOutlet,
-          only: only,
-          current: outletState.config,
-        );
-        state = AsyncData(OutletSelected(
-          outlet: outletState.outlet,
-          config: config,
-          isSyncing: false,
-        ));
+      final connection = ref.read(connectivityStatusProvider);
+      if (connection == ConnectivityState.disconnected ||
+          state.value! is OutletSelected) {
+        return;
       }
+      log('SYNC CONFIG: $only');
+      final outletState = state.value as OutletSelected;
+      state = AsyncData(OutletSelected(
+        outlet: outletState.outlet,
+        config: outletState.config,
+        isSyncing: true,
+      ));
+      final config = await _outletRepository.fetchOutletConfig(
+        outletState.outlet.idOutlet,
+        only: only,
+        current: outletState.config,
+      );
+      state = AsyncData(OutletSelected(
+        outlet: outletState.outlet,
+        config: config,
+        isSyncing: false,
+      ));
     } catch (e) {
       log('SYNC CONFIG ERROR: $e');
     }

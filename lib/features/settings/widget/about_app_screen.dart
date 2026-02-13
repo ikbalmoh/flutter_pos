@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:selleri/shared/constants/store_key.dart';
@@ -35,9 +36,8 @@ class _AboutAppState extends State<AboutApp> {
   String email = 'support@dgti.co.id';
 
   String appVersion = '0';
-  String buildNumber = '0';
   String deviceId = '';
-  int patchVersion = 0;
+  int patch = 0;
 
   @override
   void initState() {
@@ -51,14 +51,13 @@ class _AboutAppState extends State<AboutApp> {
     deviceId = await storage.read(key: StoreKey.device.name) ?? '';
     PackageInfo.fromPlatform().then((packageInfo) {
       setState(() {
-        appVersion = packageInfo.version;
-        buildNumber = packageInfo.buildNumber;
+        appVersion = '${packageInfo.version}(${packageInfo.buildNumber})';
       });
     });
     shorebirdCodePush.readCurrentPatch().then((value) {
       if (value != null) {
         setState(() {
-          patchVersion = value.number;
+          patch = value.number;
         });
       }
     });
@@ -80,7 +79,7 @@ class _AboutAppState extends State<AboutApp> {
       children: [
         ListTile(
           title: Text('app_version'.tr()),
-          subtitle: Text('$appVersion-$patchVersion',
+          subtitle: Text('v$appVersion${patch > 0 ? '-$patch' : ''}',
               style: TextStyle(color: Colors.blueGrey)),
           tileColor: Colors.white,
         ),

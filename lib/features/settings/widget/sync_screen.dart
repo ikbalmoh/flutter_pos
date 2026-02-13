@@ -1,9 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/item/provider/item_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
+import 'package:selleri/shared/exeptions/offline_exeption.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 
 class SyncScreen extends StatelessWidget {
@@ -45,24 +48,19 @@ class _SyncDataState extends ConsumerState<SyncData> {
   }
 
   void runSync() async {
-    setState(() {
-      inSync = true;
-    });
-    // showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return const Dialog(
-    //           child: Center(
-    //         child: SizedBox(
-    //           width: 20,
-    //           height: 20,
-    //           child: CircularProgressIndicator(),
-    //         ),
-    //       ));
-    //     });
     try {
+      setState(() {
+        inSync = true;
+      });
+      final isOffline = ref.read(connectivityStatusProvider) ==
+          ConnectivityState.disconnected;
+
+      if (isOffline) {
+        throw OfflineException();
+      }
       if (selected['config'] == true) {
         await ref.read(outletProvider.notifier).refreshConfig();
+        if (!mounted) return;
       }
       if (selected['items'] == true || selected['promotions'] == true) {
         await ref.read(itemsProvider().notifier).loadItems(
@@ -72,19 +70,22 @@ class _SyncDataState extends ConsumerState<SyncData> {
                 syncStatus = progress.message ?? '';
               }),
             );
+        if (!mounted) return;
       } else if (selected['categories'] == true) {
         await ref.read(itemsProvider().notifier).syncCategories();
+        if (!mounted) return;
       }
       AppAlert.toast('synced'.tr());
       setState(() {
         inSync = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         inSync = false;
       });
+      AppAlert.snackbar(e.toString(), alertType: AlertType.error);
     }
-    // context.pop();
   }
 
   @override

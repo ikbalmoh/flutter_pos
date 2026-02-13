@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/features/outlet/provider/outlet_provider.dart';
+import 'package:selleri/features/pos/widget/select_table.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
@@ -68,6 +70,9 @@ class _HoldFormState extends ConsumerState<HoldForm> {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+
+    final outlet = ref.watch(outletProvider).value as OutletSelected;
+
     return PopScope(
       key: holdWidgetKey,
       canPop: !holding,
@@ -125,6 +130,11 @@ class _HoldFormState extends ConsumerState<HoldForm> {
                 alignLabelWithHint: true,
               ),
             ),
+            if (outlet.config.addOns!.contains("table"))
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: SelectTable(),
+              ),
             const SizedBox(height: 20),
             Row(
               mainAxisSize: MainAxisSize.max,

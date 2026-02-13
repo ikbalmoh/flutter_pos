@@ -23,6 +23,7 @@ class CartPromotions extends ConsumerWidget {
             backgroundColor: Colors.white,
             isScrollControlled: true,
             context: context,
+            useSafeArea: true,
             builder: (context) {
               return const CartPromotionsList();
             });

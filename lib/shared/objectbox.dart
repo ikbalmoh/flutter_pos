@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,6 +11,7 @@ import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/item/model/item_package.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
+import 'package:selleri/features/transaction/model/offline_transaction.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -24,6 +27,7 @@ class ObjectBox {
   late final Box<ItemPackage> itemPackageBox;
   late final Box<Promotion> promotionBox;
   late final Box<CustomerGroup> customerGroupBox;
+  late final Box<OfflineTransaction> transactionBox;
 
   ObjectBox._create(this.store) {
     categoryBox = Box<Category>(store);
@@ -32,6 +36,7 @@ class ObjectBox {
     itemPackageBox = Box<ItemPackage>(store);
     promotionBox = Box<Promotion>(store);
     customerGroupBox = Box<CustomerGroup>(store);
+    transactionBox = Box<OfflineTransaction>(store);
   }
 
   static Future<ObjectBox> create() async {
@@ -474,12 +479,79 @@ class ObjectBox {
     log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
   }
 
+  Future<List<Cart>> putTransaction(Cart transaction) async {
+    try {
+      final ids = transactionBox
+          .query(OfflineTransaction_.transactionNo
+              .equals(transaction.transactionNo))
+          .build()
+          .findIds();
+      final int id = ids.isEmpty ? 0 : ids.first;
+      await transactionBox.putAsync(OfflineTransaction(
+        id: id,
+        transactionNo: transaction.transactionNo,
+        shiftId: transaction.shiftId,
+        transaction: jsonEncode(transaction
+            .copyWith(
+              isOffline: true,
+              payments: transaction.payments
+                  .map(
+                    (p) => p.copyWith(createdAt: p.createdAt ?? DateTime.now()),
+                  )
+                  .toList(),
+            )
+            .toJson()),
+      ));
+      log('Transaction Stored: $transaction');
+      return offlineTransactions();
+    } catch (e) {
+      log('Error storing transaction: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Cart>> offlineTransactions({
+    String? shiftId,
+    String? transactionNo,
+  }) async {
+    Condition<OfflineTransaction> condition =
+        OfflineTransaction_.id.greaterThan(0);
+    if (shiftId != null && shiftId.isNotEmpty) {
+      condition.and(
+        OfflineTransaction_.shiftId.equals(shiftId),
+      );
+    }
+    if (transactionNo != null && transactionNo.isNotEmpty) {
+      condition.and(
+        OfflineTransaction_.transactionNo
+            .contains(transactionNo, caseSensitive: false),
+      );
+    }
+    final builder = transactionBox.query();
+    final offlineTransactions = await builder.build().findAsync();
+    List<Cart> transactions = [];
+    for (var i = 0; i < offlineTransactions.length; i++) {
+      Cart cart = Cart.fromJson(jsonDecode(offlineTransactions[i].transaction));
+      transactions.add(cart);
+    }
+    return transactions;
+  }
+
+  Future<int> deleteOfflineTransactions(List<String> idTransactions) async {
+    int removed = await transactionBox
+        .query(OfflineTransaction_.transactionNo.oneOf(idTransactions))
+        .build()
+        .removeAsync();
+    return removed;
+  }
+
   void clearAll() {
     categoryBox.removeAll();
     itemBox.removeAll();
     itemVariantBox.removeAll();
     itemPackageBox.removeAll();
     promotionBox.removeAll();
+    transactionBox.removeAll();
   }
 }
 

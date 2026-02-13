@@ -78,6 +78,7 @@ class _AddDiscountOverallState extends ConsumerState<AddDiscountOverall> {
     focusNode.unfocus();
     final isAuthorized =
         await AuthorizationHelper.authorize('set-discount-overall');
+    if (!mounted) return;
     if (!isAuthorized) {
       return;
     }

@@ -37,7 +37,7 @@ class Outlet with _$Outlet {
 
   @override
   String toString() {
-    final jsonToken = toJson();
-    return json.encode(jsonToken);
+    final jsonOutlet = toJson();
+    return json.encode(jsonOutlet);
   }
 }

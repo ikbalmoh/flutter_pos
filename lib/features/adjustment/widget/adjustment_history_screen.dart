@@ -1,11 +1,11 @@
-// import 'dart:math';
 import 'dart:async';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -185,6 +185,7 @@ class _AdjustmentHistoryScreenState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return AdjustmentDateFilter(
               from: from, to: to, onSelect: onFilterAdjustmentDate);

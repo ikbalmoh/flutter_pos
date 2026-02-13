@@ -3,15 +3,19 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart' hide Table;
-import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart' hide Table, AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/table/model/table.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
+import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
@@ -94,6 +98,7 @@ class _TransactionHistoryScreenState
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return const TransactionReportDownloader();
         });
@@ -219,6 +224,9 @@ class _TransactionHistoryScreenState
   Widget build(BuildContext context) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
+    final isOffline =
+        ref.watch(connectivityStatusProvider) == ConnectivityState.disconnected;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: searchVisible
@@ -246,6 +254,7 @@ class _TransactionHistoryScreenState
                     },
                     icon: const Icon(Icons.menu));
               }),
+              actionsPadding: const EdgeInsets.only(right: 5),
               actions: [
                 isTablet
                     ? Container()
@@ -261,6 +270,51 @@ class _TransactionHistoryScreenState
                   onPressed: showSalesReportDownloader,
                   icon: const Icon(CupertinoIcons.doc_chart),
                 ),
+                ref.watch(offlineTransactionsProvider).when(
+                      data: (data) => ref.watch(connectivityStatusProvider) ==
+                              ConnectivityState.disconnected
+                          ? IconButton(
+                              onPressed: null,
+                              icon: Badge(
+                                label: Text(data.length.toString()),
+                                child: Icon(Icons.cloud_off_rounded),
+                              ),
+                              tooltip: 'no_connection'.tr(),
+                            )
+                          : data.isNotEmpty
+                              ? IconButton(
+                                  tooltip: 'sync'.tr(),
+                                  onPressed: () => ref
+                                      .read(
+                                          offlineTransactionsProvider.notifier)
+                                      .sync(),
+                                  icon: Badge(
+                                    label: Text(data.length.toString()),
+                                    child: Icon(Icons.cloud_upload_outlined),
+                                  ),
+                                )
+                              : IconButton(
+                                  onPressed: () {
+                                    AppAlert.toast(
+                                        'all_transactions_synced'.tr());
+                                  },
+                                  color: Colors.green,
+                                  icon: Icon(Icons.cloud_done_outlined),
+                                ),
+                      error: (error, st) => ErrorHandler(
+                        error: error,
+                      ),
+                      loading: () => IconButton(
+                        onPressed: null,
+                        icon: SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1,
+                          ),
+                        ),
+                      ),
+                    )
               ],
             ),
       drawer: const AppDrawer(),
@@ -294,7 +348,7 @@ class _TransactionHistoryScreenState
                                           child: Center(
                                             child: Text(
                                               'x_data_displayed'.tr(
-                                                args: [data.total.toString()],
+                                                args: ['all'.tr()],
                                               ),
                                               style: Theme.of(context)
                                                   .textTheme
@@ -311,7 +365,7 @@ class _TransactionHistoryScreenState
                                     Cart cart = data.data![idx];
                                     return TransactionItem(
                                         cart: cart,
-                                        isActive:
+                                        active:
                                             viewTransaction?.idTransaction ==
                                                 cart.idTransaction,
                                         onTap: () {
@@ -338,20 +392,29 @@ class _TransactionHistoryScreenState
                                     mainAxisSize: MainAxisSize.max,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
+                                    spacing: 15,
                                     children: [
+                                      Icon(
+                                        isOffline
+                                            ? Icons.cloud_off_rounded
+                                            : Icons.folder_open_rounded,
+                                        color: Colors.grey,
+                                        size: 40,
+                                      ),
                                       Text(
-                                        'no_data'.tr(
+                                        isOffline ? 'connect_internet_to_load_transactions'.tr() : 'no_data'.tr(
                                             args: ['transaction_history'.tr()]),
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodySmall
+                                            .bodyMedium
                                             ?.copyWith(color: Colors.grey),
+                                            textAlign: TextAlign.center,
                                       )
                                     ],
                                   ),
                                 ),
                           error: (e, stack) => ErrorHandler(
-                            error: e.toString(),
+                            error: e,
                             stackTrace: stack.toString(),
                           ),
                           loading: () => ListView.builder(
@@ -394,7 +457,13 @@ class _TransactionHistoryScreenState
                         )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 10,
                           children: [
+                            Icon(
+                              Icons.folder_open_rounded,
+                              size: 40,
+                              color: Colors.blueGrey.shade300,
+                            ),
                             Text(
                               'select_x'.tr(args: ['transaction'.tr()]),
                               style: Theme.of(context)

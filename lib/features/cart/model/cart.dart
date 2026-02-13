@@ -21,16 +21,17 @@ class Cart with _$Cart {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Cart({
+    required String createdBy,
     @JsonKey(
       fromJson: DateTimeFormater.stringToTimestamp,
-      toJson: DateTimeFormater.unixServer,
+      toJson: DateTimeFormater.msTosecond,
     )
     required int transactionDate,
     required String transactionNo,
     required String idOutlet,
     String? outletName,
     String? idTransaction,
-    required String shiftId,
+    @JsonKey(fromJson: ModelConverter.nullableToString) required String shiftId,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double subtotal,
     @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool discIsPercent,
@@ -59,13 +60,12 @@ class Cart with _$Cart {
     String? description,
     String? personInCharge,
     DateTime? holdAt,
-    required String createdBy,
-    String? createdName,
+    @JsonKey(fromJson: ModelConverter.nullableToString) String? createdName,
     required List<ItemCart> items,
     required List<CartPayment> payments,
     required List<CartPromotion> promotions,
     required List<CartVoucher> vouchers,
-    List<String>? tables,
+    @JsonKey(fromJson: ModelConverter.toStringList) List<String>? tables,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
     String? deletedBy,
@@ -73,10 +73,12 @@ class Cart with _$Cart {
     String? promoCode,
     @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
     List<CustomerGroup>? customerGroup,
+    bool? isOffline,
     CustomerVehicle? vehicle,
   }) = _Cart;
 
   factory Cart.initial() => Cart(
+        createdBy: '', // define on initCart
         transactionNo: '',
         transactionDate: DateTime.now().millisecondsSinceEpoch,
         items: [],
@@ -100,7 +102,6 @@ class Cart with _$Cart {
         idOutlet: '', // define on initCart
         outletName: '', // define on initCart
         shiftId: '', // define on initCart
-        createdBy: '', // define on initCart
         isApp: true,
       );
 
@@ -130,6 +131,7 @@ class Cart with _$Cart {
     }
     data['promotions'] = data['promotions'] ?? [];
     data['vouchers'] = data['vouchers'] ?? [];
+    data['vehicle'] = data['vehicle'] is Map ? data['vehicle'] : null;
     return Cart.fromJson(data);
   }
 
@@ -153,10 +155,11 @@ class Cart with _$Cart {
       }
     }
     final jsonData = <String, dynamic>{
+      "created_by": createdBy,
       "id_transaction": idTransaction,
       "id_outlet": idOutlet,
       "shift_id": shiftId,
-      "transaction_date": DateTimeFormater.unixServer(transactionDate),
+      "transaction_date": DateTimeFormater.msTosecond(transactionDate),
       "transaction_no": transactionNo,
       "id_customer": idCustomer ?? '',
       "subtotal": subtotal,
@@ -198,7 +201,6 @@ class Cart with _$Cart {
           (promo) => promo.toTransactionPayload(),
         ),
       ),
-      "created_by": createdBy,
       "images": dataImages,
       "person_in_charge": personInCharge,
       "tables": tables,

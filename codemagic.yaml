@@ -210,11 +210,11 @@ workflows:
     environment:
       <<: *stage_env
     triggering:
-          events:
-            - tag
-          tag_patterns:
-            - pattern: "v*"
-              include: true
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'v/*'
+          include: true
     scripts:
       - *extract_version
       - *shorebird_install
@@ -247,11 +247,11 @@ workflows:
     environment:
       <<: *stage_env
     triggering:
-              events:
-                - tag
-              tag_patterns:
-                - pattern: "v*"
-                  include: true
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'v/*'
+          include: true
     scripts:
       - *extract_version
       - *shorebird_install

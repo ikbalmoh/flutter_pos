@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/item/model/item_adjustment.dart';
 import 'package:selleri/features/item/model/item_variant_adjustment.dart';
 import 'package:selleri/features/adjustment/provider/adjustment_items_provider.dart';
@@ -13,6 +14,7 @@ import 'item_variant_adjustment_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/adjustment/widget/components/item_grid.dart';
 import 'package:selleri/features/adjustment/widget/components/item_list.dart';
+import 'package:selleri/shared/widget/error_handler.dart';
 
 class ItemContainer extends ConsumerWidget {
   final ScrollController? scrollController;
@@ -43,6 +45,7 @@ class ItemContainer extends ConsumerWidget {
         backgroundColor: Colors.white,
         context: context,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) => AdjustmentItemForm(item: item));
   }
 
@@ -76,10 +79,10 @@ class ItemContainer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(builder: (context, constraints) {
-      final width = constraints.maxWidth;
-      final int gridColumn = width > 510
+      final breakpoints = ResponsiveBreakpoints.of(context);
+      final int gridColumn = breakpoints.largerOrEqualTo(DESKTOP)
           ? 4
-          : width > 400
+          : breakpoints.largerOrEqualTo(TABLET)
               ? 3
               : 2;
       return ref.watch(adjustmentItemsProvider).when(
@@ -188,8 +191,9 @@ class ItemContainer extends ConsumerWidget {
                         );
                       },
                     ),
-          error: (e, stack) => Center(
-                child: Text(e.toString()),
+          error: (e, stack) => ErrorHandler(
+                error: e,
+                stackTrace: stack.toString(),
               ),
           loading: () => ListView.builder(
                 itemBuilder: (context, idx) {

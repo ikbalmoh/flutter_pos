@@ -35,14 +35,13 @@ class OrderSummary extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        withAttribute == true
-            ? Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 10),
-                child: ReceiptHeader(
-                  outletState: outletState,
-                ),
-              )
-            : Container(),
+        if (withAttribute == true)
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 10),
+            child: ReceiptHeader(
+              outletState: outletState,
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
@@ -61,10 +60,10 @@ class OrderSummary extends StatelessWidget {
                 textAlign: TextAlign.left,
               ),
               Text(
-                '${'customer'.tr()}: ${[
-                  cart.customerName,
-                  cart.vehicle?.licensePlate
-                ].whereType<String>().join(' - ')}',
+                '${'customer'.tr()}: ${cart.idCustomer != null ? [
+                    cart.customerName,
+                    cart.vehicle?.licensePlate
+                  ].whereType<String>().join(' - ') : 'walk_in'.tr()}',
                 textAlign: TextAlign.left,
               ),
               if (cart.tables != null && cart.tables!.isNotEmpty)
@@ -104,7 +103,7 @@ class OrderSummary extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(15),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: mainAxisSize ?? MainAxisSize.min,
         children: [
           mainAxisSize == MainAxisSize.max
@@ -133,20 +132,16 @@ class OrderSummary extends StatelessWidget {
                       '${'discount'.tr()} ${cart.discIsPercent && cart.discOverall > 0 ? '(${CurrencyFormat.currency(cart.discOverall, symbol: false)}%)' : ''}',
                   value: -cart.discOverallTotal,
                 ),
-          cart.discPromotionsTotal > 0
-              ? TwoColumn(
-                  label: 'promotions'.tr(),
-                  value: cart.discPromotionsTotal,
-                )
-              : Container(),
-          taxable
-              ? cart.ppnTotal > 0
-                  ? TwoColumn(
-                      label: cart.taxName ?? 'tax'.tr(),
-                      value: cart.ppnTotal,
-                    )
-                  : Container()
-              : Container(),
+          if (cart.discPromotionsTotal > 0)
+            TwoColumn(
+              label: 'promotions'.tr(),
+              value: cart.discPromotionsTotal,
+            ),
+          if (outletState.config.printIncludePpn == true || !cart.ppnIsInclude)
+            TwoColumn(
+              label: 'tax'.tr(),
+              value: cart.ppnTotal,
+            ),
           TwoColumn(
             label: 'Total',
             value: cart.total,
@@ -241,28 +236,36 @@ class OrderSummary extends StatelessWidget {
             valueStyle:
                 textTheme.bodyLarge?.copyWith(color: Colors.green.shade700),
           ),
-          cart.totalPayment < cart.grandTotal
-              ? TwoColumn(
-                  label: 'insufficient_payment'.tr(),
-                  value: cart.grandTotal - cart.totalPayment,
-                  labelStyle: textTheme.bodyLarge?.copyWith(
-                      color: Colors.black87, fontWeight: FontWeight.w700),
-                  valueStyle:
-                      textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
-                )
-              : Container(),
+          if (cart.totalPayment < cart.grandTotal)
+            TwoColumn(
+              label: 'insufficient_payment'.tr(),
+              value: cart.grandTotal - cart.totalPayment,
+              labelStyle: textTheme.bodyLarge?.copyWith(
+                  color: Colors.black87, fontWeight: FontWeight.w700),
+              valueStyle:
+                  textTheme.bodyLarge?.copyWith(color: Colors.red.shade700),
+            ),
           TwoColumn(
             label: 'change'.tr(),
             value: cart.change,
           ),
-          const SizedBox(height: 10),
-          withAttribute == true && outletState.config.attributeReceipts != null
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 10),
-                  child: ReceiptFooter(
-                      attributeReceipts: outletState.config.attributeReceipts!),
-                )
-              : Container(),
+          Divider(
+            height: 10,
+            color: Colors.blueGrey.shade50,
+          ),
+          if (cart.notes != null && cart.notes!.isNotEmpty)
+            Text(
+              cart.notes!,
+              style: textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
+              textAlign: TextAlign.left,
+            ),
+          if (withAttribute == true &&
+              outletState.config.attributeReceipts != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 10),
+              child: ReceiptFooter(
+                  attributeReceipts: outletState.config.attributeReceipts!),
+            ),
         ],
       ),
     );

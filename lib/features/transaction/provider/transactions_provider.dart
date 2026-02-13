@@ -1,70 +1,114 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'dart:developer';
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
+import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
 
 part 'transactions_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: false)
 class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
-    try {
-      final api = ref.watch(transactionApiProvider);
-      final outlet = ref.read(outletProvider).value as OutletSelected;
-      String? shiftId = ref.watch(shiftProvider).value?.id;
-      final transactions = await api.transactions(
-          idOutlet: outlet.outlet.idOutlet, shiftId: shiftId);
-      return transactions;
-    } catch (e, stackTrace) {
-      log('LIST TRANSCATION ERROR: $e\n=> $stackTrace');
-      rethrow;
-    }
+    loadTransactions(
+      page: 1,
+      currentShift: true,
+    );
+    return future;
   }
 
-  Future<void> loadTransactions(
-      {int page = 1,
-      String search = '',
-      bool? currentShift = false,
-      String? table}) async {
+  Future<void> loadTransactions({
+    int page = 1,
+    String search = '',
+    bool? currentShift = false,
+    String? table,
+  }) async {
     if (page == 1) {
       state = const AsyncLoading();
     } else {
       state = AsyncData(state.value!.copyWith(loading: true));
     }
-    final api = ref.watch(transactionApiProvider);
+
+    List<Cart> transactionsData =
+        await ref.read(offlineTransactionsProvider.future) ?? [];
+    log('Offline Transactions: ${transactionsData.map((tr) => tr.transactionNo).toList()}');
+
+    final connection = ref.read(connectivityStatusProvider);
+
+    if (state.hasValue &&
+        state.value?.data != null &&
+        state.value?.data!.isNotEmpty == true) {
+      final offlineTransactionNos =
+          transactionsData.map((tr) => tr.transactionNo).toList();
+      List<Cart> prevTransactions =
+          List.from(state.value?.data as Iterable<Cart>);
+
+      prevTransactions = prevTransactions
+        ..removeWhere(
+          (tr) =>
+              offlineTransactionNos.contains(tr.transactionNo) ||
+              tr.isOffline == true,
+        );
+
+      transactionsData += prevTransactions;
+    }
+
     try {
+      if (connection == ConnectivityState.disconnected) {
+        throw 'disconnected';
+      }
+
+      final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId;
       if (currentShift == true) {
         shiftId = ref.read(shiftProvider).value?.id;
       }
-      var customers = await api.transactions(
+
+      var transactions = await api.transactions(
         page: page,
         q: search,
         idOutlet: outlet.outlet.idOutlet,
         shiftId: shiftId,
         table: table,
       );
-      List<Cart> data = List.from(state.value?.data as Iterable<Cart>);
-      if (page > 1) {
-        data = data..addAll(customers.data as Iterable<Cart>);
-        customers = customers.copyWith(data: data, loading: false);
+
+      if (page == 1) {
+        transactionsData += (transactions.data ?? []);
+
+        transactions = transactions.copyWith(
+          data: transactionsData,
+        );
+      } else {
+        transactionsData.addAll(transactions.data as Iterable<Cart>);
+        transactions =
+            transactions.copyWith(data: transactionsData, loading: false);
       }
-      state = AsyncData(customers);
-    } catch (e, trace) {
-      log('Load Transaction Error: $e\n$trace');
-      state = AsyncError(e, trace);
+      state = AsyncData(transactions);
+    } on DioException catch (e, stack) {
+      log('Load Transaction Network Error: $e\n$stack');
+      rethrow;
+    } catch (e) {
+      state = AsyncData(
+        Pagination(
+          currentPage: 0,
+          lastPage: 0,
+          total: transactionsData.length,
+          data: transactionsData,
+        ),
+      );
     }
   }
 
@@ -95,6 +139,7 @@ class Transactions extends _$Transactions {
         isHold: isHold,
         withPrice: withPrice,
         cut: printer.cut,
+        printIncludePpn: outlet.config.printIncludePpn ?? false,
       );
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {
@@ -131,7 +176,6 @@ class Transactions extends _$Transactions {
   Future<Cart> cancelTransaction(Cart cart,
       {required String deleteReason}) async {
     try {
-      final api = ref.watch(transactionApiProvider);
       final userId =
           (ref.read(authProvider).value as Authenticated).user.user.idUser;
 
@@ -142,11 +186,7 @@ class Transactions extends _$Transactions {
 
       log('DELETE TRANSACTION: $transaction');
 
-      final res = await api.storeTransaction(transaction);
-
-      if (res.isEmpty) {
-        throw Exception('transaction_error'.tr());
-      }
+      await ref.read(offlineTransactionsProvider.notifier).store(transaction);
 
       final index = state.value?.data!
           .indexWhere((t) => t.idTransaction == transaction.idTransaction);
@@ -164,5 +204,35 @@ class Transactions extends _$Transactions {
       log('CANCEL TRANSACTION ERROR: $e');
       throw Exception(e);
     }
+  }
+
+  void appendTransaction(Cart transaction) {
+    if (state.value == null) {
+      return;
+    }
+    state = AsyncData(
+      state.value!.copyWith(
+        data: [transaction] + (state.value?.data ?? []),
+      ),
+    );
+  }
+
+  void updateTransactions(List<Cart> transactions) {
+    if (state.value == null) {
+      return;
+    }
+    state = AsyncData(
+      state.value!.copyWith(
+        data: (state.value?.data ?? [])
+            .map(
+              (t) => transactions
+                      .any((tr) => tr.transactionNo == t.transactionNo)
+                  ? transactions
+                      .firstWhere((tr) => tr.transactionNo == t.transactionNo)
+                  : t,
+            )
+            .toList(),
+      ),
+    );
   }
 }

@@ -28,6 +28,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
       showModalBottomSheet(
           context: context,
           backgroundColor: Colors.white,
+          useSafeArea: true,
           builder: (context) {
             return ConnectPrinter(device: device);
           });
@@ -84,7 +85,7 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
                     )
                   : const DeviceEmpty(),
               error: (e, trace) => DeviceEmpty(
-                message: e.toString(),
+                error: e,
               ),
               loading: () => const Padding(
                 padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
@@ -101,9 +102,10 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
 }
 
 class DeviceEmpty extends ConsumerWidget {
+  final Object? error;
   final String? message;
 
-  const DeviceEmpty({this.message, super.key});
+  const DeviceEmpty({this.error, this.message, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -122,7 +124,7 @@ class DeviceEmpty extends ConsumerWidget {
             ),
             const SizedBox(height: 15),
             Text(
-              message ?? 'no_device_found'.tr(),
+              message ?? error?.toString() ?? 'no_device_found'.tr(),
               textAlign: TextAlign.center,
               style: textTheme.bodyLarge?.copyWith(color: Colors.grey),
             ),

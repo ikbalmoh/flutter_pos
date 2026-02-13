@@ -44,6 +44,7 @@ class _CartActionsState extends ConsumerState<CartActions> {
             isScrollControlled: true,
             context: context,
             isDismissible: false,
+            useSafeArea: true,
             builder: (context) {
               return CartPromotionsList(
                   confirmText: 'continue_without_promo'.tr());

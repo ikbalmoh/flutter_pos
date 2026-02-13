@@ -7,6 +7,7 @@ import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/item/provider/category_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/shared/utils/formater.dart';
+import 'package:selleri/shared/widget/error_handler.dart';
 
 class ItemCategories extends ConsumerWidget {
   final String active;
@@ -127,7 +128,10 @@ class ItemCategories extends ConsumerWidget {
             ),
           );
         },
-        error: (error, stackTrace) => Text(error.toString()),
+        error: (error, stackTrace) => ErrorHandler(
+              error: error,
+              stackTrace: stackTrace.toString(),
+            ),
         loading: () => loadingSkeleton);
   }
 }

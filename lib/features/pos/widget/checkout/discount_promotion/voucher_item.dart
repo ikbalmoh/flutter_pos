@@ -21,6 +21,7 @@ class VoucherItem extends ConsumerWidget {
           isScrollControlled: true,
           context: context,
           backgroundColor: Colors.white,
+          useSafeArea: true,
           builder: (context) {
             return AddVoucher(ref.read(cartProvider).subtotal);
           });

@@ -4,7 +4,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/receiving/model/purchase_item.dart';
@@ -138,6 +139,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.white,
+        useSafeArea: true,
         builder: (context) {
           return ReceiveItemForm(
             item: item,
@@ -180,6 +182,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
+        useSafeArea: true,
         builder: (context) {
           return EnterPurchaseItemCode(
               itemName: itemName,
@@ -563,8 +566,8 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                             error: (error, stackTrace) => Padding(
                               padding: const EdgeInsets.only(top: 100),
                               child: ErrorHandler(
-                                error: 'code_not_found'.tr(),
-                                stackTrace: 'please_scan_another_code'.tr(),
+                                error: error,
+                                stackTrace: stackTrace.toString(),
                               ),
                             ),
                             loading: () => ListView.builder(

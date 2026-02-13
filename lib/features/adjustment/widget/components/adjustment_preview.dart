@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/adjustment/model/adjustment_history.dart';
@@ -191,7 +192,7 @@ class AdjustmentPreview extends ConsumerWidget {
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        "${'system'.tr()}: ${CurrencyFormat.currency(item.qtySystem, symbol: false)}",
+                                                        "${'system'.tr()}: ${CurrencyFormat.currency(item.qtySystem, symbol: false, minus: true)}",
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .titleSmall
@@ -202,7 +203,7 @@ class AdjustmentPreview extends ConsumerWidget {
                                                       ),
                                                       const SizedBox(width: 10),
                                                       Text(
-                                                        "${'different'.tr()}: ${CurrencyFormat.currency(item.qtyDiff, symbol: false)}",
+                                                        "${'different'.tr()}: ${CurrencyFormat.currency(item.qtyDiff, symbol: false, minus: true)}",
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .titleSmall
