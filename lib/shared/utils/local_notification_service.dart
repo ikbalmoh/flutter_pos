@@ -85,7 +85,7 @@ class LocalNotificationService {
           message.notification?.body, notificationDetails,
           payload: message.data['link']);
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
     }
   }
 }

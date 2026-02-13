@@ -373,6 +373,10 @@
   "city": "City",
   "district": "District",
   "back": "Back",
+  "no_connections": "No Connections",
+  "offline": "Offline",
+  "no_connections_instruction": "Please check your connections and try again",
+  "all_transactions_synced": "All transactions synced",
   "without_vehicle": "Without Vehicle",
   "item_expired": "This Item Has Been Expired",
   "continue_select_item": "Do you still want to add this item to the shopping cart?",
@@ -380,5 +384,8 @@
   "unselect": "Unselect",
   "package": "Package",
   "x_items_expired": "{} items expired",
-  "stock_control": "Stock Control"
+  "stock_control": "Stock Control",
+  "hello": "Hello",
+  "connect_internet_to_open_shift": "Please connect internet to open shift",
+  "connect_internet_to_load_transactions": "Please connect internet to load transactions"
 }

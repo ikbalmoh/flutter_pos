@@ -3,9 +3,10 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' hide SearchBar;
+import 'package:flutter/material.dart' hide SearchBar, AppBar;
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
@@ -103,6 +104,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
 
   Future<void> loadShift() async {
     await refreshData();
+    if (!mounted) return;
     final currentShift = ref.read(shiftProvider).value;
     if (currentShift == null) {
       ref.read(shiftProvider.notifier).initShift();

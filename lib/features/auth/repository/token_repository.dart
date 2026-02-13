@@ -24,6 +24,7 @@ class TokenRepository implements TokenRepositoryProtocol {
     const storage = FlutterSecureStorage();
     await storage.delete(key: StoreKey.token.name);
     await storage.delete(key: StoreKey.fcmSubscribe.name);
+    await storage.delete(key: StoreKey.user.name);
   }
 
   @override

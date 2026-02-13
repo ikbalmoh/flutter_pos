@@ -12,6 +12,7 @@ import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/item/repository/item_repository.dart';
 import 'package:selleri/features/outlet/provider/outlet_state.dart';
 import 'package:selleri/features/promotion/provider/promotions_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 
 part 'item_provider.g.dart';
@@ -42,6 +43,14 @@ class Items extends _$Items {
     bool fullSync = false,
     required Function(OutletLoading progress) progressCallback,
   }) async {
+    final isConnected =
+        ref.read(connectivityStatusProvider) == ConnectivityState.connected;
+    if (!isConnected) {
+      return;
+    }
+
+    log('LOAD ITEMS started');
+
     final ItemRepository itemRepository = ref.read(itemRepositoryProvider);
 
     var progress = OutletLoading(
@@ -139,9 +148,15 @@ class Items extends _$Items {
   }
 
   Future<void> syncItems() async {
-    if (objectBox.categoryBox.isEmpty()) {
+    final connection = ref.read(connectivityStatusProvider);
+    if (connection == ConnectivityState.disconnected) {
+      return;
+    }
+    final categories = await objectBox.categoryBox.getAllAsync();
+    log('categories: ${categories.length}');
+    if (categories.isEmpty || state.value == null || state.value!.isEmpty) {
       await loadItems(progressCallback: (status) {
-        log('SYNC ITEMS PROGRESS: $status');
+        log('SYNC ITEMS PROGRESS: loaded ${status.items?.length} items');
       });
     } else {
       log('SYNC ITEMS');

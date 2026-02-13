@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/receiving/model/purchase_item.dart';
 import 'package:selleri/features/receiving/model/receiving_item.dart';
@@ -90,6 +91,7 @@ class ReceivingCart extends ConsumerWidget {
             ? const Icon(CupertinoIcons.list_number_rtl)
             : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
+        hideBottom: asWidget == true,
       ),
       body: cart.items.isNotEmpty
           ? Column(

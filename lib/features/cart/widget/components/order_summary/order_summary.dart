@@ -103,7 +103,7 @@ class OrderSummary extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(15),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: mainAxisSize ?? MainAxisSize.min,
         children: [
           mainAxisSize == MainAxisSize.max
@@ -249,7 +249,16 @@ class OrderSummary extends StatelessWidget {
             label: 'change'.tr(),
             value: cart.change,
           ),
-          const SizedBox(height: 10),
+          Divider(
+            height: 10,
+            color: Colors.blueGrey.shade50,
+          ),
+          if (cart.notes != null && cart.notes!.isNotEmpty)
+            Text(
+              cart.notes!,
+              style: textTheme.bodySmall?.copyWith(color: Colors.grey.shade700),
+              textAlign: TextAlign.left,
+            ),
           if (withAttribute == true &&
               outletState.config.attributeReceipts != null)
             Padding(

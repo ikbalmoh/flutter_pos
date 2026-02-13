@@ -169,9 +169,7 @@ class HomeMenu extends ConsumerWidget {
                     style: menuStyle,
                     child: Text('extra_item'.tr()),
                   ),
-                PopupMenuDivider(
-                  color: Colors.blueGrey.shade50,
-                ),
+                PopupMenuDivider(),
                 MenuItemButton(
                   onPressed: onNewTransaction,
                   leadingIcon: Icon(
@@ -224,9 +222,7 @@ class HomeMenu extends ConsumerWidget {
                   style: menuStyle,
                   child: Text('add_item'.tr()),
                 ),
-                PopupMenuDivider(
-                  color: Colors.blueGrey.shade50,
-                ),
+                PopupMenuDivider(),
                 MenuItemButton(
                   onPressed: () =>
                       ref.read(appSettingsProvider.notifier).changeItemLayout(),

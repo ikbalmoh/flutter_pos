@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/customer/model/customer.dart';
@@ -224,9 +225,12 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
                           ],
                         ),
                       ),
-                error: (e, stack) => ErrorHandler(
-                  error: e.toString(),
-                  stackTrace: stack.toString(),
+                error: (e, stack) => SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: ErrorHandler(
+                    error: e,
+                    stackTrace: stack.toString(),
+                  ),
                 ),
                 loading: () => ListView.builder(
                   itemCount: 10,

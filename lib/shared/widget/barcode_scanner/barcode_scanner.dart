@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
+import 'package:selleri/app/widget/app_bar.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'scanner_button_widgets.dart';

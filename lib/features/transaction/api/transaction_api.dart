@@ -13,11 +13,18 @@ class TransactionApi {
 
   TransactionApi({required this.api});
 
-  Future<List<dynamic>> storeTransaction(Cart cart) async {
+  Future<List<Cart>> storeTransaction(List<Cart> transactions) async {
     try {
-      final FormData formData = await cart.toTransactionFormData();
-      log('TRANSACTION FIELDS: ${formData.fields}');
-      log('TRANSACTION FILES: ${formData.files}');
+      final List<Map<String, dynamic>> transactionJsons = await Future.wait(
+          transactions.map((tr) => tr.toTransactionPayload()));
+      final FormData formData = FormData.fromMap(
+        {"transactions": transactionJsons},
+        ListFormat.multiCompatible,
+      );
+      log('TRANSACTIONS TO STORE: $transactionJsons');
+      if (formData.files.isNotEmpty) {
+        log('TRANSACTION FILES: ${formData.files}');
+      }
       final res = await api.post(
         ApiUrl.transaction,
         data: formData,
@@ -26,7 +33,11 @@ class TransactionApi {
         ),
       );
 
-      return res.data['data'];
+      log('TRANSACTIONS STORED ${res.data}');
+
+      return List<Map<String, dynamic>>.from(res.data['data'])
+          .map((transaction) => Cart.fromTransaction(transaction))
+          .toList();
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {
@@ -126,5 +137,6 @@ class TransactionApi {
 
 final transactionApiProvider = Provider<TransactionApi>((ref) {
   final api = ref.watch(apiProvider);
-  return TransactionApi(api: api);
+  final transactionApi = TransactionApi(api: api);
+  return transactionApi;
 });
