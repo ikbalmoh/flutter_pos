@@ -45,14 +45,14 @@ class App extends ConsumerWidget {
     }
 
     // Listen for connectivity changes and sync when back online
-    ref.listen<ConnectivityState>(connectivityStatusProvider, (previous, next) {
+    ref.listen<ConnectivityState>(connectivityStatusProvider, (previous, next) async {
       if (previous == ConnectivityState.disconnected &&
           next == ConnectivityState.connected) {
         ref.read(offlineTransactionsProvider.notifier).sync();
       }
     });
 
-    ref.listen(offlineTransactionsProvider, (previous, next) {
+    ref.listen(offlineTransactionsProvider, (previous, next) async {
       if (next is AsyncData<List<Cart>> &&
           next.value.isNotEmpty &&
           isConnected) {

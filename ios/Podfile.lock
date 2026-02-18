@@ -249,6 +249,8 @@ PODS:
     - Flutter
   - wakelock_plus (0.0.1):
     - Flutter
+  - workmanager_apple (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
@@ -279,6 +281,7 @@ DEPENDENCIES:
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
+  - workmanager_apple (from `.symlinks/plugins/workmanager_apple/ios`)
 
 SPEC REPOS:
   trunk:
@@ -374,6 +377,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   wakelock_plus:
     :path: ".symlinks/plugins/wakelock_plus/ios"
+  workmanager_apple:
+    :path: ".symlinks/plugins/workmanager_apple/ios"
 
 CHECKOUT OPTIONS:
   FirebaseFirestore:
@@ -442,6 +447,7 @@ SPEC CHECKSUMS:
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
   wakelock_plus: e29112ab3ef0b318e58cfa5c32326458be66b556
+  workmanager_apple: 904529ae31e97fc5be632cf628507652294a0778
 
 PODFILE CHECKSUM: ccfeaf9fe9c108cfcc2f7bd3d97d5b9728129fbc
 

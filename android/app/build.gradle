@@ -36,7 +36,7 @@ android {
     namespace "com.dgti.selleri"
     compileSdkVersion 36
     // compileSdk = 36
-    ndkVersion "29.0.13113456 rc1"
+    ndkVersion "27.3.13750724"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -60,13 +60,9 @@ android {
         versionName flutterVersionName
         ndk {
             debugSymbolLevel 'FULL'
+            abiFilters 'armeabi-v7a', 'x86_64', 'arm64-v8a', 'x86'
         }
         multiDexEnabled true
-        externalNativeBuild {
-            cmake {
-                arguments '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
-            }
-        }
     }
 
     signingConfigs {

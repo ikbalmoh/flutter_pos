@@ -39,12 +39,18 @@ class ObjectBox {
     transactionBox = Box<OfflineTransaction>(store);
   }
 
-  static Future<ObjectBox> create() async {
+  static Future<ObjectBox> create({String? path}) async {
     if (_instance != null) {
       return _instance!;
     } else {
-      final docsDir = await getApplicationDocumentsDirectory();
-      final storePath = p.join(docsDir.path, "obx");
+      late String storePath;
+      if (path != null) {
+        storePath = p.join(path, "obx");
+      } else {
+        final docsDir = await getApplicationDocumentsDirectory();
+        storePath = p.join(docsDir.path, "obx");
+      }
+      
       late Store store;
       if (Store.isOpen(storePath)) {
         store = Store.attach(getObjectBoxModel(), storePath);

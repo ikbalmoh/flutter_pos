@@ -19,6 +19,7 @@
     <application
         android:label="${applicationLabel}"
         android:name="${applicationName}"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

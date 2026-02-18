@@ -15,6 +15,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_udid/flutter_udid.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:selleri/shared/background_sync.dart';
+import 'package:path_provider/path_provider.dart';
 
 final deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -122,6 +125,26 @@ Future initServices() async {
   if (!kDebugMode) {
     WakelockPlus.enable();
   }
+
+  await Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: kDebugMode,
+  );
+  
+  final directory = await getApplicationDocumentsDirectory();
+
+  await Workmanager().registerPeriodicTask(
+    "propagate_sync",
+    syncTask,
+    frequency: const Duration(minutes: 1),
+    constraints: Constraints(
+      networkType: NetworkType.connected,
+    ),
+    inputData: {
+      'env': env,
+      'appDocDir': directory.path,
+    },
+  );
 }
 
 Future<void> main() async {
