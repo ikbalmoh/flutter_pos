@@ -91,6 +91,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
 
   @override
   void dispose() {
+    _debounce?.cancel();
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }

@@ -167,9 +167,11 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     } catch (e) {
       AppAlert.snackbar(e.toString(), alertType: AlertType.error);
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 

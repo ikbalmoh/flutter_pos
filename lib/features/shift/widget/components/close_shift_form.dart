@@ -121,11 +121,13 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
             printReport: printReport,
             reopen: isAutoShift,
           );
+      if (!mounted) return;
       setState(() {
         status = Status.success;
       });
     } catch (e, stackTrace) {
       log('close shift error: $e => $stackTrace');
+      if (!mounted) return;
       setState(() {
         status = Status.error;
       });

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart'
         PreferredSize,
         PreferredSizeWidget,
         Size,
-        State,
         Widget;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,7 +122,8 @@ class _AppBarState extends ConsumerState<AppBar> {
       // Disconnected: Show banner
       effectiveBottom = PreferredSize(
         preferredSize: Size.fromHeight(
-          (widget.bottom?.preferredSize.height ?? 0) + 30, // 30 is banner height
+          (widget.bottom?.preferredSize.height ?? 0) +
+              30, // 30 is banner height
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

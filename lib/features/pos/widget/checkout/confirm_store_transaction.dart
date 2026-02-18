@@ -40,9 +40,11 @@ class _ConfirmStoreTransactionState
     WidgetsFlutterBinding.ensureInitialized();
 
     Future.delayed(Duration(milliseconds: 100), () {
-      setState(() {
-        printKitchen = ref.read(appSettingsProvider).autoPrintKitchen;
-      });
+      if (mounted) {
+        setState(() {
+          printKitchen = ref.read(appSettingsProvider).autoPrintKitchen;
+        });
+      }
     });
 
     super.initState();

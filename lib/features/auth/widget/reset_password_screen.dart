@@ -54,9 +54,11 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         duration: const Duration(seconds: 5),
       );
     } finally {
-      setState(() {
-        _isSubmitting = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 

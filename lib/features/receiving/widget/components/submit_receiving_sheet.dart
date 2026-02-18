@@ -33,7 +33,7 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
     super.dispose();
   }
 
-  void onSubmit(BuildContext context) async {
+  void onSubmit() async {
     setState(() {
       isLoading = true;
     });
@@ -41,9 +41,11 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
       String message = await ref
           .read(receivingProvider.notifier)
           .submit(description: descriptionController.text);
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       if (context.mounted) {
         while (context.canPop()) {
           context.pop();
@@ -53,9 +55,11 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
         AppAlert.snackbar(message);
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       AppAlert.toast(e.toString());
     }
   }
@@ -141,7 +145,7 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
                       ),
                     ),
                   ),
-                  onPressed: isLoading ? null : () => onSubmit(context),
+                  onPressed: isLoading ? null : () => onSubmit(),
                   icon: isLoading
                       ? const SizedBox(
                           height: 12,

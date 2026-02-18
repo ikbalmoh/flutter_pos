@@ -32,7 +32,7 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
     super.initState();
   }
 
-  void onSave(BuildContext context) async {
+  void onSave() async {
     ref.read(receivingProvider.notifier).receiveItem(
           widget.item,
           qtyReceive: qty,
@@ -173,7 +173,7 @@ class _ReceiveItemFormState extends ConsumerState<ReceiveItemForm> {
                       ),
                     ),
                   ),
-                  onPressed: () => onSave(context),
+                  onPressed: () => onSave(),
                   icon: const Icon(CupertinoIcons.checkmark_alt),
                   label: Text('save'.tr()),
                 ),

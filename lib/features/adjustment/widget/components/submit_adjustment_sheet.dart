@@ -31,7 +31,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
     super.dispose();
   }
 
-  void onSubmit(BuildContext context) async {
+  void onSubmit() async {
     setState(() {
       isLoading = true;
     });
@@ -39,18 +39,22 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
       String message = await ref
           .read(adjustmentProvider.notifier)
           .submitAdjustment(description: descriptionController.text);
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       if (context.mounted) {
         context.pop();
         context.push(Routes.adjustmentsHistory);
         AppAlert.snackbar(message);
       }
     } on Exception catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       AppAlert.toast(e.toString());
     }
   }
@@ -134,7 +138,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
                       ),
                     ),
                   ),
-                  onPressed: isLoading ? null : () => onSubmit(context),
+                  onPressed: isLoading ? null : () => onSubmit(),
                   icon: isLoading
                       ? const SizedBox(
                           height: 12,
