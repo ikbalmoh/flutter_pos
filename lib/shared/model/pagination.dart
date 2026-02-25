@@ -20,4 +20,11 @@ class Pagination<T> with _$Pagination<T> {
   factory Pagination.fromJson(
           Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
       _$PaginationFromJson(json, fromJsonT);
+
+  factory Pagination.empty() => Pagination(
+        currentPage: 0,
+        lastPage: 0,
+        total: 0,
+        data: [],
+      );
 }

@@ -42,9 +42,11 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
 
     setState(() {
       selected = ref
-          .read(promotionsProvider)
-          .where((promo) => ids.contains(promo.idPromotion))
-          .toList();
+              .read(promotionsProvider)
+              .value
+              ?.where((promo) => ids.contains(promo.idPromotion))
+              .toList() ??
+          [];
     });
     super.initState();
   }
@@ -81,7 +83,7 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
 
   @override
   Widget build(BuildContext context) {
-    List<Promotion> promotions = ref.watch(promotionsProvider);
+    List<Promotion> promotions = ref.watch(promotionsProvider).value ?? [];
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -187,8 +189,11 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                   Expanded(
                     child: TextButton(
                       style: TextButton.styleFrom(
-                        backgroundColor: selected.isEmpty ? Colors.teal.shade50 : Colors.teal.shade500,
-                        foregroundColor: selected.isNotEmpty ? Colors.white : Colors.teal,
+                        backgroundColor: selected.isEmpty
+                            ? Colors.teal.shade50
+                            : Colors.teal.shade500,
+                        foregroundColor:
+                            selected.isNotEmpty ? Colors.white : Colors.teal,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),

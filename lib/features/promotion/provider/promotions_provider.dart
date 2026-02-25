@@ -16,8 +16,8 @@ part 'promotions_provider.g.dart';
 @Riverpod(keepAlive: true)
 class Promotions extends _$Promotions {
   @override
-  List<Promotion> build() {
-    model.Cart cart = ref.watch(cartProvider);
+  Stream<List<Promotion>> build() {
+    final cart = ref.watch(cartProvider);
     return objectBox.transactionPromotions(cart: cart);
   }
 

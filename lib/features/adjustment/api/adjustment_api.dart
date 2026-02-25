@@ -14,12 +14,13 @@ class AdjustmentApi {
 
   AdjustmentApi({required this.api});
 
-  Future<Pagination<model.AdjustmentHistory>> adjustmentHistory(
-      {int page = 1,
-      String? search = '',
-      String? status = 'all',
-      DateTime? from,
-      DateTime? to}) async {
+  Future<Pagination<model.AdjustmentHistory>> adjustmentHistory({
+    int page = 1,
+    String? search = '',
+    String? status = 'all',
+    DateTime? from,
+    DateTime? to,
+  }) async {
     try {
       final Map<String, dynamic> queryParameters = {
         'page': page,
