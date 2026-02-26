@@ -15,8 +15,7 @@ class CartPromotions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<Promotion> promotions =
-        ref.watch(promotionsProvider).value ?? [];
+    final List<Promotion> promotions = ref.watch(promotionsProvider);
 
     void onViewPromotions() async {
       try {

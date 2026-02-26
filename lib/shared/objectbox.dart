@@ -65,7 +65,7 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
-  Stream<List<Promotion>> transactionPromotions({required Cart cart}) {
+  List<Promotion> transactionPromotions({required Cart cart}) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
@@ -183,11 +183,11 @@ class ObjectBox {
       ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)
       ..order(Promotion_.allTime);
 
-    Stream<List<Promotion>> promotionsStream = builder.watch(triggerImmediately: true).map((event) => event.find());
+    List<Promotion> promotions = builder.build().find();
 
-    log('Active Promotions: ${promotionsStream.map((p) => p.first.toJson())}');
+    log('Active Promotions: ${promotions.map((promotion) => promotion.name).toList()}');
 
-    return promotionsStream;
+    return promotions;
   }
 
   Stream<List<Promotion>> promotionsStream(

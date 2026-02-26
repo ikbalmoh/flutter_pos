@@ -43,10 +43,8 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
     setState(() {
       selected = ref
               .read(promotionsProvider)
-              .value
-              ?.where((promo) => ids.contains(promo.idPromotion))
-              .toList() ??
-          [];
+              .where((promo) => ids.contains(promo.idPromotion))
+              .toList();
     });
     super.initState();
   }
@@ -83,7 +81,7 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
 
   @override
   Widget build(BuildContext context) {
-    List<Promotion> promotions = ref.watch(promotionsProvider).value ?? [];
+    List<Promotion> promotions = ref.watch(promotionsProvider);
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),

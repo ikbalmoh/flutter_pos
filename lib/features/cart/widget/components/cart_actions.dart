@@ -36,7 +36,7 @@ class _CartActionsState extends ConsumerState<CartActions> {
       isLoading = true;
     });
     try {
-      final promotions = await ref.read(promotionsProvider.future);
+      final promotions = ref.read(promotionsProvider);
       final appliedPromotions = ref.read(cartProvider).promotions;
       if (promotions.isNotEmpty && appliedPromotions.isEmpty) {
         List<Promotion>? promotions = await showModalBottomSheet(
