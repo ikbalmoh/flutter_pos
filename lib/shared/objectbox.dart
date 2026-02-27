@@ -74,7 +74,7 @@ class ObjectBox {
     // Filter Promo by day
     promotionQuery = promotionQuery.and(Promotion_.days.isNull().or(
         Promotion_.days.containsElement(
-            DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
+            DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())));
 
     // Filter promo by current date
     promotionQuery = promotionQuery.and(Promotion_.allTime
@@ -213,7 +213,7 @@ class ObjectBox {
                   .equalsDate(today)
                   .or(Promotion_.endDate.equalsDate(today)))))
           .and(Promotion_.days.isNull().or(Promotion_.days.containsElement(
-              DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
+              DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())));
     }
 
     if (range != null) {

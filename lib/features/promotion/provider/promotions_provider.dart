@@ -80,7 +80,7 @@ class Promotions extends _$Promotions {
     // Check days
     if (promo.days != null && promo.days!.isNotEmpty) {
       if (!promo.days!
-          .contains(DateFormat('EEEE').format(DateTime.now()).toLowerCase())) {
+          .contains(DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())) {
         return false;
       }
     }
