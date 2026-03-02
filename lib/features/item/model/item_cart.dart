@@ -68,10 +68,10 @@ class ItemCart with _$ItemCart {
 
     if (promotion != null) {
       if (isReward) {
-        log('REWARD PROMOTION: $promotion');
+        log('REWARD PROMOTION: ${promotion.name}');
         identifier = 'reward-${promotion.idPromotion}';
       } else {
-        log('ITEM PROMOTION: $promotion');
+        log('ITEM PROMOTION: ${promotion.name}');
       }
       if (!isReward && promotion.type != 1) {
         discountIsPercent = promotion.discountType == true;
@@ -139,7 +139,7 @@ class ItemCart with _$ItemCart {
     }
 
     if (promotion != null) {
-      log('ITEM CART PROMOTION: $promotion');
+      log('ITEM CART PROMOTION: ${promotion.name}');
       identifier = 'reward-${promotion.idPromotion}';
       if (promotion.rewardType == 1) {
         itemPrice = 0;
@@ -190,7 +190,7 @@ class ItemCart with _$ItemCart {
       isReward: true,
     );
 
-    log('ITEM CART FROM ITEM: $itemCart');
+    log('ITEM CART FROM ITEM: ${itemCart.itemName}');
 
     return itemCart;
   }

@@ -1,114 +1,64 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
 import 'package:selleri/shared/objectbox.dart';
 
+part 'promotion.freezed.dart';
 part 'promotion.g.dart';
 
-@Entity(uid: 9072647444006103348)
-@JsonSerializable(fieldRename: FieldRename.snake)
-class Promotion {
-  int id;
+@Freezed(addImplicitFinal: false)
+class Promotion with _$Promotion {
+  @Entity(uid: 9072647444006103348, realClass: Promotion)
+  @JsonSerializable(fieldRename: FieldRename.snake)
+  factory Promotion({
+    @Default(0) @Id() int id,
+    @Index() required String idPromotion,
+    required String name,
+    required int type,
+    int? requirementQuantity,
+    double? requirementMinimumOrder,
+    int? rewardType,
+    int? rewardProductType,
+    String? rewardProductId,
+    int? rewardVariantId,
+    int? rewardQty,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? discountType,
+    required double rewardNominal,
+    double? rewardMaximumAmount,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool status,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool allOutlet,
+    @Property(type: PropertyType.date) DateTime? startDate,
+    @Property(type: PropertyType.date) DateTime? endDate,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool allTime,
+    required bool hourly,
+    required int assignCustomer, // 1 - all, 2 - member, 3 - non member, 4 - group
+    required bool policy,
+    required bool needCode,
+    String? promoCode,
+    required bool kelipatan,
+    int? priority,
+    int? requirementProductType, // 1 - item, 3 - category
+    required List<String> requirementProductId,
+    required List<String> requirementVariantId,
+    String? typeName,
+    List<String>? days,
+    String? description,
+    String? assignCustomerName,
+    List<int>? numberOfDays,
+    String? rewardProductName,
+    int? rewardItemPrice,
+    List<String>? times,
+    @AssignGroupRelToManyConverter() required ToMany<CustomerGroup> assignGroups,
+  }) = _Promotion;
 
-  @Index()
-  final String idPromotion;
+  const Promotion._();
 
-  final String name;
-  int type;
-  int? requirementQuantity;
-  double? requirementMinimumOrder;
-  int? rewardType;
-  int? rewardProductType;
-  String? rewardProductId;
-  int? rewardVariantId;
-  int? rewardQty;
-  @JsonKey(fromJson: ModelConverter.dynamicToBool)
-  bool? discountType;
-  double rewardNominal;
-  double? rewardMaximumAmount;
+  factory Promotion.fromJson(Map<String, dynamic> json) =>
+      _$PromotionFromJson(json);
 
-  @JsonKey(fromJson: ModelConverter.dynamicToBool)
-  bool status;
-
-  @JsonKey(fromJson: ModelConverter.dynamicToBool)
-  bool allOutlet;
-
-  @Property(type: PropertyType.date)
-  DateTime? startDate;
-  @Property(type: PropertyType.date)
-  DateTime? endDate;
-
-  @JsonKey(fromJson: ModelConverter.dynamicToBool)
-  bool allTime;
-
-  bool hourly;
-
-  int assignCustomer;
-
-  bool policy;
-  bool needCode;
-  String? promoCode;
-  bool kelipatan;
-  int? priority;
-  int? requirementProductType;
-  List<String> requirementProductId;
-  List<String> requirementVariantId;
-  String? typeName;
-  List<String>? days;
-  String? description;
-  String? assignCustomerName;
-  List<int>? numberOfDays;
-  String? rewardProductName;
-  int? rewardItemPrice;
-  List<String>? times;
-
-  @AssignGroupRelToManyConverter()
-  final ToMany<CustomerGroup> assignGroups;
-
-  Promotion({
-    required this.id,
-    required this.idPromotion,
-    required this.name,
-    required this.type,
-    this.requirementQuantity,
-    this.requirementMinimumOrder,
-    this.rewardType,
-    this.rewardProductType,
-    this.rewardProductId,
-    this.rewardVariantId,
-    this.rewardQty,
-    this.discountType,
-    required this.rewardNominal,
-    this.rewardMaximumAmount,
-    required this.status,
-    required this.allOutlet,
-    this.startDate,
-    this.endDate,
-    required this.allTime,
-    required this.hourly,
-    required this.assignCustomer, // 1 - all, 2 - member, 3 - non member, 4  - group
-    required this.policy,
-    required this.needCode,
-    this.promoCode,
-    required this.kelipatan,
-    this.priority,
-    this.requirementProductType, // 1 - item, 3 - category,
-    required this.requirementProductId,
-    required this.requirementVariantId,
-    this.typeName,
-    this.days,
-    this.description,
-    this.assignCustomerName,
-    this.numberOfDays,
-    this.rewardProductName,
-    this.rewardItemPrice,
-    this.times,
-    required this.assignGroups,
-  });
-
-  factory Promotion.fromJson(Map<String, dynamic> json) {
+  factory Promotion.fromJsonData(Map<String, dynamic> json) {
     final String idPromotion = json['id'];
     Promotion? existPromotion = objectBox.getPromotion(idPromotion);
     json['id_promotion'] = idPromotion;
@@ -130,13 +80,6 @@ class Promotion {
             return "${(time['start_time'] as String).substring(0, 5)}-${(time['end_time'] as String).substring(0, 5)}";
           }).toList();
     return _$PromotionFromJson(json);
-  }
-
-  Map<String, dynamic> toJson() => _$PromotionToJson(this);
-
-  @override
-  String toString() {
-    return toJson().toString();
   }
 }
 

@@ -661,7 +661,7 @@ class Cart extends _$Cart {
   }
 
   void applyPromotions(List<Promotion> selectedPromotions) {
-    log('APPLY PROMOTIONS: $selectedPromotions');
+    log('APPLY PROMOTIONS: ${selectedPromotions.map((e) => e.name)}');
 
     List<Promotion> promotions = [];
     for (Promotion promo in selectedPromotions) {
@@ -693,7 +693,7 @@ class Cart extends _$Cart {
     List<Promotion> promotionByProducts =
         promotions.where((promo) => promo.type == 3).toList();
 
-    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT\n$freeGiftpromotions\n2 => BY ORDER\n$promotionByOrder\n3 => BY PRODUCTS\n$promotionByProducts');
+    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT: ${freeGiftpromotions.map((e) => e.name)}\n2 => BY ORDER: ${promotionByOrder?.name}\n3 => BY PRODUCTS: ${promotionByProducts.map((e) => e.name)}');
 
     List<CartPromotion> cartPromotions = [];
 
@@ -749,14 +749,14 @@ class Cart extends _$Cart {
       List<ItemCart> eligibleItems = ref
           .read(promotionsProvider.notifier)
           .eligibleItems(freeGiftpromotions[i], items);
-      log('A GET B eligible items: $eligibleItems');
+      log('A GET B eligible items: ${eligibleItems.map((e) => e.itemName).toList()}');
       if (eligibleItems.isEmpty) {
         continue;
       }
       // Apply Rewards
       Promotion promo = freeGiftpromotions[i];
       ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
-      log('\nA GET B REWARD ITEM=>${reward.item.toString()}\n A GET B REWARD Variant=>${reward.variant.toString()}\n\n');
+      log('\nA GET B Promotion => $promo\nREWARD ITEM =>${reward.item?.itemName}\nREWARD Variant=>${reward.variant?.variantName}\n\n');
       if (reward.item != null) {
         for (ItemCart itemCart in eligibleItems) {
           int itemIdx = items.indexWhere(
@@ -764,11 +764,13 @@ class Cart extends _$Cart {
           );
           itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
 
-          log('ITEM GET PROMO AB: $itemCart');
+          log('ITEM GET PROMO AB: ${itemCart.itemName}');
 
           items[itemIdx] = itemCart;
         }
         double rewardQty = promo.rewardQty?.toDouble() ?? 1;
+        double rewardPrice = reward.item?.itemPrice ?? 0;
+
         final double itemPromoQty = eligibleItems
             .map((item) => item.quantity)
             .reduce((value, total) => value + total);
@@ -777,6 +779,11 @@ class Cart extends _$Cart {
           rewardQty = ((rewardQty * itemPromoQty) ~/ promo.requirementQuantity!)
               .toDouble();
         }
+
+        if (promo.rewardNominal > rewardPrice) {
+          promo = promo.copyWith(rewardNominal: rewardPrice);
+        }
+
         ItemCart rewardItem = ItemCart.asReward(
           reward.item!,
           variant: reward.variant,

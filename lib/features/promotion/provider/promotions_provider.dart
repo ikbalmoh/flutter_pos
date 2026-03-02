@@ -71,7 +71,7 @@ class Promotions extends _$Promotions {
       return false;
     }
 
-    log('CHECK PROMO ELIGIBILITY: $promo');
+    log('CHECK PROMO ELIGIBILITY: ${promo.name}');
 
     final now = DateTime.now().millisecondsSinceEpoch;
     final today =
@@ -177,7 +177,7 @@ class Promotions extends _$Promotions {
           break;
       }
 
-      log('ELIGIBLE ITEMS FOR PROMO 1 & 3: $eligibleItems');
+      log('ELIGIBLE ITEMS FOR PROMO 1 & 3: ${eligibleItems.map((e) => e.itemName)}');
 
       if (eligibleItems.isEmpty) {
         return false;
