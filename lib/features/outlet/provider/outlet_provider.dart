@@ -69,7 +69,7 @@ class Outlet extends _$Outlet {
     try {
       final connection = ref.read(connectivityStatusProvider);
       if (connection == ConnectivityState.disconnected ||
-          state.value! is OutletSelected) {
+          state.value! is! OutletSelected) {
         return;
       }
       log('SYNC CONFIG: $only');

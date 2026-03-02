@@ -98,8 +98,11 @@ class OutletRepository implements OutletRepositoryProtocol {
   }
 
   @override
-  Future<OutletConfig> fetchOutletConfig(String idOutlet,
-      {List<String>? only = const [], OutletConfig? current}) async {
+  Future<OutletConfig> fetchOutletConfig(
+    String idOutlet, {
+    List<String>? only = const [],
+    OutletConfig? current,
+  }) async {
     final api = _ref.watch(outletApiProvider);
     try {
       var configJson = await api.configs(idOutlet, only: only);
