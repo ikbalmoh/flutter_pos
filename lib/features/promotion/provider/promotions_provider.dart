@@ -191,7 +191,7 @@ class Promotions extends _$Promotions {
 
   List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
     List<ItemCart> eligibleItems = items
-        .where((item) => item.isReward != true && item.promotion == null)
+        .where((item) => item.isReward != true)
         .toList();
 
     if (promo.requirementProductType == 1) {

@@ -185,8 +185,6 @@ class ObjectBox {
 
     List<Promotion> promotions = builder.build().find();
 
-    log('Active Promotions: ${promotions.map((promotion) => promotion.name).toList()}');
-
     return promotions;
   }
 
@@ -213,7 +211,9 @@ class ObjectBox {
                   .equalsDate(today)
                   .or(Promotion_.endDate.equalsDate(today)))))
           .and(Promotion_.days.isNull().or(Promotion_.days.containsElement(
-              DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())));
+              DateFormat('EEEE', 'en_US')
+                  .format(DateTime.now())
+                  .toLowerCase())));
     }
 
     if (range != null) {

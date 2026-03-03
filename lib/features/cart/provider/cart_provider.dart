@@ -182,8 +182,7 @@ class Cart extends _$Cart {
           .toList(),
     );
 
-    log(
-        'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
+    log('ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
     state = state.copyWith(items: items);
@@ -667,6 +666,7 @@ class Cart extends _$Cart {
     for (Promotion promo in selectedPromotions) {
       bool isEligible =
           ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
+      log('PROMOTION ${promo.name}[${promo.type} - ${promo.typeName}] IS ${isEligible ? 'ELIGIBLE' : 'NOT ELIGIBLE'}');
       if (isEligible) {
         promotions.add(promo);
       }
@@ -716,7 +716,7 @@ class Cart extends _$Cart {
         );
         itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
 
-        // log('ITEM GET PROMO: $itemCart');
+        log('ITEM GET PROMO: ${itemCart.promotion?.promotionName} ${itemCart.promotion?.discountValue}');
 
         cartPromotions.add(cartPromo);
         items[itemIdx] = itemCart;
@@ -756,17 +756,18 @@ class Cart extends _$Cart {
       // Apply Rewards
       Promotion promo = freeGiftpromotions[i];
       ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
-      log('\nA GET B Promotion => $promo\nREWARD ITEM =>${reward.item?.itemName}\nREWARD Variant=>${reward.variant?.variantName}\n\n');
+      log('A GET B Promotion => ${promo.name}\nREWARD ITEM =>${reward.item?.itemName}\nREWARD Variant=>${reward.variant?.variantName}\n\n');
       if (reward.item != null) {
         for (ItemCart itemCart in eligibleItems) {
           int itemIdx = items.indexWhere(
             (item) => item.identifier == itemCart.identifier,
           );
-          itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
+          if (itemCart.promotion == null || itemCart.promotion!.type != 3) {
+            itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
+            items[itemIdx] = itemCart;
+          }
 
           log('ITEM GET PROMO AB: ${itemCart.itemName}');
-
-          items[itemIdx] = itemCart;
         }
         double rewardQty = promo.rewardQty?.toDouble() ?? 1;
         double rewardPrice = reward.item?.itemPrice ?? 0;
@@ -797,6 +798,11 @@ class Cart extends _$Cart {
 
     // PROMO BY CODE
     Promotion? promoByCode = promotions.firstWhereOrNull((p) => p.needCode);
+
+    log('APPLIED PROMOTION: ${cartPromotions.map((e) => [
+          e.promotionName,
+          e.discountValue
+        ].join(' - '))}');
 
     state = state.copyWith(
       items: items,
@@ -843,17 +849,34 @@ class Cart extends _$Cart {
 
   List<CartPromotion> activePromotion() {
     List<CartPromotion> promotions = [];
-    for (var promo in state.promotions) {
+
+    // Collect type 1 & 3 promotions from items using the per-item discountValue
+    for (var item in state.items) {
+      if (item.promotion == null) continue;
+      CartPromotion itemPromo = item.promotion!;
       int index =
-          promotions.indexWhere((p) => p.promotionId == promo.promotionId);
+          promotions.indexWhere((p) => p.promotionId == itemPromo.promotionId);
       if (index < 0) {
-        promotions.add(promo);
+        promotions.add(itemPromo);
       } else {
         promotions[index] = promotions[index].copyWith(
-            discountValue:
-                promotions[index].discountValue + promo.discountValue);
+          discountValue:
+              promotions[index].discountValue + itemPromo.discountValue,
+        );
       }
     }
+
+    // Include type 2 (by-order) promotions from state — they have no per-item marker
+    for (var promo in state.promotions) {
+      if (promo.type == 2) {
+        int index =
+            promotions.indexWhere((p) => p.promotionId == promo.promotionId);
+        if (index < 0) {
+          promotions.add(promo);
+        }
+      }
+    }
+
     return promotions;
   }
 
