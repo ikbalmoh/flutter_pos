@@ -24,11 +24,49 @@ class CheckoutScreen extends ConsumerStatefulWidget {
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
+    with SingleTickerProviderStateMixin {
+  late final ScrollController _scrollController;
+  final GlobalKey _paymentDetailsKey = GlobalKey();
+  bool _isActionsVisible = false;
+  late final AnimationController _actionsAnimController;
+
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+    _actionsAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    _actionsAnimController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final keyContext = _paymentDetailsKey.currentContext;
+    if (keyContext == null) return;
+    final box = keyContext.findRenderObject() as RenderBox;
+    final widgetBottom = box.localToGlobal(Offset.zero).dy + box.size.height;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final visible = widgetBottom <= screenHeight - bottomPadding - 120;
+    if (visible != _isActionsVisible) {
+      setState(() => _isActionsVisible = visible);
+      if (visible) {
+        _actionsAnimController.forward();
+      } else {
+        _actionsAnimController.reverse();
+      }
+    }
   }
 
   void onChangeRoundingValue() {
@@ -221,57 +259,98 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              isTablet
-                  ? Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                          right: BorderSide(
-                            width: 1,
-                            color: Colors.grey.shade200,
-                          ),
-                        ),
+              if (isTablet)
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      right: BorderSide(
+                        width: 1,
+                        color: Colors.grey.shade200,
                       ),
-                      width: ResponsiveBreakpoints.of(context)
-                              .largerOrEqualTo(DESKTOP)
+                    ),
+                  ),
+                  width:
+                      ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP)
                           ? 400
                           : MediaQuery.of(context).size.width * 0.5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: cartPreview,
-                      ),
-                    )
-                  : Container(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: cartPreview,
+                  ),
+                ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                                  horizontal: 7.5, vertical: 7.5)
-                              .copyWith(bottom: 15),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              isTablet
-                                  ? Container()
-                                  : Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: cartPreview,
+                      child: isTablet
+                          ? SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                        horizontal: 7.5, vertical: 7.5)
+                                    .copyWith(bottom: 15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const DiscountPromotion(),
+                                    paymentDetails,
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                              horizontal: 7.5, vertical: 7.5)
+                                          .copyWith(bottom: 140),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: cartPreview,
+                                          ),
+                                          const DiscountPromotion(),
+                                          KeyedSubtree(
+                                            key: _paymentDetailsKey,
+                                            child: paymentDetails,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                              const DiscountPromotion(),
-                              paymentDetails
-                            ],
-                          ),
-                        ),
-                      ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 2),
+                                      end: Offset.zero,
+                                    ).animate(CurvedAnimation(
+                                      parent: _actionsAnimController,
+                                      curve: Curves.easeOutCubic,
+                                    )),
+                                    child: actions,
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
-                    actions
+                    if (isTablet) actions,
                   ],
                 ),
               ),
