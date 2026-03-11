@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
@@ -51,6 +52,7 @@ class Promotion with _$Promotion {
     int? rewardItemPrice,
     List<String>? times,
     @AssignGroupRelToManyConverter() required ToMany<CustomerGroup> assignGroups,
+    @Default([]) List<ItemCart> eligibleItems,
   }) = _Promotion;
 
   const Promotion._();

@@ -42,22 +42,32 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
 
     setState(() {
       selected = ref
-              .read(promotionsProvider)
-              .where((promo) => ids.contains(promo.idPromotion))
-              .toList();
+          .read(promotionsProvider)
+          .where((promo) => ids.contains(promo.idPromotion))
+          .toList();
     });
     super.initState();
   }
 
   void onSelect(Promotion promo) {
     final int idx = selected.indexWhere((p) => p.id == promo.id);
+    List<Promotion> currentPromotions = List.from(selected);
     if (idx >= 0) {
+      currentPromotions.removeAt(idx);
       setState(() {
-        selected = selected..removeAt(idx);
+        selected = currentPromotions;
       });
     } else {
+      if (promo.type == 2) {
+        // remove overlap transaction promo
+        final otherTrxPromoIdx =
+            currentPromotions.indexWhere((p) => p.type == 2);
+        if (otherTrxPromoIdx >= 0) {
+          currentPromotions.removeAt(otherTrxPromoIdx);
+        }
+      }
       setState(() {
-        selected = selected..add(promo);
+        selected = currentPromotions..add(promo);
       });
     }
   }
@@ -77,6 +87,16 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
 
   bool hasCannotCombinedPromo(int exceptId) {
     return selected.indexWhere((p) => !p.policy && p.id != exceptId) >= 0;
+  }
+
+  bool isPromoDisabled(Promotion promo) {
+    bool isEligible =
+        ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
+    bool isDisabled = !isEligible ||
+        promo.needCode ||
+        (selected.where((p) => p.id != promo.id).isNotEmpty && !promo.policy) ||
+        hasCannotCombinedPromo(promo.id);
+    return isDisabled;
   }
 
   @override
@@ -129,26 +149,16 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                             shrinkWrap: true,
                             itemBuilder: (context, idx) {
                               Promotion promo = promotions[idx];
-                              bool isActive =
-                                  selected.map((p) => p.id).contains(promo.id);
-                              bool isEligible = ref
-                                  .read(promotionsProvider.notifier)
-                                  .isPromotionEligible(promo);
-                              bool isDisabled = !isEligible ||
-                                  promo.needCode ||
-                                  (selected
-                                          .where((p) => p.id != promo.id)
-                                          .isNotEmpty &&
-                                      !promo.policy) ||
-                                  hasCannotCombinedPromo(promo.id);
                               return Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 7.5),
                                 child: CartPromotionItem(
                                   promo: promo,
                                   onSelect: onSelect,
-                                  active: isActive,
-                                  disabled: isDisabled,
+                                  active: selected
+                                      .map((p) => p.id)
+                                      .contains(promo.id),
+                                  disabled: isPromoDisabled(promo),
                                 ),
                               );
                             },

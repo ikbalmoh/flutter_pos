@@ -22,13 +22,14 @@ class PromotionTypeBadge extends StatelessWidget {
     return Text(
       getPromotionType(type),
       style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: type == 3
-              ? Colors.blue.shade600
-              : type == 1
-                  ? Colors.orange.shade600
-                  : Colors.green.shade600),
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: type == 3
+            ? Colors.blue.shade600
+            : type == 1
+                ? Colors.orange.shade600
+                : Colors.red.shade400,
+      ),
     );
   }
 }

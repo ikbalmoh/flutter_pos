@@ -50,9 +50,36 @@ class CartPromotionItem extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 12.5, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 5,
                   children: [
                     PromotionTypeBadge(type: promo.type),
-                    const SizedBox(height: 5),
+                    if (promo.eligibleItems.isNotEmpty)
+                      Wrap(
+                        spacing: 7,
+                        runSpacing: 6,
+                        children: promo.eligibleItems
+                            .map(
+                              (e) => Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey.shade50
+                                      .withValues(alpha: 0.75),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 2.5,
+                                ),
+                                child: Text(
+                                  [e.itemName, e.variantName]
+                                      .where((e) => e != null && e.isNotEmpty)
+                                      .join(' - '),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(color: Colors.green.shade800),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
                     Text(
                       promo.name,
                       style: Theme.of(context)
@@ -60,7 +87,6 @@ class CartPromotionItem extends StatelessWidget {
                           .titleSmall
                           ?.copyWith(fontWeight: FontWeight.w600),
                     ),
-                    const SizedBox(height: 5),
                     Text(
                       promo.description ?? '',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(

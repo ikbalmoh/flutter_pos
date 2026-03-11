@@ -18,7 +18,17 @@ class Promotions extends _$Promotions {
   @override
   List<Promotion> build() {
     final cart = ref.watch(cartProvider);
-    return objectBox.transactionPromotions(cart: cart);
+    List<Promotion> promotions = objectBox.transactionPromotions(cart: cart);
+
+    List<ItemCart> nonRewardItems =
+        cart.items.where((item) => item.isReward != true).toList();
+
+    return promotions.map((promo) {
+      List<ItemCart> eligible = promo.type == 2
+          ? []
+          : eligibleItems(promo, nonRewardItems);
+      return promo.copyWith(eligibleItems: eligible);
+    }).toList();
   }
 
   Future<List<Promotion>> loadPromotions() async {

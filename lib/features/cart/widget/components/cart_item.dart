@@ -51,124 +51,133 @@ class _CartItemState extends State<CartItem> {
               ),
               const SizedBox(width: 20),
               Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.item.itemName,
-                  ),
-                  widget.item.details.isNotEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: widget.item.details.map(
-                            (itemPackage) {
-                              Item? item = itemPackage.item();
-                              return Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${itemPackage.quantity} x ',
-                                    style: textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black54),
-                                  ),
-                                  Text(
-                                    itemPackage.name,
-                                    style: textTheme.bodySmall?.copyWith(
-                                        color: item != null && item.isExpired()
-                                            ? Colors.red
-                                            : Colors.black54),
-                                  ),
-                                ],
-                              );
-                            },
-                          ).toList(),
-                        )
-                      : Container(),
-                  Row(
-                    children: [
-                      widget.item.idVariant != null
-                          ? Container(
-                              margin: const EdgeInsets.only(top: 5, right: 5),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Wrap(
+                      spacing: 7.5,
+                      runSpacing: 3,
+                      children: [
+                        Text(
+                          widget.item.itemName,
+                        ),
+                        if (widget.item.idVariant != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7.5, vertical: 1),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              widget.item.variantName ?? '',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: Colors.orange.shade600,
+                                fontWeight: FontWeight.w600,
                               ),
-                              child: Text(
-                                widget.item.variantName ?? '',
-                                style: textTheme.bodySmall
-                                    ?.copyWith(color: Colors.blue.shade600),
-                              ),
-                            )
-                          : Container(),
-                      widget.item.discountTotal > 0
-                          ? Container(
-                              margin: const EdgeInsets.only(top: 5, right: 5),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.red.shade50,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                '-${CurrencyFormat.currency(widget.item.discountTotal, symbol: !widget.item.discountIsPercent, decimalDigit: 2)}',
-                                style: textTheme.bodyMedium
-                                    ?.copyWith(color: Colors.red.shade600),
-                              ),
-                            )
-                          : Container(),
-                    ],
-                  ),
-                  widget.item.promotion != null
-                      ? Container(
-                          margin: const EdgeInsets.only(top: 5, right: 5),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: widget.item.isReward == true
-                                ? Colors.red.shade50
-                                : Colors.amber.shade50,
-                            borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                CupertinoIcons.ticket_fill,
-                                size: 16,
-                                color: widget.item.isReward == true
-                                    ? Colors.red.shade600
-                                    : Colors.amber.shade600,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                widget.item.isReward == true
-                                    ? 'reward_x'.tr(args: [
-                                        widget.item.promotion!.promotionName
-                                            .toString(),
-                                      ])
-                                    : widget.item.promotion!.promotionName
-                                        .toString(),
-                                style: textTheme.bodySmall?.copyWith(
+                      ],
+                    ),
+                    if (widget.item.details.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: widget.item.details.map(
+                          (itemPackage) {
+                            Item? item = itemPackage.item();
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${itemPackage.quantity} x ',
+                                  style: textTheme.bodySmall
+                                      ?.copyWith(color: Colors.black54),
+                                ),
+                                Text(
+                                  itemPackage.name,
+                                  style: textTheme.bodySmall?.copyWith(
+                                      color: item != null && item.isExpired()
+                                          ? Colors.red
+                                          : Colors.black54),
+                                ),
+                              ],
+                            );
+                          },
+                        ).toList(),
+                      ),
+                    if (widget.item.promotion != null ||
+                        widget.item.discountTotal > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Wrap(
+                          children: [
+                            if (widget.item.promotion != null)
+                              Container(
+                                margin: const EdgeInsets.only(top: 5, right: 5),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 2),
+                                decoration: BoxDecoration(
                                   color: widget.item.isReward == true
-                                      ? Colors.red.shade700
-                                      : Colors.amber.shade700,
+                                      ? Colors.red.shade50
+                                      : Colors.amber.shade50,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.ticket_fill,
+                                      size: 16,
+                                      color: widget.item.isReward == true
+                                          ? Colors.red.shade600
+                                          : Colors.amber.shade600,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      widget.item.isReward == true
+                                          ? 'reward_x'.tr(args: [
+                                              widget
+                                                  .item.promotion!.promotionName
+                                                  .toString(),
+                                            ])
+                                          : widget.item.promotion!.promotionName
+                                              .toString(),
+                                      style: textTheme.bodySmall?.copyWith(
+                                        color: widget.item.isReward == true
+                                            ? Colors.red.shade700
+                                            : Colors.amber.shade700,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        )
-                      : Container(),
-                  widget.item.note != null && widget.item.note!.isNotEmpty
-                      ? Text(
-                          widget.item.note ?? '-',
-                          style: textTheme.bodySmall,
-                        )
-                      : Container()
-                ],
-              )),
+                            if (widget.item.discountTotal > 0)
+                              Container(
+                                margin: const EdgeInsets.only(top: 5, right: 5),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade50,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  '-${CurrencyFormat.currency(widget.item.discountTotal, symbol: !widget.item.discountIsPercent, decimalDigit: 2)}',
+                                  style: textTheme.bodySmall
+                                      ?.copyWith(color: Colors.red.shade600),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    if (widget.item.note != null &&
+                        widget.item.note!.isNotEmpty)
+                      Text(
+                        widget.item.note ?? '-',
+                        style: textTheme.bodySmall,
+                      ),
+                  ],
+                ),
+              ),
               const SizedBox(width: 15),
               Text(
                 CurrencyFormat.currency(widget.item.total, symbol: false),
