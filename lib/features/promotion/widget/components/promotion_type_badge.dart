@@ -8,12 +8,16 @@ class PromotionTypeBadge extends StatelessWidget {
 
   String getPromotionType(int type) {
     switch (type) {
+      case 1:
+        return 'reward_by_product'.tr();
       case 2:
-        return 'discount_transaction'.tr();
+        return 'discount_by_order'.tr();
       case 3:
-        return 'discount_item'.tr();
+        return 'discount_by_product'.tr();
+      case 4:
+        return 'reward_by_transaction'.tr();
       default:
-        return 'discount_free_gift'.tr();
+        return 'promotions'.tr();
     }
   }
 
@@ -28,7 +32,9 @@ class PromotionTypeBadge extends StatelessWidget {
             ? Colors.blue.shade600
             : type == 1
                 ? Colors.orange.shade600
-                : Colors.red.shade400,
+                : type == 4
+                    ? Colors.green.shade600
+                    : Colors.red.shade400,
       ),
     );
   }

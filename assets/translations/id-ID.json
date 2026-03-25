@@ -388,5 +388,9 @@
   "stock_control": "Kontrol Stok",
   "hello": "Halo",
   "connect_internet_to_open_shift": "Sambungkan internet untuk membuka shift",
-  "connect_internet_to_load_transactions": "Sambungkan internet untuk memuat transaksi"
+  "connect_internet_to_load_transactions": "Sambungkan internet untuk memuat transaksi",
+  "discount_by_order": "Diskon Transaksi",
+  "discount_by_product": "Diskon Produk",
+  "reward_by_product": "Hadiah Produk",
+  "reward_by_transaction": "Hadiah Transaksi"
 }

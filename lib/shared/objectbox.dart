@@ -90,8 +90,8 @@ class ObjectBox {
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
     Condition<Promotion> promotionTermsQuery = Promotion_.type
-        .equals(2)
-        .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
+        .oneOf([2, 4]).and(
+            Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
     // Filter promotions by product
     if (cart.items.isNotEmpty) {

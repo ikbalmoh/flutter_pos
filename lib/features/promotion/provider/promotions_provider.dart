@@ -154,7 +154,7 @@ class Promotions extends _$Promotions {
     }
 
     // Promo by order
-    if (promo.type == 2) {
+    if (promo.type == 2 || promo.type == 4) {
       return promo.requirementMinimumOrder == null
           ? true
           : promo.requirementMinimumOrder! <= cart.subtotal;
@@ -200,6 +200,9 @@ class Promotions extends _$Promotions {
   }
 
   List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
+    if (promo.type == 2 || promo.type == 4) {
+      return [];
+    }
     List<ItemCart> eligibleItems = items
         .where((item) => item.isReward != true)
         .toList();

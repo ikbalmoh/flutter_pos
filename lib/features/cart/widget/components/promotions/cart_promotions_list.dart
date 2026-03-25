@@ -58,10 +58,10 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
         selected = currentPromotions;
       });
     } else {
-      if (promo.type == 2) {
+      if (promo.type == 2 || promo.type == 4) {
         // remove overlap transaction promo
         final otherTrxPromoIdx =
-            currentPromotions.indexWhere((p) => p.type == 2);
+            currentPromotions.indexWhere((p) => p.type == promo.type);
         if (otherTrxPromoIdx >= 0) {
           currentPromotions.removeAt(otherTrxPromoIdx);
         }

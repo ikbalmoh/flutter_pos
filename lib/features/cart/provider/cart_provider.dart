@@ -693,7 +693,10 @@ class Cart extends _$Cart {
     List<Promotion> promotionByProducts =
         promotions.where((promo) => promo.type == 3).toList();
 
-    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT: ${freeGiftpromotions.map((e) => e.name)}\n2 => BY ORDER: ${promotionByOrder?.name}\n3 => BY PRODUCTS: ${promotionByProducts.map((e) => e.name)}');
+    Promotion? freeTransactionGiftpromotions =
+        promotions.firstWhereOrNull((promo) => promo.type == 4);
+
+    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT: ${freeGiftpromotions.map((e) => e.name)}\n2 => BY ORDER: ${promotionByOrder?.name}\n3 => BY PRODUCTS: ${promotionByProducts.map((e) => e.name)}\n4 => FREE TRANSACTION GIFT: ${freeTransactionGiftpromotions?.name}');
 
     List<CartPromotion> cartPromotions = [];
 
@@ -744,17 +747,17 @@ class Cart extends _$Cart {
       cartPromotions.add(cartPromo.copyWith(discountValue: discountValue));
     }
 
-    // PROMO A GET B
+    // FREE GIFT
     for (var i = 0; i < freeGiftpromotions.length; i++) {
-      List<ItemCart> eligibleItems = ref
-          .read(promotionsProvider.notifier)
-          .eligibleItems(freeGiftpromotions[i], items);
+      Promotion promo = freeGiftpromotions[i];
+
+      List<ItemCart> eligibleItems =
+          ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
       log('A GET B eligible items: ${eligibleItems.map((e) => e.itemName).toList()}');
-      if (eligibleItems.isEmpty) {
+      if (promo.type == 1 && eligibleItems.isEmpty) {
         continue;
       }
       // Apply Rewards
-      Promotion promo = freeGiftpromotions[i];
       ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
       log('A GET B Promotion => ${promo.name}\nREWARD ITEM =>${reward.item?.itemName}\nREWARD Variant=>${reward.variant?.variantName}\n\n');
       if (reward.item != null) {
@@ -790,6 +793,22 @@ class Cart extends _$Cart {
           variant: reward.variant,
           promotion: promo,
           quantity: rewardQty,
+        );
+        items.add(rewardItem);
+        cartPromotions.add(CartPromotion.fromData(promo));
+      }
+    }
+
+    // FREE TRANSACTION GIFT
+    if (freeTransactionGiftpromotions != null) {
+      Promotion promo = freeTransactionGiftpromotions;
+      ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
+      if (reward.item != null) {
+        ItemCart rewardItem = ItemCart.asReward(
+          reward.item!,
+          variant: reward.variant,
+          promotion: promo,
+          quantity: promo.rewardQty?.toDouble() ?? 1,
         );
         items.add(rewardItem);
         cartPromotions.add(CartPromotion.fromData(promo));
