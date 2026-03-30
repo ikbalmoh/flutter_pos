@@ -99,6 +99,14 @@ class Items extends _$Items {
       final DateTime startLoad = DateTime.now();
       List<Item> items = await itemRepository.fetchItems(
         fullSync: fullSync,
+        page: fullSync ? 1 : null,
+        onProgress: (current, total) {
+          int percentage = (current / total * 100).toInt();
+          progress = progress.copyWith(
+            message: '${'loading_x'.tr(args: ['item'.tr()])} $percentage%',
+          );
+          progressCallback(progress);
+        },
       );
       final DateTime startSave = DateTime.now();
       objectBox.putItems(items);
@@ -162,7 +170,7 @@ class Items extends _$Items {
       log('SYNC ITEMS');
 
       List<Item> items =
-          await ref.read(itemRepositoryProvider).fetchItems(fromLastSync: true);
+          await ref.read(itemRepositoryProvider).fetchItems(fromLastSync: true, page: 1);
 
       objectBox.putItems(items);
       log('SYNCED ITEMS: $items');

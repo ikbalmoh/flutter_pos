@@ -73,7 +73,8 @@ class ItemRepository implements ItemRepositoryProtocol {
     bool? fromLastSync,
     bool? fullSync = false,
     List<Item> prevItems = const [],
-    int? page = 1,
+    int? page,
+    Function(int current, int total)? onProgress,
   }) async {
     const storage = FlutterSecureStorage();
 
@@ -96,28 +97,33 @@ class ItemRepository implements ItemRepositoryProtocol {
       if (outlet == null) {
         return [];
       }
-      final data = await api.items(
+      List<Item> items = List.from(prevItems);
+      final Pagination<Item> data = await api.items(
         outlet.idOutlet,
         idCategory: idCategory,
         lastUpdate: lastUpdate,
         fullSync: fullSync,
         page: page,
       );
-      // if (data.data != null && data.data!.isNotEmpty) {
-      //   items.addAll(data.data!.toList());
-      // }
-      // if (data.currentPage < data.lastPage) {
-      //   return fetchItems(
-      //     idCategory: idCategory,
-      //     fromLastSync: fromLastSync,
-      //     fullSync: fullSync,
-      //     prevItems: items,
-      //     page: data.currentPage + 1,
-      //   );
-      // }
-      return data;
+      if (data.data != null && data.data!.isNotEmpty) {
+        items.addAll(data.data!.toList());
+      }
+      if (onProgress != null) {
+        onProgress(data.currentPage, data.lastPage);
+      }
+      if (data.currentPage < data.lastPage) {
+        return fetchItems(
+          idCategory: idCategory,
+          fromLastSync: fromLastSync,
+          fullSync: fullSync,
+          prevItems: items,
+          page: data.currentPage + 1,
+          onProgress: onProgress,
+        );
+      }
+      return items;
     } on DioException catch (e, st) {
-      log('fetchItems Error: $st');
+      log('fetchItems Error: ${e.response?.data} $st');
       throw e.message!;
     } on PlatformException catch (e) {
       throw Exception(e.message);

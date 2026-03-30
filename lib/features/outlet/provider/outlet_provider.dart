@@ -38,15 +38,12 @@ class Outlet extends _$Outlet {
       promotions: false,
       items: [],
     );
-    state = AsyncData(progress);
+    state = AsyncData(progress.copyWith(config: true));
     try {
-      state = AsyncData(OutletNotSelected());
       _outletRepository.saveOutlet(outlet);
       await _outletRepository.fetchOutletInfo(outlet.idOutlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
       log('CONFIG LOADED: $config');
-
-      state = AsyncData(progress.copyWith(config: true));
 
       await ref.read(itemsProvider().notifier).loadItems(
             refresh: true,

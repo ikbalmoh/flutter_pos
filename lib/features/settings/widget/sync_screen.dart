@@ -32,13 +32,12 @@ class SyncData extends ConsumerStatefulWidget {
 
 class _SyncDataState extends ConsumerState<SyncData> {
   bool inSync = false;
-  String syncStatus = '';
+  String syncStatus = 'please_wait'.tr();
 
   Map<String, bool> selected = {
     'config': false,
     'categories': false,
     'items': false,
-    'promotions': false,
   };
 
   void onSelectItem(String key, bool value) {
@@ -51,6 +50,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
     try {
       setState(() {
         inSync = true;
+        syncStatus = 'please_wait'.tr();
       });
       final isOffline = ref.read(connectivityStatusProvider) ==
           ConnectivityState.disconnected;
@@ -62,14 +62,14 @@ class _SyncDataState extends ConsumerState<SyncData> {
         await ref.read(outletProvider.notifier).refreshConfig();
         if (!mounted) return;
       }
-      if (selected['items'] == true || selected['promotions'] == true) {
+      if (selected['items'] == true) {
         await ref.read(itemsProvider().notifier).loadItems(
               refresh: true,
               fullSync: true,
               progressCallback: (progress) => setState(() {
-                syncStatus = progress.message ?? '';
+                syncStatus = progress.message ?? 'please_wait'.tr();
               }),
-            );
+            );  
         if (!mounted) return;
       } else if (selected['categories'] == true) {
         await ref.read(itemsProvider().notifier).syncCategories();
@@ -92,8 +92,7 @@ class _SyncDataState extends ConsumerState<SyncData> {
   Widget build(BuildContext context) {
     bool hasSelection = selected['config'] == true ||
         selected['categories'] == true ||
-        selected['items'] == true ||
-        selected['promotions'] == true;
+        selected['items'] == true;
     return Scaffold(
       body: ListView(
         children: [
@@ -110,16 +109,10 @@ class _SyncDataState extends ConsumerState<SyncData> {
                 onChanged: (bool value) => onSelectItem('categories', value)),
           ),
           ListTile(
-            title: Text('item'.tr()),
+            title: Text('${'item'.tr()} & ${'promotions'.tr()}'),
             trailing: Switch(
                 value: selected['items'] ?? false,
                 onChanged: (bool value) => onSelectItem('items', value)),
-          ),
-          ListTile(
-            title: Text('promotions'.tr()),
-            trailing: Switch(
-                value: selected['promotions'] ?? false,
-                onChanged: (bool value) => onSelectItem('promotions', value)),
           ),
         ],
       ),
@@ -137,7 +130,9 @@ class _SyncDataState extends ConsumerState<SyncData> {
                 )
               : const Icon(CupertinoIcons.refresh),
           onPressed: hasSelection && !inSync ? runSync : null,
-          label: Text(inSync ? 'please_wait'.tr() : 'run_sync'.tr())),
+          label: Text(inSync
+              ? syncStatus
+              : 'run_sync'.tr())),
     );
   }
 }

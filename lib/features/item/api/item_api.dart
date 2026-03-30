@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
+import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/objectbox.g.dart';
 import 'package:selleri/shared/utils/fetch.dart';
@@ -20,40 +21,50 @@ class ItemApi {
     return res.data;
   }
 
-  Future<List<Item>> items(
+  Future<Pagination<Item>> items(
     String idOutlet, {
     String? idCategory,
     int? lastUpdate,
     bool? fullSync,
-    int? page = 1,
+    int? page,
   }) async {
     Map<String, dynamic> query = {
       'is_app': 1,
       'id_outlet': idOutlet,
-      'last_update': lastUpdate,
-      // 'page': page,
-      // 'per_page': 20
     };
-    if (fullSync == true) {
-      query['full_sync'] = true;
+    if (lastUpdate != null) {
+      query['last_update'] = lastUpdate;
     }
     if (idCategory != null) {
       query['id_category'] = idCategory;
     }
+    if (fullSync == true) {
+      query['page'] = page ?? 1;
+      query['full_sync'] = true;
+      query['per_page'] = 100;
+    }
     final res = await api.get(ApiUrl.listItems, queryParameters: query);
     log('LOADED ITEMS: ${res.data['data']}');
-    // if (res.data['data'] != null && res.data['data']['data'] != null) {
-    //   final pagination = Pagination<Item>.fromJson(res.data['data'], (item) {
-    //     return Item.fromJsonData(item as Map<String, dynamic>);
-    //   });
-    //   return pagination;
-    // }
-    List<Item> items = res.data['data'] != null
-        ? List<Map<String, dynamic>>.from(res.data['data'])
-            .map((json) => Item.fromJsonData(json))
-            .toList()
-        : [];
-    return items;
+    if (fullSync != true) {
+      List<Item> items = res.data['data'] != null
+          ? List<Map<String, dynamic>>.from(res.data['data'])
+              .map((json) => Item.fromJsonData(json))
+              .toList()
+          : [];
+      return Pagination<Item>(
+        data: items,
+        currentPage: 1,
+        lastPage: 1,
+        total: items.length,
+      );
+    }
+    if (res.data['data'] != null && res.data['data']['data'] != null) {
+      final pagination = Pagination<Item>.fromJson(res.data['data'], (item) {
+        return Item.fromJsonData(item as Map<String, dynamic>);
+      });
+      return pagination;
+    }
+    throw Exception('Failed to load items');
   }
 
   Future<Item> storeItem(Map<String, dynamic> item) async {
