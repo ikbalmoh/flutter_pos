@@ -27,7 +27,7 @@ FirebaseMessaging messaging = FirebaseMessaging.instance;
 class Fcm extends _$Fcm {
   @override
   FutureOr<FcmSubscribe?> build() async {
-    init();
+    await init();
     final auth = ref.watch(authProvider);
     final outlet = ref.watch(outletProvider);
     if (auth.value is Authenticated && outlet.value is OutletSelected) {
@@ -43,7 +43,7 @@ class Fcm extends _$Fcm {
 
   Timer? _debounceSync;
 
-  void init() async {
+  Future<void> init() async {
     LocalNotificationService.initialize();
 
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
