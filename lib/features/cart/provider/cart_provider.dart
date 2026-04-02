@@ -337,16 +337,27 @@ class Cart extends _$Cart {
   }
 
   Future<bool> removeItem(String identifier) async {
-    List<ItemCart> items = [...state.items];
-    List<CartPromotion> promotions = [...state.promotions];
+    List<ItemCart> items = List.from(state.items);
+    List<CartPromotion> promotions = List.from(state.promotions);
     ItemCart item = items.firstWhere((item) => item.identifier == identifier);
+    log('Remove ${item.isReward == true ? 'REWARD' : 'ITEM'} ${item.itemName}, promo ${item.promotion?.promotionName}');
     items.removeWhere((i) =>
         i.identifier == item.identifier ||
         (i.isReward == true &&
             i.promotion?.promotionId == item.promotion?.promotionId));
-    promotions.removeWhere(
-      (p) => p.idItem == item.idItem && p.variantId == item.idVariant,
-    );
+    promotions = promotions
+      ..removeWhere(
+        (p) =>
+            p.idItem == item.idItem && p.variantId == item.idVariant ||
+            p.promotionId == item.promotion?.promotionId,
+      );
+    if (item.isReward == true) {
+      items = items
+          .map((i) => i.promotion?.promotionId == item.promotion?.promotionId
+              ? i.copyWith(promotion: null)
+              : i)
+          .toList();
+    }
     state =
         state.copyWith(items: items, promotions: promotions, roundingValue: 0);
     calculateCart();
@@ -700,6 +711,10 @@ class Cart extends _$Cart {
 
     List<CartPromotion> cartPromotions = [];
 
+    // Track items claimed per promo type to enforce one-promo-per-type-per-item
+    Set<String> claimedByType3 = {};
+    Set<String> claimedByType1 = {};
+
     // PROMO BY PRODUCT
     for (var i = 0; i < promotionByProducts.length; i++) {
       Promotion promo = promotionByProducts[i];
@@ -708,6 +723,13 @@ class Cart extends _$Cart {
 
       List<ItemCart> eligibleItems =
           ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
+
+      // Filter out items already claimed by another Type 3 promo
+      eligibleItems = eligibleItems
+          .where((item) =>
+              item.identifier == null ||
+              !claimedByType3.contains(item.identifier))
+          .toList();
 
       if (eligibleItems.isEmpty) {
         continue;
@@ -722,6 +744,9 @@ class Cart extends _$Cart {
         log('ITEM GET PROMO: ${itemCart.promotion?.promotionName} ${itemCart.promotion?.discountValue}');
 
         cartPromotions.add(cartPromo);
+        if (itemCart.identifier != null) {
+          claimedByType3.add(itemCart.identifier!);
+        }
         items[itemIdx] = itemCart;
       }
     }
@@ -753,6 +778,14 @@ class Cart extends _$Cart {
 
       List<ItemCart> eligibleItems =
           ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
+
+      // Filter out items already claimed by another Type 1 promo
+      eligibleItems = eligibleItems
+          .where((item) =>
+              item.identifier == null ||
+              !claimedByType1.contains(item.identifier))
+          .toList();
+
       log('A GET B eligible items: ${eligibleItems.map((e) => e.itemName).toList()}');
       if (promo.type == 1 && eligibleItems.isEmpty) {
         continue;
@@ -768,6 +801,9 @@ class Cart extends _$Cart {
           if (itemCart.promotion == null || itemCart.promotion!.type != 3) {
             itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
             items[itemIdx] = itemCart;
+          }
+          if (itemCart.identifier != null) {
+            claimedByType1.add(itemCart.identifier!);
           }
 
           log('ITEM GET PROMO AB: ${itemCart.itemName}');

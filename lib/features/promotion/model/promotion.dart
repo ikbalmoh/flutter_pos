@@ -17,7 +17,7 @@ class Promotion with _$Promotion {
     @Default(0) @Id() int id,
     @Index() required String idPromotion,
     required String name,
-    required int type, // 1 - A get B, 2 - Discount by Order, 3 - Discount by Product, 4 - Reward by Transaction
+    required int type, // 1 - Reward by Product, 2 - Discount by Transaction, 3 - Discount by Product, 4 - Reward by Transaction
     int? requirementQuantity,
     double? requirementMinimumOrder,
     int? rewardType,

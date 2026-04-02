@@ -50,39 +50,19 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   }
 
   void onSelect(Promotion promo) {
-    final int idx = selected.indexWhere((p) => p.id == promo.id);
-    List<Promotion> currentPromotions = List.from(selected);
-    if (idx >= 0) {
-      currentPromotions.removeAt(idx);
-      setState(() {
-        selected = currentPromotions;
-      });
-    } else {
-      if (promo.type == 2 || promo.type == 4) {
-        // remove overlap transaction promo
-        final otherTrxPromoIdx =
-            currentPromotions.indexWhere((p) => p.type == promo.type);
-        if (otherTrxPromoIdx >= 0) {
-          currentPromotions.removeAt(otherTrxPromoIdx);
-        }
-      }
-      setState(() {
-        selected = currentPromotions..add(promo);
-      });
-    }
+    setState(() {
+      selected = ref
+          .read(promotionsProvider.notifier)
+          .resolveSelection(selected, promo);
+    });
   }
 
   void onSelectPromoByCode(Promotion promo) {
-    final int idx = selected.indexWhere((p) => p.id == promo.id);
-    if (idx >= 0) {
-      setState(() {
-        selected = [];
-      });
-    } else {
-      setState(() {
-        selected = [promo];
-      });
-    }
+    setState(() {
+      selected = ref
+          .read(promotionsProvider.notifier)
+          .resolveSelection(selected, promo);
+    });
   }
 
   bool hasCannotCombinedPromo(int exceptId) {

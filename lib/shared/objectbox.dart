@@ -178,6 +178,7 @@ class ObjectBox {
     promotionQuery = promotionQuery.and(promotionTermsQuery);
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
+      ..order(Promotion_.type)
       ..order(Promotion_.needCode)
       ..order(Promotion_.priority)
       ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)

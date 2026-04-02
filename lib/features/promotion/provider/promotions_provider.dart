@@ -234,4 +234,57 @@ class Promotions extends _$Promotions {
     }
     return eligibleItems;
   }
+
+  /// Pure conflict resolver — takes current selection + toggled promo,
+  /// returns the new resolved selection list.
+  /// Selection state is NOT stored in the provider.
+  List<Promotion> resolveSelection(
+    List<Promotion> currentSelection,
+    Promotion promo,
+  ) {
+    // Toggle off if already selected
+    final int idx = currentSelection.indexWhere((p) => p.id == promo.id);
+    if (idx >= 0) {
+      return List.from(currentSelection)..removeAt(idx);
+    }
+
+    List<Promotion> result = List.from(currentSelection);
+
+    if (promo.type == 2 || promo.type == 4) {
+      // Transaction promos: only one per type
+      result.removeWhere((p) => p.type == promo.type);
+    } else if (promo.type == 1 || promo.type == 3) {
+      // Product promos: one promo per type per item
+      // Only conflict with same-type promos
+      result.removeWhere((p) {
+        if (p.type != promo.type) return false;
+
+        // Find overlapping items between p and the new promo
+        final bool hasOverlap = p.eligibleItems.any((item) =>
+            promo.eligibleItems.any((newItem) =>
+                newItem.idItem == item.idItem &&
+                newItem.idVariant == item.idVariant));
+
+        if (!hasOverlap) return false;
+
+        // Compute remaining eligible items for p (non-overlapping)
+        final remainingItems = p.eligibleItems
+            .where((item) => !promo.eligibleItems.any((newItem) =>
+                newItem.idItem == item.idItem &&
+                newItem.idVariant == item.idVariant))
+            .toList();
+
+        final double remainingQty =
+            remainingItems.fold(0, (sum, item) => sum + item.quantity);
+        final double requiredQty =
+            (p.requirementQuantity ?? 1).toDouble();
+
+        // Remove if remaining items can't satisfy requirement
+        return remainingQty < requiredQty;
+      });
+    }
+
+    result.add(promo);
+    return result;
+  }
 }
