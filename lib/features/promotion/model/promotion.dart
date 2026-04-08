@@ -109,9 +109,9 @@ class PromotionType {
 
   static List<PromotionType> filter() => [
         PromotionType(id: 0, name: 'all_type'.tr()),
-        PromotionType(id: 1, name: 'reward_by_product'.tr()),
-        PromotionType(id: 2, name: 'discount_by_order'.tr()),
+        PromotionType(id: 2, name: 'discount_by_transaction'.tr()),
         PromotionType(id: 3, name: 'discount_by_product'.tr()),
+        PromotionType(id: 1, name: 'reward_by_product'.tr()),
         PromotionType(id: 4, name: 'reward_by_transaction'.tr()),
       ];
 }
