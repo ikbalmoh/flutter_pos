@@ -392,5 +392,6 @@
   "discount_by_transaction": "Diskon Transaksi",
   "discount_by_product": "Diskon Produk",
   "reward_by_product": "Hadiah Produk",
-  "reward_by_transaction": "Hadiah Transaksi"
+  "reward_by_transaction": "Hadiah Transaksi",
+  "promotion": "Promosi"
 }

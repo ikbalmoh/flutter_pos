@@ -26,7 +26,7 @@ class ShopItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool hasPromotions = item.promotions.isNotEmpty;
+    bool hasPromotions = item.hasPromo == true;
 
     if (!hasPromotions && item.variants.isNotEmpty) {
       var variantPromotions = item.variants.firstWhereOrNull(

@@ -290,10 +290,11 @@ class ObjectBox {
   Stream<List<Item>> itemsStream({
     String idCategory = '',
     String search = '',
+    bool? isPromo = false,
     FilterStock filterStock = FilterStock.all,
   }) {
     Condition<Item> itemQuery = Item_.isActive.equals(true);
-    if (idCategory != '') {
+    if (idCategory != '' && idCategory != 'promo') {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
     if (search != '') {
@@ -306,6 +307,9 @@ class ObjectBox {
       itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
     } else if (filterStock == FilterStock.empty) {
       itemQuery = itemQuery.and(Item_.stockItem.lessOrEqual(0));
+    }
+    if (isPromo == true) {
+      itemQuery = itemQuery.and(Item_.hasPromo.equals(true));
     }
     QueryBuilder<Item> builder = itemBox.query(itemQuery)
       ..order(Item_.stockItem, flags: Order.descending)
@@ -455,17 +459,23 @@ class ObjectBox {
     }
   }
 
-  int getTotalItem(
-      {String idCategory = '', FilterStock? filterStock = FilterStock.all}) {
+  int getTotalItem({
+    String idCategory = '',
+    FilterStock? filterStock = FilterStock.all,
+    bool? isPromo = false,
+  }) {
     Condition<Item> itemQuery = Item_.isActive.equals(true);
 
-    if (idCategory != '') {
+    if (idCategory != '' && idCategory != 'promo') {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
     if (filterStock == FilterStock.available) {
       itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
     } else if (filterStock == FilterStock.empty) {
       itemQuery = itemQuery.and(Item_.stockItem.lessOrEqual(0));
+    }
+    if (isPromo == true) {
+      itemQuery = itemQuery.and(Item_.hasPromo.equals(true));
     }
     final result = itemBox.query(itemQuery).build().count();
 

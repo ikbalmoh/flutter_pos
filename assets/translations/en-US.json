@@ -391,5 +391,6 @@
   "discount_by_transaction": "Discount by Order",
   "discount_by_product": "Discount by Product",
   "reward_by_product": "Reward by Product",
-  "reward_by_transaction": "Reward by Transaction"
+  "reward_by_transaction": "Reward by Transaction",
+  "promotion": "Promotion"
 }
