@@ -17,11 +17,12 @@ import 'package:selleri/shared/utils/share_file.dart';
 import 'package:share_plus/share_plus.dart';
 
 class HoldedPreview extends ConsumerStatefulWidget {
-  const HoldedPreview(
-      {required this.cartHolded,
-      this.asWidget,
-      required this.onDelete,
-      super.key});
+  const HoldedPreview({
+    required this.cartHolded,
+    this.asWidget,
+    required this.onDelete,
+    super.key,
+  });
 
   final CartHolded cartHolded;
   final bool? asWidget;
@@ -210,7 +211,9 @@ class _HoldedPreviewState extends ConsumerState<HoldedPreview> {
                   key: summaryContainerKey,
                   withAttribute: true,
                   taxable: config?.taxable ?? false,
-                  cart: widget.cartHolded.dataHold,
+                  cart: widget.cartHolded.dataHold.copyWith(
+                    transactionNo: widget.cartHolded.transactionNo,
+                  ),
                   radius: const Radius.circular(5),
                   outletState:
                       ref.watch(outletProvider).value as OutletSelected,

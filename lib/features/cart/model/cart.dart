@@ -132,7 +132,16 @@ class Cart with _$Cart {
     data['promotions'] = data['promotions'] ?? [];
     data['vouchers'] = data['vouchers'] ?? [];
     data['vehicle'] = data['vehicle'] is Map ? data['vehicle'] : null;
-    return Cart.fromJson(data);
+    Cart cart = Cart.fromJson(data);
+    cart = cart.copyWith(
+        payments: cart.payments
+            .map(
+              (p) => p.copyWith(
+                shiftId: p.shiftId ?? cart.shiftId,
+              ),
+            )
+            .toList());
+    return cart;
   }
 
   factory Cart.fromTransaction(Map<String, dynamic> json) {
@@ -183,7 +192,11 @@ class Cart with _$Cart {
       ),
       "payments": List<Map<String, dynamic>>.from(
         payments.map(
-          (payment) => payment.toJson(),
+          (payment) => payment
+              .copyWith(
+                shiftId: payment.shiftId ?? shiftId,
+              )
+              .toJson(),
         ),
       ),
       "vouchers": List<Map<String, dynamic>>.from(
