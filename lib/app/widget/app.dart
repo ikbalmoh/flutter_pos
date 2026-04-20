@@ -1,26 +1,70 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:flutter/services.dart';
 import 'package:selleri/app/widget/app_theme.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/fcm/provider/fcm_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/router/app_router.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
-import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 
-class App extends ConsumerWidget {
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isConnected = ref.watch(connectivityStatusProvider) ==
-        ConnectivityState.connected; //trigger rebuild
+  ConsumerState<App> createState() => _AppState();
+}
 
-    if (MediaQuery.of(context).size.shortestSide < 451) {
+class _AppState extends ConsumerState<App> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize FCM once — reading the provider triggers its build()
+    // which sets up listeners for auth/outlet changes internally.
+    ref.read(fcmProvider);
+
+    // Listen for connectivity changes and sync offline transactions when
+    // back online. Registered once here to avoid duplicate listeners on rebuild.
+    ref.listenManual<ConnectivityState>(
+      connectivityStatusProvider,
+      (previous, next) {
+        if (previous == ConnectivityState.disconnected &&
+            next == ConnectivityState.connected) {
+          ref.read(offlineTransactionsProvider.notifier).sync();
+        }
+      },
+    );
+
+    // Listen for offline transactions becoming available while connected.
+    // We read connectivity fresh inside the callback to avoid stale closures.
+    ref.listenManual(
+      offlineTransactionsProvider,
+      (previous, next) {
+        final isConnected = ref.read(connectivityStatusProvider) ==
+            ConnectivityState.connected;
+        if (next is AsyncData<List<Cart>> &&
+            next.value.isNotEmpty &&
+            isConnected) {
+          ref.read(offlineTransactionsProvider.notifier).sync();
+        }
+      },
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Lock orientation based on shortest screen side.
+    // Called here (not in build) to avoid repeated platform-channel calls
+    // on every rebuild.
+    final shortestSide = MediaQuery.of(context).size.shortestSide;
+    if (shortestSide < 451) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
@@ -31,9 +75,11 @@ class App extends ConsumerWidget {
         DeviceOrientation.landscapeRight,
       ]);
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
-    ref.read(fcmProvider.notifier).build();
 
     final outlet = ref.watch(outletProvider).value;
     if (outlet is OutletSelected) {
@@ -43,22 +89,6 @@ class App extends ConsumerWidget {
             : const Locale('id', 'ID'),
       );
     }
-
-    // Listen for connectivity changes and sync when back online
-    ref.listen<ConnectivityState>(connectivityStatusProvider, (previous, next) {
-      if (previous == ConnectivityState.disconnected &&
-          next == ConnectivityState.connected) {
-        ref.read(offlineTransactionsProvider.notifier).sync();
-      }
-    });
-
-    ref.listen(offlineTransactionsProvider, (previous, next) {
-      if (next is AsyncData<List<Cart>> &&
-          next.value.isNotEmpty &&
-          isConnected) {
-        ref.read(offlineTransactionsProvider.notifier).sync();
-      }
-    });
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
