@@ -49,7 +49,8 @@ class _AppState extends ConsumerState<App> {
             ConnectivityState.connected;
         if (next is AsyncData<List<Cart>> &&
             next.value.isNotEmpty &&
-            isConnected) {
+            isConnected &&
+            next.value != previous?.value) {
           ref.read(offlineTransactionsProvider.notifier).sync();
         }
       },

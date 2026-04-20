@@ -458,7 +458,7 @@ class Cart extends _$Cart {
       }
 
       final String transactionNo =
-          state.transactionNo.replaceFirst('BILL-', '').trim();
+          state.transactionNo.trim().replaceFirst('BILL-', '').trim();
 
       final res = await api.storeTransaction([
         state.copyWith(
@@ -573,6 +573,7 @@ class Cart extends _$Cart {
     final taxable = outletState.config.taxable ?? false;
 
     model.Cart cart = holded.dataHold.copyWith(
+      transactionNo: holded.transactionNo,
       idTransaction: holded.transactionId,
       ppn: tax?.percentage ?? 0,
       ppnIsInclude: tax?.isInclude ?? true,
