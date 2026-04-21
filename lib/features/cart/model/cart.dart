@@ -169,7 +169,7 @@ class Cart with _$Cart {
       "id_outlet": idOutlet,
       "shift_id": shiftId,
       "transaction_date": DateTimeFormater.msTosecond(transactionDate),
-      "transaction_no": transactionNo,
+      "transaction_no": transactionNo.replaceFirst('BILL-', '').trim(),
       "id_customer": idCustomer ?? '',
       "subtotal": subtotal,
       "disc_is_percent": discIsPercent ? 1 : 0,
