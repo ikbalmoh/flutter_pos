@@ -36,7 +36,10 @@ class OfflineTransactions extends _$OfflineTransactions {
   }
 
   Future<void> store(model.Cart transaction) async {
-    transaction = transaction.copyWith(isOffline: true);
+    transaction = transaction.copyWith(
+      isOffline: true,
+      transactionNo: transaction.transactionNo.replaceFirst('BILL-', ''),
+    );
 
     final List<model.Cart> currentTransactions = state.value ?? [];
     await Future.delayed(const Duration(milliseconds: 500));
