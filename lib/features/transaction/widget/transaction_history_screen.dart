@@ -301,8 +301,14 @@ class _TransactionHistoryScreenState
                                   color: Colors.green,
                                   icon: Icon(Icons.cloud_done_outlined),
                                 ),
-                      error: (error, st) => ErrorHandler(
-                        error: error,
+                      error: (error, st) => IconButton(
+                        onPressed: () => ref
+                            .read(offlineTransactionsProvider.notifier)
+                            .sync(),
+                        icon: Icon(
+                          Icons.cloud_off_rounded,
+                          color: Colors.red,
+                        ),
                       ),
                       loading: () => IconButton(
                         onPressed: null,
@@ -402,13 +408,17 @@ class _TransactionHistoryScreenState
                                         size: 40,
                                       ),
                                       Text(
-                                        isOffline ? 'connect_internet_to_load_transactions'.tr() : 'no_data'.tr(
-                                            args: ['transaction_history'.tr()]),
+                                        isOffline
+                                            ? 'connect_internet_to_load_transactions'
+                                                .tr()
+                                            : 'no_data'.tr(args: [
+                                                'transaction_history'.tr()
+                                              ]),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium
                                             ?.copyWith(color: Colors.grey),
-                                            textAlign: TextAlign.center,
+                                        textAlign: TextAlign.center,
                                       )
                                     ],
                                   ),

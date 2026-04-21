@@ -50,39 +50,19 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   }
 
   void onSelect(Promotion promo) {
-    final int idx = selected.indexWhere((p) => p.id == promo.id);
-    List<Promotion> currentPromotions = List.from(selected);
-    if (idx >= 0) {
-      currentPromotions.removeAt(idx);
-      setState(() {
-        selected = currentPromotions;
-      });
-    } else {
-      if (promo.type == 2 || promo.type == 4) {
-        // remove overlap transaction promo
-        final otherTrxPromoIdx =
-            currentPromotions.indexWhere((p) => p.type == promo.type);
-        if (otherTrxPromoIdx >= 0) {
-          currentPromotions.removeAt(otherTrxPromoIdx);
-        }
-      }
-      setState(() {
-        selected = currentPromotions..add(promo);
-      });
-    }
+    setState(() {
+      selected = ref
+          .read(promotionsProvider.notifier)
+          .resolveSelection(selected, promo);
+    });
   }
 
   void onSelectPromoByCode(Promotion promo) {
-    final int idx = selected.indexWhere((p) => p.id == promo.id);
-    if (idx >= 0) {
-      setState(() {
-        selected = [];
-      });
-    } else {
-      setState(() {
-        selected = [promo];
-      });
-    }
+    setState(() {
+      selected = ref
+          .read(promotionsProvider.notifier)
+          .resolveSelection(selected, promo);
+    });
   }
 
   bool hasCannotCombinedPromo(int exceptId) {
@@ -142,27 +122,50 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                           selected.where((p) => p.needCode == true).isNotEmpty,
                     ),
                     promotions.isNotEmpty
-                        ? ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0, vertical: 7.5),
-                            shrinkWrap: true,
-                            itemBuilder: (context, idx) {
-                              Promotion promo = promotions[idx];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 7.5),
-                                child: CartPromotionItem(
-                                  promo: promo,
-                                  onSelect: onSelect,
-                                  active: selected
-                                      .map((p) => p.id)
-                                      .contains(promo.id),
-                                  disabled: isPromoDisabled(promo),
-                                ),
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: PromotionType.filter()
+                                .where((t) => t.id != 0)
+                                .map((promotionType) {
+                              final grouped = promotions
+                                  .where((p) => p.type == promotionType.id)
+                                  .toList();
+                              if (grouped.isEmpty) return const SizedBox();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 15, bottom: 5),
+                                    child: Text(
+                                      promotionType.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(
+                                            color: Colors.blueGrey.shade400,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.4,
+                                          ),
+                                    ),
+                                  ),
+                                  ...grouped.map(
+                                    (promo) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: CartPromotionItem(
+                                        promo: promo,
+                                        onSelect: onSelect,
+                                        active: selected
+                                            .map((p) => p.id)
+                                            .contains(promo.id),
+                                        disabled: isPromoDisabled(promo),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               );
-                            },
-                            itemCount: promotions.length,
+                            }).toList(),
                           )
                         : Container(
                             margin: const EdgeInsets.only(top: 100),

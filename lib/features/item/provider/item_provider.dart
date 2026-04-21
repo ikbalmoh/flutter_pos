@@ -28,6 +28,7 @@ class Items extends _$Items {
     return objectBox.itemsStream(
       idCategory: idCategory,
       search: search,
+      isPromo: idCategory == 'promo',
       filterStock: filterStock,
     );
   }
@@ -169,8 +170,9 @@ class Items extends _$Items {
     } else {
       log('SYNC ITEMS');
 
-      List<Item> items =
-          await ref.read(itemRepositoryProvider).fetchItems(fromLastSync: true, page: 1);
+      List<Item> items = await ref
+          .read(itemRepositoryProvider)
+          .fetchItems(fromLastSync: true, page: 1);
 
       objectBox.putItems(items);
       log('SYNCED ITEMS: $items');

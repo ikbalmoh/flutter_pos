@@ -11,7 +11,7 @@ class PromotionTypeBadge extends StatelessWidget {
       case 1:
         return 'reward_by_product'.tr();
       case 2:
-        return 'discount_by_order'.tr();
+        return 'discount_by_transaction'.tr();
       case 3:
         return 'discount_by_product'.tr();
       case 4:

@@ -62,7 +62,7 @@ class ItemCategories extends ConsumerWidget {
             height: 55,
             width: double.infinity,
             child: ListView.builder(
-              itemCount: categories.length + 1,
+              itemCount: categories.length + 2,
               itemBuilder: (context, idx) {
                 model.Category category = idx == 0
                     ? model.Category(
@@ -72,7 +72,15 @@ class ItemCategories extends ConsumerWidget {
                         categoryName: 'all'.tr(),
                         isActive: active == '',
                       )
-                    : categories[idx - 1];
+                    : idx == 1
+                        ? model.Category(
+                            id: 1,
+                            idCategory: 'promo',
+                            code: 'promo',
+                            categoryName: 'promotion'.tr(),
+                            isActive: active == 'promo',
+                          )
+                        : categories[idx - 2];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: ActionChip(
@@ -81,7 +89,9 @@ class ItemCategories extends ConsumerWidget {
                     ),
                     backgroundColor: active == category.idCategory
                         ? Colors.teal.shade400
-                        : Colors.teal.shade50.withValues(alpha: 0.5),
+                        : category.idCategory == 'promo'
+                            ? Colors.amber.shade100.withValues(alpha: 0.5)
+                            : Colors.teal.shade50.withValues(alpha: 0.5),
                     labelStyle: TextStyle(
                       color: active == category.idCategory
                           ? Colors.white
@@ -91,7 +101,21 @@ class ItemCategories extends ConsumerWidget {
                     label: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(category.categoryName),
+                        if (category.idCategory == 'promo') ...[
+                          Icon(
+                            Icons.discount,
+                            size: 16,
+                            color: active == category.idCategory
+                                ? Colors.white
+                                : Colors.amber.shade700,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          )
+                        ],
+                        Text(
+                          category.categoryName,
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
@@ -105,8 +129,10 @@ class ItemCategories extends ConsumerWidget {
                           child: Text(
                             CurrencyFormat.currency(
                               objectBox.getTotalItem(
-                                  idCategory: category.idCategory,
-                                  filterStock: filterStock),
+                                idCategory: category.idCategory,
+                                filterStock: filterStock,
+                                isPromo: category.idCategory == 'promo',
+                              ),
                               symbol: false,
                             ),
                             style: Theme.of(context)

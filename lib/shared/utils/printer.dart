@@ -308,7 +308,9 @@ class Printer {
       if (cart.notes != null && cart.notes!.isNotEmpty) {
         bytes += generator.text(cart.notes!,
             styles: const PosStyles(align: PosAlign.left));
-        bytes += generator.feed(1);
+        if (cut != true) {
+          bytes += generator.feed(1);
+        }
       }
 
       if (isHold) {
@@ -317,12 +319,9 @@ class Printer {
               align: PosAlign.center,
               bold: true,
             ));
-      } else {
-        // footer
-        if (footers != null) {
-          bytes += generator.text(footers,
-              styles: const PosStyles(align: PosAlign.center));
-        }
+      } else if (footers != null) {
+        bytes += generator.text(footers,
+            styles: const PosStyles(align: PosAlign.center));
       }
 
       if (isCopy) {
@@ -338,8 +337,6 @@ class Printer {
 
       if (cut == true) {
         bytes += generator.cut();
-      } else {
-        bytes += generator.feed(3);
       }
 
       return bytes;

@@ -388,8 +388,9 @@
   "hello": "Hello",
   "connect_internet_to_open_shift": "Please connect internet to open shift",
   "connect_internet_to_load_transactions": "Please connect internet to load transactions",
-  "discount_by_order": "Discount by Order",
+  "discount_by_transaction": "Discount by Order",
   "discount_by_product": "Discount by Product",
   "reward_by_product": "Reward by Product",
-  "reward_by_transaction": "Reward by Transaction"
+  "reward_by_transaction": "Reward by Transaction",
+  "promotion": "Promotion"
 }

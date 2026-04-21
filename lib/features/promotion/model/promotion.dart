@@ -17,7 +17,7 @@ class Promotion with _$Promotion {
     @Default(0) @Id() int id,
     @Index() required String idPromotion,
     required String name,
-    required int type, // 1 - A get B, 2 - Discount by Order, 3 - Discount by Product, 4 - Reward by Transaction
+    required int type, // 1 - Reward by Product, 2 - Discount by Transaction, 3 - Discount by Product, 4 - Reward by Transaction
     int? requirementQuantity,
     double? requirementMinimumOrder,
     int? rewardType,
@@ -109,9 +109,9 @@ class PromotionType {
 
   static List<PromotionType> filter() => [
         PromotionType(id: 0, name: 'all_type'.tr()),
-        PromotionType(id: 1, name: 'reward_by_product'.tr()),
-        PromotionType(id: 2, name: 'discount_by_order'.tr()),
+        PromotionType(id: 2, name: 'discount_by_transaction'.tr()),
         PromotionType(id: 3, name: 'discount_by_product'.tr()),
+        PromotionType(id: 1, name: 'reward_by_product'.tr()),
         PromotionType(id: 4, name: 'reward_by_transaction'.tr()),
       ];
 }
