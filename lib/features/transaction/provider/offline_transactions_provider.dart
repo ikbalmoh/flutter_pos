@@ -61,7 +61,9 @@ class OfflineTransactions extends _$OfflineTransactions {
     if (transactions.isEmpty) {
       return;
     }
+
     state = const AsyncLoading();
+
     try {
       log('SYNC OFFLINE TRANSACTIONS: ${transactions.map(
         (tr) => {
@@ -86,10 +88,12 @@ class OfflineTransactions extends _$OfflineTransactions {
             .read(transactionsProvider.notifier)
             .updateTransactions(syncedTransactions);
       }
-      state = AsyncData([]);
+      state = AsyncData(await objectBox.offlineTransactions());
+      return;
     } catch (e, st) {
       log('SYNC TRANSACTIONS FAILED: $e => $st');
       state = AsyncData(transactions);
+      rethrow;
     }
   }
 

@@ -77,6 +77,19 @@ class _TransactionHistoryScreenState
     });
   }
 
+  Future<void> triggerSync() async {
+    try {
+      await ref.read(offlineTransactionsProvider.notifier).sync();
+    } catch (e) {
+      if (mounted) {
+        AppAlert.snackbar(
+          e.toString(),
+          alertType: AlertType.error,
+        );
+      }
+    }
+  }
+
   void loadMore() {
     final pagination = ref.read(transactionsProvider).asData?.value;
     if (pagination == null ||
@@ -284,10 +297,7 @@ class _TransactionHistoryScreenState
                           : data.isNotEmpty
                               ? IconButton(
                                   tooltip: 'sync'.tr(),
-                                  onPressed: () => ref
-                                      .read(
-                                          offlineTransactionsProvider.notifier)
-                                      .sync(),
+                                  onPressed: () => triggerSync(),
                                   icon: Badge(
                                     label: Text(data.length.toString()),
                                     child: Icon(Icons.cloud_upload_outlined),
@@ -302,9 +312,7 @@ class _TransactionHistoryScreenState
                                   icon: Icon(Icons.cloud_done_outlined),
                                 ),
                       error: (error, st) => IconButton(
-                        onPressed: () => ref
-                            .read(offlineTransactionsProvider.notifier)
-                            .sync(),
+                        onPressed: () => triggerSync(),
                         icon: Icon(
                           Icons.cloud_off_rounded,
                           color: Colors.red,
