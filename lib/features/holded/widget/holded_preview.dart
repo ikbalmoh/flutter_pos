@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,6 +79,23 @@ class _HoldedPreviewState extends ConsumerState<HoldedPreview> {
         outletState is OutletSelected ? outletState.config : null;
 
     void openHoldedTransaction() {
+      if (widget.cartHolded.isCustomerActive != true) {
+        AppAlert.confirm(
+          context,
+          title: 'x_is_no_longer_active'.tr(args: [
+            widget.cartHolded.customerName ?? 'customer'.tr(),
+          ]),
+          subtitle: 'reselect_customer_note'.tr(),
+          confirmLabel: 'open_transaction'.tr(),
+          onConfirm: () {
+            ref.read(cartProvider.notifier).openHoldedCart(widget.cartHolded);
+            while (context.canPop()) {
+              context.pop();
+            }
+          },
+        );
+        return;
+      }
       ref.read(cartProvider.notifier).openHoldedCart(widget.cartHolded);
       while (context.canPop()) {
         context.pop();

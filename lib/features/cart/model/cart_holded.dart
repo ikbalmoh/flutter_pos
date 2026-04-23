@@ -20,6 +20,7 @@ class CartHolded with _$CartHolded {
     required DateTime createdAt,
     String? createdName,
     String? description,
+    @Default(false) bool isCustomerActive,
     @JsonKey(fromJson: Cart.fromDataHold) required Cart dataHold,
   }) = _CartHolded;
 

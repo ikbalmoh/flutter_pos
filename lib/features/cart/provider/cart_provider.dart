@@ -573,6 +573,9 @@ class Cart extends _$Cart {
     final taxable = outletState.config.taxable ?? false;
 
     model.Cart cart = holded.dataHold.copyWith(
+      idCustomer: holded.isCustomerActive ? holded.dataHold.idCustomer : null,
+      customerName:
+          holded.isCustomerActive ? holded.dataHold.customerName : null,
       transactionNo: holded.transactionNo,
       idTransaction: holded.transactionId,
       ppn: tax?.percentage ?? 0,

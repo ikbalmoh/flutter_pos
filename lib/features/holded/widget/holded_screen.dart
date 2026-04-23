@@ -76,13 +76,6 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
     });
   }
 
-  void openHoldedTransaction(CartHolded holded) {
-    ref.read(cartProvider.notifier).openHoldedCart(holded);
-    while (context.canPop()) {
-      context.pop();
-    }
-  }
-
   void deleteTransaction() async {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
@@ -124,7 +117,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
         onConfirm: deleteTransaction);
   }
 
-  void onOpenHoldedCart(CartHolded cartHolded) {
+  void onViewHoldedCart(CartHolded cartHolded) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
     setState(() {
       viewTransaction = cartHolded;
@@ -236,7 +229,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                                     ? Colors.grey.shade100
                                     : Colors.white,
                                 hold: hold,
-                                onSelect: onOpenHoldedCart,
+                                onSelect: onViewHoldedCart,
                               );
                             },
                             itemCount: data.data!.length + 1,

@@ -393,5 +393,7 @@
   "discount_by_product": "Diskon Produk",
   "reward_by_product": "Hadiah Produk",
   "reward_by_transaction": "Hadiah Transaksi",
-  "promotion": "Promosi"
+  "promotion": "Promosi",
+  "x_is_no_longer_active": "{} Sudah Tidak Aktif Lagi",
+  "reselect_customer_note": "Pelanggan akan dihapus dari transaksi ini"
 }

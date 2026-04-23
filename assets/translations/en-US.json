@@ -392,5 +392,7 @@
   "discount_by_product": "Discount by Product",
   "reward_by_product": "Reward by Product",
   "reward_by_transaction": "Reward by Transaction",
-  "promotion": "Promotion"
+  "promotion": "Promotion",
+  "x_is_no_longer_active": "{} is No Longer Active",
+  "reselect_customer_note": "Customer will be removed from this transaction"
 }
