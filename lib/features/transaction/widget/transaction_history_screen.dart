@@ -374,7 +374,15 @@ class _TransactionHistoryScreenState
                                           ),
                                         );
                                       }
-                                      return const ItemListSkeleton();
+                                      return Column(
+                                        children: const [
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                        ],
+                                      );
                                     }
                                     Cart cart = data.data![idx];
                                     return TransactionItem(
