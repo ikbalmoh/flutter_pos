@@ -35,6 +35,8 @@ class Transactions extends _$Transactions {
     bool? currentShift = false,
     String? table,
   }) async {
+    log('Load Transaction: $page $search $currentShift $table');
+
     if (page == 1) {
       state = const AsyncLoading();
     } else {
@@ -45,27 +47,26 @@ class Transactions extends _$Transactions {
         await ref.read(offlineTransactionsProvider.future) ?? [];
     log('Offline Transactions: ${transactionsData.map((tr) => tr.transactionNo).toList()}');
 
-    final connection = ref.read(connectivityStatusProvider);
+    try {
+      final connection = ref.read(connectivityStatusProvider);
 
-    if (state.hasValue &&
-        state.value?.data != null &&
-        state.value?.data!.isNotEmpty == true) {
-      final offlineTransactionNos =
-          transactionsData.map((tr) => tr.transactionNo).toList();
-      List<Cart> prevTransactions =
-          List.from(state.value?.data as Iterable<Cart>);
+      if (page > 1 &&
+          state.hasValue &&
+          state.value?.data != null &&
+          state.value?.data!.isNotEmpty == true) {
+        final offlineTransactionIds =
+            transactionsData.map((tr) => tr.idTransaction).toList();
+        List<Cart> prevTransactions =
+            List.from(state.value?.data as Iterable<Cart>);
 
-      prevTransactions = prevTransactions
-        ..removeWhere(
+        prevTransactions.removeWhere(
           (tr) =>
-              offlineTransactionNos.contains(tr.transactionNo) ||
+              offlineTransactionIds.contains(tr.idTransaction) ||
               tr.isOffline == true,
         );
 
-      transactionsData += prevTransactions;
-    }
-
-    try {
+        transactionsData += prevTransactions;
+      }
       if (connection == ConnectivityState.disconnected) {
         throw 'disconnected';
       }
@@ -77,7 +78,7 @@ class Transactions extends _$Transactions {
         shiftId = ref.read(shiftProvider).value?.id;
       }
 
-      var transactions = await api.transactions(
+      Pagination<Cart> transactions = await api.transactions(
         page: page,
         q: search,
         idOutlet: outlet.outlet.idOutlet,

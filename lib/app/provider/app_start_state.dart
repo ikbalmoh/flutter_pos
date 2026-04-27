@@ -12,4 +12,6 @@ class AppStartState with _$AppStartState {
   
   const factory AppStartState.selectedOutlet() = AppSelectedOutlet;
 
+  const factory AppStartState.selectingOutlet() = AppSelectingOutlet;
+
 }

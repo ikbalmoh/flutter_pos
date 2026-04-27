@@ -40,10 +40,9 @@ class Outlet extends _$Outlet {
     );
     state = AsyncData(progress.copyWith(config: true));
     try {
-      _outletRepository.saveOutlet(outlet);
       await _outletRepository.fetchOutletInfo(outlet.idOutlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
-      log('CONFIG LOADED: $config');
+      _outletRepository.saveOutlet(outlet);
 
       await ref.read(itemsProvider().notifier).loadItems(
             refresh: true,
@@ -56,7 +55,7 @@ class Outlet extends _$Outlet {
       state = AsyncData(OutletSelected(outlet: outlet, config: config));
     } catch (e, stacktrace) {
       if (kDebugMode) {
-        print("SELECT OUTLET ERROR: $e\n$stacktrace");
+        log("SELECT OUTLET ERROR: $e\n$stacktrace");
       }
       state = AsyncData(OutletFailure(message: "$e"));
     }
@@ -93,7 +92,9 @@ class Outlet extends _$Outlet {
 
   Future<void> clearOutlet() async {
     await _outletRepository.remove();
-    state = AsyncData(OutletNotSelected());
+    if (state.value is! OutletNotSelected) {
+      state = AsyncData(OutletNotSelected());
+    }
     ref.read(shiftProvider.notifier).offShift();
   }
 }

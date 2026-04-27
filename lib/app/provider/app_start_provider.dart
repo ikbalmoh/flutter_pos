@@ -8,17 +8,27 @@ part 'app_start_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class AppStart extends _$AppStart {
+  bool isAuthenticated = false;
+  bool outletSelected = false;
+
   @override
   FutureOr<AppStartState> build() async {
     ref.onDispose(() {});
 
-    final outletState = ref.watch(outletProvider);
     final authState = ref.watch(authProvider);
+    final outletState = ref.watch(outletProvider);
 
-    log('AUTHENTICATED? ${authState.value is Authenticated ? true : false}');
-    if (authState.value is Authenticated &&
-        outletState.value is OutletSelected) {
-      log('OUTLET SELECTED');
+    isAuthenticated = authState.value is Authenticated;
+    outletSelected = outletState.value is OutletSelected;
+
+    log('AUTHENTICATED? $isAuthenticated');
+    log('OUTLET STATE: $outletState');
+
+    if (isAuthenticated && outletState.value is OutletLoading) {
+      return const AppStartState.selectingOutlet();
+    }
+
+    if (isAuthenticated && outletSelected) {
       return const AppStartState.selectedOutlet();
     }
 
