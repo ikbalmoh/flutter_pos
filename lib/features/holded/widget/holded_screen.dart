@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart_holded.dart';
-import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/holded/provider/holded_provider.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';

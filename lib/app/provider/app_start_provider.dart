@@ -22,7 +22,7 @@ class AppStart extends _$AppStart {
     outletSelected = outletState.value is OutletSelected;
 
     log('AUTHENTICATED? $isAuthenticated');
-    log('OUTLET STATE: $outletState');
+    log('OUTLET STATE: ${outletState.value}');
 
     if (isAuthenticated && outletState.value is OutletLoading) {
       return const AppStartState.selectingOutlet();
