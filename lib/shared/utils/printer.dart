@@ -337,6 +337,8 @@ class Printer {
 
       if (cut == true) {
         bytes += generator.cut();
+      } else {
+        bytes += generator.feed(1);
       }
 
       return bytes;
