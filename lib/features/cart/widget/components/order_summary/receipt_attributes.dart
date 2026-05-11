@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:selleri/features/outlet/model/outlet.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';
-import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ReceiptHeader extends StatelessWidget {
-  const ReceiptHeader({required this.outletState, super.key, this.asReceipt});
+  const ReceiptHeader(
+      {required this.outlet,
+      super.key,
+      this.asReceipt,
+      this.attributeReceipts});
 
-  final OutletSelected outletState;
+  final model.Outlet outlet;
   final bool? asReceipt;
+  final AttributeReceipts? attributeReceipts;
 
   @override
   Widget build(BuildContext context) {
-    final outlet = outletState.outlet;
-    final AttributeReceipts? attributeReceipts =
-        outletState.config.attributeReceipts;
-
     var outletName = Text(
       outlet.outletName,
       style: asReceipt == true
-          ? TextStyle(fontSize: 20, color: Colors.black,fontWeight: FontWeight.w700)
+          ? TextStyle(
+              fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700)
           : Theme.of(context)
               .textTheme
               .titleMedium
@@ -29,9 +31,9 @@ class ReceiptHeader extends StatelessWidget {
     return attributeReceipts != null
         ? Column(
             children: [
-              attributeReceipts.imagePath != null
+              attributeReceipts?.imagePath != null
                   ? CachedNetworkImage(
-                      imageUrl: attributeReceipts.imagePath!,
+                      imageUrl: attributeReceipts!.imagePath!,
                       height: 60,
                       fit: BoxFit.contain,
                       errorWidget: (context, url, error) => Image.asset(
@@ -43,10 +45,10 @@ class ReceiptHeader extends StatelessWidget {
                   : Container(),
               const SizedBox(height: 5),
               outletName,
-              attributeReceipts.headers != null
+              attributeReceipts!.headers != null
                   ? Text(
                       GeneralFormater.stripHtmlIfNeeded(
-                          attributeReceipts.headers ?? ''),
+                          attributeReceipts!.headers ?? ''),
                       style: asReceipt == true
                           ? TextStyle(fontSize: 20, color: Colors.black)
                           : null,

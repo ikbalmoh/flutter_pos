@@ -64,7 +64,8 @@ class OrderSummary extends StatelessWidget {
                 ? const EdgeInsets.only(bottom: 8)
                 : const EdgeInsets.only(top: 20, bottom: 10),
             child: ReceiptHeader(
-              outletState: outletState,
+              outlet: outletState.outlet,
+              attributeReceipts: outletState.config.attributeReceipts,
               asReceipt: asReceipt,
             ),
           ),

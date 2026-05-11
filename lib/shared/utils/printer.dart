@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:selleri/features/cart/model/cart.dart';
@@ -15,8 +16,10 @@ import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/outlet/provider/outlet_state.dart';
+import 'package:selleri/features/settings/widget/printer/test_printer_preview.dart';
 import 'package:selleri/features/shift/model/shift_info.dart';
 import 'package:selleri/features/shift/model/shift_summary.dart';
+import 'package:selleri/features/shift/widget/components/shift_summary_receipt.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:selleri/shared/utils/transaction.dart';
 
@@ -343,7 +346,7 @@ class Printer {
       if (cut == true) {
         bytes += generator.cut();
       } else {
-        bytes += generator.feed(1);
+        bytes += generator.feed(2);
       }
 
       return bytes;
@@ -485,8 +488,9 @@ class Printer {
     }
 
     // info
-    bytes +=
-        generator.text('SHIFT REPORT', styles: const PosStyles(bold: true));
+    bytes += generator.text('SHIFT REPORT',
+        styles: const PosStyles(bold: true, align: PosAlign.center));
+    bytes += generator.hr();
     bytes += generator.text('Code: ${shift.codeShift}');
     bytes += generator.text('${'cashier'.tr()}: ${shift.openedBy}');
     bytes += generator.text(
@@ -498,8 +502,8 @@ class Printer {
     final List<SummaryItem> summaries = ShiftUtil.paymentList(shift.summary);
     for (var summary in summaries) {
       if (summary.isTotal == true) {
-        bytes +=
-            generator.text(summary.label, styles: const PosStyles(bold: true));
+        bytes += generator.text(summary.label,
+            styles: const PosStyles(bold: true, align: PosAlign.left));
       } else {
         bytes += generator.row([
           PosColumn(
@@ -557,9 +561,56 @@ class Printer {
     if (cut == true) {
       bytes += generator.cut();
     } else {
-      bytes += generator.feed(3);
+      bytes += generator.feed(2);
     }
 
+    return bytes;
+  }
+
+  static Future<List<int>> buildShiftReportReceiptCaptureBytes(ShiftInfo shift,
+      {AttributeReceipts? attributes,
+      required Outlet outlet,
+      PaperSize? size = PaperSize.mm58,
+      bool? cut = false,
+      bool isCopy = false}) async {
+    final effectiveSize = size ?? PaperSize.mm58;
+    final controller = ScreenshotController();
+    final Uint8List captured = await controller.captureFromWidget(
+      MediaQuery(
+        data: const MediaQueryData(),
+        child: Directionality(
+          textDirection: ui.TextDirection.ltr,
+          child: Theme(
+            data: ThemeData.light(),
+            child: Material(
+              color: Colors.white,
+              child: ShiftSummaryReceipt(
+                shift: shift,
+                outlet: outlet,
+                asReceipt: true,
+                attributeReceipts: attributes,
+                withAttribute: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+      targetSize: Size(effectiveSize.width.toDouble(), 4000),
+      pixelRatio: 1.0,
+    );
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(effectiveSize, profile, spaceBetweenRows: 0);
+    List<int> bytes = [];
+    Image? receiptImage = decodeImage(captured);
+    if (receiptImage != null) {
+      receiptImage = copyResize(receiptImage, width: effectiveSize.width);
+      bytes += generator.image(receiptImage, align: PosAlign.center);
+    }
+    if (cut == true) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(2);
+    }
     return bytes;
   }
 
@@ -589,6 +640,118 @@ class Printer {
                 withAttribute: true,
                 asReceipt: true,
               ),
+            ),
+          ),
+        ),
+      ),
+      targetSize: Size(effectiveSize.width.toDouble(), 4000),
+      pixelRatio: 1.0,
+    );
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(effectiveSize, profile, spaceBetweenRows: 0);
+    List<int> bytes = [];
+    Image? receiptImage = decodeImage(captured);
+    if (receiptImage != null) {
+      receiptImage = copyResize(receiptImage, width: effectiveSize.width);
+      bytes += generator.image(receiptImage, align: PosAlign.center);
+    }
+    if (cut == true) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(2);
+    }
+    return bytes;
+  }
+
+  Future<List<int>> buildTestTicketBytes(
+      {required PaperSize size, bool? cut = false}) async {
+    // Using default profile
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(size, profile, spaceBetweenRows: 2);
+    List<int> bytes = [];
+
+    final ByteData data = await rootBundle.load('assets/images/icon-print.jpg');
+    final Uint8List imgBytes = data.buffer.asUint8List();
+    final Image? img = decodeImage(imgBytes);
+    if (img != null) {
+      log('Print Image  $img');
+      bytes += generator.image(img, align: PosAlign.center);
+    }
+    bytes += generator.text(
+      'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ',
+      styles: const PosStyles(
+        height: PosTextSize.size1,
+        width: PosTextSize.size1,
+      ),
+    );
+
+    bytes += generator.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+        styles: const PosStyles(codeTable: 'CP1252'));
+    bytes += generator.text('Special 2: blåbærgrød',
+        styles: const PosStyles(codeTable: 'CP1252'));
+
+    bytes += generator.text('Bold text', styles: const PosStyles(bold: true));
+    bytes +=
+        generator.text('Reverse text', styles: const PosStyles(reverse: true));
+    bytes += generator.text('Underlined text',
+        styles: const PosStyles(underline: true), linesAfter: 1);
+    bytes += generator.text('Align left',
+        styles: const PosStyles(align: PosAlign.left));
+    bytes += generator.text('Align center',
+        styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text('Align right',
+        styles: const PosStyles(align: PosAlign.right), linesAfter: 1);
+
+    bytes += generator.row([
+      PosColumn(
+        text: 'col3',
+        width: 3,
+        styles: const PosStyles(align: PosAlign.center, underline: true),
+      ),
+      PosColumn(
+        text: 'col6',
+        width: 6,
+        styles: const PosStyles(align: PosAlign.center, underline: true),
+      ),
+      PosColumn(
+        text: 'col3',
+        width: 3,
+        styles: const PosStyles(align: PosAlign.center, underline: true),
+      ),
+    ]);
+
+    bytes += generator.text('Text size 200%',
+        styles: const PosStyles(
+          height: PosTextSize.size2,
+          width: PosTextSize.size2,
+        ));
+
+    bytes += generator.qrcode('selleri.co.id');
+
+    if (cut == true) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(2);
+    }
+    return bytes;
+  }
+
+  Future<List<int>> buildTestPrinterCaptureBytes({
+    PaperSize? size = PaperSize.mm58,
+    bool? cut = false,
+  }) async {
+    final effectiveSize = size ?? PaperSize.mm58;
+    final controller = ScreenshotController();
+    final Uint8List captured = await controller.captureFromWidget(
+      MediaQuery(
+        data: const MediaQueryData(),
+        child: Directionality(
+          textDirection: ui.TextDirection.ltr,
+          child: Theme(
+            data: ThemeData.light(),
+            child: Material(
+              color: Colors.white,
+              child: TestPrinterPreview(),
             ),
           ),
         ),

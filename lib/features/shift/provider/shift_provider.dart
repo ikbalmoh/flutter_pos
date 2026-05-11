@@ -120,13 +120,24 @@ class Shift extends _$Shift {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
           outlet.config.attributeReceipts;
-      final receipt = await util.Printer.buildShiftReportBytes(
-        outlet: outlet.outlet,
-        info,
-        attributes: attributeReceipts,
-        size: printer.size,
-        cut: printer.cut,
-      );
+      List<int> receipt = [];
+      if (printer.printImage) {
+        receipt = await util.Printer.buildShiftReportReceiptCaptureBytes(
+          outlet: outlet.outlet,
+          info,
+          attributes: attributeReceipts,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      } else {
+        receipt = await util.Printer.buildShiftReportBytes(
+          outlet: outlet.outlet,
+          info,
+          attributes: attributeReceipts,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      }
       await ref.read(printerProvider.notifier).print(receipt);
     } catch (e, stackTrace) {
       log('PRINT SHIFT ERROR: $e => $stackTrace');

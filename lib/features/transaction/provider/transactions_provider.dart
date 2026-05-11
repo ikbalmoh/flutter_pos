@@ -2,14 +2,8 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:screenshot/screenshot.dart';
 import 'package:selleri/features/cart/model/cart.dart';
-import 'package:selleri/features/cart/widget/components/order_summary/order_summary.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/shared/model/pagination.dart';
@@ -21,7 +15,6 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
-import 'package:image/image.dart' as img;
 
 part 'transactions_provider.g.dart';
 
