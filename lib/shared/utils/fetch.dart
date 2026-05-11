@@ -96,15 +96,6 @@ class CustomInterceptors extends Interceptor {
       err.response?.data = {'msg': 'connection_error'};
     }
 
-    if (err.response?.statusCode == 401) {
-      // Sign out
-      storage.delete(key: StoreKey.token.name);
-      log('Expired Session!');
-      if (onSessionExpired != null) {
-        onSessionExpired!();
-      }
-    }
-
     String message = err.message ?? 'Unexpected Error Occured!';
     if (err.response?.data is String) {
       message = err.response?.data;
@@ -117,11 +108,24 @@ class CustomInterceptors extends Interceptor {
     }
     err = err.copyWith(message: message);
 
-    FirebaseCrashlytics.instance.recordError(
-      err.message,
-      err.stackTrace,
-      fatal: false,
-    );
+    int? statusCode = err.response?.statusCode;
+
+    if (statusCode != null && statusCode != 500) {
+      FirebaseCrashlytics.instance.recordError(
+        err.message,
+        err.stackTrace,
+        fatal: false,
+      );
+    }
+
+    if (statusCode == 401) {
+      // Sign out
+      storage.delete(key: StoreKey.token.name);
+      log('Expired Session!');
+      if (onSessionExpired != null) {
+        onSessionExpired!();
+      }
+    }
 
     super.onError(err, handler);
   }
