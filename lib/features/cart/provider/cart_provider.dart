@@ -18,7 +18,7 @@ import 'package:selleri/features/item/model/item_package.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
-import 'package:selleri/features/table/model/table.dart';
+import 'package:selleri/features/table/model/table.dart' as tableModel;
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
@@ -484,8 +484,10 @@ class Cart extends _$Cart {
     }
   }
 
-  Future<void> printReceipt(
-      {int printCounter = 1, bool? withKitchen = false}) async {
+  Future<void> printReceipt({
+    int printCounter = 1,
+    bool? withKitchen = false,
+  }) async {
     try {
       log('PRINT RECEIPT $state');
       final printer = ref.read(printerProvider).value;
@@ -500,17 +502,32 @@ class Cart extends _$Cart {
         }
       }
       final outlet = ref.read(outletProvider).value as OutletSelected;
-      final AttributeReceipts? attributeReceipts =
-          outlet.config.attributeReceipts;
-      final receipt = await util.Printer.buildReceiptBytes(
-        state,
-        outlet: outlet.outlet,
-        attributes: attributeReceipts,
-        size: printer.size,
-        isCopy: printCounter > 1,
-        cut: printer.cut,
-        printIncludePpn: outlet.config.printIncludePpn ?? false,
-      );
+      
+      final bool printImage = printer.printImage;
+
+      List<int> receipt;
+
+      if (printImage == true) {
+        receipt = await util.Printer.buildReceiptCaptureBytes(
+          state,
+          outlet: outlet,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      } else {
+        final AttributeReceipts? attributeReceipts =
+            outlet.config.attributeReceipts;
+        receipt = await util.Printer.buildReceiptBytes(
+          state,
+          outlet: outlet.outlet,
+          attributes: attributeReceipts,
+          size: printer.size,
+          isCopy: printCounter > 1,
+          cut: printer.cut,
+          printIncludePpn: outlet.config.printIncludePpn ?? false,
+        );
+      }
+
       await ref.read(printerProvider.notifier).print(receipt);
       if (withKitchen == true) {
         await printKitchen();
@@ -1043,7 +1060,7 @@ class Cart extends _$Cart {
     );
   }
 
-  void setTables(List<Table> tables) async {
+  void setTables(List<tableModel.Table> tables) async {
     if (state.transactionNo == '') {
       await initCart();
     }

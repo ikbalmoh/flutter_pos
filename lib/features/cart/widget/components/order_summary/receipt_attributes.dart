@@ -5,9 +5,10 @@ import 'package:selleri/shared/utils/formater.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ReceiptHeader extends StatelessWidget {
-  const ReceiptHeader({required this.outletState, super.key});
+  const ReceiptHeader({required this.outletState, super.key, this.asReceipt});
 
   final OutletSelected outletState;
+  final bool? asReceipt;
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +18,12 @@ class ReceiptHeader extends StatelessWidget {
 
     var outletName = Text(
       outlet.outletName,
-      style: Theme.of(context)
-          .textTheme
-          .titleMedium
-          ?.copyWith(fontWeight: FontWeight.w700),
+      style: asReceipt == true
+          ? TextStyle(fontSize: 20, color: Colors.black,fontWeight: FontWeight.w700)
+          : Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.w700),
     );
 
     return attributeReceipts != null
@@ -41,8 +44,13 @@ class ReceiptHeader extends StatelessWidget {
               const SizedBox(height: 5),
               outletName,
               attributeReceipts.headers != null
-                  ? Text(GeneralFormater.stripHtmlIfNeeded(
-                      attributeReceipts.headers ?? ''))
+                  ? Text(
+                      GeneralFormater.stripHtmlIfNeeded(
+                          attributeReceipts.headers ?? ''),
+                      style: asReceipt == true
+                          ? TextStyle(fontSize: 20, color: Colors.black)
+                          : null,
+                    )
                   : Container()
             ],
           )

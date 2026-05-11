@@ -2,8 +2,14 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:selleri/features/cart/model/cart.dart';
+import 'package:selleri/features/cart/widget/components/order_summary/order_summary.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/shared/model/pagination.dart';
@@ -15,6 +21,7 @@ import 'package:selleri/features/shift/provider/shift_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
+import 'package:image/image.dart' as img;
 
 part 'transactions_provider.g.dart';
 
@@ -86,6 +93,8 @@ class Transactions extends _$Transactions {
         table: table,
       );
 
+      log('Transaction Data: ${transactions.data}');
+
       if (page == 1) {
         transactionsData += (transactions.data ?? []);
 
@@ -101,7 +110,8 @@ class Transactions extends _$Transactions {
     } on DioException catch (e, stack) {
       log('Load Transaction Network Error: $e\n$stack');
       rethrow;
-    } catch (e) {
+    } catch (e, stack) {
+      log('Load Transaction Error: $e\n$stack');
       state = AsyncData(
         Pagination(
           currentPage: 0,
@@ -130,18 +140,30 @@ class Transactions extends _$Transactions {
               .config
               .attributeReceipts;
       final outlet = ref.read(outletProvider).value as OutletSelected;
+      final bool printImage = printer.printImage;
 
-      final receipt = await util.Printer.buildReceiptBytes(
-        cart,
-        outlet: outlet.outlet,
-        attributes: attributeReceipts,
-        size: printer.size,
-        isCopy: true,
-        isHold: isHold,
-        withPrice: withPrice,
-        cut: printer.cut,
-        printIncludePpn: outlet.config.printIncludePpn ?? false,
-      );
+      List<int> receipt;
+
+      if (printImage) {
+        receipt = await util.Printer.buildReceiptCaptureBytes(
+          cart,
+          outlet: outlet,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      } else {
+        receipt = await util.Printer.buildReceiptBytes(
+          cart,
+          outlet: outlet.outlet,
+          attributes: attributeReceipts,
+          size: printer.size,
+          isCopy: true,
+          isHold: isHold,
+          withPrice: withPrice,
+          cut: printer.cut,
+          printIncludePpn: outlet.config.printIncludePpn ?? false,
+        );
+      }
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {
       rethrow;

@@ -1,15 +1,20 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:image/image.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
+import 'package:selleri/features/cart/widget/components/order_summary/order_summary.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
+import 'package:selleri/features/outlet/provider/outlet_state.dart';
 import 'package:selleri/features/shift/model/shift_info.dart';
 import 'package:selleri/features/shift/model/shift_summary.dart';
 import 'package:selleri/shared/utils/formater.dart';
@@ -555,6 +560,55 @@ class Printer {
       bytes += generator.feed(3);
     }
 
+    return bytes;
+  }
+
+  static Future<List<int>> buildReceiptCaptureBytes(
+    Cart cart, {
+    required OutletSelected outlet,
+    PaperSize? size = PaperSize.mm58,
+    bool? cut = false,
+    bool withPrice = true,
+    bool printIncludePpn = false,
+  }) async {
+    final effectiveSize = size ?? PaperSize.mm58;
+    final controller = ScreenshotController();
+    final Uint8List captured = await controller.captureFromWidget(
+      MediaQuery(
+        data: const MediaQueryData(),
+        child: Directionality(
+          textDirection: ui.TextDirection.ltr,
+          child: Theme(
+            data: ThemeData.light(),
+            child: Material(
+              color: Colors.white,
+              child: OrderSummary(
+                cart: cart,
+                outletState: outlet,
+                taxable: outlet.config.taxable ?? false,
+                withAttribute: true,
+                asReceipt: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+      targetSize: Size(effectiveSize.width.toDouble(), 4000),
+      pixelRatio: 1.0,
+    );
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(effectiveSize, profile, spaceBetweenRows: 0);
+    List<int> bytes = [];
+    Image? receiptImage = decodeImage(captured);
+    if (receiptImage != null) {
+      receiptImage = copyResize(receiptImage, width: effectiveSize.width);
+      bytes += generator.image(receiptImage, align: PosAlign.center);
+    }
+    if (cut == true) {
+      bytes += generator.cut();
+    } else {
+      bytes += generator.feed(3);
+    }
     return bytes;
   }
 
