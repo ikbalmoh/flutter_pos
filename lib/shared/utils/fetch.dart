@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/constants/store_key.dart';
@@ -95,15 +96,6 @@ class CustomInterceptors extends Interceptor {
       err.response?.data = {'msg': 'connection_error'};
     }
 
-    if (err.response?.statusCode == 401) {
-      // Sign out
-      storage.delete(key: StoreKey.token.name);
-      log('Expired Session!');
-      if (onSessionExpired != null) {
-        onSessionExpired!();
-      }
-    }
-
     String message = err.message ?? 'Unexpected Error Occured!';
     if (err.response?.data is String) {
       message = err.response?.data;
@@ -115,6 +107,25 @@ class CustomInterceptors extends Interceptor {
       message = 'Invalid data. Please check your input and try again.';
     }
     err = err.copyWith(message: message);
+
+    int? statusCode = err.response?.statusCode;
+
+    if (statusCode != null && statusCode != 500) {
+      FirebaseCrashlytics.instance.recordError(
+        err.message,
+        err.stackTrace,
+        fatal: false,
+      );
+    }
+
+    if (statusCode == 401) {
+      // Sign out
+      storage.delete(key: StoreKey.token.name);
+      log('Expired Session!');
+      if (onSessionExpired != null) {
+        onSessionExpired!();
+      }
+    }
 
     super.onError(err, handler);
   }

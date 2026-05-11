@@ -25,8 +25,8 @@ class Shift extends _$Shift {
       ref.read(shiftRepositoryProvider);
 
   @override
-  FutureOr<model.Shift?> build() async {
-    return future;
+  FutureOr<model.Shift?> build() {
+    return null;
   }
 
   Future<void> openShift(double openAmount) async {
