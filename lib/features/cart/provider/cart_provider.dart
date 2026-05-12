@@ -18,7 +18,7 @@ import 'package:selleri/features/item/model/item_package.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
-import 'package:selleri/features/table/model/table.dart' as tableModel;
+import 'package:selleri/features/table/model/table.dart' as table_model;
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
@@ -1060,7 +1060,7 @@ class Cart extends _$Cart {
     );
   }
 
-  void setTables(List<tableModel.Table> tables) async {
+  void setTables(List<table_model.Table> tables) async {
     if (state.transactionNo == '') {
       await initCart();
     }

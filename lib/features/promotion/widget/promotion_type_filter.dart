@@ -20,30 +20,33 @@ class PromotionTypeFilter extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: PromotionType.filter()
-              .map(
-                (type) => ListTile(
-                  minLeadingWidth: 0,
-                  dense: true,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                  horizontalTitleGap: -7,
-                  title: Text(type.name),
-                  leading: Radio<int>(
-                    visualDensity: const VisualDensity(horizontal: 0),
-                    value: type.id,
-                    groupValue: selected,
-                    onChanged: (value) {
-                      context.pop(value);
-                    },
+        child: RadioGroup<int>(
+          groupValue: selected,
+          onChanged: (value) {
+            context.pop(value);
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: PromotionType.filter()
+                .map(
+                  (type) => ListTile(
+                    minLeadingWidth: 0,
+                    dense: true,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    visualDensity:
+                        const VisualDensity(horizontal: 0, vertical: -4),
+                    horizontalTitleGap: -7,
+                    title: Text(type.name),
+                    leading: Radio<int>(
+                      visualDensity: const VisualDensity(horizontal: 0),
+                      value: type.id,
+                    ),
                   ),
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
+          ),
         ),
       ),
     );
