@@ -154,11 +154,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                           ),
                           SuperTooltip(
                             controller: tooltipController,
-                            showBarrier: false,
-                            showDropBoxFilter: false,
-                            hasShadow: false,
                             onHide: () => resetDateFilter(),
-                            hideTooltipOnTap: true,
                             content: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
