@@ -87,10 +87,11 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
       await ref
           .read(holdedProvider.notifier)
           .deleteHoldedTransaction(viewTransaction!.transactionId);
+      if (!mounted) return;
       setState(() {
         viewTransaction = null;
       });
-      if (!isTablet) {
+      if (!isTablet && context.mounted) {
         context.pop();
       }
       AppAlert.toast(

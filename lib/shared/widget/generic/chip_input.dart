@@ -149,6 +149,7 @@ class ChipsInputEditingController<T> extends TextEditingController {
 
   String get textWithoutReplacements {
     final String char = String.fromCharCode(kObjectReplacementChar);
+    // ignore: deprecated_member_use
     return text.replaceAll(',', '').replaceAll(RegExp(char), '');
   }
 

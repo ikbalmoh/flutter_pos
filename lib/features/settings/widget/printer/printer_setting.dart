@@ -26,12 +26,14 @@ class _PrinterSettingState extends ConsumerState<PrinterSetting> {
   Widget build(BuildContext context) {
     void onSelectPrinter(BluetoothInfo device) {
       showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.white,
-          useSafeArea: true,
-          builder: (context) {
-            return ConnectPrinter(device: device);
-          });
+        context: context,
+        backgroundColor: Colors.white,
+        useSafeArea: true,
+        isScrollControlled: true,
+        builder: (context) {
+          return ConnectPrinter(device: device);
+        },
+      );
     }
 
     ref.listen(printerProvider, (prev, next) {

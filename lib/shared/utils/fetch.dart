@@ -110,7 +110,7 @@ class CustomInterceptors extends Interceptor {
 
     int? statusCode = err.response?.statusCode;
 
-    if (statusCode != null && statusCode != 500) {
+    if (statusCode != null && ![401, 500].contains(statusCode)) {
       FirebaseCrashlytics.instance.recordError(
         err.message,
         err.stackTrace,

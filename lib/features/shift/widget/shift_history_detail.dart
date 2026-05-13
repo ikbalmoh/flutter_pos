@@ -1,19 +1,16 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide AppBar;
 import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:responsive_framework/responsive_framework.dart';
+import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/provider/detail_shift_info_provider.dart';
 import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/widget/components/shift_summary_receipt.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
-import 'package:selleri/features/shift/widget/components/sales_summary.dart';
 import 'package:selleri/features/shift/widget/components/shift_skeleton.dart';
-import 'package:selleri/features/shift/widget/components/sold_items.dart';
-import 'package:selleri/features/shift/widget/components/active_shift_info.dart';
-import 'package:selleri/features/shift/widget/components/active_shift_info_horizontal.dart';
-import 'package:selleri/features/shift/widget/components/shift_cashflows.dart';
-import 'package:selleri/features/shift/widget/components/shift_summary_card.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 
 class SummaryMenu {
@@ -43,6 +40,7 @@ class _ShiftHistoryDetailScreenState
   void onPrint() async {
     final shiftInfo =
         ref.read(detailShiftInfoNotifierProvider(widget.shiftId)).value;
+    log('Print Shift History: $shiftInfo');
     if (shiftInfo == null) {
       return;
     }
@@ -57,113 +55,25 @@ class _ShiftHistoryDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
-
     return Scaffold(
       appBar: widget.asWidget == true
           ? null
           : AppBar(
               title: Text('shift_detail'.tr()),
             ),
-      backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
+      backgroundColor: Colors.blueGrey.shade50,
       body: ref.watch(detailShiftInfoNotifierProvider(widget.shiftId)).when(
             data: (data) {
-              if (isTablet) {
-                return Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    children: [
-                      ActiveShiftInfoHorizontal(
-                        shiftInfo: data!,
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 300,
-                            child: summaryMenu(context),
-                          ),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.55,
-                              child: Card(
-                                color: Colors.white,
-                                elevation: 0,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: SingleChildScrollView(
-                                    child: viewSummary == 'cashflow'
-                                        ? Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 10,
-                                            ),
-                                            child: ShiftCashflows(
-                                              withoutLabel: true,
-                                              cashflows: data.cashFlows.data,
-                                            ),
-                                          )
-                                        : viewSummary == 'summary'
-                                            ? SalesSummaryList(
-                                                summary: data.summary,
-                                              )
-                                            : Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                  vertical: 10,
-                                                ),
-                                                child: data.soldItems.isEmpty
-                                                    ? const Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 150),
-                                                        child:
-                                                            EmptySoldItemsPlaceholder(),
-                                                      )
-                                                    : SoldItemsList(
-                                                        items: data.soldItems,
-                                                      ),
-                                              ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }
+              final outletSelected =
+                  ref.watch(outletProvider).value as OutletSelected;
               return SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: ActiveShiftInfo(
-                          shiftInfo: data!,
-                          showPrintButton: true,
-                        ),
-                      ),
-                    ),
-                    ShiftSummaryCards(shiftInfo: data),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    ShiftCashflows(cashflows: data.cashFlows.data)
-                  ],
+                padding: const EdgeInsets.all(10),
+                child: ShiftSummaryReceipt(
+                  shift: data!,
+                  outlet: outletSelected.outlet,
+                  attributeReceipts: outletSelected.config.attributeReceipts,
+                  withAttribute: true,
                 ),
               );
             },
@@ -173,12 +83,12 @@ class _ShiftHistoryDetailScreenState
             ),
             loading: () => const ShiftSkeleon(),
           ),
-      floatingActionButton: isTablet
-          ? FloatingActionButton.extended(
+      floatingActionButton: widget.asWidget == true
+          ? null
+          : FloatingActionButton.extended(
               icon: const Icon(CupertinoIcons.printer),
               onPressed: onPrint,
-              label: Text('print'.tr()))
-          : null,
+              label: Text('print'.tr())),
     );
   }
 

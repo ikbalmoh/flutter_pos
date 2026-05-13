@@ -70,6 +70,8 @@ class Transactions extends _$Transactions {
         table: table,
       );
 
+      log('Transaction Data: ${transactions.data}');
+
       if (page == 1) {
         transactionsData += (transactions.data ?? []);
         transactions = transactions.copyWith(data: transactionsData);
@@ -147,18 +149,30 @@ class Transactions extends _$Transactions {
               .config
               .attributeReceipts;
       final outlet = ref.read(outletProvider).value as OutletSelected;
+      final bool printImage = printer.printImage;
 
-      final receipt = await util.Printer.buildReceiptBytes(
-        cart,
-        outlet: outlet.outlet,
-        attributes: attributeReceipts,
-        size: printer.size,
-        isCopy: true,
-        isHold: isHold,
-        withPrice: withPrice,
-        cut: printer.cut,
-        printIncludePpn: outlet.config.printIncludePpn ?? false,
-      );
+      List<int> receipt;
+
+      if (printImage) {
+        receipt = await util.Printer.buildReceiptCaptureBytes(
+          cart,
+          outlet: outlet,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      } else {
+        receipt = await util.Printer.buildReceiptBytes(
+          cart,
+          outlet: outlet.outlet,
+          attributes: attributeReceipts,
+          size: printer.size,
+          isCopy: true,
+          isHold: isHold,
+          withPrice: withPrice,
+          cut: printer.cut,
+          printIncludePpn: outlet.config.printIncludePpn ?? false,
+        );
+      }
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {
       rethrow;

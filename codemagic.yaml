@@ -7,7 +7,7 @@ definitions:
         - firebase_credentials
         - selleri-stage
       vars:
-        FLUTTER_VERSION: '3.35.3'
+        FLUTTER_VERSION: '3.41.9'
       android_signing:
         - selleri_stage_keystore
       ios_signing:
@@ -20,7 +20,7 @@ definitions:
         - firebase_credentials_prod
         - selleri-prod
       vars:
-        FLUTTER_VERSION: '3.35.3'
+        FLUTTER_VERSION: '3.35.4'
       android_signing:
         - selleri_release_keystore
       ios_signing:
@@ -105,7 +105,7 @@ definitions:
 
     - &shorebird_android_release
       name: Shorebird release Android
-      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
+      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=prod -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
 
     - &shorebird_ios_release
       name: Shorebird release iOS
@@ -113,7 +113,7 @@ definitions:
 
     - &shorebird_android_patch
       name: Shorebird patch Android
-      script: shorebird patch android --release-version=$RELEASE_VERSION --flavor=prod --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
+      script: shorebird patch android --release-version=$RELEASE_VERSION --flavor=prod --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
 
     - &shorebird_ios_patch
       name: Shorebird patch iOS
@@ -121,7 +121,7 @@ definitions:
 
     - &shorebird_android_release_stage
       name: Shorebird release Android
-      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=stage -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+      script: shorebird release android --artifact=apk --flutter-version="$FLUTTER_VERSION" --flavor=stage -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
 
     - &shorebird_ios_release_stage
       name: Shorebird release iOS
@@ -129,7 +129,7 @@ definitions:
 
     - &shorebird_android_patch_stage
       name: Shorebird patch Android
-      script: shorebird patch android --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/prodRelease/symbols
+      script: shorebird patch android --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --obfuscate --split-debug-info=./build/app/outputs/bundle/stageRelease/symbols
 
     - &shorebird_ios_patch_stage
       name: Shorebird patch iOS

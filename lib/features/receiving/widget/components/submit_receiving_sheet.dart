@@ -34,6 +34,7 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
   }
 
   void onSubmit() async {
+    final ctx = context;
     setState(() {
       isLoading = true;
     });
@@ -41,21 +42,19 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
       String message = await ref
           .read(receivingProvider.notifier)
           .submit(description: descriptionController.text);
-      if (mounted) {
+      if (ctx.mounted) {
         setState(() {
           isLoading = false;
         });
-      }
-      if (context.mounted) {
-        while (context.canPop()) {
-          context.pop();
+        while (ctx.canPop()) {
+          ctx.pop();
         }
-        context.pushReplacementNamed(Routes.home);
-        context.pushNamed(Routes.receivingHistory);
+        ctx.pushReplacementNamed(Routes.home);
+        ctx.pushNamed(Routes.receivingHistory);
         AppAlert.snackbar(message);
       }
     } catch (e) {
-      if (mounted) {
+      if (ctx.mounted) {
         setState(() {
           isLoading = false;
         });

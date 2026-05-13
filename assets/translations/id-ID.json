@@ -395,5 +395,7 @@
   "reward_by_transaction": "Hadiah Transaksi",
   "promotion": "Promosi",
   "x_is_no_longer_active": "{} Sudah Tidak Aktif Lagi",
-  "reselect_customer_note": "Pelanggan akan dihapus dari transaksi ini"
+  "reselect_customer_note": "Pelanggan akan dihapus dari transaksi ini",
+  "print_receipt_as_image": "Cetak Struk Sebagai Gambar",
+  "turn_on_this_option_if_receipt_is_blank": "Nyalakan opsi ini jika struk tidak keluar"
 }

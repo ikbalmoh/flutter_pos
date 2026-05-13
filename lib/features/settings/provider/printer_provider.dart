@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'dart:developer';
 import 'package:selleri/features/settings/model/printer.dart' as model;
-import 'package:image/image.dart';
+import 'package:selleri/shared/utils/printer.dart' as util;
 
 part 'printer_provider.g.dart';
 
@@ -77,7 +76,9 @@ class Printer extends _$Printer {
   }
 
   void updatePrinter(BluetoothInfo device,
-      {required PaperSize size, bool cut = false}) async {
+      {required PaperSize size,
+      bool cut = false,
+      bool printImage = false}) async {
     const storage = FlutterSecureStorage();
 
     final printer = model.Printer(
@@ -85,6 +86,7 @@ class Printer extends _$Printer {
       name: device.name,
       size: size,
       cut: cut,
+      printImage: printImage,
     );
     await storage.write(key: 'printer', value: printer.toString());
     state = AsyncData(printer);
@@ -104,7 +106,22 @@ class Printer extends _$Printer {
   Future<void> printTest() async {
     try {
       log('Test Print');
-      final bytes = await generateTestTicket();
+      final printer = await ref.read(printerProvider.future);
+      if (printer == null) {
+        throw 'printer_not_connected'.tr();
+      }
+      List<int> bytes = [];
+      if (printer.printImage) {
+        bytes = await util.Printer().buildTestPrinterCaptureBytes(
+          size: printer.size,
+          cut: printer.cut,
+        );
+      } else {
+        bytes = await util.Printer().buildTestTicketBytes(
+          size: printer.size,
+          cut: printer.cut,
+        );
+      }
       log('Print Bytes: $bytes');
       await print(bytes);
     } catch (e, stackTrace) {
@@ -131,82 +148,6 @@ class Printer extends _$Printer {
       log('PRINT FAILED: $e => $stackTrace');
       rethrow;
     }
-  }
-
-  Future<List<int>> generateTestTicket() async {
-    final printer = state.value;
-    if (printer == null) {
-      throw 'printer_not_connected'.tr();
-    }
-    // Using default profile
-    final profile = await CapabilityProfile.load();
-    final generator = Generator(printer.size, profile, spaceBetweenRows: 2);
-    List<int> bytes = [];
-
-    final ByteData data = await rootBundle.load('assets/images/icon-print.jpg');
-    final Uint8List imgBytes = data.buffer.asUint8List();
-    final Image? img = decodeImage(imgBytes);
-    if (img != null) {
-      log('Print Image  $img');
-      bytes += generator.image(img, align: PosAlign.center);
-    }
-    bytes += generator.text(
-      'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ',
-      styles: const PosStyles(
-        height: PosTextSize.size1,
-        width: PosTextSize.size1,
-      ),
-    );
-
-    bytes += generator.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
-        styles: const PosStyles(codeTable: 'CP1252'));
-    bytes += generator.text('Special 2: blåbærgrød',
-        styles: const PosStyles(codeTable: 'CP1252'));
-
-    bytes += generator.text('Bold text', styles: const PosStyles(bold: true));
-    bytes +=
-        generator.text('Reverse text', styles: const PosStyles(reverse: true));
-    bytes += generator.text('Underlined text',
-        styles: const PosStyles(underline: true), linesAfter: 1);
-    bytes += generator.text('Align left',
-        styles: const PosStyles(align: PosAlign.left));
-    bytes += generator.text('Align center',
-        styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text('Align right',
-        styles: const PosStyles(align: PosAlign.right), linesAfter: 1);
-
-    bytes += generator.row([
-      PosColumn(
-        text: 'col3',
-        width: 3,
-        styles: const PosStyles(align: PosAlign.center, underline: true),
-      ),
-      PosColumn(
-        text: 'col6',
-        width: 6,
-        styles: const PosStyles(align: PosAlign.center, underline: true),
-      ),
-      PosColumn(
-        text: 'col3',
-        width: 3,
-        styles: const PosStyles(align: PosAlign.center, underline: true),
-      ),
-    ]);
-
-    bytes += generator.text('Text size 200%',
-        styles: const PosStyles(
-          height: PosTextSize.size2,
-          width: PosTextSize.size2,
-        ));
-
-    bytes += generator.qrcode('selleri.co.id');
-
-    if (printer.cut) {
-      bytes += generator.cut();
-    } else {
-      bytes += generator.feed(3);
-    }
-    return bytes;
   }
 
   void stopScanDevices() {}

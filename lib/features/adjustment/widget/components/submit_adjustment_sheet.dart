@@ -32,6 +32,7 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
   }
 
   void onSubmit() async {
+    final ctx = context;
     setState(() {
       isLoading = true;
     });
@@ -39,18 +40,16 @@ class _SubmitAdjustmentSheetState extends ConsumerState<SubmitAdjustmentSheet> {
       String message = await ref
           .read(adjustmentProvider.notifier)
           .submitAdjustment(description: descriptionController.text);
-      if (mounted) {
+      if (ctx.mounted) {
         setState(() {
           isLoading = false;
         });
-      }
-      if (context.mounted) {
-        context.pop();
-        context.push(Routes.adjustmentsHistory);
+        ctx.pop();
+        ctx.push(Routes.adjustmentsHistory);
         AppAlert.snackbar(message);
       }
     } on Exception catch (e) {
-      if (mounted) {
+      if (ctx.mounted) {
         setState(() {
           isLoading = false;
         });
