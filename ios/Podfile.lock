@@ -234,7 +234,7 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - restart_app (0.0.1):
+  - restart_app (1.8.3):
     - Flutter
   - SAMKeychain (1.5.3)
   - share_plus (0.0.1):
@@ -435,7 +435,7 @@ SPEC CHECKSUMS:
   print_bluetooth_thermal: 28adf527ac4c47e42e268c13d21e5f2abf48ecdd
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  restart_app: 9cda5378aacc5000e3f66ee76a9201534e7d3ecf
+  restart_app: 7ae91f45705765b4d0042da3a160b72a9927fcd8
   SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
@@ -443,6 +443,6 @@ SPEC CHECKSUMS:
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
   wakelock_plus: e29112ab3ef0b318e58cfa5c32326458be66b556
 
-PODFILE CHECKSUM: ccfeaf9fe9c108cfcc2f7bd3d97d5b9728129fbc
+PODFILE CHECKSUM: 03591770238e2bee05a9086a21a25e4c28df3e43
 
 COCOAPODS: 1.16.2

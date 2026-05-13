@@ -17,6 +17,10 @@ class ErrorHandler extends ConsumerWidget {
     final isOffline = error is OfflineException ||
         ref.read(connectivityStatusProvider) != ConnectivityState.connected;
 
+    final String message = isOffline
+        ? 'offline'.tr()
+        : (error != null ? error.toString() : 'something_wrong'.tr());
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20).copyWith(top: 80),
       child: Column(
@@ -35,7 +39,7 @@ class ErrorHandler extends ConsumerWidget {
             height: 40,
           ),
           Text(
-            isOffline ? 'offline'.tr() : 'something_wrong'.tr(),
+            message,
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme

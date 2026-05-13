@@ -9,15 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
 import 'package:selleri/features/promotion/provider/promotion_list_provider.dart';
 import 'package:selleri/features/promotion/provider/promotions_provider.dart';
+import 'package:selleri/features/promotion/widget/components/promotion_item.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/date_picker.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
-import 'package:selleri/features/promotion/widget/components/promotion_assign.dart';
-import 'package:selleri/features/promotion/widget/components/promotion_date.dart';
-import 'package:selleri/features/promotion/widget/components/promotion_days.dart';
-import 'package:selleri/features/promotion/widget/components/promotion_policy.dart';
-import 'package:selleri/features/promotion/widget/components/promotion_times.dart';
-import 'package:selleri/features/promotion/widget/components/promotion_type_badge.dart';
 import 'package:selleri/shared/widget/search_app_bar.dart';
 import 'package:selleri/features/promotion/widget/promotion_type_filter.dart';
 import 'package:selleri/shared/widget/loading_widget.dart';
@@ -222,97 +217,9 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                                         promo.endDate!.isAfter(today));
                             final isActive =
                                 !promo.needCode && promo.status && !isExpired;
-                            return ListTile(
-                              tileColor: isActive
-                                  ? Colors.white
-                                  : Colors.grey.shade100,
-                              shape: Border(
-                                bottom: BorderSide(
-                                  width: 0.5,
-                                  color: Colors.blueGrey.shade50,
-                                ),
-                              ),
-                              title: Wrap(
-                                spacing: 10,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                direction: Axis.horizontal,
-                                children: [
-                                  Text(promo.name),
-                                  promo.needCode
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.amber,
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 3),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              const Icon(
-                                                CupertinoIcons.tag_fill,
-                                                color: Colors.white,
-                                                size: 14,
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Text(
-                                                promo.promoCode!,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleSmall
-                                                    ?.copyWith(
-                                                        color: Colors.white),
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      : Container()
-                                ],
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  promo.description != null
-                                      ? Text(
-                                          promo.description!,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall
-                                              ?.copyWith(
-                                                  color: Colors.grey.shade600),
-                                        )
-                                      : Container(),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 10,
-                                    runSpacing: 3,
-                                    children: [
-                                      PromotionAssign(
-                                        assignCustomer: promo.assignCustomer,
-                                        groups: promo.assignGroups,
-                                      ),
-                                      PromotionPolicy(policy: promo.policy),
-                                      PromotionDays(days: promo.days),
-                                      PromotionDate(
-                                        allTime: promo.allTime,
-                                        startDate: promo.startDate,
-                                        endDate: promo.endDate,
-                                      ),
-                                      PromotionTimes(times: promo.times ?? [])
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              trailing: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  PromotionTypeBadge(type: promo.type)
-                                ],
-                              ),
+                            return PromotionItem(
+                              promo: promo,
+                              isActive: isActive,
                             );
                           },
                         )

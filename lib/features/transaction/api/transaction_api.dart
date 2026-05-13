@@ -21,7 +21,7 @@ class TransactionApi {
         {"transactions": transactionJsons},
         ListFormat.multiCompatible,
       );
-      log('TRANSACTIONS TO STORE: $transactionJsons');
+      log('TRANSACTIONS TO STORE: ${transactionJsons.length}');
       if (formData.files.isNotEmpty) {
         log('TRANSACTION FILES: ${formData.files}');
       }
@@ -35,9 +35,15 @@ class TransactionApi {
 
       log('TRANSACTIONS STORED ${res.data}');
 
-      return List<Map<String, dynamic>>.from(res.data['data'])
-          .map((transaction) => Cart.fromTransaction(transaction))
-          .toList();
+      if (res.data is Map &&
+          res.data['data'] is List &&
+          res.data['data'] != null) {
+        return List<Map<String, dynamic>>.from(res.data['data'] as List)
+            .map((transaction) => Cart.fromTransaction(transaction))
+            .toList();
+      }
+
+      return [];
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {

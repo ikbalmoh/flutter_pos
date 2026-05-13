@@ -50,33 +50,33 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   }
 
   void onSelect(Promotion promo) {
-    final int idx = selected.indexWhere((p) => p.id == promo.id);
-    if (idx >= 0) {
-      setState(() {
-        selected = selected..removeAt(idx);
-      });
-    } else {
-      setState(() {
-        selected = selected..add(promo);
-      });
-    }
+    setState(() {
+      selected = ref
+          .read(promotionsProvider.notifier)
+          .resolveSelection(selected, promo);
+    });
   }
 
   void onSelectPromoByCode(Promotion promo) {
-    final int idx = selected.indexWhere((p) => p.id == promo.id);
-    if (idx >= 0) {
-      setState(() {
-        selected = [];
-      });
-    } else {
-      setState(() {
-        selected = [promo];
-      });
-    }
+    setState(() {
+      selected = ref
+          .read(promotionsProvider.notifier)
+          .resolveSelection(selected, promo);
+    });
   }
 
   bool hasCannotCombinedPromo(int exceptId) {
     return selected.indexWhere((p) => !p.policy && p.id != exceptId) >= 0;
+  }
+
+  bool isPromoDisabled(Promotion promo) {
+    bool isEligible =
+        ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
+    bool isDisabled = !isEligible ||
+        promo.needCode ||
+        (selected.where((p) => p.id != promo.id).isNotEmpty && !promo.policy) ||
+        hasCannotCombinedPromo(promo.id);
+    return isDisabled;
   }
 
   @override
@@ -122,37 +122,50 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                           selected.where((p) => p.needCode == true).isNotEmpty,
                     ),
                     promotions.isNotEmpty
-                        ? ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0, vertical: 7.5),
-                            shrinkWrap: true,
-                            itemBuilder: (context, idx) {
-                              Promotion promo = promotions[idx];
-                              bool isActive =
-                                  selected.map((p) => p.id).contains(promo.id);
-                              bool isEligible = ref
-                                  .read(promotionsProvider.notifier)
-                                  .isPromotionEligible(promo);
-                              bool isDisabled = !isEligible ||
-                                  promo.needCode ||
-                                  (selected
-                                          .where((p) => p.id != promo.id)
-                                          .isNotEmpty &&
-                                      !promo.policy) ||
-                                  hasCannotCombinedPromo(promo.id);
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 7.5),
-                                child: CartPromotionItem(
-                                  promo: promo,
-                                  onSelect: onSelect,
-                                  active: isActive,
-                                  disabled: isDisabled,
-                                ),
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: PromotionType.filter()
+                                .where((t) => t.id != 0)
+                                .map((promotionType) {
+                              final grouped = promotions
+                                  .where((p) => p.type == promotionType.id)
+                                  .toList();
+                              if (grouped.isEmpty) return const SizedBox();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 15, bottom: 5),
+                                    child: Text(
+                                      promotionType.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(
+                                            color: Colors.blueGrey.shade400,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.4,
+                                          ),
+                                    ),
+                                  ),
+                                  ...grouped.map(
+                                    (promo) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: CartPromotionItem(
+                                        promo: promo,
+                                        onSelect: onSelect,
+                                        active: selected
+                                            .map((p) => p.id)
+                                            .contains(promo.id),
+                                        disabled: isPromoDisabled(promo),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               );
-                            },
-                            itemCount: promotions.length,
+                            }).toList(),
                           )
                         : Container(
                             margin: const EdgeInsets.only(top: 100),
@@ -187,8 +200,11 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
                   Expanded(
                     child: TextButton(
                       style: TextButton.styleFrom(
-                        backgroundColor: selected.isEmpty ? Colors.teal.shade50 : Colors.teal.shade500,
-                        foregroundColor: selected.isNotEmpty ? Colors.white : Colors.teal,
+                        backgroundColor: selected.isEmpty
+                            ? Colors.teal.shade50
+                            : Colors.teal.shade500,
+                        foregroundColor:
+                            selected.isNotEmpty ? Colors.white : Colors.teal,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),

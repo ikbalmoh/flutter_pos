@@ -43,7 +43,9 @@ class _CancelTransactionFormState extends ConsumerState<CancelTransactionForm> {
           .read(transactionsProvider.notifier)
           .cancelTransaction(widget.cart, deleteReason: deleteReason);
       AppAlert.snackbar('transaction_canceled'.tr());
-      context.pop(transaction);
+      if (mounted) {
+        context.pop(transaction);
+      }
     } catch (e) {
       setState(() {
         isLoading = false;

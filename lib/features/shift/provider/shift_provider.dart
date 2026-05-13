@@ -24,11 +24,21 @@ class Shift extends _$Shift {
   late final ShiftRepository _shiftRepository =
       ref.read(shiftRepositoryProvider);
 
+  /// Initializes the provider state with `null`.
+  /// The shift becomes non-null once [openShift] is called successfully.
   @override
   FutureOr<model.Shift?> build() async {
-    return future;
+    return await initShift();
   }
 
+  /// Opens a new shift for the current authenticated user and outlet.
+  ///
+  /// Creates a new [model.Shift] record with the given [openAmount] as the
+  /// opening cash balance, then persists it via [ShiftRepository.startShift].
+  /// The state transitions to [AsyncLoading] during the operation and resolves
+  /// to [AsyncData] on success or [AsyncError] on failure.
+  ///
+  /// - [openAmount]: The opening cash amount for the shift.
   Future<void> openShift(double openAmount) async {
     state = const AsyncLoading();
     final outletState = await ref.read(outletProvider.future) as OutletSelected;
@@ -62,6 +72,19 @@ class Shift extends _$Shift {
     }
   }
 
+  /// Closes the currently active shift.
+  ///
+  /// Submits closing data to the repository and, if [reopen] is `true`,
+  /// immediately opens a new shift using [closeAmount] as the opening balance.
+  /// Optionally prints a shift report via [printShift] when [printReport] is `true`.
+  ///
+  /// - [shift]: The current shift summary info used for the closing report.
+  /// - [closeAmount]: The actual cash count at close.
+  /// - [diffAmount]: The difference between expected and actual cash.
+  /// - [refundAmount]: Total refund amount for the shift.
+  /// - [attachments]: Optional images/files attached to the closing report.
+  /// - [printReport]: Whether to print the shift report after closing. Defaults to `true`.
+  /// - [reopen]: Whether to immediately open a new shift after closing. Defaults to `false`.
   Future<void> closeShift(
     ShiftInfo shift, {
     required double closeAmount,
@@ -86,7 +109,7 @@ class Shift extends _$Shift {
         "updated_by": user.idUser,
         "_method": "PUT"
       };
-      await _shiftRepository.close(state.value!.id, payload);
+      await _shiftRepository.close(currentShift.id, payload);
 
       if (reopen) {
         await openShift(closeAmount);
@@ -111,6 +134,15 @@ class Shift extends _$Shift {
     }
   }
 
+  /// Prints the shift report for the given [info].
+  ///
+  /// Builds the receipt bytes using [util.Printer], choosing between
+  /// image-based or text-based rendering depending on the printer configuration.
+  /// Errors are logged; if [throwError] is `true`, the error is re-thrown
+  /// so the caller can handle it explicitly.
+  ///
+  /// - [info]: The shift summary data to include in the report.
+  /// - [throwError]: If `true`, rethrows any caught exception. Defaults to `null` (suppressed).
   Future<void> printShift(ShiftInfo info, {bool? throwError}) async {
     try {
       final printer = ref.read(printerProvider).value;
@@ -120,13 +152,24 @@ class Shift extends _$Shift {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       final AttributeReceipts? attributeReceipts =
           outlet.config.attributeReceipts;
-      final receipt = await util.Printer.buildShiftReportBytes(
-        outlet: outlet.outlet,
-        info,
-        attributes: attributeReceipts,
-        size: printer.size,
-        cut: printer.cut,
-      );
+      List<int> receipt = [];
+      if (printer.printImage) {
+        receipt = await util.Printer.buildShiftReportReceiptCaptureBytes(
+          outlet: outlet.outlet,
+          info,
+          attributes: attributeReceipts,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      } else {
+        receipt = await util.Printer.buildShiftReportBytes(
+          outlet: outlet.outlet,
+          info,
+          attributes: attributeReceipts,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      }
       await ref.read(printerProvider.notifier).print(receipt);
     } catch (e, stackTrace) {
       log('PRINT SHIFT ERROR: $e => $stackTrace');
@@ -136,28 +179,46 @@ class Shift extends _$Shift {
     }
   }
 
-  void initShift() async {
+  /// Initializes the shift state from the repository on app startup.
+  ///
+  /// If a shift is already loaded in state, this method returns early.
+  /// Otherwise, it retrieves the active shift from [ShiftRepository] and
+  /// saves it locally before updating the state.
+  Future<model.Shift?> initShift() async {
     log('INIT SHIFT');
     if (state.value != null) {
-      log('SHIFT ACTIVE: ${state.value}');
-      return;
+      log('SHIFT ALREADY ACTIVE: ${state.value?.closeShift}');
+      return state.value;
     }
     final shift = await _shiftRepository.retrieveShift();
     if (shift != null) {
       await _shiftRepository.saveShift(shift);
     }
-    state = AsyncData(shift);
+    return shift;
   }
 
+  /// Sets the state to [AsyncLoading], typically used to show a loading
+  /// indicator while an external shift operation is in progress.
   void shiftLoading() {
     state = const AsyncLoading();
   }
 
+  /// Clears the shift data from local storage and resets the state to loading.
+  ///
+  /// Called when the user logs out or when the outlet session ends,
+  /// ensuring no stale shift data remains.
   Future<void> offShift() async {
     await _shiftRepository.clear();
     state = const AsyncValue.loading();
   }
 
+  /// Updates the opening cash amount for the current active shift.
+  ///
+  /// Persists the new [amount] via [ShiftRepository.changeOpenAmount] and
+  /// reflects the change in the provider state. Re-throws any exception
+  /// so the caller can handle it.
+  ///
+  /// - [amount]: The new opening cash amount to set.
   void updateOpenAmount(double amount) async {
     try {
       await _shiftRepository.changeOpenAmount(state.value!.id, amount);

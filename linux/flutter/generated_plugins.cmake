@@ -8,6 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_udid
   objectbox_flutter_libs
   open_file_linux
+  restart_app
   url_launcher_linux
 )
 

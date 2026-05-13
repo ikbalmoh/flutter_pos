@@ -74,6 +74,7 @@ class _TransactionDetailScreenState
     try {
       await ref.read(transactionsProvider.notifier).printReceipt(
             widget.cart,
+            withPrice: true,
           );
     } catch (e) {
       log('PRINT FAILED: $e');

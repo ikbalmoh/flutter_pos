@@ -214,6 +214,7 @@ GoRouter router(Ref ref) {
             final redirectRoute = appState.maybeWhen(
               initializing: () => Routes.root,
               authenticated: () => Routes.outlet,
+              selectingOutlet: () => [Routes.root, Routes.login, Routes.resetPassword].contains(currentRoute) ? Routes.outlet : null,
               selectedOutlet: () => [
                 Routes.root,
                 Routes.login,

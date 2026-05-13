@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,6 +50,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   bool printReport = true;
   bool isAutoShift = false;
   bool isAttachmentRequired = false;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -121,13 +123,21 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
             printReport: printReport,
             reopen: isAutoShift,
           );
+      if (!mounted) return;
       setState(() {
         status = Status.success;
       });
     } catch (e, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(e, stackTrace);
       log('close shift error: $e => $stackTrace');
+      if (!mounted) return;
       setState(() {
         status = Status.error;
+        if (e is DioException) {
+          errorMessage = e.message;
+        } else {
+          errorMessage = e.toString();
+        }
       });
     }
   }
@@ -177,6 +187,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
                             status = Status.iddle;
                           });
                         },
+                        error: errorMessage,
                       )
                     : SafeArea(
                       child: Column(

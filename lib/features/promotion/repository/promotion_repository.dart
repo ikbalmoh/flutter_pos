@@ -39,7 +39,7 @@ class PromotionRepository implements PromotionRepositoryProtocol {
       for (var i = 0; i < List.from(data['data']).length; i++) {
         var json = data['data'][i];
         try {
-          final promotion = Promotion.fromJson(json);
+          final promotion = Promotion.fromJsonData(json);
           promotions.add(promotion);
         } on Error catch (e, stackTrace) {
           log('LOAD PROMOTION ERROR: $json\n=> $e\n=> $stackTrace');
@@ -63,7 +63,7 @@ class PromotionRepository implements PromotionRepositoryProtocol {
       final outlet = (outletState as OutletSelected).outlet;
       final data = await api.promotionByCode(code, outlet.idOutlet);
       if (data['data'] != null) {
-        return Promotion.fromJson(data['data']);
+        return Promotion.fromJsonData(data['data']);
       }
       throw Exception('Promotion Not Found!');
     } on DioException catch (e) {

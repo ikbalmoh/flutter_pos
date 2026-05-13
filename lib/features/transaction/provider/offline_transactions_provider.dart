@@ -36,7 +36,10 @@ class OfflineTransactions extends _$OfflineTransactions {
   }
 
   Future<void> store(model.Cart transaction) async {
-    transaction = transaction.copyWith(isOffline: true);
+    transaction = transaction.copyWith(
+      isOffline: true,
+      transactionNo: transaction.transactionNo.replaceFirst('BILL-', ''),
+    );
 
     final List<model.Cart> currentTransactions = state.value ?? [];
     await Future.delayed(const Duration(milliseconds: 500));
@@ -54,17 +57,27 @@ class OfflineTransactions extends _$OfflineTransactions {
   Future<void> sync() async {
     if (state.isLoading) return;
 
-    final transactions = state.value;
+    final transactions = state.value ?? [];
+    if (transactions.isEmpty) {
+      return;
+    }
+
     state = const AsyncLoading();
+
     try {
-      if (transactions == null || transactions.isEmpty) {
-        return;
-      }
+      log('SYNC OFFLINE TRANSACTIONS: ${transactions.map(
+        (tr) => {
+          'transaction_no': tr.transactionNo,
+          'shiftId': tr.shiftId,
+          'items': tr.items.length,
+          'total': tr.grandTotal,
+        },
+      )}');
       final syncedTransactions =
           // ignore: avoid_manual_providers_as_generated_provider_dependency
           await ref.read(transactionApiProvider).storeTransaction(transactions);
 
-      log('TRANSACTIONS SYNCED: $syncedTransactions');
+      log('SYNC TRANSACTIONS SUCCESS: ${syncedTransactions.map((tr) => tr.transactionNo)}');
       if (syncedTransactions.isNotEmpty) {
         final ids = syncedTransactions
             .map((transaction) => transaction.transactionNo)
@@ -75,10 +88,12 @@ class OfflineTransactions extends _$OfflineTransactions {
             .read(transactionsProvider.notifier)
             .updateTransactions(syncedTransactions);
       }
-      ref.invalidateSelf();
+      state = AsyncData(await objectBox.offlineTransactions());
+      return;
     } catch (e, st) {
-      log('SYNC FAILED: $e => $st');
-      ref.invalidateSelf();
+      log('SYNC TRANSACTIONS FAILED: $e => $st');
+      state = AsyncData(transactions);
+      rethrow;
     }
   }
 

@@ -17,11 +17,12 @@ import 'package:selleri/shared/utils/share_file.dart';
 import 'package:share_plus/share_plus.dart';
 
 class HoldedPreview extends ConsumerStatefulWidget {
-  const HoldedPreview(
-      {required this.cartHolded,
-      this.asWidget,
-      required this.onDelete,
-      super.key});
+  const HoldedPreview({
+    required this.cartHolded,
+    this.asWidget,
+    required this.onDelete,
+    super.key,
+  });
 
   final CartHolded cartHolded;
   final bool? asWidget;
@@ -76,6 +77,23 @@ class _HoldedPreviewState extends ConsumerState<HoldedPreview> {
         outletState is OutletSelected ? outletState.config : null;
 
     void openHoldedTransaction() {
+      if (widget.cartHolded.isCustomerActive != true) {
+        AppAlert.confirm(
+          context,
+          title: 'x_is_no_longer_active'.tr(args: [
+            widget.cartHolded.customerName ?? 'customer'.tr(),
+          ]),
+          subtitle: 'reselect_customer_note'.tr(),
+          confirmLabel: 'open_transaction'.tr(),
+          onConfirm: () {
+            ref.read(cartProvider.notifier).openHoldedCart(widget.cartHolded);
+            while (context.canPop()) {
+              context.pop();
+            }
+          },
+        );
+        return;
+      }
       ref.read(cartProvider.notifier).openHoldedCart(widget.cartHolded);
       while (context.canPop()) {
         context.pop();
@@ -210,7 +228,9 @@ class _HoldedPreviewState extends ConsumerState<HoldedPreview> {
                   key: summaryContainerKey,
                   withAttribute: true,
                   taxable: config?.taxable ?? false,
-                  cart: widget.cartHolded.dataHold,
+                  cart: widget.cartHolded.dataHold.copyWith(
+                    transactionNo: widget.cartHolded.transactionNo,
+                  ),
                   radius: const Radius.circular(5),
                   outletState:
                       ref.watch(outletProvider).value as OutletSelected,

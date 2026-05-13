@@ -387,5 +387,14 @@
   "stock_control": "Stock Control",
   "hello": "Hello",
   "connect_internet_to_open_shift": "Please connect internet to open shift",
-  "connect_internet_to_load_transactions": "Please connect internet to load transactions"
+  "connect_internet_to_load_transactions": "Please connect internet to load transactions",
+  "discount_by_transaction": "Discount by Order",
+  "discount_by_product": "Discount by Product",
+  "reward_by_product": "Reward by Product",
+  "reward_by_transaction": "Reward by Transaction",
+  "promotion": "Promotion",
+  "x_is_no_longer_active": "{} is No Longer Active",
+  "reselect_customer_note": "Customer will be removed from this transaction",
+  "print_receipt_as_image": "Print Receipt As Image",
+  "turn_on_this_option_if_receipt_is_blank": "Turn on this option if receipt is blank"
 }

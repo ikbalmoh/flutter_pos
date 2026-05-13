@@ -95,29 +95,7 @@ Future initServices() async {
     return true;
   };
 
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    log('FCM NOTIFICATION: User granted permission');
-  } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-    log('FCM NOTIFICATION: User granted provisional permission');
-  } else {
-    log('FCM NOTIFICATION: User declined or has not accepted permission');
-  }
-
-  log(StoreKey.deviceName.name);
 
   if (!kDebugMode) {
     WakelockPlus.enable();

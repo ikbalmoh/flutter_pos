@@ -74,7 +74,7 @@ class ObjectBox {
     // Filter Promo by day
     promotionQuery = promotionQuery.and(Promotion_.days.isNull().or(
         Promotion_.days.containsElement(
-            DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
+            DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())));
 
     // Filter promo by current date
     promotionQuery = promotionQuery.and(Promotion_.allTime
@@ -90,8 +90,8 @@ class ObjectBox {
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
     Condition<Promotion> promotionTermsQuery = Promotion_.type
-        .equals(2)
-        .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
+        .oneOf([2, 4]).and(
+            Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
     // Filter promotions by product
     if (cart.items.isNotEmpty) {
@@ -178,14 +178,13 @@ class ObjectBox {
     promotionQuery = promotionQuery.and(promotionTermsQuery);
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
+      ..order(Promotion_.type)
       ..order(Promotion_.needCode)
       ..order(Promotion_.priority)
       ..order(Promotion_.requirementMinimumOrder, flags: Order.descending)
       ..order(Promotion_.allTime);
 
     List<Promotion> promotions = builder.build().find();
-
-    log('Active Promotions: ${promotions.map((p) => p.toJson())}');
 
     return promotions;
   }
@@ -213,7 +212,9 @@ class ObjectBox {
                   .equalsDate(today)
                   .or(Promotion_.endDate.equalsDate(today)))))
           .and(Promotion_.days.isNull().or(Promotion_.days.containsElement(
-              DateFormat('EEEE').format(DateTime.now()).toLowerCase())));
+              DateFormat('EEEE', 'en_US')
+                  .format(DateTime.now())
+                  .toLowerCase())));
     }
 
     if (range != null) {
@@ -289,10 +290,11 @@ class ObjectBox {
   Stream<List<Item>> itemsStream({
     String idCategory = '',
     String search = '',
+    bool? isPromo = false,
     FilterStock filterStock = FilterStock.all,
   }) {
     Condition<Item> itemQuery = Item_.isActive.equals(true);
-    if (idCategory != '') {
+    if (idCategory != '' && idCategory != 'promo') {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
     if (search != '') {
@@ -305,6 +307,9 @@ class ObjectBox {
       itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
     } else if (filterStock == FilterStock.empty) {
       itemQuery = itemQuery.and(Item_.stockItem.lessOrEqual(0));
+    }
+    if (isPromo == true) {
+      itemQuery = itemQuery.and(Item_.hasPromo.equals(true));
     }
     QueryBuilder<Item> builder = itemBox.query(itemQuery)
       ..order(Item_.stockItem, flags: Order.descending)
@@ -454,17 +459,23 @@ class ObjectBox {
     }
   }
 
-  int getTotalItem(
-      {String idCategory = '', FilterStock? filterStock = FilterStock.all}) {
+  int getTotalItem({
+    String idCategory = '',
+    FilterStock? filterStock = FilterStock.all,
+    bool? isPromo = false,
+  }) {
     Condition<Item> itemQuery = Item_.isActive.equals(true);
 
-    if (idCategory != '') {
+    if (idCategory != '' && idCategory != 'promo') {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
     if (filterStock == FilterStock.available) {
       itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
     } else if (filterStock == FilterStock.empty) {
       itemQuery = itemQuery.and(Item_.stockItem.lessOrEqual(0));
+    }
+    if (isPromo == true) {
+      itemQuery = itemQuery.and(Item_.hasPromo.equals(true));
     }
     final result = itemBox.query(itemQuery).build().count();
 

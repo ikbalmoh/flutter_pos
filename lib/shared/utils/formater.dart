@@ -94,6 +94,7 @@ class DateTimeFormater {
 
 class GeneralFormater {
   static String stripHtmlIfNeeded(String text) {
+    // ignore: deprecated_member_use
     return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '\n');
   }
 }

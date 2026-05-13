@@ -44,9 +44,11 @@ class _StoreItemState extends ConsumerState<StoreItem> {
       Item item = await ref
           .read(itemsProvider().notifier)
           .storeItem(widget.itemPayload, widget.attributes);
-      setState(() {
-        status = Status.success;
-      });
+      if (mounted) {
+        setState(() {
+          status = Status.success;
+        });
+      }
       if (widget.attributes.isNotEmpty && context.mounted) {
         // ignore: use_build_context_synchronously
         context.pushNamed(Routes.manageVariant,

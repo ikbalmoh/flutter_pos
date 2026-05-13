@@ -41,6 +41,7 @@ class Item with _$Item {
     DateTime? expiredDate,
     @Property(type: PropertyType.dateNano) DateTime? lastAdjustment,
     required List<String> promotions,
+    bool? hasPromo,
     List<String>? packageCategories,
     @VariantRelToManyConverter() required ToMany<ItemVariant> variants,
     @PackageItemRelToManyConverter() required ToMany<ItemPackage> packageItems,
@@ -57,6 +58,8 @@ class Item with _$Item {
         ...json,
       };
     }
+    json['has_promo'] = json['promotions'] != null &&
+        (json['promotions'] as List).isNotEmpty;
     json['id'] = existItem?.id ?? 0;
     json['item_name'] = json['item_name'] ?? existItem?.itemName;
     json['variants'] = json['variants']?.map((variant) {

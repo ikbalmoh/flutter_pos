@@ -33,7 +33,8 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
     super.dispose();
   }
 
-  void onSubmit(BuildContext context) async {
+  void onSubmit() async {
+    final ctx = context;
     setState(() {
       isLoading = true;
     });
@@ -41,21 +42,23 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
       String message = await ref
           .read(receivingProvider.notifier)
           .submit(description: descriptionController.text);
-      setState(() {
-        isLoading = false;
-      });
-      if (context.mounted) {
-        while (context.canPop()) {
-          context.pop();
+      if (ctx.mounted) {
+        setState(() {
+          isLoading = false;
+        });
+        while (ctx.canPop()) {
+          ctx.pop();
         }
-        context.pushReplacementNamed(Routes.home);
-        context.pushNamed(Routes.receivingHistory);
+        ctx.pushReplacementNamed(Routes.home);
+        ctx.pushNamed(Routes.receivingHistory);
         AppAlert.snackbar(message);
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      if (ctx.mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       AppAlert.toast(e.toString());
     }
   }
@@ -141,7 +144,7 @@ class _SubmitReceivingSheetState extends ConsumerState<SubmitReceivingSheet> {
                       ),
                     ),
                   ),
-                  onPressed: isLoading ? null : () => onSubmit(context),
+                  onPressed: isLoading ? null : () => onSubmit(),
                   icon: isLoading
                       ? const SizedBox(
                           height: 12,

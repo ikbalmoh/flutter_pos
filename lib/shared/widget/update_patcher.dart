@@ -33,7 +33,10 @@ class _UpdatePatchState extends State<UpdatePatch> {
   }
 
   void onRestart() {
-    Restart.restartApp();
+    Restart.restartApp(
+      forceKill: true,
+      mode: RestartMode.process,
+    );
   }
 
   @override

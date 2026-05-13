@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart_holded.dart';
-import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/holded/provider/holded_provider.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
@@ -76,13 +75,6 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
     });
   }
 
-  void openHoldedTransaction(CartHolded holded) {
-    ref.read(cartProvider.notifier).openHoldedCart(holded);
-    while (context.canPop()) {
-      context.pop();
-    }
-  }
-
   void deleteTransaction() async {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
@@ -95,10 +87,11 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
       await ref
           .read(holdedProvider.notifier)
           .deleteHoldedTransaction(viewTransaction!.transactionId);
+      if (!mounted) return;
       setState(() {
         viewTransaction = null;
       });
-      if (!isTablet) {
+      if (!isTablet && context.mounted) {
         context.pop();
       }
       AppAlert.toast(
@@ -124,7 +117,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
         onConfirm: deleteTransaction);
   }
 
-  void onOpenHoldedCart(CartHolded cartHolded) {
+  void onViewHoldedCart(CartHolded cartHolded) {
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
     setState(() {
       viewTransaction = cartHolded;
@@ -236,7 +229,7 @@ class _HoldedScreenState extends ConsumerState<HoldedScreen> {
                                     ? Colors.grey.shade100
                                     : Colors.white,
                                 hold: hold,
-                                onSelect: onOpenHoldedCart,
+                                onSelect: onViewHoldedCart,
                               );
                             },
                             itemCount: data.data!.length + 1,

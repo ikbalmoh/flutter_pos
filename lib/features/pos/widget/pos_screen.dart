@@ -76,7 +76,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    Future.delayed(Duration(seconds: 2), loadShift);
+    Future.delayed(const Duration(milliseconds: 100), refreshData);
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
@@ -91,6 +91,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
 
   @override
   void dispose() {
+    _debounce?.cancel();
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }
@@ -102,14 +103,6 @@ class _PosScreenState extends ConsumerState<PosScreen>
     return;
   }
 
-  Future<void> loadShift() async {
-    await refreshData();
-    if (!mounted) return;
-    final currentShift = ref.read(shiftProvider).value;
-    if (currentShift == null) {
-      ref.read(shiftProvider.notifier).initShift();
-    }
-  }
 
   void onFilterItems() async {
     FilterStock? result = await showModalBottomSheet(

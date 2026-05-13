@@ -22,46 +22,31 @@ part 'transactions_provider.g.dart';
 class Transactions extends _$Transactions {
   @override
   FutureOr<Pagination<Cart>> build() async {
-    loadTransactions(
-      page: 1,
-      currentShift: true,
-    );
-    return future;
+    return await _fetchPage(page: 1, currentShift: true);
   }
 
-  Future<void> loadTransactions({
+  Future<Pagination<Cart>> _fetchPage({
     int page = 1,
     String search = '',
     bool? currentShift = false,
     String? table,
+    List<Cart>? existingData,
   }) async {
-    if (page == 1) {
-      state = const AsyncLoading();
-    } else {
-      state = AsyncData(state.value!.copyWith(loading: true));
-    }
-
     List<Cart> transactionsData =
         await ref.read(offlineTransactionsProvider.future) ?? [];
     log('Offline Transactions: ${transactionsData.map((tr) => tr.transactionNo).toList()}');
 
     final connection = ref.read(connectivityStatusProvider);
 
-    if (state.hasValue &&
-        state.value?.data != null &&
-        state.value?.data!.isNotEmpty == true) {
-      final offlineTransactionNos =
-          transactionsData.map((tr) => tr.transactionNo).toList();
-      List<Cart> prevTransactions =
-          List.from(state.value?.data as Iterable<Cart>);
-
-      prevTransactions = prevTransactions
-        ..removeWhere(
-          (tr) =>
-              offlineTransactionNos.contains(tr.transactionNo) ||
-              tr.isOffline == true,
-        );
-
+    if (existingData != null && existingData.isNotEmpty) {
+      final offlineTransactionIds =
+          transactionsData.map((tr) => tr.idTransaction).toList();
+      List<Cart> prevTransactions = List.from(existingData);
+      prevTransactions.removeWhere(
+        (tr) =>
+            offlineTransactionIds.contains(tr.idTransaction) ||
+            tr.isOffline == true,
+      );
       transactionsData += prevTransactions;
     }
 
@@ -77,7 +62,7 @@ class Transactions extends _$Transactions {
         shiftId = ref.read(shiftProvider).value?.id;
       }
 
-      var transactions = await api.transactions(
+      Pagination<Cart> transactions = await api.transactions(
         page: page,
         q: search,
         idOutlet: outlet.outlet.idOutlet,
@@ -85,30 +70,65 @@ class Transactions extends _$Transactions {
         table: table,
       );
 
+      log('Transaction Data: ${transactions.data}');
+
       if (page == 1) {
         transactionsData += (transactions.data ?? []);
-
-        transactions = transactions.copyWith(
-          data: transactionsData,
-        );
+        transactions = transactions.copyWith(data: transactionsData);
       } else {
         transactionsData.addAll(transactions.data as Iterable<Cart>);
         transactions =
             transactions.copyWith(data: transactionsData, loading: false);
       }
-      state = AsyncData(transactions);
+      return transactions;
     } on DioException catch (e, stack) {
       log('Load Transaction Network Error: $e\n$stack');
       rethrow;
-    } catch (e) {
-      state = AsyncData(
-        Pagination(
-          currentPage: 0,
-          lastPage: 0,
-          total: transactionsData.length,
-          data: transactionsData,
-        ),
+    } catch (e, stack) {
+      log('Load Transaction Error: $e\n$stack');
+      return Pagination(
+        currentPage: 0,
+        lastPage: 0,
+        total: transactionsData.length,
+        data: transactionsData,
       );
+    }
+  }
+
+  Future<void> loadTransactions({
+    int page = 1,
+    String search = '',
+    bool? currentShift = false,
+    String? table,
+  }) async {
+    log('Load Transaction: $page $search $currentShift $table');
+
+    List<Cart>? existingData;
+    if (page > 1 &&
+        state.hasValue &&
+        state.value?.data != null &&
+        state.value?.data!.isNotEmpty == true) {
+      existingData = List.from(state.value!.data!);
+    }
+
+    if (page == 1) {
+      state = const AsyncLoading();
+    } else {
+      state = AsyncData(state.value!.copyWith(loading: true));
+    }
+
+    try {
+      final result = await _fetchPage(
+        page: page,
+        search: search,
+        currentShift: currentShift,
+        table: table,
+        existingData: existingData,
+      );
+      state = AsyncData(result);
+    } on DioException catch (e, stack) {
+      log('Load Transaction Network Error: $e\n$stack');
+      rethrow;
     }
   }
 
@@ -129,18 +149,30 @@ class Transactions extends _$Transactions {
               .config
               .attributeReceipts;
       final outlet = ref.read(outletProvider).value as OutletSelected;
+      final bool printImage = printer.printImage;
 
-      final receipt = await util.Printer.buildReceiptBytes(
-        cart,
-        outlet: outlet.outlet,
-        attributes: attributeReceipts,
-        size: printer.size,
-        isCopy: true,
-        isHold: isHold,
-        withPrice: withPrice,
-        cut: printer.cut,
-        printIncludePpn: outlet.config.printIncludePpn ?? false,
-      );
+      List<int> receipt;
+
+      if (printImage) {
+        receipt = await util.Printer.buildReceiptCaptureBytes(
+          cart,
+          outlet: outlet,
+          size: printer.size,
+          cut: printer.cut,
+        );
+      } else {
+        receipt = await util.Printer.buildReceiptBytes(
+          cart,
+          outlet: outlet.outlet,
+          attributes: attributeReceipts,
+          size: printer.size,
+          isCopy: true,
+          isHold: isHold,
+          withPrice: withPrice,
+          cut: printer.cut,
+          printIncludePpn: outlet.config.printIncludePpn ?? false,
+        );
+      }
       ref.read(printerProvider.notifier).print(receipt);
     } catch (error) {
       rethrow;

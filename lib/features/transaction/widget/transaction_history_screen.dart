@@ -77,6 +77,19 @@ class _TransactionHistoryScreenState
     });
   }
 
+  Future<void> triggerSync() async {
+    try {
+      await ref.read(offlineTransactionsProvider.notifier).sync();
+    } catch (e) {
+      if (mounted) {
+        AppAlert.snackbar(
+          e.toString(),
+          alertType: AlertType.error,
+        );
+      }
+    }
+  }
+
   void loadMore() {
     final pagination = ref.read(transactionsProvider).asData?.value;
     if (pagination == null ||
@@ -284,10 +297,7 @@ class _TransactionHistoryScreenState
                           : data.isNotEmpty
                               ? IconButton(
                                   tooltip: 'sync'.tr(),
-                                  onPressed: () => ref
-                                      .read(
-                                          offlineTransactionsProvider.notifier)
-                                      .sync(),
+                                  onPressed: () => triggerSync(),
                                   icon: Badge(
                                     label: Text(data.length.toString()),
                                     child: Icon(Icons.cloud_upload_outlined),
@@ -301,8 +311,12 @@ class _TransactionHistoryScreenState
                                   color: Colors.green,
                                   icon: Icon(Icons.cloud_done_outlined),
                                 ),
-                      error: (error, st) => ErrorHandler(
-                        error: error,
+                      error: (error, st) => IconButton(
+                        onPressed: () => triggerSync(),
+                        icon: Icon(
+                          Icons.cloud_off_rounded,
+                          color: Colors.red,
+                        ),
                       ),
                       loading: () => IconButton(
                         onPressed: null,
@@ -360,7 +374,15 @@ class _TransactionHistoryScreenState
                                           ),
                                         );
                                       }
-                                      return const ItemListSkeleton();
+                                      return Column(
+                                        children: const [
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                          ItemListSkeleton(),
+                                        ],
+                                      );
                                     }
                                     Cart cart = data.data![idx];
                                     return TransactionItem(
@@ -402,13 +424,17 @@ class _TransactionHistoryScreenState
                                         size: 40,
                                       ),
                                       Text(
-                                        isOffline ? 'connect_internet_to_load_transactions'.tr() : 'no_data'.tr(
-                                            args: ['transaction_history'.tr()]),
+                                        isOffline
+                                            ? 'connect_internet_to_load_transactions'
+                                                .tr()
+                                            : 'no_data'.tr(args: [
+                                                'transaction_history'.tr()
+                                              ]),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium
                                             ?.copyWith(color: Colors.grey),
-                                            textAlign: TextAlign.center,
+                                        textAlign: TextAlign.center,
                                       )
                                     ],
                                   ),

@@ -52,6 +52,7 @@ class AuthorizationHelper {
       }
 
       // Step 1: Select PIC
+      if (!context.mounted) return false;
       final selectedUser = await showModalBottomSheet<UserHasPin>(
         context: context,
         isDismissible: false,
@@ -80,6 +81,7 @@ class AuthorizationHelper {
       String? errorText;
 
       while (!isVerified) {
+        if (!context.mounted) return false;
         final pin = await showDialog<String>(
           context: context,
           barrierDismissible: false,

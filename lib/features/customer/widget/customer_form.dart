@@ -167,9 +167,11 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     } catch (e) {
       AppAlert.snackbar(e.toString(), alertType: AlertType.error);
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -185,6 +187,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     }
 
     if (fieldName == 'email' && value != null && value.isNotEmpty) {
+      // ignore: deprecated_member_use
       if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
           .hasMatch(value)) {
         return 'invalid_email'.tr();

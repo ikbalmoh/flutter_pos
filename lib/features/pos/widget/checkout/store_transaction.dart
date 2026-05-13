@@ -77,6 +77,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
     }
     try {
       await ref.read(offlineTransactionsProvider.notifier).storeCurrentTransaction();
+      if (!mounted) return;
       setState(() {
         status = Status.success;
       });
@@ -86,6 +87,7 @@ class _StoreTransactionState extends ConsumerState<StoreTransaction> {
       }
     } catch (e, stackTrace) {
       log('TRANSACTION ERROR: ${e.toString()}\n${stackTrace.toString()}');
+      if (!mounted) return;
       setState(() {
         status = Status.error;
         error = e.toString();

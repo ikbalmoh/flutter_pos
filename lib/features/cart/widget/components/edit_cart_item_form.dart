@@ -94,7 +94,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
     return total;
   }
 
-  void onUpdateItem(BuildContext context) async {
+  void onUpdateItem() async {
     ItemCart item = widget.item.copyWith(
       quantity: qty,
       price: price,
@@ -117,7 +117,9 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
         }
       }
       await ref.read(cartProvider.notifier).updateItem(item);
-      context.pop();
+      if (mounted) {
+        context.pop();
+      }
     } catch (e) {
       AppAlert.toast(e.toString());
     }
@@ -401,7 +403,7 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
                       ),
                     ),
                   ),
-                  onPressed: () => onUpdateItem(context),
+                  onPressed: () => onUpdateItem(),
                   icon: const Icon(CupertinoIcons.checkmark_alt),
                   label: Text(
                     widget.item.isReward == true

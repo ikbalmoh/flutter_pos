@@ -17,8 +17,18 @@ part 'promotions_provider.g.dart';
 class Promotions extends _$Promotions {
   @override
   List<Promotion> build() {
-    model.Cart cart = ref.watch(cartProvider);
-    return objectBox.transactionPromotions(cart: cart);
+    final cart = ref.watch(cartProvider);
+    List<Promotion> promotions = objectBox.transactionPromotions(cart: cart);
+
+    List<ItemCart> nonRewardItems =
+        cart.items.where((item) => item.isReward != true).toList();
+
+    return promotions.map((promo) {
+      List<ItemCart> eligible = promo.type == 2
+          ? []
+          : eligibleItems(promo, nonRewardItems);
+      return promo.copyWith(eligibleItems: eligible);
+    }).toList();
   }
 
   Future<List<Promotion>> loadPromotions() async {
@@ -71,7 +81,7 @@ class Promotions extends _$Promotions {
       return false;
     }
 
-    log('CHECK PROMO ELIGIBILITY: $promo');
+    log('CHECK PROMO ELIGIBILITY: ${promo.name}');
 
     final now = DateTime.now().millisecondsSinceEpoch;
     final today =
@@ -80,7 +90,7 @@ class Promotions extends _$Promotions {
     // Check days
     if (promo.days != null && promo.days!.isNotEmpty) {
       if (!promo.days!
-          .contains(DateFormat('EEEE').format(DateTime.now()).toLowerCase())) {
+          .contains(DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())) {
         return false;
       }
     }
@@ -144,7 +154,7 @@ class Promotions extends _$Promotions {
     }
 
     // Promo by order
-    if (promo.type == 2) {
+    if (promo.type == 2 || promo.type == 4) {
       return promo.requirementMinimumOrder == null
           ? true
           : promo.requirementMinimumOrder! <= cart.subtotal;
@@ -177,7 +187,7 @@ class Promotions extends _$Promotions {
           break;
       }
 
-      log('ELIGIBLE ITEMS FOR PROMO 1 & 3: $eligibleItems');
+      log('ELIGIBLE ITEMS FOR PROMO 1 & 3: ${eligibleItems.map((e) => e.itemName)}');
 
       if (eligibleItems.isEmpty) {
         return false;
@@ -190,8 +200,11 @@ class Promotions extends _$Promotions {
   }
 
   List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
+    if (promo.type == 2 || promo.type == 4) {
+      return [];
+    }
     List<ItemCart> eligibleItems = items
-        .where((item) => item.isReward != true && item.promotion == null)
+        .where((item) => item.isReward != true)
         .toList();
 
     if (promo.requirementProductType == 1) {
@@ -220,5 +233,58 @@ class Promotions extends _$Promotions {
           .toList();
     }
     return eligibleItems;
+  }
+
+  /// Pure conflict resolver — takes current selection + toggled promo,
+  /// returns the new resolved selection list.
+  /// Selection state is NOT stored in the provider.
+  List<Promotion> resolveSelection(
+    List<Promotion> currentSelection,
+    Promotion promo,
+  ) {
+    // Toggle off if already selected
+    final int idx = currentSelection.indexWhere((p) => p.id == promo.id);
+    if (idx >= 0) {
+      return List.from(currentSelection)..removeAt(idx);
+    }
+
+    List<Promotion> result = List.from(currentSelection);
+
+    if (promo.type == 2 || promo.type == 4) {
+      // Transaction promos: only one per type
+      result.removeWhere((p) => p.type == promo.type);
+    } else if (promo.type == 1 || promo.type == 3) {
+      // Product promos: one promo per type per item
+      // Only conflict with same-type promos
+      result.removeWhere((p) {
+        if (p.type != promo.type) return false;
+
+        // Find overlapping items between p and the new promo
+        final bool hasOverlap = p.eligibleItems.any((item) =>
+            promo.eligibleItems.any((newItem) =>
+                newItem.idItem == item.idItem &&
+                newItem.idVariant == item.idVariant));
+
+        if (!hasOverlap) return false;
+
+        // Compute remaining eligible items for p (non-overlapping)
+        final remainingItems = p.eligibleItems
+            .where((item) => !promo.eligibleItems.any((newItem) =>
+                newItem.idItem == item.idItem &&
+                newItem.idVariant == item.idVariant))
+            .toList();
+
+        final double remainingQty =
+            remainingItems.fold(0, (sum, item) => sum + item.quantity);
+        final double requiredQty =
+            (p.requirementQuantity ?? 1).toDouble();
+
+        // Remove if remaining items can't satisfy requirement
+        return remainingQty < requiredQty;
+      });
+    }
+
+    result.add(promo);
+    return result;
   }
 }

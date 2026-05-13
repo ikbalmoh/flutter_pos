@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
-import 'package:selleri/features/outlet/provider/outlet_provider.dart'
-    hide Outlet;
+import 'package:selleri/app/provider/app_start_provider.dart';
+import 'package:selleri/app/provider/app_start_state.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
 import 'package:selleri/features/outlet/widget/outlet_loading_status.dart';
@@ -55,6 +55,9 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     final height = MediaQuery.of(context).size.height;
+    final isSelecting =
+        ref.watch(appStartProvider).value is AppSelectingOutlet;
+    final outletList = ref.watch(outletListProvider);
     return Scaffold(
       backgroundColor: Colors.teal.shade400,
       body: Center(
@@ -90,7 +93,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 17.5, vertical: 15),
-                    child: ref.watch(outletProvider).value is OutletLoading
+                    child: isSelecting
                         ? Row(
                             children: [
                               Expanded(
@@ -128,9 +131,9 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                           ).createShader(rect);
                         },
                         blendMode: BlendMode.dstOut,
-                        child: ref.watch(outletProvider).value is OutletLoading
+                        child: isSelecting
                             ? OutletLoadingStatus()
-                            : ref.watch(outletListProvider).when(
+                            : outletList.when(
                                   data: (data) {
                                     setState(() => _isLoading = false);
                                     return buildOutletLists(context, data);

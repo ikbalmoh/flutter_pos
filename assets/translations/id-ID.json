@@ -345,8 +345,8 @@
   "print_kitchen": "Cetak Dapur",
   "kitchen": "Dapur",
   "verificator": "Verifikator",
-  "voucher": "Kupon",
-  "voucher_code": "Kode Kupon",
+  "voucher": "Voucher",
+  "voucher_code": "Kode Voucher",
   "check": "Periksa",
   "checking": "Memeriksa",
   "use_x": "Gunakan {}",
@@ -388,5 +388,14 @@
   "stock_control": "Kontrol Stok",
   "hello": "Halo",
   "connect_internet_to_open_shift": "Sambungkan internet untuk membuka shift",
-  "connect_internet_to_load_transactions": "Sambungkan internet untuk memuat transaksi"
+  "connect_internet_to_load_transactions": "Sambungkan internet untuk memuat transaksi",
+  "discount_by_transaction": "Diskon Transaksi",
+  "discount_by_product": "Diskon Produk",
+  "reward_by_product": "Hadiah Produk",
+  "reward_by_transaction": "Hadiah Transaksi",
+  "promotion": "Promosi",
+  "x_is_no_longer_active": "{} Sudah Tidak Aktif Lagi",
+  "reselect_customer_note": "Pelanggan akan dihapus dari transaksi ini",
+  "print_receipt_as_image": "Cetak Struk Sebagai Gambar",
+  "turn_on_this_option_if_receipt_is_blank": "Nyalakan opsi ini jika struk tidak keluar"
 }

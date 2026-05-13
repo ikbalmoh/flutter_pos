@@ -40,9 +40,11 @@ class _ConfirmStoreTransactionState
     WidgetsFlutterBinding.ensureInitialized();
 
     Future.delayed(Duration(milliseconds: 100), () {
-      setState(() {
-        printKitchen = ref.read(appSettingsProvider).autoPrintKitchen;
-      });
+      if (mounted) {
+        setState(() {
+          printKitchen = ref.read(appSettingsProvider).autoPrintKitchen;
+        });
+      }
     });
 
     super.initState();
@@ -75,7 +77,7 @@ class _ConfirmStoreTransactionState
     if (cart.totalPayment < cart.grandTotal) {
       final isAuhtorized =
           await AuthorizationHelper.authorize('partial-payment');
-      if (!mounted) return;
+      if (!context.mounted) return;
       if (!isAuhtorized) {
         return;
       }
@@ -102,7 +104,7 @@ class _ConfirmStoreTransactionState
           builder: (context) {
             return const PicPicker();
           });
-      if (!mounted) return;
+      if (!context.mounted) return;
 
       if (pic == null) {
         return;
