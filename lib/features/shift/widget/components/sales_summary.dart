@@ -114,34 +114,30 @@ class SalesSummaryList extends ConsumerWidget {
       itemBuilder: (context, idx) {
         SummaryItem item = summaries[idx];
         return ListTile(
-          tileColor: item.isTotal != null
-              ? Colors.blueGrey.shade50.withValues(alpha: 0.6)
-              : Colors.transparent,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
           title: Text(item.label),
           titleTextStyle: textTheme.bodyLarge?.copyWith(
-            fontWeight:
-                item.isTotal != null ? FontWeight.bold : FontWeight.w400,
-          ),
+              fontSize: item.isTotal != null ? 16 : 14,
+              fontWeight:
+                  item.isTotal != null ? FontWeight.bold : FontWeight.w400,
+              color: item.isTotal != null ? Colors.black : Colors.black87),
           minTileHeight: 0,
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              item.isStartingCash == true && openCashEditable == true
-                  ? Builder(builder: (context) {
-                      return IconButton(
-                        onPressed: () =>
-                            onEditOpenAmount(context, item.value ?? 0),
-                        icon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.blue.shade600,
-                        ),
-                        tooltip: 'edit_open_amount'.tr(),
-                      );
-                    })
-                  : Container(),
+              if (item.isStartingCash == true && openCashEditable == true)
+                Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () => onEditOpenAmount(context, item.value ?? 0),
+                    icon: Icon(
+                      Icons.edit,
+                      size: 16,
+                      color: Colors.blue.shade600,
+                    ),
+                    tooltip: 'edit_open_amount'.tr(),
+                  );
+                }),
               Text(
                 item.value != null
                     ? CurrencyFormat.currency(
@@ -150,8 +146,10 @@ class SalesSummaryList extends ConsumerWidget {
                       )
                     : '',
                 style: item.isTotal != null
-                    ? textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)
-                    : textTheme.bodyLarge,
+                    ? textTheme.bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold, fontSize: 16)
+                    : textTheme.bodyLarge
+                        ?.copyWith(color: Colors.grey.shade700, fontSize: 14),
               )
             ],
           ),
@@ -160,8 +158,8 @@ class SalesSummaryList extends ConsumerWidget {
       separatorBuilder: (context, index) {
         return Divider(
           height: 0,
-          thickness: 0.5,
-          color: Colors.blueGrey.shade100,
+          thickness: 1,
+          color: Colors.blueGrey.shade50,
         );
       },
     );
