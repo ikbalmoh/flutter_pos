@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,10 @@ import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
+import 'package:selleri/features/pos/widget/checkout/payment/qris_payment_modal.dart';
 import 'package:selleri/features/pos/widget/select_table.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
+import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/widget/generic/picked_image.dart';
 import 'package:selleri/shared/widget/pic/pic_picker.dart';
 import 'package:selleri/features/pos/widget/checkout/store_transaction.dart';
@@ -74,6 +77,7 @@ class _ConfirmStoreTransactionState
     // context.pop();
 
     model.Cart cart = ref.watch(cartProvider);
+
     if (cart.totalPayment < cart.grandTotal) {
       final isAuhtorized =
           await AuthorizationHelper.authorize('partial-payment');
@@ -115,10 +119,32 @@ class _ConfirmStoreTransactionState
 
     await cartAction.setPic(pic);
 
-    bool? hasTableAddon = (ref.watch(outletProvider).value as OutletSelected)
-        .config
-        .addOns
-        ?.contains('table');
+    final OutletConfig outletConfig = (outletState as OutletSelected).config;
+
+    bool? hasTableAddon = outletConfig.addOns?.contains('table');
+
+    // check if using qris payment
+    final qrisMethodIds = outletConfig.paymentMethods
+            ?.where((p) => p.type == AppConfig.qrisPaymentTypeId)
+            .map((e) => e.id)
+            .toList() ??
+        [];
+
+    final qrisPayment = cart.payments.firstWhereOrNull(
+        (p) => qrisMethodIds.contains(p.paymentMethodId) && p.id == null);
+
+    if (qrisPayment != null) {
+      if (context.mounted) {
+        // show qris payment modal
+        final isPaid = await QrisPaymentModal.show(
+          context,
+          transactionNo: cart.transactionNo,
+          amount: cart.grandTotal,
+        );
+
+        if (isPaid != true) return;
+      }
+    }
 
     if (context.mounted) {
       showModalBottomSheet(

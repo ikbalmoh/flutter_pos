@@ -10,8 +10,14 @@ class PaymentForm extends StatefulWidget {
   final PaymentMethod method;
   final CartPayment? cartPayment;
   final double? insufficient;
-  const PaymentForm(
-      {super.key, required this.method, this.cartPayment, this.insufficient});
+  final bool isCash;
+  const PaymentForm({
+    super.key,
+    required this.method,
+    this.cartPayment,
+    this.insufficient,
+    this.isCash = false,
+  });
 
   @override
   State<PaymentForm> createState() => _PaymentFormState();
@@ -104,6 +110,39 @@ class _PaymentFormState extends State<PaymentForm> {
               ],
             ),
           ),
+          if (widget.isCash) ...[
+            SizedBox(
+              height: 10,
+            ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [10000, 20000, 50000, 100000]
+                  .map(
+                    (v) => TextButton(
+                      onPressed: () {
+                        amountController.text =
+                            CurrencyFormat.currency(v, symbol: false);
+                        setState(() {
+                          amount = v.toDouble();
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        backgroundColor: Colors.grey.shade50,
+                      ),
+                      child: Text(CurrencyFormat.currency(v)),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
           TextFormField(
             inputFormatters: [_formatter],
             onChanged: (_) => setState(() {
@@ -132,37 +171,37 @@ class _PaymentFormState extends State<PaymentForm> {
               extentOffset: amountController.value.text.length,
             ),
           ),
-          TextFormField(
-            controller: refController,
-            decoration: InputDecoration(
-              label: Text(
-                'payment_ref'.tr(),
-                style: labelStyle,
+          if (!widget.isCash)
+            TextFormField(
+              controller: refController,
+              decoration: InputDecoration(
+                label: Text(
+                  'payment_ref'.tr(),
+                  style: labelStyle,
+                ),
+                alignLabelWithHint: true,
               ),
-              alignLabelWithHint: true,
             ),
-          ),
           const SizedBox(
             height: 20,
           ),
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              widget.cartPayment != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 15),
-                      child: IconButton(
-                        onPressed: onDelete,
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey,
-                        ),
-                        icon: const Icon(
-                          CupertinoIcons.trash,
-                          color: Colors.red,
-                        ),
-                      ),
-                    )
-                  : Container(),
+              if (widget.cartPayment != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: IconButton(
+                    onPressed: onDelete,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                    ),
+                    icon: const Icon(
+                      CupertinoIcons.trash,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(

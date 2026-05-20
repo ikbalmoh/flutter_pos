@@ -21,7 +21,8 @@ class OutletConfig with _$OutletConfig {
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? syncBeforeCloseShift,
     int? maxOffline,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? saleWithPic,
-    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? customerTransMandatory,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool)
+    bool? customerTransMandatory,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? stockMinus,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? partialPayment,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? taxable,
@@ -31,7 +32,8 @@ class OutletConfig with _$OutletConfig {
     int? defaultOpenAmount,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? discountOverall,
     int? defaultPaper,
-    @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? attachmentShiftMandatory,
+    @JsonKey(fromJson: ModelConverter.dynamicToBool)
+    bool? attachmentShiftMandatory,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? generateSku,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? generateBarcode,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) bool? printIncludePpn,
@@ -49,6 +51,8 @@ class OutletConfig with _$OutletConfig {
     List<PersonInCharge>? listUser,
     int? saldoAkunKas,
     CustomMandatory? customMandatory,
+    String? merchantCode,
+    String? merchantId,
   }) = _OutletConfig;
 
   factory OutletConfig.fromJson(Map<String, dynamic> json) =>

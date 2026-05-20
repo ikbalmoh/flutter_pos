@@ -14,6 +14,7 @@ import 'package:selleri/features/cart/widget/components/order_summary/order_summ
 import 'package:selleri/features/pos/widget/checkout/payment/payment.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({required this.isPartialPayment, super.key});
@@ -28,7 +29,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
     with SingleTickerProviderStateMixin {
   late final ScrollController _scrollController;
   final GlobalKey _paymentDetailsKey = GlobalKey();
-  bool _isActionsVisible = false;
+  bool _isDisposed = false;
   late final AnimationController _actionsAnimController;
 
   @override
@@ -36,36 +37,36 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
     WidgetsFlutterBinding.ensureInitialized();
     super.initState();
     _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
     _actionsAnimController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
+    final hasPayments = ref.read(cartProvider).payments.isNotEmpty;
+    if (hasPayments) {
+      setState(() {});
+      _actionsAnimController.forward();
+    }
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
+    _isDisposed = true;
+    VisibilityDetectorController.instance.notifyNow();
     _scrollController.dispose();
     _actionsAnimController.dispose();
     super.dispose();
   }
 
-  void _onScroll() {
-    final keyContext = _paymentDetailsKey.currentContext;
-    if (keyContext == null) return;
-    final box = keyContext.findRenderObject() as RenderBox;
-    final widgetBottom = box.localToGlobal(Offset.zero).dy + box.size.height;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    final visible = widgetBottom <= screenHeight - bottomPadding - 120;
-    if (visible != _isActionsVisible) {
-      setState(() => _isActionsVisible = visible);
-      if (visible) {
-        _actionsAnimController.forward();
-      } else {
-        _actionsAnimController.reverse();
-      }
+  void _onPaymentDetailsVisibilityChanged(double visibleFraction) {
+    if (_isDisposed || !mounted) {
+      return;
+    }
+    final hasPayments = ref.read(cartProvider).payments.isNotEmpty;
+    final visible = visibleFraction > 0.5 || hasPayments;
+    if (visible) {
+      _actionsAnimController.forward();
+    } else {
+      _actionsAnimController.reverse();
     }
   }
 
@@ -80,8 +81,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
         });
   }
 
-  void onConfirmStoreTransaction() async {
-    showModalBottomSheet(
+  void onConfirmStoreTransaction() => showModalBottomSheet(
       isDismissible: true,
       enableDrag: true,
       context: context,
@@ -89,10 +89,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
       backgroundColor: Colors.white,
       useSafeArea: true,
       builder: (context) => ConfirmStoreTransaction(
-        isPartialPayment: widget.isPartialPayment,
-      ),
-    );
-  }
+            isPartialPayment: widget.isPartialPayment,
+          ));
 
   @override
   Widget build(BuildContext context) {
@@ -232,16 +230,21 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
       ),
     );
 
-    Widget paymentDetails = PaymentDetails(
-      cart: cart,
-      onAddPayment: (payment) =>
-          ref.read(cartProvider.notifier).addPayment(payment),
-      onRemovePayment: (String paymentMethodId) =>
-          ref.read(cartProvider.notifier).removePayment(paymentMethodId),
-      paymentMethods: (ref.read(outletProvider).value as OutletSelected)
-              .config
-              .paymentMethods ??
-          [],
+    Widget paymentDetails = VisibilityDetector(
+      key: _paymentDetailsKey,
+      onVisibilityChanged: (info) =>
+          _onPaymentDetailsVisibilityChanged(info.visibleFraction),
+      child: PaymentDetails(
+        cart: cart,
+        onAddPayment: (payment) =>
+            ref.read(cartProvider.notifier).addPayment(payment),
+        onRemovePayment: (String paymentMethodId) =>
+            ref.read(cartProvider.notifier).removePayment(paymentMethodId),
+        paymentMethods: (ref.read(outletProvider).value as OutletSelected)
+                .config
+                .paymentMethods ??
+            [],
+      ),
     );
 
     return Scaffold(
@@ -323,10 +326,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
                                             child: cartPreview,
                                           ),
                                           const DiscountPromotion(),
-                                          KeyedSubtree(
-                                            key: _paymentDetailsKey,
-                                            child: paymentDetails,
-                                          ),
+                                          paymentDetails,
                                         ],
                                       ),
                                     ),

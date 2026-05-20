@@ -92,8 +92,9 @@ class _PosScreenState extends ConsumerState<PosScreen>
   @override
   void dispose() {
     _debounce?.cancel();
-    super.dispose();
+    VisibilityDetectorController.instance.notifyNow();
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> refreshData() async {
@@ -165,6 +166,16 @@ class _PosScreenState extends ConsumerState<PosScreen>
     }
   }
 
+  void _onItemContainerVisibilityChanged(VisibilityInfo info) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          canListenBarcode = info.visibleFraction > 0;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final outlet = ref.watch(outletProvider);
@@ -173,14 +184,8 @@ class _PosScreenState extends ConsumerState<PosScreen>
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     var itemContainer = VisibilityDetector(
-      onVisibilityChanged: (info) {
-        if (context.mounted) {
-          setState(() {
-            canListenBarcode = info.visibleFraction > 0;
-          });
-        }
-      },
       key: const Key('visible-detector-key'),
+      onVisibilityChanged: _onItemContainerVisibilityChanged,
       child: BarcodeKeyboardListener(
         bufferDuration: const Duration(milliseconds: 200),
         onBarcodeScanned: onBarcodeScanned,

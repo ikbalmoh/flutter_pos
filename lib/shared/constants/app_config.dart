@@ -11,8 +11,6 @@ class AppConfig {
 
   static String qrisHost = String.fromEnvironment('QRIS_HOST',
       defaultValue: "https://svc-relay-q3n.dgti.co.id");
-  static String qrisMerchantId = String.fromEnvironment('QRIS_MERCHANT_ID',
-      defaultValue: "998226033150138");
   static String qrisAppId =
       String.fromEnvironment('QRIS_APP_ID', defaultValue: "selleri");
   static String qrisVendor =

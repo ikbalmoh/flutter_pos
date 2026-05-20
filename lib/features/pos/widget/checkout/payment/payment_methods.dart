@@ -40,12 +40,16 @@ class PaymentMethods extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Material(
-            color: isPrevious == true ? Colors.grey.shade50 : Colors.white,
+            color: isPrevious == true
+                ? Colors.grey.shade50
+                : inUse
+                    ? Colors.teal.shade50.withValues(alpha: 0.3)
+                    : Colors.white,
             shape: RoundedRectangleBorder(
               side: BorderSide(
                 width: 1,
                 color: inUse && isPrevious != true
-                    ? Colors.teal
+                    ? Colors.teal.shade300
                     : Colors.grey.shade200,
               ),
               borderRadius: const BorderRadius.all(
