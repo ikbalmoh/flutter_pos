@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/app/widget/app.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:selleri/shared/constants/app_config.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/shared/objectbox.dart';
@@ -38,9 +38,7 @@ Future initServices() async {
     return true;
   };
 
-  String env = isDev ? ".env.stage" : ".env";
-
-  await dotenv.load(fileName: env);
+  await AppConfig.init(isStage: isDev);
 
   String deviceId = await FlutterUdid.consistentUdid;
   String? deviceName = '';
