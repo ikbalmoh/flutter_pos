@@ -86,11 +86,13 @@ class _EditCartItemFormState extends ConsumerState<EditCartItemForm> {
   }
 
   double discountTotal() {
-    return discountIsPercent ? (price * (discount / 100)) : discount;
+    double discountValue =
+        discountIsPercent ? (price * (discount / 100)) : discount;
+    return discountValue * qty;
   }
 
   double total() {
-    double total = (price - discountTotal()) * qty;
+    double total = (price * qty) - discountTotal();
     return total;
   }
 
