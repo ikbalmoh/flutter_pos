@@ -9,6 +9,8 @@ part 'shift_info.g.dart';
 
 @freezed
 class ShiftInfo with _$ShiftInfo {
+  const ShiftInfo._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ShiftInfo({
     required String codeShift,
@@ -28,10 +30,13 @@ class ShiftInfo with _$ShiftInfo {
     required List<dynamic> attachments,
   }) = _ShiftInfo;
 
-  factory ShiftInfo.fromJson(Map<String, dynamic> json) {
+  factory ShiftInfo.fromJson(Map<String, dynamic> json) =>
+      _$ShiftInfoFromJson(json);
+
+  factory ShiftInfo.fromData(Map<String, dynamic> json) {
     json['sold_items'] = json['sold_items'] ?? [];
     json['refund_items'] = json['refund_items'] ?? [];
     json['attachments'] = json['attachments'] ?? [];
-    return _$ShiftInfoFromJson(json);
+    return ShiftInfo.fromJson(json);
   }
 }
