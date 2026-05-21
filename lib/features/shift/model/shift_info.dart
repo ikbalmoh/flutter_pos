@@ -28,6 +28,10 @@ class ShiftInfo with _$ShiftInfo {
     required List<dynamic> attachments,
   }) = _ShiftInfo;
 
-  factory ShiftInfo.fromJson(Map<String, dynamic> json) =>
-      _$ShiftInfoFromJson(json);
+  factory ShiftInfo.fromJson(Map<String, dynamic> json) {
+    json['sold_items'] = json['sold_items'] ?? [];
+    json['refund_items'] = json['refund_items'] ?? [];
+    json['attachments'] = json['attachments'] ?? [];
+    return _$ShiftInfoFromJson(json);
+  }
 }

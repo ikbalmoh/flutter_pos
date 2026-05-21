@@ -148,8 +148,13 @@ class Cart with _$Cart {
     json['transcaction_id'] = json['id_transaction'];
     json['transaction_date'] =
         DateTimeFormater.stringToTimestamp(json['transaction_date']);
+    json['promotions'] = json['promotions'] ?? [];
+    json['vouchers'] = json['vouchers'] ?? [];
     for (var item in json['items']) {
       item['item_name'] = item['name'];
+      item['details'] = item['details'] != null
+          ? List<Map<String, dynamic>>.from(item['details'])
+          : [];
     }
     return Cart.fromJson(json);
   }
