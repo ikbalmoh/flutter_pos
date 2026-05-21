@@ -270,9 +270,8 @@ class Cart extends _$Cart {
     }
 
     double quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
-    double finalPrice = itemCart.price - itemCart.discountTotal;
-    items[index] =
-        itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
+    double total = (itemCart.price * quantity) - itemCart.discountTotal;
+    items[index] = itemCart.copyWith(quantity: quantity, total: total);
     state =
         state.copyWith(items: items, roundingValue: 0, promotions: promotions);
     if (itemCart.promotion != null) {
@@ -313,12 +312,12 @@ class Cart extends _$Cart {
 
       double discount = itemCart.discount;
       double discountTotal = itemCart.discountTotal;
+
       if (itemCart.promotion != null) {
         discount = 0;
         discountTotal = 0;
       }
-      double finalPrice = itemCart.price - discountTotal;
-      double total = itemCart.quantity * finalPrice;
+      double total = (itemCart.price * itemCart.quantity) - discountTotal;
       items[index] = itemCart.copyWith(
         total: total,
         discount: discount,
@@ -502,7 +501,7 @@ class Cart extends _$Cart {
         }
       }
       final outlet = ref.read(outletProvider).value as OutletSelected;
-      
+
       final bool printImage = printer.printImage;
 
       List<int> receipt;
