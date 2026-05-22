@@ -65,6 +65,11 @@ class Promotion with _$Promotion {
     Promotion? existPromotion = objectBox.getPromotion(idPromotion);
     json['id_promotion'] = idPromotion;
     json['id'] = existPromotion?.id ?? 0;
+    json['requirement_product_id'] = json['requirement_product_id'] != null
+        ? List.from(json['requirement_product_id'])
+            .map((id) => id.toString())
+            .toList()
+        : [];
     json['requirement_variant_id'] = json['requirement_variant_id'] != null
         ? List.from(json['requirement_variant_id'])
             .map((id) => id.toString())

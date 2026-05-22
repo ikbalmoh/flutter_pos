@@ -49,7 +49,7 @@ class ShiftApi {
 
   Future<ShiftInfo?> shiftInfo(String shiftId) async {
     final res = await api.get('${ApiUrl.shifts}/$shiftId');
-    return ShiftInfo.fromJson(res.data['data']);
+    return ShiftInfo.fromData(res.data['data']);
   }
 
   Future<Shift?> activeShift(String outletId) async {

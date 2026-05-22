@@ -58,8 +58,8 @@ class Item with _$Item {
         ...json,
       };
     }
-    json['has_promo'] = json['promotions'] != null &&
-        (json['promotions'] as List).isNotEmpty;
+    json['promotions'] = json['promotions'] ?? [];
+    json['has_promo'] = (json['promotions'] as List).isNotEmpty;
     json['id'] = existItem?.id ?? 0;
     json['item_name'] = json['item_name'] ?? existItem?.itemName;
     json['variants'] = json['variants']?.map((variant) {
