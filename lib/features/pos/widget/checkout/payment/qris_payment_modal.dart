@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/transaction/provider/qris_provider.dart';
 import 'package:selleri/shared/utils/formater.dart';
@@ -34,6 +35,8 @@ class QrisPaymentModal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
+
     final qrisAsync = ref.watch(qrisProvider(transactionNo, amount));
 
     ref.listen(qrisProvider(transactionNo, amount), (_, next) {
@@ -51,91 +54,90 @@ class QrisPaymentModal extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SafeArea(
+      backgroundColor: Colors.grey.shade50,
+      body: SingleChildScrollView(
         child: Container(
-          color: Colors.grey.shade50,
-          child: Container(
-            margin: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 150,
-                  left: 0,
-                  child: CustomPaint(
-                    size: const Size(150, 150),
-                    painter: _TrianglePainter(
-                      color: Colors.red.shade600,
-                      flip: false,
-                    ),
+          margin: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 150,
+                left: 0,
+                child: CustomPaint(
+                  size: const Size(150, 150),
+                  painter: _TrianglePainter(
+                    color: Colors.red.shade600,
+                    flip: false,
                   ),
                 ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: CustomPaint(
-                    size: const Size(150, 150),
-                    painter: _TrianglePainter(
-                      color: Colors.red.shade600,
-                      flip: true,
-                    ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: CustomPaint(
+                  size: const Size(150, 150),
+                  painter: _TrianglePainter(
+                    color: Colors.red.shade600,
+                    flip: true,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/qris.svg',
-                            semanticsLabel: 'QRIS',
-                            height: 25,
-                          ),
-                          SvgPicture.asset(
-                            'assets/images/gpn.svg',
-                            semanticsLabel: 'GPN',
-                            height: 35,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 125),
-                      Text(
-                        'NMID: ${(ref.read(outletProvider).value as OutletSelected).config.merchantId}',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      const SizedBox(height: 24),
-                      qrisAsync.when(
-                        loading: () => Container(
-                          width: 250,
-                          height: 250,
-                          color: Colors.white,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15).copyWith(bottom: 50),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/qris.svg',
+                          semanticsLabel: 'QRIS',
+                          height: 25,
                         ),
-                        error: (e, _) => _ErrorBody(
-                          error: e.toString(),
-                          onRetry: () => ref
-                              .invalidate(qrisProvider(transactionNo, amount)),
+                        SvgPicture.asset(
+                          'assets/images/gpn.svg',
+                          semanticsLabel: 'GPN',
+                          height: 35,
                         ),
-                        data: (qris) => qris.isPaid
-                            ? _PaidBody()
-                            : _QrBody(
-                                qrContent: qris.qrContent, amount: amount),
+                      ],
+                    ),
+                    SizedBox(
+                      height: isTablet ? 20 : 120,
+                    ),
+                    Text(
+                      'NMID: ${(ref.read(outletProvider).value as OutletSelected).config.merchantId}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 24),
+                    qrisAsync.when(
+                      loading: () => Container(
+                        width: isTablet ? 350 : 250,
+                        height: isTablet ? 350 : 250,
+                        color: Colors.white,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       ),
-                    ],
-                  ),
+                      error: (e, _) => _ErrorBody(
+                        error: e.toString(),
+                        onRetry: () =>
+                            ref.invalidate(qrisProvider(transactionNo, amount)),
+                      ),
+                      data: (qris) => qris.isPaid
+                          ? _PaidBody()
+                          : _QrBody(qrContent: qris.qrContent, amount: amount),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
