@@ -400,5 +400,6 @@
   "turn_on_this_option_if_receipt_is_blank": "Nyalakan opsi ini jika struk tidak keluar",
   "waiting_payment": "Menunggu Pembayaran",
   "payment_success": "Pembayaran Berhasil",
-  "other": "Lainnya"
+  "other": "Lainnya",
+  "please_recheck_x": "Silahkan periksa kembali {}"
 }

@@ -399,5 +399,6 @@
   "turn_on_this_option_if_receipt_is_blank": "Turn on this option if receipt is blank",
   "waiting_payment": "Waiting for Payment",
   "payment_success": "Payment Success",
-  "other": "Other"
+  "other": "Other",
+  "please_recheck_x": "Please recheck the {}"
 }

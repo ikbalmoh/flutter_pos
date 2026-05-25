@@ -567,9 +567,12 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                             error: (error, stackTrace) => Padding(
                               padding: const EdgeInsets.only(top: 100),
                               child: ErrorHandler(
-                                error: 'Kode Tidak Ditemukan!',
-                                stackTrace:
-                                    'Silahkan periksa kembali kode ${type == '1' ? 'pembelian' : 'transfer'}.',
+                                error: 'code_not_found'.tr(),
+                                stackTrace: 'please_recheck_x'.tr(args: [
+                                  type == '1'
+                                      ? 'purchase_code'.tr()
+                                      : 'transfer_code'.tr()
+                                ]),
                               ),
                             ),
                             loading: () => ListView.builder(
