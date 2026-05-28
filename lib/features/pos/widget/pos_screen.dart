@@ -12,7 +12,7 @@ import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/item/provider/item_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/widget/app_drawer/app_drawer.dart';
 import 'package:selleri/shared/widget/barcode_scanner/barcode_scanner.dart';
 import 'package:selleri/features/cart/widget/components/add_barcode_item.dart';
@@ -267,7 +267,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
                     icon: const Icon(Icons.menu));
               }),
               actions: [
-                ...ref.watch(shiftProvider).value == null
+                ...ref.watch(shiftNotifierProvider).value == null
                     ? []
                     : [
                         IconButton(

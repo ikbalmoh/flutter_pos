@@ -27,7 +27,7 @@ import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/promotion/provider/promotions_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/table/provider/tables_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/formater.dart';
@@ -57,7 +57,7 @@ class Cart extends _$Cart {
 
       final authState = await ref.read(authProvider.future) as Authenticated;
 
-      final shift = ref.read(shiftProvider).value;
+      final shift = ref.read(shiftNotifierProvider).value;
 
       if (shift == null) {
         log('Shift is not started');
@@ -417,7 +417,7 @@ class Cart extends _$Cart {
 
   void addPayment(CartPayment payment) {
     final auth = ref.read(authProvider).value as Authenticated;
-    final shift = ref.read(shiftProvider).value;
+    final shift = ref.read(shiftNotifierProvider).value;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
@@ -452,7 +452,7 @@ class Cart extends _$Cart {
     try {
       final api = ref.watch(transactionApiProvider);
 
-      final shift = ref.read(shiftProvider).value;
+      final shift = ref.read(shiftNotifierProvider).value;
       if (shift == null) {
         throw 'shift_not_opened'.tr();
       }
@@ -598,7 +598,7 @@ class Cart extends _$Cart {
       ppn: tax?.percentage ?? 0,
       ppnIsInclude: tax?.isInclude ?? true,
       taxName: taxable ? tax?.taxName : '',
-      shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
+      shiftId: ref.read(shiftNotifierProvider).value?.id ?? holded.shiftId,
       holdAt: holded.dataHold.holdAt ?? DateTime.now(),
       promotions: [],
       items: [],

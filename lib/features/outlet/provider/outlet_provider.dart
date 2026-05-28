@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:selleri/features/outlet/model/outlet.dart' as model;
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
 import 'package:selleri/features/item/provider/item_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'outlet_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -95,6 +95,6 @@ class Outlet extends _$Outlet {
     if (state.value is! OutletNotSelected) {
       state = AsyncData(OutletNotSelected());
     }
-    ref.read(shiftProvider.notifier).offShift();
+    ref.read(shiftNotifierProvider.notifier).offShift();
   }
 }

@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/shift/model/shift_summary.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/shift/widget/components/edit_open_amount.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:selleri/shared/utils/transaction.dart';
@@ -93,11 +94,11 @@ class SalesSummaryList extends ConsumerWidget {
             );
           });
 
-      if (newAmount != openAmount) {
+      if (newAmount != null && newAmount != openAmount) {
         if (!isTablet && context.mounted) {
           context.pop();
         }
-        ref.read(shiftProvider.notifier).updateOpenAmount(newAmount);
+        ref.read(shiftNotifierProvider.notifier).updateOpenAmount(newAmount);
         AppAlert.toast('open_amount_updated_x'
             .tr(args: [CurrencyFormat.currency(newAmount)]));
       }
@@ -126,7 +127,10 @@ class SalesSummaryList extends ConsumerWidget {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (item.isStartingCash == true && openCashEditable == true)
+              if (item.isStartingCash == true &&
+                  openCashEditable == true &&
+                  ref.watch(connectivityStatusProvider) ==
+                      ConnectivityState.connected)
                 Builder(builder: (context) {
                   return IconButton(
                     onPressed: () => onEditOpenAmount(context, item.value ?? 0),
