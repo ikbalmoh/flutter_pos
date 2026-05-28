@@ -1,4 +1,5 @@
 definitions:
+  flutter_version: &flutter_version '3.41.9'
   environment:
     stage_env: &stage_env
       flutter: fvm
@@ -7,7 +8,7 @@ definitions:
         - firebase_credentials
         - selleri-stage
       vars:
-        FLUTTER_VERSION: '3.41.9'
+        FLUTTER_VERSION: *flutter_version
       android_signing:
         - selleri_stage_keystore
       ios_signing:
@@ -20,7 +21,7 @@ definitions:
         - firebase_credentials_prod
         - selleri-prod
       vars:
-        FLUTTER_VERSION: '3.35.4'
+        FLUTTER_VERSION: *flutter_version
       android_signing:
         - selleri_release_keystore
       ios_signing:
