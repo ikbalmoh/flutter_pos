@@ -6,6 +6,7 @@ enum StoreKey {
   outlet('OUTLET'),
   outletConfig('OUTLET_CONFIG'),
   shift('SHIFT'),
+  shiftInfo('SHIFT_INFO'),
   fcmSubscribe('FCM_SUBSCRIBE'),
   notification('NOTIFICATION');
 

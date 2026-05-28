@@ -98,9 +98,10 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     return Scaffold(
       backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
       body: RefreshIndicator(
-        onRefresh: () => ref.read(shiftInfoNotifierProvider.notifier).reload(),
+        onRefresh: () =>
+            ref.read(currentShiftInfoNotifierProvider.notifier).reload(),
         child: shift != null
-            ? ref.watch(shiftInfoNotifierProvider).when(
+            ? ref.watch(currentShiftInfoNotifierProvider).when(
                   data: (data) {
                     if (isTablet) {
                       return Padding(
@@ -225,10 +226,9 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                 )
             : const ShiftInactive(),
       ),
-      floatingActionButton:
-          shift == null || ref.watch(shiftInfoNotifierProvider).value == null
-              ? null
-              : viewSummary == 'cashflow'
+      floatingActionButton: viewSummary == 'cashflow'
+          ? ref.watch(currentShiftInfoNotifierProvider).when(
+              data: (data) => data != null
                   ? FloatingActionButton.extended(
                       onPressed: onShowCashflowForm,
                       label: Text(
@@ -237,6 +237,9 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                       icon: const Icon(Icons.add),
                     )
                   : null,
+              error: (e, st) => null,
+              loading: () => null)
+          : null,
     );
   }
 

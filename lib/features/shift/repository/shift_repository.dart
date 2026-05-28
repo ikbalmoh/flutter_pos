@@ -24,7 +24,9 @@ abstract class ShiftRepositoryProtocol {
 
   Future<Shift?> startShift(Shift outlet);
 
-  Future<void> saveShift(Shift outlet);
+  Future<void> saveShift(Shift shift);
+
+  Future<void> saveShiftInfo(String shiftId, ShiftInfo shiftInfo);
 
   Future<Shift?> retrieveShift();
 }
@@ -61,7 +63,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   @override
   Future<Shift?> retrieveShift() async {
     try {
-      final api = _ref.watch(shiftApiProvider);
+      final api = _ref.read(shiftApiProvider);
       final outletRepository = _ref.read(outletRepositoryProvider);
       const storage = FlutterSecureStorage();
       final outlet = await outletRepository.retrieveOutlet();
@@ -69,6 +71,7 @@ class ShiftRepository implements ShiftRepositoryProtocol {
         return null;
       }
       String? stringShift = await storage.read(key: StoreKey.shift.name);
+      log('LOCAL ACTIVE SHIFT: $stringShift');
       if (stringShift != null) {
         final shift = Shift.fromJson(json.decode(stringShift));
         if (outlet.idOutlet != shift.outletId) {
@@ -108,9 +111,20 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     try {
       final api = _ref.watch(shiftApiProvider);
       final shiftInfo = await api.shiftInfo(shiftId);
+      if (shiftInfo != null) {
+        await saveShiftInfo(shiftId, shiftInfo);
+      }
       return shiftInfo;
     } catch (e, stackTrack) {
       log('SHIFT INFO ERROR: $e => $stackTrack');
+      // check saved shift info
+      const storage = FlutterSecureStorage();
+      String? stringShiftInfo =
+          await storage.read(key: '${StoreKey.shiftInfo.name}[$shiftId]');
+      if (stringShiftInfo != null) {
+        final shiftInfo = ShiftInfo.fromJson(json.decode(stringShiftInfo));
+        return shiftInfo;
+      }
       rethrow;
     }
   }
@@ -132,6 +146,15 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     final shiftJson = shift.toJson();
     final stringShift = json.encode(shiftJson);
     await storage.write(key: StoreKey.shift.name, value: stringShift);
+  }
+
+  @override
+  Future<void> saveShiftInfo(String shiftId, ShiftInfo shiftInfo) async {
+    const storage = FlutterSecureStorage();
+    final shiftJson = shiftInfo.toJson();
+    final stringShift = json.encode(shiftJson);
+    await storage.write(
+        key: '${StoreKey.shiftInfo.name}[$shiftId]', value: stringShift);
   }
 
   @override

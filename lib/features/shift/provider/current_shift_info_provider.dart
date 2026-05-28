@@ -11,12 +11,16 @@ part 'current_shift_info_provider.g.dart';
 var uuid = const Uuid();
 
 @riverpod
-class ShiftInfoNotifier extends _$ShiftInfoNotifier {
+class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
   @override
   FutureOr<ShiftInfo?> build() async {
     final model.Shift? shift = ref.watch(shiftProvider).value;
     if (shift != null) {
-      return ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
+      try {
+        return ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
+      } catch (e) {
+        return null;
+      }
     }
     return null;
   }

@@ -10,6 +10,8 @@ import 'package:selleri/features/shift/repository/shift_repository.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
+import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
 import 'package:uuid/uuid.dart';
@@ -94,6 +96,20 @@ class Shift extends _$Shift {
     bool printReport = true,
     bool reopen = false,
   }) async {
+    final connectivity = ref.read(connectivityStatusProvider);
+    if (connectivity == ConnectivityState.disconnected) {
+      throw 'connect_internet_to_close_shift'.tr();
+    }
+
+    final offlineTxs = ref.read(offlineTransactionsProvider).value ?? [];
+    if (offlineTxs.isNotEmpty) {
+      await ref.read(offlineTransactionsProvider.notifier).sync();
+      final remaining = await ref.read(offlineTransactionsProvider.future);
+      if (remaining.isNotEmpty) {
+        throw 'offline_transactions_sync_failed'.tr();
+      }
+    }
+
     final user = (ref.read(authProvider).value as Authenticated).user.user;
     final model.Shift currentShift = state.value!;
     try {
