@@ -39,8 +39,13 @@ class Printer extends _$Printer {
     return null;
   }
 
-  Future<void> connectPrinter(BluetoothInfo device,
-      {required PaperSize size, bool cut = false, bool print = true}) async {
+  Future<void> connectPrinter(
+    BluetoothInfo device, {
+    required PaperSize size,
+    bool cut = false,
+    bool print = true,
+    bool printImage = false,
+  }) async {
     state = const AsyncLoading();
     try {
       const storage = FlutterSecureStorage();
@@ -64,6 +69,7 @@ class Printer extends _$Printer {
         name: device.name,
         size: size,
         cut: cut,
+        printImage: printImage,
       );
 
       await storage.write(key: 'printer', value: printer.toString());
@@ -75,10 +81,12 @@ class Printer extends _$Printer {
     }
   }
 
-  void updatePrinter(BluetoothInfo device,
-      {required PaperSize size,
-      bool cut = false,
-      bool printImage = false}) async {
+  void updatePrinter(
+    BluetoothInfo device, {
+    required PaperSize size,
+    bool cut = false,
+    bool printImage = false,
+  }) async {
     const storage = FlutterSecureStorage();
 
     final printer = model.Printer(
