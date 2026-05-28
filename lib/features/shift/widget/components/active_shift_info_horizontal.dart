@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/shift/model/shift_info.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
 class ActiveShiftInfoHorizontal extends ConsumerWidget {
@@ -18,6 +19,10 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = Theme.of(context).textTheme;
+
+    final bool isOnline =
+        ref.watch(connectivityStatusProvider) == ConnectivityState.connected;
+
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.all(0),
@@ -145,9 +150,12 @@ class ActiveShiftInfoHorizontal extends ConsumerWidget {
                               onCloseShift != null
                                   ? TextButton.icon(
                                       style: TextButton.styleFrom(
-                                          foregroundColor: Colors.white,
-                                          backgroundColor: Colors.red),
-                                      onPressed: onCloseShift,
+                                        foregroundColor: Colors.white,
+                                        disabledBackgroundColor: Colors.grey,
+                                        disabledForegroundColor: Colors.white,
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      onPressed: isOnline ? onCloseShift : null,
                                       label: Text('close'.tr()),
                                       icon: const Icon(
                                         Icons.stop,

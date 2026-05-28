@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
 class OpenShift extends ConsumerStatefulWidget {
@@ -81,7 +81,7 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
         ),
         TextButton(
             onPressed: () {
-              ref.read(shiftProvider.notifier).openShift(
+              ref.read(shiftNotifierProvider.notifier).openShift(
                     amount,
                   );
               context.pop();

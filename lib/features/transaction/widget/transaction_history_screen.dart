@@ -10,7 +10,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/table/model/table.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/transaction/widget/component/transaction_item.dart';
@@ -50,7 +50,7 @@ class _TransactionHistoryScreenState
     _searchController.addListener(() => onSearchItems(page: 1));
     _scrollController.addListener(loadMore);
     setState(() {
-      currentShift = ref.read(shiftProvider).value != null;
+      currentShift = ref.read(shiftNotifierProvider).value != null;
     });
     super.initState();
   }
@@ -186,7 +186,7 @@ class _TransactionHistoryScreenState
         ),
       ],
     );
-    return ref.watch(shiftProvider).value != null
+    return ref.watch(shiftNotifierProvider).value != null
         ? Card(
             margin: const EdgeInsets.all(0),
             elevation: 1,

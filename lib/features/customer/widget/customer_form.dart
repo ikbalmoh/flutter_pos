@@ -24,7 +24,7 @@ import 'package:selleri/features/customer/provider/customer_groups_provider.dart
 import 'package:selleri/features/customer/provider/customer_list_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/provider/current_shift_info_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/button_selection.dart';
 import 'package:selleri/shared/widget/generic/loading_placeholder.dart';

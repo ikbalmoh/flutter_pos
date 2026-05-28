@@ -17,12 +17,12 @@ import 'package:selleri/shared/utils/printer.dart' as util;
 import 'package:uuid/uuid.dart';
 import 'dart:developer';
 
-part 'shift_provider.g.dart';
+part 'shift_notifier_provider.g.dart';
 
 var uuid = const Uuid();
 
 @Riverpod(keepAlive: true)
-class Shift extends _$Shift {
+class ShiftNotifier extends _$ShiftNotifier {
   late final ShiftRepository _shiftRepository =
       ref.read(shiftRepositoryProvider);
 
@@ -30,7 +30,9 @@ class Shift extends _$Shift {
   /// The shift becomes non-null once [openShift] is called successfully.
   @override
   FutureOr<model.Shift?> build() async {
-    return await initShift();
+    final offlineShift = await _shiftRepository.retrieveOfflineShift();
+    getCurrentShift();
+    return offlineShift;
   }
 
   /// Opens a new shift for the current authenticated user and outlet.
@@ -42,6 +44,9 @@ class Shift extends _$Shift {
   ///
   /// - [openAmount]: The opening cash amount for the shift.
   Future<void> openShift(double openAmount) async {
+    if (state.isLoading) {
+      return;
+    }
     state = const AsyncLoading();
     final outletState = await ref.read(outletProvider.future) as OutletSelected;
     final authState = await ref.read(authProvider.future) as Authenticated;
@@ -97,7 +102,7 @@ class Shift extends _$Shift {
     bool reopen = false,
   }) async {
     final connectivity = ref.read(connectivityStatusProvider);
-    if (connectivity == ConnectivityState.disconnected) {
+    if (connectivity != ConnectivityState.connected) {
       throw 'connect_internet_to_close_shift'.tr();
     }
 
@@ -197,18 +202,14 @@ class Shift extends _$Shift {
 
   /// Initializes the shift state from the repository on app startup.
   ///
-  /// If a shift is already loaded in state, this method returns early.
-  /// Otherwise, it retrieves the active shift from [ShiftRepository] and
+  /// Retrieves the active shift from [ShiftRepository] and
   /// saves it locally before updating the state.
-  Future<model.Shift?> initShift() async {
-    log('INIT SHIFT');
-    if (state.value != null) {
-      log('SHIFT ALREADY ACTIVE: ${state.value?.closeShift}');
-      return state.value;
-    }
+  Future<model.Shift?> getCurrentShift() async {
+    log('GET CURRENT SHIFT');
     final shift = await _shiftRepository.retrieveShift();
     if (shift != null) {
       await _shiftRepository.saveShift(shift);
+      state = AsyncData(shift);
     }
     return shift;
   }

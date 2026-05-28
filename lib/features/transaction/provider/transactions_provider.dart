@@ -11,7 +11,7 @@ import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/printer.dart' as util;
@@ -59,7 +59,7 @@ class Transactions extends _$Transactions {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId;
       if (currentShift == true) {
-        shiftId = ref.read(shiftProvider).value?.id;
+        shiftId = ref.read(shiftNotifierProvider).value?.id;
       }
 
       Pagination<Cart> transactions = await api.transactions(

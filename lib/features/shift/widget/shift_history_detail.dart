@@ -7,7 +7,7 @@ import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/provider/detail_shift_info_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/shift/widget/components/shift_summary_receipt.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/features/shift/widget/components/shift_skeleton.dart';
@@ -46,7 +46,7 @@ class _ShiftHistoryDetailScreenState
     }
     try {
       await ref
-          .read(shiftProvider.notifier)
+          .read(shiftNotifierProvider.notifier)
           .printShift(shiftInfo, throwError: true);
     } catch (e) {
       AppAlert.toast(e.toString());

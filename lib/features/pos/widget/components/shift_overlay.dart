@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/features/shift/widget/components/open_shift.dart';
 import 'package:selleri/features/shift/widget/components/shift_inactive.dart';
@@ -19,7 +19,7 @@ class ShiftOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(shiftProvider).when(
+    return ref.watch(shiftNotifierProvider).when(
           data: (data) {
             return data == null
                 ? Positioned.fill(

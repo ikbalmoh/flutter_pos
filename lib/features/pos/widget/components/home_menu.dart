@@ -7,7 +7,7 @@ import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/holded/widget/components/hold_form.dart';
@@ -79,7 +79,7 @@ class HomeMenu extends ConsumerWidget {
         shadowColor: WidgetStateProperty.all<Color>(Colors.grey.shade50),
       ),
       alignmentOffset:
-          Offset(ref.watch(shiftProvider).value == null ? 0 : -160, -10),
+          Offset(ref.watch(shiftNotifierProvider).value == null ? 0 : -160, -10),
       builder:
           (BuildContext context, MenuController controller, Widget? child) {
         return IconButton(
@@ -109,7 +109,7 @@ class HomeMenu extends ConsumerWidget {
         );
       },
       menuChildren: [
-        ...ref.watch(shiftProvider).value == null
+        ...ref.watch(shiftNotifierProvider).value == null
             ? []
             : [
                 if (!isTablet)

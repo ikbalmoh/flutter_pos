@@ -4,7 +4,7 @@ import 'package:selleri/features/shift/model/shift_info.dart';
 import 'package:selleri/features/shift/repository/shift_repository.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'shift_provider.dart';
+import 'shift_notifier_provider.dart';
 
 part 'current_shift_info_provider.g.dart';
 
@@ -14,7 +14,7 @@ var uuid = const Uuid();
 class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
   @override
   FutureOr<ShiftInfo?> build() async {
-    final model.Shift? shift = ref.watch(shiftProvider).value;
+    final model.Shift? shift = ref.watch(shiftNotifierProvider).value;
     if (shift != null) {
       try {
         return ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
@@ -28,7 +28,7 @@ class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
   Future<void> reload() async {
     state = const AsyncLoading();
     try {
-      final model.Shift? shift = ref.read(shiftProvider).value;
+      final model.Shift? shift = ref.read(shiftNotifierProvider).value;
       if (shift != null) {
         final info =
             await ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
@@ -46,7 +46,7 @@ class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
 
   Future<void> submitCashflow(Map<String, dynamic> data,
       {Function? onSubmited}) async {
-    final model.Shift? shift = ref.watch(shiftProvider).value;
+    final model.Shift? shift = ref.watch(shiftNotifierProvider).value;
     if (shift == null) {
       return;
     }
