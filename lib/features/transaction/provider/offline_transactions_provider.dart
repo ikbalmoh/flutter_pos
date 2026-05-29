@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/features/shift/provider/current_shift_info_provider.dart';
 import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
@@ -94,6 +95,7 @@ class OfflineTransactions extends _$OfflineTransactions {
             .updateTransactions(syncedTransactions);
       }
       state = AsyncData(await objectBox.offlineTransactions());
+      ref.invalidate(currentShiftInfoNotifierProvider);
       return;
     } catch (e, st) {
       log('SYNC TRANSACTIONS FAILED: $e => $st');

@@ -18,6 +18,7 @@ import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
 import 'package:selleri/features/shift/provider/current_shift_info_provider.dart';
 import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
+import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
 import 'package:selleri/shared/widget/generic/button_selection.dart';
 import 'package:selleri/shared/widget/generic/loading_placeholder.dart';
 import 'package:selleri/shared/widget/generic/picked_image.dart';
@@ -25,7 +26,7 @@ import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:image_picker/image_picker.dart';
 
-enum Status { iddle, loading, success, error }
+enum Status { syncing, iddle, loading, success, error }
 
 class CloseShiftForm extends ConsumerStatefulWidget {
   const CloseShiftForm({required this.shift, super.key, this.scrollController});
@@ -41,7 +42,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   final _amountFormater = CurrencyFormat.currencyInput();
   final inputController = TextEditingController();
 
-  Status status = Status.iddle;
+  Status status = Status.syncing;
 
   DateTime transDate = DateTime.now();
   double amount = 0;
@@ -58,14 +59,33 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     bool isAutoPrint = ref.read(appSettingsProvider).autoPrintShiftReport;
     OutletState? outletState = ref.read(outletProvider).value;
     if (outletState is OutletSelected) {
-      setState(() {
-        isAttachmentRequired =
-            outletState.config.attachmentShiftMandatory ?? false;
-        isAutoShift = outletState.config.autoShift ?? false;
-        printReport = isAutoPrint;
-      });
+      isAttachmentRequired =
+          outletState.config.attachmentShiftMandatory ?? false;
+      isAutoShift = outletState.config.autoShift ?? false;
+      printReport = isAutoPrint;
     }
     super.initState();
+    _syncOfflineTransactions();
+  }
+
+  Future<void> _syncOfflineTransactions() async {
+    final offlineTxs = ref.read(offlineTransactionsProvider).value ?? [];
+    if (offlineTxs.isEmpty) {
+      if (mounted) setState(() => status = Status.iddle);
+      return;
+    }
+    await ref.read(offlineTransactionsProvider.notifier).sync();
+    if (!mounted) return;
+    final remaining = await ref.read(offlineTransactionsProvider.future);
+    if (!mounted) return;
+    if (remaining.isNotEmpty) {
+      setState(() {
+        status = Status.error;
+        errorMessage = 'transactions_sync_failed'.tr();
+      });
+    } else {
+      setState(() => status = Status.iddle);
+    }
   }
 
   double diffAmount() {
@@ -169,290 +189,353 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
       height: (MediaQuery.of(context).size.height *
           (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.95 : 0.6)),
       child: PopScope(
-        canPop: status != Status.loading,
-        child: status == Status.loading
-            ? const Center(
-                child: LoadingPlaceholder(),
-              )
-            : status == Status.success
-                ? CloseShiftSuccess(
-                    onClose: () => context.pop(),
-                    isAutoShift: isAutoShift,
+        canPop: status != Status.loading && status != Status.syncing,
+        child: status == Status.syncing
+            ? const _SyncingSkeleton()
+            : status == Status.loading
+                ? const Center(
+                    child: LoadingPlaceholder(),
                   )
-                : status == Status.error
-                    ? CloseShiftError(
-                        onRetry: () => onSubmit(context),
-                        onClose: () {
-                          setState(() {
-                            status = Status.iddle;
-                          });
-                        },
-                        error: errorMessage,
+                : status == Status.success
+                    ? CloseShiftSuccess(
+                        onClose: () => context.pop(),
+                        isAutoShift: isAutoShift,
                       )
-                    : SafeArea(
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  top: 20, left: 15, right: 15, bottom: 15),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    width: 0.5,
-                                    color: Colors.blueGrey.shade100,
+                    : status == Status.error
+                        ? CloseShiftError(
+                            onRetry: () => onSubmit(context),
+                            onClose: () {
+                              setState(() {
+                                status = Status.iddle;
+                              });
+                            },
+                            error: errorMessage,
+                          )
+                        : SafeArea(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      top: 20, left: 15, right: 15, bottom: 15),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        width: 0.5,
+                                        color: Colors.blueGrey.shade100,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'close_shift'.tr(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () => context.pop(),
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Colors.grey,
+                                          size: 18,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'close_shift'.tr(),
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => context.pop(),
-                                    child: const Icon(
-                                      Icons.close,
-                                      color: Colors.grey,
-                                      size: 18,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: SingleChildScrollView(
-                                controller: widget.scrollController,
-                                padding: EdgeInsets.only(
-                                    bottom:
-                                        MediaQuery.of(context).viewInsets.bottom),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    isAutoShift
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(15),
-                                            child: Container(
-                                              width: double.maxFinite,
-                                              decoration: BoxDecoration(
-                                                color: Colors.amber.shade200,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    controller: widget.scrollController,
+                                    padding: EdgeInsets.only(
+                                        bottom: MediaQuery.of(context)
+                                            .viewInsets
+                                            .bottom),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        isAutoShift
+                                            ? Padding(
+                                                padding:
+                                                    const EdgeInsets.all(15),
+                                                child: Container(
+                                                  width: double.maxFinite,
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        Colors.amber.shade200,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 7.5),
+                                                  child: Text(
+                                                    'autoshift_note'.tr(),
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ),
+                                              )
+                                            : const SizedBox(height: 0),
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 15),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                            bottom: BorderSide(
+                                              width: 1,
+                                              color: Colors.blueGrey.shade100,
+                                            ),
+                                          )),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'expected_cash'.tr(),
+                                                style: labelStyle,
                                               ),
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 7.5),
-                                              child: Text(
-                                                'autoshift_note'.tr(),
+                                              Text(
+                                                CurrencyFormat.currency(
+                                                  widget.shift.summary
+                                                      .expectedCashEnd,
+                                                  symbol: false,
+                                                ),
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodySmall,
+                                                    .bodyLarge
+                                                    ?.copyWith(
+                                                        color: Colors.teal),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          child: TextFormField(
+                                            inputFormatters: <TextInputFormatter>[
+                                              _amountFormater
+                                            ],
+                                            onChanged: (value) {
+                                              setState(() {
+                                                amount = _amountFormater
+                                                    .getUnformattedValue()
+                                                    .toDouble();
+                                              });
+                                            },
+                                            textAlign: TextAlign.right,
+                                            keyboardType: TextInputType.number,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  const EdgeInsets.only(
+                                                      left: 0,
+                                                      bottom: 15,
+                                                      right: 0),
+                                              floatingLabelBehavior:
+                                                  FloatingLabelBehavior.never,
+                                              label: Text(
+                                                'available_cash'.tr(),
+                                                style: labelStyle,
                                               ),
+                                              prefix: Text(
+                                                'available_cash'.tr(),
+                                                style: labelStyle,
+                                              ),
+                                              alignLabelWithHint: true,
                                             ),
-                                          )
-                                        : const SizedBox(height: 0),
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 15),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15),
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                        bottom: BorderSide(
-                                          width: 1,
-                                          color: Colors.blueGrey.shade100,
+                                            controller: inputController,
+                                            onTap: () =>
+                                                inputController.selection =
+                                                    TextSelection(
+                                                        baseOffset: 0,
+                                                        extentOffset:
+                                                            inputController
+                                                                .value
+                                                                .text
+                                                                .length),
+                                          ),
                                         ),
-                                      )),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'expected_cash'.tr(),
-                                            style: labelStyle,
+                                        diffAmount() != 0
+                                            ? Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5,
+                                                    right: 15,
+                                                    left: 15),
+                                                child: Text(
+                                                  '${'different'.tr()} ${CurrencyFormat.currency(diffAmount(), minus: false)}',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall
+                                                      ?.copyWith(
+                                                          color: Colors.red),
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                              )
+                                            : Container(),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                            vertical: 15,
                                           ),
-                                          Text(
-                                            CurrencyFormat.currency(
-                                              widget
-                                                  .shift.summary.expectedCashEnd,
-                                              symbol: false,
-                                            ),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(color: Colors.teal),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15),
-                                      child: TextFormField(
-                                        inputFormatters: <TextInputFormatter>[
-                                          _amountFormater
-                                        ],
-                                        onChanged: (value) {
-                                          setState(() {
-                                            amount = _amountFormater
-                                                .getUnformattedValue()
-                                                .toDouble();
-                                          });
-                                        },
-                                        textAlign: TextAlign.right,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              left: 0, bottom: 15, right: 0),
-                                          floatingLabelBehavior:
-                                              FloatingLabelBehavior.never,
-                                          label: Text(
-                                            'available_cash'.tr(),
-                                            style: labelStyle,
-                                          ),
-                                          prefix: Text(
-                                            'available_cash'.tr(),
-                                            style: labelStyle,
-                                          ),
-                                          alignLabelWithHint: true,
-                                        ),
-                                        controller: inputController,
-                                        onTap: () => inputController.selection =
-                                            TextSelection(
-                                                baseOffset: 0,
-                                                extentOffset: inputController
-                                                    .value.text.length),
-                                      ),
-                                    ),
-                                    diffAmount() != 0
-                                        ? Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, right: 15, left: 15),
-                                            child: Text(
-                                              '${'different'.tr()} ${CurrencyFormat.currency(diffAmount(), minus: false)}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(color: Colors.red),
-                                              textAlign: TextAlign.end,
-                                            ),
-                                          )
-                                        : Container(),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 15,
-                                        vertical: 15,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${'attachments'.tr()} ${isAttachmentRequired ? '*' : ''}",
-                                            style: labelStyle,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Wrap(
-                                            children: List.generate(images.length,
-                                                (index) {
-                                              XFile image = images[index];
-                                              return PickedImage(
-                                                source: image.path,
-                                                sourceType: SourceType.path,
-                                                onDelete: () =>
-                                                    onDeleteImage(index),
-                                              );
-                                            }),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              TextButton.icon(
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Colors.blueGrey.shade600,
-                                                  backgroundColor:
-                                                      Colors.blueGrey.shade50,
-                                                ),
-                                                icon: const Icon(
-                                                  CupertinoIcons.camera_fill,
-                                                  size: 18,
-                                                ),
-                                                onPressed: () => pickImage(
-                                                    source: ImageSource.camera),
-                                                label: Text('photo'.tr()),
+                                              Text(
+                                                "${'attachments'.tr()} ${isAttachmentRequired ? '*' : ''}",
+                                                style: labelStyle,
                                               ),
                                               const SizedBox(
-                                                width: 10,
+                                                height: 10,
                                               ),
-                                              TextButton.icon(
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Colors.blueGrey.shade600,
-                                                  backgroundColor:
-                                                      Colors.blueGrey.shade50,
-                                                ),
-                                                icon: const Icon(
-                                                  CupertinoIcons
-                                                      .photo_fill_on_rectangle_fill,
-                                                  size: 18,
-                                                ),
-                                                onPressed: pickImage,
-                                                label: Text('image'.tr()),
+                                              Wrap(
+                                                children: List.generate(
+                                                    images.length, (index) {
+                                                  XFile image = images[index];
+                                                  return PickedImage(
+                                                    source: image.path,
+                                                    sourceType: SourceType.path,
+                                                    onDelete: () =>
+                                                        onDeleteImage(index),
+                                                  );
+                                                }),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  TextButton.icon(
+                                                    style: TextButton.styleFrom(
+                                                      foregroundColor: Colors
+                                                          .blueGrey.shade600,
+                                                      backgroundColor: Colors
+                                                          .blueGrey.shade50,
+                                                    ),
+                                                    icon: const Icon(
+                                                      CupertinoIcons
+                                                          .camera_fill,
+                                                      size: 18,
+                                                    ),
+                                                    onPressed: () => pickImage(
+                                                        source:
+                                                            ImageSource.camera),
+                                                    label: Text('photo'.tr()),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  TextButton.icon(
+                                                    style: TextButton.styleFrom(
+                                                      foregroundColor: Colors
+                                                          .blueGrey.shade600,
+                                                      backgroundColor: Colors
+                                                          .blueGrey.shade50,
+                                                    ),
+                                                    icon: const Icon(
+                                                      CupertinoIcons
+                                                          .photo_fill_on_rectangle_fill,
+                                                      size: 18,
+                                                    ),
+                                                    onPressed: pickImage,
+                                                    label: Text('image'.tr()),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20)
-                                  .copyWith(bottom: 15),
-                              child: Row(
-                                children: [
-                                  Switch(
-                                    thumbIcon: printIcon,
-                                    value: printReport,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        printReport = value;
-                                      });
-                                    },
                                   ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(30),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 20)
+                                          .copyWith(bottom: 15),
+                                  child: Row(
+                                    children: [
+                                      Switch(
+                                        thumbIcon: printIcon,
+                                        value: printReport,
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            printReport = value;
+                                          });
+                                        },
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(30),
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: status == Status.loading
+                                              ? null
+                                              : () => onSubmit(context),
+                                          child: Text(
+                                            'close_shift'.tr(),
                                           ),
                                         ),
                                       ),
-                                      onPressed: status == Status.loading
-                                          ? null
-                                          : () => onSubmit(context),
-                                      child: Text(
-                                        'close_shift'.tr(),
-                                      ),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                    ),
+                          ),
+      ),
+    );
+  }
+}
+
+class _SyncingSkeleton extends StatelessWidget {
+  const _SyncingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 20),
+          Text(
+            'syncing_transactions'.tr(),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.blueGrey.shade600),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'please_wait'.tr(),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: Colors.blueGrey.shade600),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
