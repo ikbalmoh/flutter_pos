@@ -70,27 +70,28 @@ class PaymentMethods extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          method.name,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey.shade800,
-                            fontWeight: FontWeight.w600,
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            method.name,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey.shade800,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        inUse
-                            ? Text(
-                                CurrencyFormat.currency(
-                                  cartPayment.paymentValue,
-                                ),
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: Colors.teal,
-                                ),
-                              )
-                            : Container(),
-                      ],
+                          if (inUse)
+                            Text(
+                              CurrencyFormat.currency(
+                                cartPayment.paymentValue,
+                              ),
+                              style: textTheme.bodySmall?.copyWith(
+                                color: Colors.teal,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       width: 10,

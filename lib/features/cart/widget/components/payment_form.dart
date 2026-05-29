@@ -99,9 +99,11 @@ class _PaymentFormState extends State<PaymentForm> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'payment_x'.tr(args: [widget.method.name]),
-                  style: Theme.of(context).textTheme.bodyLarge,
+                Flexible(
+                  child: Text(
+                    'payment_x'.tr(args: [widget.method.name]),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ),
                 IconButton(
                   onPressed: () => context.pop(),
