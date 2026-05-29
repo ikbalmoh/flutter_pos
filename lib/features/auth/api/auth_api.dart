@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/utils/fetch.dart';
 import 'package:selleri/shared/router/api_url.dart';
 
@@ -16,9 +16,9 @@ class AuthApi {
     final data = {
       'username': username,
       'password': password,
-      'grant_type': dotenv.env['GRANT_TYPE'],
-      'client_id': dotenv.env['CLIENT_ID'],
-      'client_secret': dotenv.env['CLIENT_SECRET'],
+      'grant_type': AppConfig.grantType,
+      'client_id': AppConfig.clientId,
+      'client_secret': AppConfig.clientSecret,
     };
     final res = await api.post(ApiUrl.auth, data: data);
 

@@ -11,7 +11,7 @@ import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/shared/exeptions/offline_exeption.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:validators/validators.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:selleri/shared/constants/app_config.dart';
 import 'dart:developer';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -19,7 +19,7 @@ const storage = FlutterSecureStorage();
 
 Dio fetch() {
   final baseOption = BaseOptions(
-    baseUrl: dotenv.env['HOST']!,
+    baseUrl: AppConfig.baseUrl,
     contentType: Headers.jsonContentType,
     validateStatus: (int? status) => status != null,
     connectTimeout: Duration(minutes: 10),

@@ -429,8 +429,12 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
             child: VisibilityDetector(
               onVisibilityChanged: (info) {
                 if (context.mounted) {
-                  setState(() {
-                    canListenBarcode = info.visibleFraction > 0;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (context.mounted) {
+                      setState(() {
+                        canListenBarcode = info.visibleFraction > 0;
+                      });
+                    }
                   });
                 }
               },
@@ -440,38 +444,35 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                 onBarcodeScanned: onBarcodeScanned,
                 child: Column(
                   children: [
-                    isTablet
-                        ? Container()
-                        : Material(
-                            color: Colors.teal.shade50,
-                            child: InkWell(
-                              onTap: pickReceiveDate,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                                child: Row(
-                                  children: [
-                                    Icon(CupertinoIcons.calendar,
-                                        color: Colors.teal.shade600),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      DateTimeFormater.dateToString(
-                                          ref
-                                              .watch(receivingProvider)
-                                              .receiveDate,
-                                          format: 'd MMM y'),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Colors.teal.shade600,
-                                          ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                    if (!isTablet)
+                      Material(
+                        color: Colors.teal.shade50,
+                        child: InkWell(
+                          onTap: pickReceiveDate,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            child: Row(
+                              children: [
+                                Icon(CupertinoIcons.calendar,
+                                    color: Colors.teal.shade600),
+                                const SizedBox(width: 10),
+                                Text(
+                                  DateTimeFormater.dateToString(
+                                      ref.watch(receivingProvider).receiveDate,
+                                      format: 'd MMM y'),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Colors.teal.shade600,
+                                      ),
+                                )
+                              ],
                             ),
                           ),
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: typeSelector,
@@ -566,8 +567,12 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
                             error: (error, stackTrace) => Padding(
                               padding: const EdgeInsets.only(top: 100),
                               child: ErrorHandler(
-                                error: error,
-                                stackTrace: stackTrace.toString(),
+                                error: 'code_not_found'.tr(),
+                                stackTrace: 'please_recheck_x'.tr(args: [
+                                  type == '1'
+                                      ? 'purchase_code'.tr()
+                                      : 'transfer_code'.tr()
+                                ]),
                               ),
                             ),
                             loading: () => ListView.builder(

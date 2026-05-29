@@ -399,5 +399,9 @@
   "x_is_no_longer_active": "{} Sudah Tidak Aktif Lagi",
   "reselect_customer_note": "Pelanggan akan dihapus dari transaksi ini",
   "print_receipt_as_image": "Cetak Struk Sebagai Gambar",
-  "turn_on_this_option_if_receipt_is_blank": "Nyalakan opsi ini jika struk tidak keluar"
+  "turn_on_this_option_if_receipt_is_blank": "Nyalakan opsi ini jika struk tidak keluar",
+  "waiting_payment": "Menunggu Pembayaran",
+  "payment_success": "Pembayaran Berhasil",
+  "other": "Lainnya",
+  "please_recheck_x": "Silahkan periksa kembali {}"
 }

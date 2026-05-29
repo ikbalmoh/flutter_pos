@@ -1,15 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/cart/model/cart_payment.dart';
 import 'package:selleri/features/pos/model/payment_method.dart';
 import 'package:selleri/features/pos/model/payment_type.dart';
 import 'package:selleri/features/cart/widget/components/payment_form.dart';
+import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
+import 'package:selleri/shared/utils/formater.dart';
 import 'payment_methods.dart';
 
-class PaymentDetails extends StatefulWidget {
+class PaymentDetails extends ConsumerStatefulWidget {
   const PaymentDetails({
     required this.cart,
     required this.onAddPayment,
@@ -24,80 +27,126 @@ class PaymentDetails extends StatefulWidget {
   final Function(String paymentMethodId) onRemovePayment;
 
   @override
-  State<PaymentDetails> createState() => _PaymentDetailsState();
+  ConsumerState<PaymentDetails> createState() => _PaymentDetailsState();
 }
 
-class _PaymentDetailsState extends State<PaymentDetails> {
-  List<PaymentType> paymentTypes = [
-    PaymentType(
-      id: 1,
-      icon: Icon(
-        Icons.wallet,
-        color: Colors.green.shade700,
+class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
+  late PaymentMethod? cashPayment;
+  late PaymentMethod? qrisPayment;
+
+  List<PaymentType> paymentTypes = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsFlutterBinding.ensureInitialized();
+
+    final availablePaymentTypes =
+        widget.paymentMethods.map((p) => p.type).toSet();
+
+    final filteredPaymentTypes = [
+      PaymentType(
+        id: 6,
+        icon: Icon(Icons.qr_code, color: Colors.black),
+        name: 'QRIS',
+        isExpanded: false,
       ),
-      name: 'cash'.tr(),
-      isExpanded: true,
-    ),
-    PaymentType(
-      id: 4,
-      icon: Icon(
-        Icons.qr_code,
-        color: Colors.blue.shade900,
+      PaymentType(
+        id: 2,
+        icon: Icon(
+          Icons.credit_card_outlined,
+          color: Colors.amber.shade600,
+        ),
+        name: 'Debit',
+        isExpanded: false,
       ),
-      name: 'e-wallet',
-      isExpanded: false,
-    ),
-    PaymentType(
-      id: 2,
-      icon: Icon(
-        Icons.credit_card_outlined,
-        color: Colors.amber.shade600,
+      PaymentType(
+        id: 3,
+        icon: Icon(
+          Icons.credit_card,
+          color: Colors.red.shade700,
+        ),
+        name: 'Credit',
+        isExpanded: false,
       ),
-      name: 'Debit',
-      isExpanded: false,
-    ),
-    PaymentType(
-      id: 3,
-      icon: Icon(
-        Icons.credit_card,
-        color: Colors.red.shade700,
+      PaymentType(
+        id: 4,
+        icon: Icon(
+          Icons.wallet,
+          color: Colors.blue.shade900,
+        ),
+        name: 'payment_x'.tr(args: ['other'.tr()]),
+        isExpanded: false,
       ),
-      name: 'Credit',
-      isExpanded: false,
-    ),
-  ];
+    ].where((p) => availablePaymentTypes.contains(p.id)).toList();
+
+    setState(() {
+      cashPayment = widget.paymentMethods.firstWhereOrNull((p) => p.type == 1);
+      qrisPayment = widget.paymentMethods
+          .firstWhereOrNull((p) => p.type == AppConfig.qrisPaymentTypeId);
+      paymentTypes = filteredPaymentTypes;
+    });
+  }
+
+  void onSelectMethod(PaymentMethod method) async {
+    CartPayment? cartPayment = widget.cart.payments.firstWhereOrNull(
+        (payment) =>
+            payment.paymentMethodId == method.id && payment.id == null);
+
+    final bool hasQris = widget.cart.payments.firstWhereOrNull(
+            (payment) => payment.paymentMethodId == qrisPayment?.id) !=
+        null;
+
+    final bool isCash = method.type == 1;
+
+    if (method.type == AppConfig.qrisPaymentTypeId) {
+      if (cartPayment != null) {
+        return;
+      }
+
+      final isAuthorized = await AuthorizationHelper.authorize('make-payment');
+      if (!isAuthorized) return;
+
+      widget.onAddPayment(CartPayment(
+        paymentMethodId: method.id,
+        paymentName: method.name,
+        paymentValue: widget.cart.grandTotal,
+      ));
+
+      return;
+    }
+
+// Show payment sheet to input payment amount
+    CartPayment? payment = await showModalBottomSheet(
+      backgroundColor: Colors.white,
+      // ignore: use_build_context_synchronously
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (BuildContext context) {
+        return PaymentForm(
+          method: method,
+          isCash: isCash,
+          cartPayment: cartPayment,
+          insufficient: (widget.cart.grandTotal -
+              (hasQris ? 0 : widget.cart.totalPayment)),
+        );
+      },
+    );
+    if (payment == null) {
+      return;
+    }
+    final isAuthorized = await AuthorizationHelper.authorize('make-payment');
+    if (!isAuthorized) return;
+    widget.onAddPayment(payment);
+  }
 
   @override
   Widget build(BuildContext context) {
-    void onSelectMethod(PaymentMethod method) async {
-      CartPayment? cartPayment = widget.cart.payments.firstWhereOrNull(
-          (payment) =>
-              payment.paymentMethodId == method.id &&
-              payment.createdAt == null);
-      CartPayment? payment = await showModalBottomSheet(
-        backgroundColor: Colors.white,
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        builder: (BuildContext context) {
-          return PaymentForm(
-            method: method,
-            cartPayment: cartPayment,
-            insufficient: (widget.cart.grandTotal - widget.cart.totalPayment),
-          );
-        },
-      );
-      if (payment == null) {
-        return;
-      }
-      final isAuthorized = await AuthorizationHelper.authorize('make-payment');
-      if (!isAuthorized) {
-        return;
-      }
-      widget.onAddPayment(payment);
-    }
-
     TextTheme textTheme = Theme.of(context).textTheme;
+    final cashUsed = widget.cart.payments.firstWhereOrNull(
+        (payment) => payment.paymentMethodId == cashPayment?.id);
     return Card(
       margin: const EdgeInsets.all(10),
       color: Colors.white,
@@ -114,81 +163,123 @@ class _PaymentDetailsState extends State<PaymentDetails> {
             height: 1,
             color: Colors.blueGrey.shade50,
           ),
-          widget.cart.prevPayments().isNotEmpty
-              ? Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.history),
-                      title: Text(
-                        'prev_payments'.tr(),
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade900,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+          if (widget.cart.prevPayments().isNotEmpty)
+            Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: Text(
+                    'prev_payments'.tr(),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey.shade900,
+                      fontWeight: FontWeight.w400,
                     ),
-                    PaymentMethods(
-                      paymentMethods: widget.paymentMethods
-                          .where((p) => widget.cart
-                              .prevPayments()
-                              .map((pc) => pc.paymentMethodId)
-                              .contains(p.id))
-                          .toList(),
-                      cartPayments: widget.cart.payments,
-                      isPrevious: true,
-                    )
-                  ],
+                  ),
+                ),
+                PaymentMethods(
+                  paymentMethods: widget.paymentMethods
+                      .where((p) => widget.cart
+                          .prevPayments()
+                          .map((pc) => pc.paymentMethodId)
+                          .contains(p.id))
+                      .toList(),
+                  cartPayments: widget.cart.payments,
+                  isPrevious: true,
                 )
-              : Container(),
+              ],
+            ),
           ClipRRect(
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(12.5),
               bottomRight: Radius.circular(12.5),
             ),
-            child: ExpansionPanelList(
-              elevation: 0,
-              dividerColor: Colors.grey.shade200,
-              materialGapSize: 0,
-              expandedHeaderPadding: const EdgeInsets.all(0),
-              expansionCallback: (int index, bool isExpanded) {
-                setState(() {
-                  paymentTypes[index] =
-                      paymentTypes[index].copyWith(isExpanded: isExpanded);
-                });
-              },
-              children: paymentTypes.map<ExpansionPanel>((PaymentType type) {
-                return ExpansionPanel(
-                  backgroundColor: Colors.white,
-                  canTapOnHeader: true,
-                  headerBuilder: (BuildContext context, bool isExpanded) {
-                    return ListTile(
-                      leading: type.icon,
-                      title: Text(
-                        type.name,
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade900,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                      ),
-                    );
-                  },
-                  body: PaymentMethods(
-                    onSelectMethod: onSelectMethod,
-                    paymentMethods: widget.paymentMethods
-                        .where((p) => p.type == type.id)
-                        .toList(),
-                    cartPayments: widget.cart.payments,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.money_rounded,
+                    color: Colors.green.shade600,
                   ),
-                  isExpanded: type.isExpanded!,
-                );
-              }).toList(),
+                  title: Text(
+                    'cash'.tr(),
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  selectedTileColor: Colors.teal.shade50.withValues(alpha: 0.5),
+                  subtitle: cashUsed != null
+                      ? Text(
+                          CurrencyFormat.currency(cashUsed.paymentValue),
+                          style: textTheme.bodySmall?.copyWith(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      : null,
+                  trailing: cashUsed != null
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Colors.teal,
+                          size: 18,
+                        )
+                      : null,
+                  onTap: cashPayment != null
+                      ? () => onSelectMethod(cashPayment!)
+                      : null,
+                  selected: cashUsed != null,
+                  dense: true,
+                  contentPadding: const EdgeInsets.only(left: 15, right: 25),
+                ),
+                ExpansionPanelList(
+                  elevation: 0,
+                  dividerColor: Colors.grey.shade200,
+                  materialGapSize: 0,
+                  expandedHeaderPadding: const EdgeInsets.all(0),
+                  expansionCallback: (int index, bool isExpanded) {
+                    setState(() {
+                      paymentTypes[index] =
+                          paymentTypes[index].copyWith(isExpanded: isExpanded);
+                    });
+                  },
+                  children:
+                      paymentTypes.map<ExpansionPanel>((PaymentType type) {
+                    final paymentMethods = widget.paymentMethods
+                        .where((p) => p.type == type.id)
+                        .toList();
+                    final bool anyPaymentUsed = widget.cart.payments.any((p) =>
+                        paymentMethods
+                            .map((p) => p.id)
+                            .contains(p.paymentMethodId));
+                    return ExpansionPanel(
+                      backgroundColor: Colors.white,
+                      canTapOnHeader: !anyPaymentUsed,
+                      headerBuilder: (BuildContext context, bool isExpanded) {
+                        return ListTile(
+                          leading: type.icon,
+                          title: Text(
+                            type.name,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey.shade900,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          selected: anyPaymentUsed,
+                        );
+                      },
+                      body: PaymentMethods(
+                        onSelectMethod: onSelectMethod,
+                        paymentMethods: paymentMethods,
+                        cartPayments: widget.cart.payments,
+                      ),
+                      isExpanded: type.isExpanded == true || anyPaymentUsed,
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
-          )
+          ),
+          const SizedBox(height: 15),
         ],
       ),
     );

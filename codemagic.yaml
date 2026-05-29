@@ -45,30 +45,6 @@ definitions:
         # Write variables to CM_ENV
         echo "RELEASE_VERSION=$RELEASE_VERSION" >> $CM_ENV
 
-    - &create_env
-      name: Create .env
-      script: |
-        touch "$CM_BUILD_DIR/.env"
-          cat >> "$CM_BUILD_DIR/.env" <<EOF
-          GRANT_TYPE=password
-          CLIENT_ID=2
-          HOST=https://selleri.co.id/api
-          CLIENT_SECRET=7lJC833F5COjxMfFGS9xcLoPFEmKTIXnf6gYClKR
-          APP_ID=selleri
-          EOF
-
-    - &create_env_stage
-      name: Create .env.stage
-      script: |
-        touch "$CM_BUILD_DIR/.env.stage"
-          cat >> "$CM_BUILD_DIR/.env.stage" <<EOF
-          GRANT_TYPE=password
-          CLIENT_ID=2
-          HOST=https://dev.selleri.co.id/api
-          CLIENT_SECRET=7lJC833F5COjxMfFGS9xcLoPFEmKTIXnf6gYClKR
-          APP_ID=dev-selleri
-          EOF
-
     - &get_flutter_packages
       name: Get Flutter packages
       script: |
@@ -152,8 +128,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze
@@ -183,8 +157,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze
@@ -219,8 +191,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze
@@ -256,8 +226,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze
@@ -288,8 +256,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze
@@ -308,8 +274,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze
@@ -329,8 +293,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze
@@ -349,8 +311,6 @@ workflows:
     scripts:
       - *extract_version
       - *shorebird_install
-      - *create_env
-      - *create_env_stage
       - *get_flutter_packages
       - *build_runner
       - *flutter_analyze

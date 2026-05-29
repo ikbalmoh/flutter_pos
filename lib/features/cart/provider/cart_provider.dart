@@ -22,6 +22,7 @@ import 'package:selleri/features/table/model/table.dart' as table_model;
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
+import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
@@ -270,9 +271,8 @@ class Cart extends _$Cart {
     }
 
     double quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
-    double finalPrice = itemCart.price - itemCart.discountTotal;
-    items[index] =
-        itemCart.copyWith(quantity: quantity, total: quantity * finalPrice);
+    double total = (itemCart.price * quantity) - itemCart.discountTotal;
+    items[index] = itemCart.copyWith(quantity: quantity, total: total);
     state =
         state.copyWith(items: items, roundingValue: 0, promotions: promotions);
     if (itemCart.promotion != null) {
@@ -313,12 +313,12 @@ class Cart extends _$Cart {
 
       double discount = itemCart.discount;
       double discountTotal = itemCart.discountTotal;
+
       if (itemCart.promotion != null) {
         discount = 0;
         discountTotal = 0;
       }
-      double finalPrice = itemCart.price - discountTotal;
-      double total = itemCart.quantity * finalPrice;
+      double total = (itemCart.price * itemCart.quantity) - discountTotal;
       items[index] = itemCart.copyWith(
         total: total,
         discount: discount,
@@ -418,6 +418,7 @@ class Cart extends _$Cart {
   void addPayment(CartPayment payment) {
     final auth = ref.read(authProvider).value as Authenticated;
     final shift = ref.read(shiftNotifierProvider).value;
+    final outlet = ref.read(outletProvider).value as OutletSelected;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
@@ -426,6 +427,25 @@ class Cart extends _$Cart {
     );
 
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
+
+    // Check if payment is QRIS
+    final qrisMethodIds = outlet.config.paymentMethods
+        ?.where((pm) => pm.type == AppConfig.qrisPaymentTypeId)
+        .map((p) => p.id)
+        .toList();
+    final bool isQrisPayment =
+        qrisMethodIds?.contains(payment.paymentMethodId) ?? false;
+
+    log('addPayment: payment: $payment, qrisMethodIds: $qrisMethodIds, isQrisPayment? $isQrisPayment');
+    if (isQrisPayment) {
+      // is qris payment, remove all other payments
+      payments = [];
+    } else if (qrisMethodIds?.contains(payment.paymentMethodId) == false) {
+      // not qris payment, remove qris payment
+      payments.removeWhere(
+          (p) => qrisMethodIds?.contains(p.paymentMethodId) ?? false);
+    }
+
     int paymentIdx = payments.indexWhere((cp) =>
         cp.createdAt == null && cp.paymentMethodId == payment.paymentMethodId);
 
@@ -502,7 +522,7 @@ class Cart extends _$Cart {
         }
       }
       final outlet = ref.read(outletProvider).value as OutletSelected;
-      
+
       final bool printImage = printer.printImage;
 
       List<int> receipt;

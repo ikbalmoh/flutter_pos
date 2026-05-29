@@ -2,7 +2,7 @@ name: selleri
 description: 'Selleri POS'
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.5.3+29
+version: 2.6.0+29
 
 environment:
   sdk: '>=3.2.1 <4.0.0'
@@ -27,10 +27,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_barcode_listener: ^0.1.4
-  flutter_dotenv: ^5.1.0
   flutter_local_notifications: ^18.0.1
   flutter_riverpod: ^2.5.1
   flutter_secure_storage: ^10.0.0-beta.4
+  flutter_svg: ^2.3.0
   flutter_udid: ^4.0.0
   fluttertoast: ^8.2.6
   freezed_annotation: ^2.4.1
@@ -52,6 +52,7 @@ dependencies:
   pdf: ^3.11.0
   permission_handler: ^11.3.1
   print_bluetooth_thermal: ^1.1.6
+  qr_flutter: ^4.1.0
   responsive_framework: ^1.1.1
   restart_app: ^1.8.3
   riverpod_annotation: ^2.3.5
@@ -86,8 +87,8 @@ dependency_overrides:
 flutter:
   uses-material-design: true
   assets:
-    - .env.stage
-    - .env
+    - env/env.json
+    - env/env.stage.json
     - assets/images/
     - assets/translations/
     - shorebird.yaml

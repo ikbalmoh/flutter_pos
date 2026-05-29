@@ -398,5 +398,9 @@
   "x_is_no_longer_active": "{} is No Longer Active",
   "reselect_customer_note": "Customer will be removed from this transaction",
   "print_receipt_as_image": "Print Receipt As Image",
-  "turn_on_this_option_if_receipt_is_blank": "Turn on this option if receipt is blank"
+  "turn_on_this_option_if_receipt_is_blank": "Turn on this option if receipt is blank",
+  "waiting_payment": "Waiting for Payment",
+  "payment_success": "Payment Success",
+  "other": "Other",
+  "please_recheck_x": "Please recheck the {}"
 }
