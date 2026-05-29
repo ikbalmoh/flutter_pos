@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/shift/model/shift_info.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 
@@ -24,10 +25,13 @@ class ActiveShiftInfo extends ConsumerWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     bool active = shiftInfo.closeShift == null;
 
+    final bool isOnline =
+        ref.watch(connectivityStatusProvider) == ConnectivityState.connected;
+
     void onPrint() async {
       try {
         await ref
-            .read(shiftProvider.notifier)
+            .read(shiftNotifierProvider.notifier)
             .printShift(shiftInfo, throwError: true);
       } catch (e) {
         AppAlert.toast(e.toString());
@@ -173,11 +177,17 @@ class ActiveShiftInfo extends ConsumerWidget {
                                           onCloseShift != null
                                               ? TextButton.icon(
                                                   style: TextButton.styleFrom(
-                                                      foregroundColor:
-                                                          Colors.white,
-                                                      backgroundColor:
-                                                          Colors.red),
-                                                  onPressed: onCloseShift,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    backgroundColor: Colors.red,
+                                                    disabledBackgroundColor:
+                                                        Colors.grey,
+                                                    disabledForegroundColor:
+                                                        Colors.white,
+                                                  ),
+                                                  onPressed: isOnline
+                                                      ? onCloseShift
+                                                      : null,
                                                   label: Text('close'.tr()),
                                                   icon: const Icon(
                                                     Icons.stop,

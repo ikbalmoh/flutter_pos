@@ -49,6 +49,7 @@ class _ConnectPrinterState extends ConsumerState<ConnectPrinter> {
           widget.device,
           size: size ?? PaperSize.mm58,
           cut: cut,
+          printImage: printImage,
         );
   }
 

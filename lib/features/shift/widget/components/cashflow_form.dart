@@ -164,7 +164,7 @@ class _CashflowFormState extends ConsumerState<CashflowForm> {
       if (widget.cashflow != null) {
         mapData["id"] = widget.cashflow?.id ?? '';
       }
-      ref.read(shiftInfoNotifierProvider.notifier).submitCashflow(
+      ref.read(currentShiftInfoNotifierProvider.notifier).submitCashflow(
         mapData,
         onSubmited: () {
           context.pop();

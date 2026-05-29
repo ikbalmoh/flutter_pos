@@ -14,7 +14,7 @@ class Printer {
     required this.macAddress,
     required this.size,
     required this.cut,
-    this.printImage = true,
+    this.printImage = false,
   });
 
   Map<String, dynamic> toJson() => {

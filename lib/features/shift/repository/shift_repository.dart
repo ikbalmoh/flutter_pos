@@ -10,6 +10,8 @@ import 'package:selleri/features/shift/api/shift_api.dart';
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
 import 'dart:developer';
 
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
+
 part 'shift_repository.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -24,9 +26,13 @@ abstract class ShiftRepositoryProtocol {
 
   Future<Shift?> startShift(Shift outlet);
 
-  Future<void> saveShift(Shift outlet);
+  Future<void> saveShift(Shift shift);
+
+  Future<void> saveShiftInfo(String shiftId, ShiftInfo shiftInfo);
 
   Future<Shift?> retrieveShift();
+
+  Future<Shift?> retrieveOfflineShift();
 }
 
 class ShiftRepository implements ShiftRepositoryProtocol {
@@ -61,14 +67,41 @@ class ShiftRepository implements ShiftRepositoryProtocol {
   @override
   Future<Shift?> retrieveShift() async {
     try {
-      final api = _ref.watch(shiftApiProvider);
+      log('Retrieving Online Shift...');
+      final connectivityState = _ref.read(connectivityStatusProvider);
+      if (connectivityState != ConnectivityState.connected) {
+        return retrieveOfflineShift();
+      }
       final outletRepository = _ref.read(outletRepositoryProvider);
-      const storage = FlutterSecureStorage();
       final outlet = await outletRepository.retrieveOutlet();
+      log('Shift Outlet: ${outlet?.outletName}');
       if (outlet == null) {
         return null;
       }
+      final api = _ref.read(shiftApiProvider);
+      final Shift? shift = await api.activeShift(outlet.idOutlet);
+      log('RETRIEVED ONLINE SHIFT: ${shift?.toJson()}');
+      return shift;
+    } catch (e) {
+      log('RETIREVE ONLINE SHIFT FAILED: ${e.toString()}');
+    }
+    return await retrieveOfflineShift();
+  }
+
+  @override
+  Future<Shift?> retrieveOfflineShift() async {
+    try {
+      log('Retrieving Offline Shift...');
+      final outletRepository = _ref.read(outletRepositoryProvider);
+      const storage = FlutterSecureStorage();
+      final outlet = await outletRepository.retrieveOutlet();
+      log('Shift Outlet: ${outlet?.outletName}');
+      if (outlet == null) {
+        return null;
+      }
+      // check connectivity
       String? stringShift = await storage.read(key: StoreKey.shift.name);
+      log('Local Current Shift: $stringShift');
       if (stringShift != null) {
         final shift = Shift.fromJson(json.decode(stringShift));
         if (outlet.idOutlet != shift.outletId) {
@@ -76,13 +109,10 @@ class ShiftRepository implements ShiftRepositoryProtocol {
           return null;
         }
         return shift;
-      } else {
-        log('CHECKING ACTIVE SHIFT FROM SERVER...');
-        final Shift? shift = await api.activeShift(outlet.idOutlet);
-        return shift;
       }
+      return null;
     } catch (e) {
-      log('RETIREVE CURRENT SHIFT FAILED: ${e.toString()}');
+      log('RETIREVE OFFLINE SHIFT FAILED: ${e.toString()}');
     }
     return null;
   }
@@ -106,11 +136,23 @@ class ShiftRepository implements ShiftRepositoryProtocol {
 
   Future<ShiftInfo?> getShiftInfo(String shiftId) async {
     try {
-      final api = _ref.watch(shiftApiProvider);
+      final api = _ref.read(shiftApiProvider);
       final shiftInfo = await api.shiftInfo(shiftId);
+      if (shiftInfo != null) {
+        await saveShiftInfo(shiftId, shiftInfo);
+      }
       return shiftInfo;
-    } catch (e, stackTrack) {
-      log('SHIFT INFO ERROR: $e => $stackTrack');
+    } catch (e, _) {
+      log('SHIFT INFO ERROR: $e');
+      // check saved shift info
+      const storage = FlutterSecureStorage();
+      String? stringShiftInfo =
+          await storage.read(key: '${StoreKey.shiftInfo.name}[$shiftId]');
+      if (stringShiftInfo != null) {
+        final shiftInfo = ShiftInfo.fromJson(json.decode(stringShiftInfo));
+        log('OFFLINE SHIFT INFO: $shiftInfo');
+        return shiftInfo;
+      }
       rethrow;
     }
   }
@@ -132,6 +174,15 @@ class ShiftRepository implements ShiftRepositoryProtocol {
     final shiftJson = shift.toJson();
     final stringShift = json.encode(shiftJson);
     await storage.write(key: StoreKey.shift.name, value: stringShift);
+  }
+
+  @override
+  Future<void> saveShiftInfo(String shiftId, ShiftInfo shiftInfo) async {
+    const storage = FlutterSecureStorage();
+    final shiftJson = shiftInfo.toJson();
+    final stringShift = json.encode(shiftJson);
+    await storage.write(
+        key: '${StoreKey.shiftInfo.name}[$shiftId]', value: stringShift);
   }
 
   @override

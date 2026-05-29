@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/cart/provider/cart_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/shared/objectbox.dart';
@@ -21,7 +21,7 @@ class OfflineTransactions extends _$OfflineTransactions {
   }
 
   Future<void> storeCurrentTransaction() async {
-    final shift = ref.read(shiftProvider).value;
+    final shift = ref.read(shiftNotifierProvider).value;
     if (shift == null) {
       throw 'shift_not_opened'.tr();
     }
@@ -65,10 +65,15 @@ class OfflineTransactions extends _$OfflineTransactions {
     state = const AsyncLoading();
 
     try {
+      final shift =
+          await ref.read(shiftNotifierProvider.notifier).getCurrentShift();
+      if (shift == null) {
+        throw 'shift_inactive'.tr();
+      }
       log('SYNC OFFLINE TRANSACTIONS: ${transactions.map(
         (tr) => {
           'transaction_no': tr.transactionNo,
-          'shiftId': tr.shiftId,
+          'shiftId': shift.id,
           'items': tr.items.length,
           'total': tr.grandTotal,
         },

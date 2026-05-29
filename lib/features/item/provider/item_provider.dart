@@ -161,36 +161,41 @@ class Items extends _$Items {
     if (connection == ConnectivityState.disconnected) {
       return;
     }
-    final categories = await objectBox.categoryBox.getAllAsync();
-    log('categories: ${categories.length}');
-    if (categories.isEmpty || state.value == null || state.value!.isEmpty) {
-      await loadItems(progressCallback: (status) {
-        log('SYNC ITEMS PROGRESS: loaded ${status.items?.length} items');
-      });
-    } else {
-      log('SYNC ITEMS');
+    try {
+      final categories = await objectBox.categoryBox.getAllAsync();
+      log('categories: ${categories.length}');
+      if (categories.isEmpty || state.value == null || state.value!.isEmpty) {
+        await loadItems(progressCallback: (status) {
+          log('SYNC ITEMS PROGRESS: loaded ${status.items?.length} items');
+        });
+      } else {
+        log('SYNC ITEMS');
 
-      List<Item> items = await ref
-          .read(itemRepositoryProvider)
-          .fetchItems(fromLastSync: true, page: 1);
+        List<Item> items = await ref
+            .read(itemRepositoryProvider)
+            .fetchItems(fromLastSync: true, page: 1);
 
-      objectBox.putItems(items);
-      log('SYNCED ITEMS: $items');
-      if (items.isNotEmpty) {
-        List<String> messages = [items[0].itemName];
-        if (items.length > 2) {
-          messages.add(', ${items[1].itemName}');
-          messages
-              .add('and_x_others'.tr(args: [(items.length - 2).toString()]));
-        } else if (items.length > 1) {
-          messages.add("${'and'.tr()} ${items[1].itemName}");
+        objectBox.putItems(items);
+        log('SYNCED ITEMS: $items');
+        if (items.isNotEmpty) {
+          List<String> messages = [items[0].itemName];
+          if (items.length > 2) {
+            messages.add(', ${items[1].itemName}');
+            messages
+                .add('and_x_others'.tr(args: [(items.length - 2).toString()]));
+          } else if (items.length > 1) {
+            messages.add("${'and'.tr()} ${items[1].itemName}");
+          }
+          messages.add('synced'.tr().toLowerCase());
+          AppAlert.toast(messages.join(' ')); 
         }
-        messages.add('synced'.tr().toLowerCase());
-        AppAlert.toast(messages.join(' '));
       }
-    }
 
-    await ref.read(promotionsProvider.notifier).loadPromotions();
+      await ref.read(promotionsProvider.notifier).loadPromotions();
+    } catch (e, st) {
+      log('SYNC ITEMS ERROR: $e => $st');
+      return;
+    }
   }
 
   double getItemStock(String idItem, {int? variantId}) {

@@ -8,7 +8,7 @@ import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/fcm/provider/fcm_provider.dart';
 import 'package:selleri/features/item/provider/item_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'auth_state.dart';
 
 export 'auth_state.dart';
@@ -60,7 +60,7 @@ class Auth extends _$Auth {
 
   Future<void> logout({bool? skipLogout}) async {
     ref.read(fcmProvider.notifier).unsubscribe();
-    ref.read(shiftProvider.notifier).shiftLoading();
+    ref.read(shiftNotifierProvider.notifier).shiftLoading();
     try {
       log('API LOGOUT');
       if (skipLogout == true) {
@@ -80,7 +80,7 @@ class Auth extends _$Auth {
       ref.invalidate(itemsProvider);
       ref.invalidate(cartProvider);
       ref.invalidate(outletProvider);
-      ref.invalidate(shiftProvider);
+      ref.invalidate(shiftNotifierProvider);
     });
   }
 }

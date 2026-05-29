@@ -10,7 +10,7 @@ import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/features/cart/widget/components/cancel_transaction_form.dart';
 import 'package:selleri/features/cart/widget/components/order_summary/order_summary.dart';
@@ -131,7 +131,7 @@ class _TransactionDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-    final currentShift = ref.read(shiftProvider).value;
+    final currentShift = ref.read(shiftNotifierProvider).value;
     final transaction = ref
         .watch(transactionsProvider)
         .value

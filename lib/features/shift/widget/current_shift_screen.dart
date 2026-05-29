@@ -7,7 +7,8 @@ import 'package:selleri/features/shift/model/shift.dart' as model;
 import 'package:selleri/features/shift/model/shift_cashflow.dart';
 import 'package:selleri/features/shift/model/shift_info.dart';
 import 'package:selleri/features/shift/provider/current_shift_info_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/features/shift/widget/components/cashflow_form.dart';
 import 'package:selleri/features/shift/widget/components/close_shift_form.dart';
@@ -82,7 +83,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         });
 
     if (newAmount != shiftInfo.summary.startingCash) {
-      ref.read(shiftProvider.notifier).updateOpenAmount(newAmount);
+      ref.read(shiftNotifierProvider.notifier).updateOpenAmount(newAmount);
       AppAlert.toast('open_amount_updated_x'
           .tr(args: [CurrencyFormat.currency(newAmount)]));
     }
@@ -91,16 +92,20 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final model.Shift? shift = ref.watch(shiftProvider).value;
+    final model.Shift? shift = ref.watch(shiftNotifierProvider).value;
+
+    final bool isOnline =
+        ref.watch(connectivityStatusProvider) == ConnectivityState.connected;
 
     final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     return Scaffold(
       backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
       body: RefreshIndicator(
-        onRefresh: () => ref.read(shiftInfoNotifierProvider.notifier).reload(),
+        onRefresh: () =>
+            ref.read(currentShiftInfoNotifierProvider.notifier).reload(),
         child: shift != null
-            ? ref.watch(shiftInfoNotifierProvider).when(
+            ? ref.watch(currentShiftInfoNotifierProvider).when(
                   data: (data) {
                     if (isTablet) {
                       return Padding(
@@ -225,10 +230,9 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                 )
             : const ShiftInactive(),
       ),
-      floatingActionButton:
-          shift == null || ref.watch(shiftInfoNotifierProvider).value == null
-              ? null
-              : viewSummary == 'cashflow'
+      floatingActionButton: isOnline && viewSummary == 'cashflow'
+          ? ref.watch(currentShiftInfoNotifierProvider).when(
+              data: (data) => data != null
                   ? FloatingActionButton.extended(
                       onPressed: onShowCashflowForm,
                       label: Text(
@@ -237,6 +241,9 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
                       icon: const Icon(Icons.add),
                     )
                   : null,
+              error: (e, st) => null,
+              loading: () => null)
+          : null,
     );
   }
 

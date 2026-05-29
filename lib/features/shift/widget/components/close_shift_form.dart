@@ -17,7 +17,7 @@ import 'package:selleri/features/shift/model/shift_info.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
 import 'package:selleri/features/shift/provider/current_shift_info_provider.dart';
-import 'package:selleri/features/shift/provider/shift_provider.dart';
+import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/widget/generic/button_selection.dart';
 import 'package:selleri/shared/widget/generic/loading_placeholder.dart';
 import 'package:selleri/shared/widget/generic/picked_image.dart';
@@ -114,7 +114,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     });
     final summary = widget.shift.summary;
     try {
-      await ref.read(shiftProvider.notifier).closeShift(
+      await ref.read(shiftNotifierProvider.notifier).closeShift(
             widget.shift,
             closeAmount: amount,
             diffAmount: diffAmount(),
