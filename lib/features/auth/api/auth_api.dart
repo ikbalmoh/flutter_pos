@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/features/auth/model/token.dart';
 import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/utils/fetch.dart';
 import 'package:selleri/shared/router/api_url.dart';
@@ -35,6 +36,14 @@ class AuthApi {
       'email': email,
     });
     return res.data['success'] ?? false;
+  }
+
+  Future<Token> refreshToken(String refreshToken) async {
+    final res = await api.post(
+      ApiUrl.refreshToken,
+      data: {'refresh_token': refreshToken},
+    );
+    return Token.fromJson(res.data);
   }
 
   Future<void> logout() async {

@@ -10,7 +10,7 @@ part 'token_repository.g.dart';
 abstract class TokenRepositoryProtocol {
   Future<void> removeToken();
 
-  Future<void> saveToken(Token token);
+  Future<Token> saveToken(Token token);
 
   Future<Token?> fetchToken();
 }
@@ -39,8 +39,20 @@ class TokenRepository implements TokenRepositoryProtocol {
   }
 
   @override
-  Future<void> saveToken(Token token) async {
+  Future<Token> saveToken(Token token) async {
     const storage = FlutterSecureStorage();
-    await storage.write(key: StoreKey.token.name, value: token.toString());
+    // Compute absolute expiresAt from the API-supplied expiresIn so the value
+    // survives app restarts (expiresIn alone would be meaningless after relaunch).
+    final Token tokenToSave =
+        (token.expiresIn != null && token.expiresAt == null)
+            ? token.copyWith(
+                expiresAt: DateTime.now()
+                    .toUtc()
+                    .add(Duration(seconds: token.expiresIn!)),
+              )
+            : token;
+    await storage.write(
+        key: StoreKey.token.name, value: json.encode(tokenToSave.toJson()));
+    return tokenToSave;
   }
 }

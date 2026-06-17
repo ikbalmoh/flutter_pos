@@ -8,8 +8,10 @@ import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/auth/model/token.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
+import 'package:selleri/features/auth/repository/token_repository.dart';
 import 'package:selleri/shared/exeptions/offline_exeption.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
+import 'package:selleri/shared/router/api_url.dart';
 import 'package:validators/validators.dart';
 import 'package:selleri/shared/constants/app_config.dart';
 import 'dart:developer';
@@ -37,6 +39,18 @@ class CustomInterceptors extends Interceptor {
   final Dio dio;
   Function? onSessionExpired;
 
+  /// A bare Dio instance used exclusively for the refresh-token call so that
+  /// it does not go through CustomInterceptors and cause an infinite loop.
+  late final Dio _refreshDio = Dio(
+    BaseOptions(
+      baseUrl: AppConfig.baseUrl,
+      contentType: Headers.jsonContentType,
+      validateStatus: (status) => status != null,
+    ),
+  );
+
+  bool _isRefreshing = false;
+
   CustomInterceptors({
     required this.dio,
     this.onSessionExpired,
@@ -47,30 +61,80 @@ class CustomInterceptors extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     options.receiveTimeout = Duration(seconds: 120);
 
-    String? deviceId = await storage.read(key: StoreKey.device.name);
-    options.headers['device'] = deviceId;
-    options.headers['is-app'] = 1;
-
-    final packageInfo = await PackageInfo.fromPlatform();
-    options.headers['version'] = packageInfo.version;
-
-    // User agent
-    options.headers['User-Agent'] = 'okhttp/3.12.1';
-
-    String? tokenString = await storage.read(key: StoreKey.token.name);
+    // Read stored token, proactively refresh if expiring soon, then build
+    // all request headers via the shared _buildHeaders helper.
+    Token? token;
+    final tokenString = await storage.read(key: StoreKey.token.name);
     if (tokenString != null) {
-      final Token token = Token.fromJson(json.decode(tokenString));
-      options.headers['Authorization'] = 'Bearer ${token.accessToken}';
+      token = Token.fromJson(json.decode(tokenString));
+      log('[TOKEN] Expiring at ${token.expiresAt} - ${token.isExpiringSoon() ? 'EXPIRING' : 'VALID'}');
+      final isAuthEndpoint = options.path == ApiUrl.auth;
+      if (!isAuthEndpoint && token.isExpiringSoon() && !_isRefreshing) {
+        final refreshed = await _tryRefreshToken(token);
+        log('[TOKEN] New token will expire at ${refreshed?.expiresAt}');
+        if (refreshed != null) token = refreshed;
+      }
     }
 
-    String? outletString = await storage.read(key: StoreKey.outlet.name);
+    final headers = await _buildHeaders(token);
+    options.headers.addAll(headers);
+
+    return super.onRequest(options, handler);
+  }
+
+  /// Single source of truth for all request headers.
+  /// Used by both [onRequest] (main Dio) and [_tryRefreshToken] ([_refreshDio]
+  /// which bypasses the interceptor chain).
+  /// Pass [token] as null when no session exists.
+  Future<Map<String, dynamic>> _buildHeaders(Token? token) async {
+    final headers = <String, dynamic>{
+      'is-app': 1,
+      'User-Agent': 'okhttp/3.12.1',
+    };
+
+    final deviceId = await storage.read(key: StoreKey.device.name);
+    if (deviceId != null) headers['device'] = deviceId;
+
+    final packageInfo = await PackageInfo.fromPlatform();
+    headers['version'] = packageInfo.version;
+
+    if (token != null) {
+      headers['Authorization'] = 'Bearer ${token.accessToken}';
+    }
+
+    final outletString = await storage.read(key: StoreKey.outlet.name);
     if (outletString != null) {
       final jsonOutlet = json.decode(outletString);
       final outlet = Outlet.fromJson(jsonOutlet);
-      options.headers['outlet'] = outlet.idOutlet;
+      headers['outlet'] = outlet.idOutlet;
     }
 
-    return super.onRequest(options, handler);
+    return headers;
+  }
+
+  /// Calls POST /refresh-token and persists the new token.
+  /// Returns the new [Token] on success, or null on any error.
+  Future<Token?> _tryRefreshToken(Token currentToken) async {
+    try {
+      final headers = await _buildHeaders(currentToken);
+      final response = await _refreshDio.post(
+        ApiUrl.refreshToken,
+        data: {'refresh_token': currentToken.refreshToken},
+        options: Options(headers: headers),
+      );
+
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        final newToken = Token.fromJson(response.data);
+        final tokenToSave = await TokenRepository().saveToken(newToken);
+        log('Token refreshed successfully (expires at ${tokenToSave.expiresAt})');
+        return tokenToSave;
+      }
+    } catch (e) {
+      log('Token refresh failed: $e');
+    }
+    return null;
   }
 
   @override
@@ -89,10 +153,10 @@ class CustomInterceptors extends Interceptor {
 
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
-    bool json = err.response?.data != null
+    bool isJson = err.response?.data != null
         ? isJSON(jsonEncode(err.response?.data))
         : false;
-    if (!json) {
+    if (!isJson) {
       err.response?.data = {'msg': 'connection_error'};
     }
 
@@ -118,10 +182,31 @@ class CustomInterceptors extends Interceptor {
       );
     }
 
-    if (statusCode == 401) {
-      // Sign out
-      storage.delete(key: StoreKey.token.name);
-      log('Expired Session!');
+    final isAuthEndpoint = err.requestOptions.path == ApiUrl.auth;
+    if (statusCode == 401 && !_isRefreshing && !isAuthEndpoint) {
+      _isRefreshing = true;
+      final tokenString = await storage.read(key: StoreKey.token.name);
+      if (tokenString != null) {
+        final oldToken = Token.fromJson(json.decode(tokenString));
+        final newToken = await _tryRefreshToken(oldToken);
+        if (newToken != null) {
+          // Retry the original request with the refreshed access token.
+          final retryOptions = err.requestOptions
+            ..headers['Authorization'] = 'Bearer ${newToken.accessToken}';
+          try {
+            final retryResponse = await dio.fetch(retryOptions);
+            _isRefreshing = false;
+            return handler.resolve(retryResponse);
+          } catch (_) {
+            // Retry failed – fall through to sign-out below.
+          }
+        }
+      }
+
+      _isRefreshing = false;
+      // Refresh failed or no token stored – sign out.
+      await storage.delete(key: StoreKey.token.name);
+      log('Session expired, signing out.');
       if (onSessionExpired != null) {
         onSessionExpired!();
       }
