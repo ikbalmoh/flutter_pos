@@ -112,6 +112,20 @@ definitions:
       name: Shorebird patch iOS
       script: shorebird patch ios --flavor=stage  --release-version=$RELEASE_VERSION --allow-asset-diffs -- --export-options-plist=/Users/builder/export_options.plist
 
+    - &upload_symbols_android_prod
+      name: Upload Crashlytics symbols Android Prod
+      script: |
+        echo $FIREBASE_SERVICE_ACCOUNT > /tmp/firebase_credentials.json
+        export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase_credentials.json
+        firebase crashlytics:symbols:upload --app=1:107680786292:android:33ce365eb80fcee83cee21 ./build/app/outputs/bundle/prodRelease/symbols
+
+    - &upload_symbols_android_stage
+      name: Upload Crashlytics symbols Android Stage
+      script: |
+        echo $FIREBASE_SERVICE_ACCOUNT > /tmp/firebase_credentials.json
+        export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase_credentials.json
+        firebase crashlytics:symbols:upload --app=1:957311922583:android:d61a59e4b45bfdd62794d2 ./build/app/outputs/bundle/stageRelease/symbols
+
   publishing_notifications: &publishing_notifications
     email:
       recipients:
@@ -132,6 +146,7 @@ workflows:
       - *build_runner
       - *flutter_analyze
       - *shorebird_android_release
+      - *upload_symbols_android_prod
 
     artifacts:
       - build/**/outputs/**/*.apk
@@ -196,6 +211,7 @@ workflows:
       - *flutter_analyze
       - *setup_local_properties
       - *shorebird_android_release_stage
+      - *upload_symbols_android_stage
 
     artifacts:
       - build/**/outputs/**/*.apk

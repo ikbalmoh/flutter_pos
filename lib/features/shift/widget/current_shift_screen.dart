@@ -44,6 +44,14 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     with AutomaticKeepAliveClientMixin {
   String viewSummary = 'cashflow';
 
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.invalidate(shiftNotifierProvider);
+    });
+  }
+
   void onShowCashflowForm({ShiftCashflow? cashflow}) {
     double sheetHeight = MediaQuery.of(context).size.height * 0.8;
 
