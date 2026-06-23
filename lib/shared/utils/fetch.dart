@@ -173,12 +173,20 @@ class CustomInterceptors extends Interceptor {
     err = err.copyWith(message: message);
 
     int? statusCode = err.response?.statusCode;
-
-    if (statusCode != null && ![401, 500].contains(statusCode)) {
+    if (err.requestOptions.path != ApiUrl.auth) {
       FirebaseCrashlytics.instance.recordError(
-        err.message,
+        {
+          'statusCode': statusCode,
+          'message': err.message,
+          'url': err.requestOptions.path,
+          'method': err.requestOptions.method,
+          'request': err.requestOptions.data,
+          'headers': err.requestOptions.headers,
+          'response': err.response?.data,
+        },
         err.stackTrace,
         fatal: false,
+        printDetails: true,
       );
     }
 
