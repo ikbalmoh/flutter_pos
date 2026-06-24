@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -252,6 +253,12 @@ class HomeMenu extends ConsumerWidget {
           ),
           style: menuStyle,
           child: Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
+        ),
+        MenuItemButton(
+          onPressed: () => FirebaseCrashlytics.instance.crash(),
+          leadingIcon: Icon(Icons.close, color: Colors.red),
+          style: menuStyle,
+          child: Text('Test Crash'),
         ),
       ],
     );

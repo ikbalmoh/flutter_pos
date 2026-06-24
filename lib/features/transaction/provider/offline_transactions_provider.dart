@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -14,6 +17,9 @@ part 'offline_transactions_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class OfflineTransactions extends _$OfflineTransactions {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseCrashlytics crashlytics = FirebaseCrashlytics.instance;
+
   @override
   Future<List<model.Cart>> build() async {
     final offlineTransactions = await objectBox.offlineTransactions();
@@ -22,14 +28,8 @@ class OfflineTransactions extends _$OfflineTransactions {
   }
 
   Future<void> storeCurrentTransaction() async {
-    final shift = ref.read(shiftNotifierProvider).value;
-    if (shift == null) {
-      throw 'shift_not_opened'.tr();
-    }
-
     final cart = ref.read(cartProvider);
     final transaction = cart.copyWith(
-      shiftId: shift.id,
       isOffline: true,
     );
 
@@ -48,14 +48,22 @@ class OfflineTransactions extends _$OfflineTransactions {
       final stored = await objectBox.putTransaction(transaction);
       state = AsyncData(stored);
       ref.read(transactionsProvider.notifier).appendTransaction(transaction);
-    } catch (e) {
-      log('Error storing offline transaction: $e');
+    } catch (e, stack) {
+      log('Error storing offline transaction: $e\n$stack');
+      crashlytics.recordError(
+        'Error storing offline transaction: $e',
+        stack,
+        fatal: false,
+        information: [
+          transaction.toTransactionPayload(),
+        ],
+      );
       state = AsyncData(currentTransactions);
       throw 'Failed to store offline transaction: $e';
     }
   }
 
-  Future<void> sync() async {
+  Future<void> syncOfflineTransactions() async {
     if (state.isLoading) return;
 
     final transactions = state.value ?? [];
@@ -79,12 +87,29 @@ class OfflineTransactions extends _$OfflineTransactions {
           'total': tr.grandTotal,
         },
       )}');
+
+      analytics.logEvent(
+        name: 'sync_transaction_start',
+        parameters: {
+          'transaction_count': transactions.length,
+          'transactions': transactions
+              .map((tr) => jsonEncode(tr.toTransactionPayload()))
+              .toList(),
+        },
+      );
+
       final syncedTransactions =
           // ignore: avoid_manual_providers_as_generated_provider_dependency
           await ref.read(transactionApiProvider).storeTransaction(transactions);
 
       log('SYNC TRANSACTIONS SUCCESS: ${syncedTransactions.map((tr) => tr.transactionNo)}');
       if (syncedTransactions.isNotEmpty) {
+        analytics.logEvent(
+          name: 'sync_transaction_success',
+          parameters: {
+            'transaction_count': syncedTransactions.length,
+          },
+        );
         final ids = syncedTransactions
             .map((transaction) => transaction.transactionNo)
             .toList();
@@ -96,9 +121,27 @@ class OfflineTransactions extends _$OfflineTransactions {
       }
       state = AsyncData(await objectBox.offlineTransactions());
       ref.invalidate(currentShiftInfoNotifierProvider);
+      analytics.logEvent(
+        name: 'sync_transaction_finish',
+        parameters: {
+          'transaction_count': transactions.length,
+          'synced_count': syncedTransactions.length,
+        },
+      );
       return;
     } catch (e, st) {
       log('SYNC TRANSACTIONS FAILED: $e => $st');
+      crashlytics.recordError(
+        "Sync transactions failed: $e",
+        st,
+        fatal: false,
+        information: [
+          transactions
+              .map((tr) => tr.toTransactionPayload().toString())
+              .toList()
+              .toString(),
+        ],
+      );
       state = AsyncData(transactions);
       rethrow;
     }

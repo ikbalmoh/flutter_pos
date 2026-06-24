@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model show Cart;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -30,6 +32,7 @@ import 'package:selleri/features/promotion/provider/promotions_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
 import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/table/provider/tables_provider.dart';
+import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'dart:developer';
@@ -39,6 +42,9 @@ part 'cart_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class Cart extends _$Cart {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseCrashlytics crashlytics = FirebaseCrashlytics.instance;
+
   @override
   model.Cart build() {
     return model.Cart.initial();
@@ -188,6 +194,15 @@ class Cart extends _$Cart {
     items.add(itemCart);
     state = state.copyWith(items: items);
     calculateCart();
+
+    analytics.logAddToCart(items: [
+      AnalyticsEventItem(
+        itemName: itemCart.itemName,
+        itemId: itemCart.idItem,
+        price: itemCart.price,
+        quantity: itemCart.quantity.toInt(),
+      )
+    ]);
   }
 
   void addExtraItemCart(ItemCart item) async {
@@ -470,15 +485,40 @@ class Cart extends _$Cart {
 
   Future<void> storeTransaction() async {
     try {
+      final isConnected =
+          ref.read(connectivityStatusProvider) == ConnectivityState.connected;
+
+      if (!isConnected) {
+        crashlytics.recordError(
+            'Store transaction aborted! connectivity is disconnected', null,
+            fatal: false, information: [state.toTransactionPayload()]);
+        return;
+      }
+
       final api = ref.watch(transactionApiProvider);
 
       final shift = ref.read(shiftNotifierProvider).value;
       if (shift == null) {
+        crashlytics.recordError(
+          'Store transaction failed because shift is null, store transaction aborted',
+          null,
+          fatal: false,
+        );
         throw 'shift_not_opened'.tr();
       }
 
       final String transactionNo =
           state.transactionNo.trim().replaceFirst('BILL-', '').trim();
+
+      analytics.logEvent(
+        name: 'store_transaction',
+        parameters: {
+          'transaction': state.toTransactionPayload().toString(),
+          'transaction_no': transactionNo,
+          'shift_id': shift.id,
+          'shift_code': shift.codeShift ?? '',
+        },
+      );
 
       final res = await api.storeTransaction([
         state.copyWith(
@@ -486,8 +526,6 @@ class Cart extends _$Cart {
           shiftId: shift.id,
         )
       ]);
-
-      log('TRANSACTIONS: $res');
 
       if (res.isEmpty) {
         throw 'transaction_error'.tr();

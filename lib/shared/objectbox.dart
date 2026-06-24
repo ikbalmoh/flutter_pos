@@ -377,7 +377,6 @@ class ObjectBox {
       List<int> ids = itemBox.putMany(items);
       if (kDebugMode) {
         print('PUT ${ids.length} ITEMS');
-        log('$items');
       }
       List<ItemVariant> itemVariants = [];
       List<int> removeVariants = [];
@@ -440,7 +439,6 @@ class ObjectBox {
     }
     if (kDebugMode) {
       print('PUT ITEM PACKAGES');
-      log('$itemPackages');
     }
     List<int> ids = itemPackageBox.putMany(itemPackages);
     if (kDebugMode) {
@@ -451,7 +449,6 @@ class ObjectBox {
   void putVariants(List<ItemVariant> variants) {
     if (kDebugMode) {
       print('PUT VARIANTS');
-      log('$variants');
     }
     List<int> ids = itemVariantBox.putMany(variants);
     if (kDebugMode) {

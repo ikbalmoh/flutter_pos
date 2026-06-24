@@ -2,6 +2,8 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
@@ -20,6 +22,9 @@ part 'transactions_provider.g.dart';
 
 @Riverpod(keepAlive: false)
 class Transactions extends _$Transactions {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseCrashlytics crashlytics = FirebaseCrashlytics.instance;
+
   @override
   FutureOr<Pagination<Cart>> build() async {
     return await _fetchPage(page: 1, currentShift: true);
@@ -70,8 +75,6 @@ class Transactions extends _$Transactions {
         table: table,
       );
 
-      log('Transaction Data: ${transactions.data}');
-
       if (page == 1) {
         transactionsData += (transactions.data ?? []);
         transactions = transactions.copyWith(data: transactionsData);
@@ -83,9 +86,19 @@ class Transactions extends _$Transactions {
       return transactions;
     } on DioException catch (e, stack) {
       log('Load Transaction Network Error: $e\n$stack');
+      crashlytics.recordError(
+        'Load Transaction Network Error: $e',
+        stack,
+        fatal: false,
+      );
       rethrow;
     } catch (e, stack) {
       log('Load Transaction Error: $e\n$stack');
+      crashlytics.recordError(
+        'Load Transaction Error: $e',
+        stack,
+        fatal: false,
+      );
       return Pagination(
         currentPage: 0,
         lastPage: 0,
@@ -242,10 +255,20 @@ class Transactions extends _$Transactions {
     if (state.value == null) {
       return;
     }
+
     state = AsyncData(
       state.value!.copyWith(
         data: [transaction] + (state.value?.data ?? []),
       ),
+    );
+
+    analytics.logEvent(
+      name: 'add_transaction',
+      parameters: {
+        'transaction_no': transaction.transactionNo,
+        'shift_id': transaction.shiftId,
+        'transaction': transaction.toTransactionPayload().toString(),
+      },
     );
   }
 

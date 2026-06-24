@@ -35,7 +35,7 @@ class _AppState extends ConsumerState<App> {
       (previous, next) {
         if (previous == ConnectivityState.disconnected &&
             next == ConnectivityState.connected) {
-          ref.read(offlineTransactionsProvider.notifier).sync();
+          ref.read(offlineTransactionsProvider.notifier).syncOfflineTransactions();
         }
       },
     );
@@ -51,7 +51,7 @@ class _AppState extends ConsumerState<App> {
             next.value.isNotEmpty &&
             isConnected &&
             next.value != previous?.value) {
-          ref.read(offlineTransactionsProvider.notifier).sync();
+          ref.read(offlineTransactionsProvider.notifier).syncOfflineTransactions();
         }
       },
     );

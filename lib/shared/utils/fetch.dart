@@ -67,11 +67,9 @@ class CustomInterceptors extends Interceptor {
     final tokenString = await storage.read(key: StoreKey.token.name);
     if (tokenString != null) {
       token = Token.fromJson(json.decode(tokenString));
-      log('[TOKEN] Expiring at ${token.expiresAt} - ${token.isExpiringSoon() ? 'EXPIRING' : 'VALID'}');
       final isAuthEndpoint = options.path == ApiUrl.auth;
       if (!isAuthEndpoint && token.isExpiringSoon() && !_isRefreshing) {
         final refreshed = await _tryRefreshToken(token);
-        log('[TOKEN] New token will expire at ${refreshed?.expiresAt}');
         if (refreshed != null) token = refreshed;
       }
     }

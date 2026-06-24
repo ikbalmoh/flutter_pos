@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:selleri/features/outlet/model/outlet.dart' as model;
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
@@ -19,6 +21,9 @@ class Outlet extends _$Outlet {
   late final OutletRepository _outletRepository =
       ref.read(outletRepositoryProvider);
 
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseCrashlytics crashlytics = FirebaseCrashlytics.instance;
+
   @override
   FutureOr<OutletState> build() async {
     final outlet = await _outletRepository.retrieveOutlet();
@@ -32,6 +37,14 @@ class Outlet extends _$Outlet {
   }
 
   Future<void> selectOutlet(model.Outlet outlet) async {
+    analytics.logEvent(
+      name: 'select_outlet',
+      parameters: {
+        'outlet_name': outlet.outletName,
+        'outlet_id': outlet.idOutlet,
+      },
+    );
+
     var progress = OutletLoading(
       config: false,
       message: 'preparing_outlet'.tr(),
@@ -39,6 +52,7 @@ class Outlet extends _$Outlet {
       items: [],
     );
     state = AsyncData(progress.copyWith(config: true));
+
     try {
       await _outletRepository.fetchOutletInfo(outlet.idOutlet);
       final config = await _outletRepository.fetchOutletConfig(outlet.idOutlet);
@@ -57,6 +71,19 @@ class Outlet extends _$Outlet {
       if (kDebugMode) {
         log("SELECT OUTLET ERROR: $e\n$stacktrace");
       }
+      analytics.logEvent(
+        name: 'select_outlet_failed',
+        parameters: {
+          'outlet_name': outlet.outletName,
+          'outlet_id': outlet.idOutlet,
+          'error': e.toString(),
+        },
+      );
+      crashlytics.recordError(
+        e,
+        stacktrace,
+        fatal: false,
+      );
       state = AsyncData(OutletFailure(message: "$e"));
     }
   }
@@ -69,6 +96,11 @@ class Outlet extends _$Outlet {
         return;
       }
       log('SYNC CONFIG: $only');
+      analytics.logEvent(
+        name: 'sync_config',
+        parameters: {'only': only?.join(',') ?? ''},
+      );
+
       final outletState = state.value as OutletSelected;
       state = AsyncData(OutletSelected(
         outlet: outletState.outlet,

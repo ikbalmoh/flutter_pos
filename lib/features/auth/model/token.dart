@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -39,7 +38,6 @@ class Token with _$Token {
   bool isExpiringSoon({int thresholdSeconds = 60}) {
     if (expiresAt == null) return false;
     final remaining = expiresAt!.difference(DateTime.now().toUtc()).inSeconds;
-    log('[TOKEN] expiresAt $expiresAt expiresIn $expiresIn remaining $remaining ');
     return remaining <= thresholdSeconds;
   }
 
