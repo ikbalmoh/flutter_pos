@@ -102,6 +102,7 @@
   "update_note": "Please do update to continue using Selleri",
   "apply_update": "Apply Update",
   "update_applied": "Update Applied",
+  "update_failed": "Update Failed",
   "downloading": "Downloading...",
   "please_wait": "Please Wait",
   "please_restart": "Please Restart",
