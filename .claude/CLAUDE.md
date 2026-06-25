@@ -15,17 +15,17 @@ fvm flutter run --flavor stage        # Run stage flavor
 
 # Code generation (required after changing models, providers, or ObjectBox entities)
 make runner                           # or: dart run build_runner build -d
-dart run build_runner watch -d        # Watch mode for continuous generation
+fvm dart run build_runner watch -d        # Watch mode for continuous generation
 
 # Apply patched packages
-dart run patch_package apply
+fvm dart run patch_package apply
 
 # Run tests
-flutter test                          # All tests
-flutter test test/path/to/test.dart   # Single test file
+fvm flutter test                          # All tests
+fvm flutter test test/path/to/test.dart   # Single test file
 
 # Static analysis
-flutter analyze
+fvm flutter analyze
 
 # Release & distribution (via Makefile)
 make op=release platform=android flavor=stage release_notes="description"
