@@ -20,6 +20,16 @@ class OfflineTransactions extends _$OfflineTransactions {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   FirebaseCrashlytics crashlytics = FirebaseCrashlytics.instance;
 
+  /// Set to true when a transaction is stored while a sync is in progress.
+  /// After the current sync completes, another cycle is triggered automatically.
+  bool _syncNeeded = false;
+
+  /// Tracks consecutive sync failures for exponential backoff on background
+  /// syncs. Reset to 0 on success.
+  int _retryCount = 0;
+  static const int _initialBackoffMs = 1000;
+  static const int _maxBackoffMs = 60000;
+
   @override
   Future<List<model.Cart>> build() async {
     final offlineTransactions = await objectBox.offlineTransactions();
@@ -43,11 +53,25 @@ class OfflineTransactions extends _$OfflineTransactions {
     );
 
     final List<model.Cart> currentTransactions = state.value ?? [];
-    await Future.delayed(const Duration(milliseconds: 500));
     try {
       final stored = await objectBox.putTransaction(transaction);
       state = AsyncData(stored);
-      ref.read(transactionsProvider.notifier).appendTransaction(transaction);
+
+      try {
+        // ignore: avoid_manual_providers_as_generated_provider_dependency
+        ref
+            .read(transactionsProvider.notifier)
+            .appendTransaction(transaction);
+      } catch (e, stack) {
+        // Non-fatal — ObjectBox write is already committed.
+        // The in-memory provider will reconcile on its next refresh.
+        log('appendTransaction failed (non-fatal): $e\n$stack');
+      }
+
+      // Flag for re-sync if a sync cycle is currently in flight.
+      if (state.isLoading) {
+        _syncNeeded = true;
+      }
     } catch (e, stack) {
       log('Error storing offline transaction: $e\n$stack');
       crashlytics.recordError(
@@ -63,15 +87,39 @@ class OfflineTransactions extends _$OfflineTransactions {
     }
   }
 
+  /// Background sync with exponential backoff.
+  ///
+  /// Intended for use by connectivity and offline-list listeners — errors
+  /// are logged but not propagated to avoid unhandled exceptions in
+  /// fire-and-forget contexts.
+  Future<void> syncBackground() async {
+    await _applyBackoffIfNeeded();
+    try {
+      await syncOfflineTransactions();
+    } catch (_) {
+      // Background sync errors are expected (no network, shift closed, etc.),
+      // and are already logged inside syncOfflineTransactions.
+      // The listener will retry on the next connectivity change or manual
+      // trigger.
+    }
+  }
+
+  /// Syncs all pending offline transactions to the server.
+  ///
+  /// Safe to call from both background listeners (via [syncBackground]) and
+  /// user-initiated actions (shift close, manual sync button). Errors are
+  /// propagated to the caller so UI-facing callers can show feedback.
   Future<void> syncOfflineTransactions() async {
     if (state.isLoading) return;
 
     final transactions = state.value ?? [];
     if (transactions.isEmpty) {
+      _retryCount = 0;
       return;
     }
 
     state = const AsyncLoading();
+    _syncNeeded = false;
 
     try {
       final shift =
@@ -79,6 +127,7 @@ class OfflineTransactions extends _$OfflineTransactions {
       if (shift == null) {
         throw 'shift_inactive'.tr();
       }
+
       log('SYNC OFFLINE TRANSACTIONS: ${transactions.map(
         (tr) => {
           'transaction_no': tr.transactionNo,
@@ -92,9 +141,6 @@ class OfflineTransactions extends _$OfflineTransactions {
         name: 'sync_transaction_start',
         parameters: {
           'transaction_count': transactions.length,
-          'transactions': transactions
-              .map((tr) => jsonEncode(tr.toTransactionPayload()))
-              .toList(),
         },
       );
 
@@ -113,14 +159,15 @@ class OfflineTransactions extends _$OfflineTransactions {
         final ids = syncedTransactions
             .map((transaction) => transaction.transactionNo)
             .toList();
-        log('delete transactions $ids');
         await objectBox.deleteOfflineTransactions(ids);
         ref
             .read(transactionsProvider.notifier)
             .updateTransactions(syncedTransactions);
       }
+
       state = AsyncData(await objectBox.offlineTransactions());
       ref.invalidate(currentShiftInfoNotifierProvider);
+
       analytics.logEvent(
         name: 'sync_transaction_finish',
         parameters: {
@@ -128,9 +175,17 @@ class OfflineTransactions extends _$OfflineTransactions {
           'synced_count': syncedTransactions.length,
         },
       );
-      return;
+
+      _retryCount = 0;
+
+      // If new transactions arrived during this sync, retrigger immediately.
+      if (_syncNeeded) {
+        _syncNeeded = false;
+        syncOfflineTransactions();
+      }
     } catch (e, st) {
-      log('SYNC TRANSACTIONS FAILED: $e => $st');
+      _retryCount++;
+      log('SYNC TRANSACTIONS FAILED (attempt $_retryCount): $e => $st');
       crashlytics.recordError(
         "Sync transactions failed: $e",
         st,
@@ -150,5 +205,16 @@ class OfflineTransactions extends _$OfflineTransactions {
   Future<void> delete(List<String> transactionNos) async {
     await objectBox.deleteOfflineTransactions(transactionNos);
     ref.invalidateSelf();
+  }
+
+  /// Waits with exponential backoff when retrying a failed background sync.
+  /// Only applies when [_retryCount] > 0 (i.e. after a previous failure).
+  Future<void> _applyBackoffIfNeeded() async {
+    if (_retryCount > 0) {
+      final delay = (_initialBackoffMs * (1 << (_retryCount - 1)))
+          .clamp(0, _maxBackoffMs);
+      log('Sync retry backoff: ${delay}ms (attempt $_retryCount)');
+      await Future.delayed(Duration(milliseconds: delay));
+    }
   }
 }

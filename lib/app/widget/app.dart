@@ -35,7 +35,7 @@ class _AppState extends ConsumerState<App> {
       (previous, next) {
         if (previous == ConnectivityState.disconnected &&
             next == ConnectivityState.connected) {
-          ref.read(offlineTransactionsProvider.notifier).syncOfflineTransactions();
+          ref.read(offlineTransactionsProvider.notifier).syncBackground();
         }
       },
     );
