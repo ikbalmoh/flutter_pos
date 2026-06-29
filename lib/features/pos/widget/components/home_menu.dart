@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -79,8 +78,8 @@ class HomeMenu extends ConsumerWidget {
         elevation: WidgetStateProperty.all<double>(15),
         shadowColor: WidgetStateProperty.all<Color>(Colors.grey.shade50),
       ),
-      alignmentOffset:
-          Offset(ref.watch(shiftNotifierProvider).value == null ? 0 : -160, -10),
+      alignmentOffset: Offset(
+          ref.watch(shiftNotifierProvider).value == null ? 0 : -160, -10),
       builder:
           (BuildContext context, MenuController controller, Widget? child) {
         return IconButton(
