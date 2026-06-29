@@ -254,12 +254,6 @@ class HomeMenu extends ConsumerWidget {
           style: menuStyle,
           child: Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
         ),
-        MenuItemButton(
-          onPressed: () => FirebaseCrashlytics.instance.crash(),
-          leadingIcon: Icon(Icons.close, color: Colors.red),
-          style: menuStyle,
-          child: Text('Test Crash'),
-        ),
       ],
     );
   }

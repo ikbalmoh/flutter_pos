@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -59,9 +58,7 @@ class OfflineTransactions extends _$OfflineTransactions {
 
       try {
         // ignore: avoid_manual_providers_as_generated_provider_dependency
-        ref
-            .read(transactionsProvider.notifier)
-            .appendTransaction(transaction);
+        ref.read(transactionsProvider.notifier).appendTransaction(transaction);
       } catch (e, stack) {
         // Non-fatal — ObjectBox write is already committed.
         // The in-memory provider will reconcile on its next refresh.
@@ -122,8 +119,7 @@ class OfflineTransactions extends _$OfflineTransactions {
     _syncNeeded = false;
 
     try {
-      final shift =
-          await ref.read(shiftNotifierProvider.notifier).getCurrentShift();
+      final shift = await ref.read(shiftNotifierProvider.future);
       if (shift == null) {
         throw 'shift_inactive'.tr();
       }
