@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -52,10 +54,52 @@ class AuthRepository implements AuthRepositoryProtocol {
       }
       return const AuthFailure(message: 'user authentication failed');
     } on DioException catch (e) {
+      FirebaseAnalytics.instance.logEvent(
+        name: 'login_failed',
+        parameters: {
+          'username': username,
+          'error_type': 'DioException',
+          'status_code': e.response?.statusCode?.toString() ?? 'unknown',
+          'message': e.message ?? 'unknown',
+        },
+      );
       return AuthFailure(message: e.message!);
-    } on PlatformException catch (e) {
+    } on PlatformException catch (e, st) {
       await tokenRepository.removeToken();
+      FirebaseAnalytics.instance.logEvent(
+        name: 'login_failed',
+        parameters: {
+          'username': username,
+          'error_type': 'PlatformException',
+          'message': e.message ?? 'unknown',
+        },
+      );
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        st,
+        reason: 'Login PlatformException',
+        fatal: false,
+        information: ['username: $username'],
+      );
       return AuthFailure(message: e.message ?? e.toString());
+    } catch (e, st) {
+      log('Login failed unexpectedly: $e');
+      FirebaseAnalytics.instance.logEvent(
+        name: 'login_failed',
+        parameters: {
+          'username': username,
+          'error_type': e.runtimeType.toString(),
+          'message': e.toString(),
+        },
+      );
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        st,
+        reason: 'Login unexpected error',
+        fatal: false,
+        information: ['username: $username'],
+      );
+      return AuthFailure(message: e.toString());
     }
   }
 
@@ -80,7 +124,8 @@ class AuthRepository implements AuthRepositoryProtocol {
       await storage.write(key: StoreKey.user.name, value: user.toString());
       return user;
     } on DioException catch (e) {
-      throw e.message!;
+      log('fetch user DioException: ${e.message}');
+      rethrow;
     } catch (e) {
       log('fetch user failed: $e');
       storage.delete(key: StoreKey.user.name);

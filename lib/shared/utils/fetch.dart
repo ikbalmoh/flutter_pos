@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -171,22 +172,32 @@ class CustomInterceptors extends Interceptor {
     err = err.copyWith(message: message);
 
     int? statusCode = err.response?.statusCode;
-    if (err.requestOptions.path != ApiUrl.auth) {
-      FirebaseCrashlytics.instance.recordError(
-        {
-          'statusCode': statusCode,
-          'message': err.message,
-          'url': err.requestOptions.path,
-          'method': err.requestOptions.method,
-          'request': err.requestOptions.data,
-          'headers': err.requestOptions.headers,
-          'response': err.response?.data,
-        },
-        err.stackTrace,
-        fatal: false,
-        printDetails: true,
-      );
-    }
+
+    // Record all API errors to Analytics & Crashlytics
+    FirebaseAnalytics.instance.logEvent(
+      name: 'api_error',
+      parameters: {
+        'status_code': statusCode?.toString() ?? 'unknown',
+        'url': err.requestOptions.path,
+        'method': err.requestOptions.method,
+        'message': (message.length > 100 ? message.substring(0, 100) : message),
+      },
+    );
+    FirebaseCrashlytics.instance.recordError(
+      {
+        'statusCode': statusCode,
+        'message': err.message,
+        'url': err.requestOptions.path,
+        'method': err.requestOptions.method,
+        'request': err.requestOptions.data,
+        'headers': err.requestOptions.headers,
+        'response': err.response?.data,
+      },
+      err.stackTrace,
+      reason: 'API Error: ${err.requestOptions.method} ${err.requestOptions.path} [$statusCode]',
+      fatal: false,
+      printDetails: true,
+    );
 
     final isAuthEndpoint = err.requestOptions.path == ApiUrl.auth;
     if (statusCode == 401 && !_isRefreshing && !isAuthEndpoint) {
