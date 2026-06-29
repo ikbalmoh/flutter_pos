@@ -76,7 +76,7 @@ class OfflineTransactions extends _$OfflineTransactions {
         stack,
         fatal: false,
         information: [
-          transaction.toTransactionPayload(),
+          (await transaction.toTransactionPayload()).toString(),
         ],
       );
       state = AsyncData(currentTransactions);
@@ -187,9 +187,8 @@ class OfflineTransactions extends _$OfflineTransactions {
         st,
         fatal: false,
         information: [
-          transactions
-              .map((tr) => tr.toTransactionPayload().toString())
-              .toList()
+          (await Future.wait(
+                  transactions.map((tr) => tr.toTransactionPayload())))
               .toString(),
         ],
       );

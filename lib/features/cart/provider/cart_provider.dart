@@ -491,7 +491,7 @@ class Cart extends _$Cart {
       if (!isConnected) {
         crashlytics.recordError(
             'Store transaction aborted! connectivity is disconnected', null,
-            fatal: false, information: [state.toTransactionPayload()]);
+            fatal: false, information: [(await state.toTransactionPayload()).toString()]);
         return;
       }
 
@@ -513,7 +513,7 @@ class Cart extends _$Cart {
       analytics.logEvent(
         name: 'store_transaction',
         parameters: {
-          'transaction': state.toTransactionPayload().toString(),
+          'transaction': (await state.toTransactionPayload()).toString(),
           'transaction_no': transactionNo,
           'shift_id': shift.id,
           'shift_code': shift.codeShift ?? '',

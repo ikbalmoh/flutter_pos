@@ -251,7 +251,7 @@ class Transactions extends _$Transactions {
     }
   }
 
-  void appendTransaction(Cart transaction) {
+  Future<void> appendTransaction(Cart transaction) async {
     if (state.value == null) {
       return;
     }
@@ -262,12 +262,13 @@ class Transactions extends _$Transactions {
       ),
     );
 
+    final payload = await transaction.toTransactionPayload();
     analytics.logEvent(
       name: 'add_transaction',
       parameters: {
         'transaction_no': transaction.transactionNo,
         'shift_id': transaction.shiftId,
-        'transaction': transaction.toTransactionPayload().toString(),
+        'transaction': payload.toString(),
       },
     );
   }
