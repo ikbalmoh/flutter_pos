@@ -34,7 +34,7 @@ Dio fetch() {
   return dio;
 }
 
-class CustomInterceptors extends Interceptor {
+class CustomInterceptors extends QueuedInterceptor {
   final Dio dio;
   Function? onSessionExpired;
 
