@@ -31,8 +31,6 @@ Dio fetch() {
 
   Dio dio = Dio(baseOption);
 
-  dio.interceptors.add(CustomInterceptors(dio: dio));
-
   return dio;
 }
 
@@ -64,10 +62,9 @@ class CustomInterceptors extends Interceptor {
 
     // Read stored token, proactively refresh if expiring soon, then build
     // all request headers via the shared _buildHeaders helper.
-    Token? token;
-    final tokenString = await storage.read(key: StoreKey.token.name);
-    if (tokenString != null) {
-      token = Token.fromJson(json.decode(tokenString));
+    Token? token = await TokenRepository().fetchToken();
+
+    if (token != null) {
       final isAuthEndpoint = options.path == ApiUrl.auth;
       if (!isAuthEndpoint && token.isExpiringSoon() && !_isRefreshing) {
         final refreshed = await _tryRefreshToken(token);
@@ -194,7 +191,8 @@ class CustomInterceptors extends Interceptor {
         'response': err.response?.data,
       },
       err.stackTrace,
-      reason: 'API Error: ${err.requestOptions.method} ${err.requestOptions.path} [$statusCode]',
+      reason:
+          'API Error: ${err.requestOptions.method} ${err.requestOptions.path} [$statusCode]',
       fatal: false,
       printDetails: true,
     );

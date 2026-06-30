@@ -48,6 +48,10 @@ class AuthRepository implements AuthRepositoryProtocol {
       await tokenRepository.saveToken(token);
       await outletRepository.remove();
 
+      // Clear cached user so fetchUser hits the API with the fresh token
+      const storage = FlutterSecureStorage();
+      await storage.delete(key: StoreKey.user.name);
+
       User? user = await fetchUser();
       if (user != null) {
         return Authenticated(user: user, token: token);
@@ -120,7 +124,7 @@ class AuthRepository implements AuthRepositoryProtocol {
     try {
       final json = await api.user();
       final user = User.fromJson(json);
-      log('Online User: ${user.user.name }');
+      log('Online User: ${user.user.name}');
       await storage.write(key: StoreKey.user.name, value: user.toString());
       return user;
     } on DioException catch (e) {
