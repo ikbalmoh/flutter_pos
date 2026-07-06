@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 enum Status { waiting, downloading, downloaded }
@@ -22,14 +23,29 @@ class _UpdatePatchState extends State<UpdatePatch> {
     setState(() {
       downloading = true;
     });
-    await Future.wait([
-      _shorebirdCodePush.update(),
-      Future<void>.delayed(const Duration(milliseconds: 250)),
-    ]);
-    setState(() {
-      downloading = false;
-      downloaded = true;
-    });
+    try {
+      await Future.wait([
+        _shorebirdCodePush.update(),
+        Future<void>.delayed(const Duration(milliseconds: 250)),
+      ]);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        downloaded = true;
+        downloading = false;
+      });
+      AppAlert.toast('update_applied'.tr());
+    } catch (e) {
+      if (!mounted) {
+        return;
+      }
+      AppAlert.toast('update_failed'.tr());
+      setState(() {
+        downloaded = false;
+        downloading = false;
+      });
+    }
   }
 
   void onRestart() {
@@ -91,7 +107,9 @@ class _UpdatePatchState extends State<UpdatePatch> {
                       ),
                     ),
                     onPressed: downloading ? null : downloadUpdate,
-                    child: Text('apply_update'.tr()),
+                    child: downloading
+                        ? const CircularProgressIndicator()
+                        : Text('apply_update'.tr()),
                   ),
             const SizedBox(height: 10),
           ],
@@ -124,7 +142,7 @@ class _UpdatePatcherState extends State<UpdatePatcher> {
               builder: (context) {
                 return const UpdatePatch();
               },
-              isDismissible: false,
+              isDismissible: true,
               enableDrag: false,
             );
           }

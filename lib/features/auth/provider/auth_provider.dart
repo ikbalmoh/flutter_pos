@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/repository/auth_repository.dart';
@@ -22,6 +23,8 @@ class Auth extends _$Auth {
   late final TokenRepository _tokenRepository =
       ref.read(tokenRepositoryProvider);
 
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   FutureOr<AuthState> build() async {
     try {
@@ -42,6 +45,8 @@ class Auth extends _$Auth {
   }
 
   Future<void> login(String username, String password) async {
+    analytics
+        .logLogin(loginMethod: 'username', parameters: {'username': username});
     try {
       state = AsyncData(Authenticating());
       state = AsyncData(await _authRepoistory.login(username, password));
@@ -51,6 +56,7 @@ class Auth extends _$Auth {
   }
 
   Future<bool> resetPassword(String email) async {
+    analytics.logEvent(name: 'reset_password', parameters: {'email': email});
     try {
       return await _authRepoistory.resetPassword(email);
     } catch (e) {
@@ -59,6 +65,7 @@ class Auth extends _$Auth {
   }
 
   Future<void> logout({bool? skipLogout}) async {
+    analytics.logEvent(name: 'logout');
     ref.read(fcmProvider.notifier).unsubscribe();
     ref.read(shiftNotifierProvider.notifier).shiftLoading();
     try {

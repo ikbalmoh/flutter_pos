@@ -1,4 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -25,12 +27,18 @@ class ShiftNotifier extends _$ShiftNotifier {
   late final ShiftRepository _shiftRepository =
       ref.read(shiftRepositoryProvider);
 
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseCrashlytics crashlytics = FirebaseCrashlytics.instance;
+
   /// Initializes the provider state with `null`.
   /// The shift becomes non-null once [openShift] is called successfully.
   @override
   FutureOr<model.Shift?> build() async {
     final offlineShift = await _shiftRepository.retrieveOfflineShift();
     getCurrentShift();
+    analytics.setUserProperty(
+        name: 'shift', value: offlineShift?.codeShift ?? '');
+    crashlytics.setCustomKey('shift', offlineShift?.codeShift ?? '');
     return offlineShift;
   }
 
@@ -70,8 +78,19 @@ class ShiftNotifier extends _$ShiftNotifier {
       startShift: DateTime.now(),
       openAmount: openAmount,
     );
+
+    analytics.logEvent(
+      name: 'open_shift',
+      parameters: {
+        'id_outlet': outlet.idOutlet,
+        'open_amount': openAmount,
+      },
+    );
     try {
       final storedShift = await _shiftRepository.startShift(shift);
+      analytics.setUserProperty(
+          name: 'shift', value: storedShift?.codeShift ?? '');
+      crashlytics.setCustomKey('shift', storedShift?.codeShift ?? '');
       state = AsyncData(storedShift);
     } catch (e, stackTrace) {
       state = AsyncError(e, stackTrace);
@@ -120,6 +139,15 @@ class ShiftNotifier extends _$ShiftNotifier {
         "updated_by": user.idUser,
         "_method": "PUT"
       };
+      analytics.logEvent(
+        name: 'close_shift',
+        parameters: {
+          'id': currentShift.id,
+          'close_amount': closeAmount,
+          'diff_amount': diffAmount,
+          'refund_amount': refundAmount,
+        },
+      );
       await _shiftRepository.close(currentShift.id, payload);
 
       if (reopen) {
@@ -198,6 +226,8 @@ class ShiftNotifier extends _$ShiftNotifier {
     log('GET CURRENT SHIFT');
     final shift = await _shiftRepository.retrieveShift();
     if (shift != null) {
+      analytics.setUserProperty(name: 'shift', value: shift.codeShift ?? '');
+      crashlytics.setCustomKey('shift', shift.codeShift ?? '');
       await _shiftRepository.saveShift(shift);
       state = AsyncData(shift);
     }

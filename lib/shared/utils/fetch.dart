@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -30,12 +31,10 @@ Dio fetch() {
 
   Dio dio = Dio(baseOption);
 
-  dio.interceptors.add(CustomInterceptors(dio: dio));
-
   return dio;
 }
 
-class CustomInterceptors extends Interceptor {
+class CustomInterceptors extends QueuedInterceptor {
   final Dio dio;
   Function? onSessionExpired;
 
@@ -63,15 +62,12 @@ class CustomInterceptors extends Interceptor {
 
     // Read stored token, proactively refresh if expiring soon, then build
     // all request headers via the shared _buildHeaders helper.
-    Token? token;
-    final tokenString = await storage.read(key: StoreKey.token.name);
-    if (tokenString != null) {
-      token = Token.fromJson(json.decode(tokenString));
-      log('[TOKEN] Expiring at ${token.expiresAt} - ${token.isExpiringSoon() ? 'EXPIRING' : 'VALID'}');
+    Token? token = await TokenRepository().fetchToken();
+
+    if (token != null) {
       final isAuthEndpoint = options.path == ApiUrl.auth;
       if (!isAuthEndpoint && token.isExpiringSoon() && !_isRefreshing) {
         final refreshed = await _tryRefreshToken(token);
-        log('[TOKEN] New token will expire at ${refreshed?.expiresAt}');
         if (refreshed != null) token = refreshed;
       }
     }
@@ -174,13 +170,32 @@ class CustomInterceptors extends Interceptor {
 
     int? statusCode = err.response?.statusCode;
 
-    if (statusCode != null && ![401, 500].contains(statusCode)) {
-      FirebaseCrashlytics.instance.recordError(
-        err.message,
-        err.stackTrace,
-        fatal: false,
-      );
-    }
+    // Record all API errors to Analytics & Crashlytics
+    FirebaseAnalytics.instance.logEvent(
+      name: 'api_error',
+      parameters: {
+        'status_code': statusCode?.toString() ?? 'unknown',
+        'url': err.requestOptions.path,
+        'method': err.requestOptions.method,
+        'message': (message.length > 100 ? message.substring(0, 100) : message),
+      },
+    );
+    FirebaseCrashlytics.instance.recordError(
+      {
+        'statusCode': statusCode,
+        'message': err.message,
+        'url': err.requestOptions.path,
+        'method': err.requestOptions.method,
+        'request': err.requestOptions.data,
+        'headers': err.requestOptions.headers,
+        'response': err.response?.data,
+      },
+      err.stackTrace,
+      reason:
+          'API Error: ${err.requestOptions.method} ${err.requestOptions.path} [$statusCode]',
+      fatal: false,
+      printDetails: true,
+    );
 
     final isAuthEndpoint = err.requestOptions.path == ApiUrl.auth;
     if (statusCode == 401 && !_isRefreshing && !isAuthEndpoint) {

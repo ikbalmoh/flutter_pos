@@ -69,22 +69,28 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
   }
 
   Future<void> _syncOfflineTransactions() async {
-    final offlineTxs = ref.read(offlineTransactionsProvider).value ?? [];
-    if (offlineTxs.isEmpty) {
-      if (mounted) setState(() => status = Status.iddle);
-      return;
-    }
-    await ref.read(offlineTransactionsProvider.notifier).sync();
-    if (!mounted) return;
-    final remaining = await ref.read(offlineTransactionsProvider.future);
-    if (!mounted) return;
-    if (remaining.isNotEmpty) {
-      setState(() {
-        status = Status.error;
-        errorMessage = 'transactions_sync_failed'.tr();
-      });
-    } else {
-      setState(() => status = Status.iddle);
+    try {
+      final offlineTxs = ref.read(offlineTransactionsProvider).value ?? [];
+      if (offlineTxs.isEmpty) {
+        if (mounted) setState(() => status = Status.iddle);
+        return;
+      }
+      await ref
+          .read(offlineTransactionsProvider.notifier)
+          .syncOfflineTransactions();
+      if (!mounted) return;
+      final remaining = await ref.read(offlineTransactionsProvider.future);
+      if (!mounted) return;
+      if (remaining.isNotEmpty) {
+        setState(() {
+          status = Status.error;
+          errorMessage = 'transactions_sync_failed'.tr();
+        });
+      } else {
+        if (mounted) setState(() => status = Status.iddle);
+      }
+    } catch (e) {
+      if (mounted) setState(() => status = Status.error);
     }
   }
 

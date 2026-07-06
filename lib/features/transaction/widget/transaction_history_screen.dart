@@ -79,7 +79,7 @@ class _TransactionHistoryScreenState
 
   Future<void> triggerSync() async {
     try {
-      await ref.read(offlineTransactionsProvider.notifier).sync();
+      await ref.read(offlineTransactionsProvider.notifier).syncOfflineTransactions();
     } catch (e) {
       if (mounted) {
         AppAlert.snackbar(
