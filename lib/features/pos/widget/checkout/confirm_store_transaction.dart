@@ -17,6 +17,7 @@ import 'package:selleri/features/pos/widget/select_table.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
 import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/widget/generic/picked_image.dart';
+import 'package:selleri/shared/widget/generic/custom_text_input.dart';
 import 'package:selleri/shared/widget/pic/pic_picker.dart';
 import 'package:selleri/features/pos/widget/checkout/store_transaction.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
@@ -323,29 +324,9 @@ class _ConfirmStoreTransactionState
                   const SizedBox(
                     height: 15,
                   ),
-                  TextFormField(
+                  CustomTextInput(
                     controller: noteController,
-                    decoration: InputDecoration(
-                      label: Text(
-                        'add'.tr(args: ['note'.tr()]),
-                        style: labelStyle,
-                      ),
-                      alignLabelWithHint: true,
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      contentPadding: const EdgeInsets.all(10),
-                      focusColor: Colors.teal,
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                        color: Colors.grey.shade200,
-                        width: 1,
-                      )),
-                      focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                        color: Colors.teal,
-                        width: 1,
-                      )),
-                    ),
+                    label: 'add'.tr(args: ['note'.tr()]),
                   ),
                   const SizedBox(
                     height: 15,

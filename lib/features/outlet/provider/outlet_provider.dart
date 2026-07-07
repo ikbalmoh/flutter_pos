@@ -117,6 +117,7 @@ class Outlet extends _$Outlet {
         config: config,
         isSyncing: false,
       ));
+      log('CONFIG SYNCED');
     } catch (e) {
       log('SYNC CONFIG ERROR: $e');
     }

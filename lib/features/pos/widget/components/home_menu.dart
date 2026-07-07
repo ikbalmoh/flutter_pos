@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:selleri/shared/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/holded/widget/components/hold_form.dart';
 import 'package:selleri/features/pos/widget/add_extra_item_form.dart';
+import 'package:selleri/shared/widget/custom_fields.dart';
 
 class HomeMenu extends ConsumerWidget {
   const HomeMenu({super.key});
@@ -168,6 +171,21 @@ class HomeMenu extends ConsumerWidget {
                     ),
                     style: menuStyle,
                     child: Text('extra_item'.tr()),
+                  ),
+                if (outlet
+                        .config.customFields?.modules.transaction?.isNotEmpty ??
+                    false)
+                  MenuItemButton(
+                    onPressed: () => CustomFields(
+                      fields: outlet.config.customFields!.modules.transaction!,
+                      values: {},
+                      onValuesChange: (values) {
+                        log('custom fields: $values');
+                      },
+                    ).show(context),
+                    leadingIcon: Icon(CupertinoIcons.list_dash),
+                    style: menuStyle,
+                    child: Text('custom_field'.tr()),
                   ),
                 PopupMenuDivider(),
                 MenuItemButton(

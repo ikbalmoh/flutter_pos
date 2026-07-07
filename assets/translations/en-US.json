@@ -404,5 +404,6 @@
   "waiting_payment": "Waiting for Payment",
   "payment_success": "Payment Success",
   "other": "Other",
-  "please_recheck_x": "Please recheck the {}"
+  "please_recheck_x": "Please recheck the {}",
+  "custom_field": "Custom Field"
 }

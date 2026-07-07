@@ -7,26 +7,26 @@ class DateInput extends StatelessWidget {
     super.key,
     required this.label,
     required this.onChange,
-    required this.firstDate,
-    required this.lastDate,
+    this.firstDate,
+    this.lastDate,
     this.value,
   });
 
   final String label;
   final DateTime? value;
   final Function(DateTime?) onChange;
-  final DateTime firstDate;
-  final DateTime lastDate;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   @override
   Widget build(BuildContext context) {
     void pickDate() async {
       final date = await showDatePicker(
         context: context,
-        firstDate: firstDate,
-        lastDate: lastDate,
+        firstDate: firstDate ?? DateTime.now(),
+        lastDate: lastDate ?? DateTime.now().add(const Duration(days: 365)),
         barrierLabel: label,
-        initialDate: value,
+        initialDate: value ?? DateTime.now(),
       );
       onChange(date);
     }

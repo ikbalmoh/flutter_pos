@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/shared/model/custom_fields.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 
 import '../../pos/model/payment_method.dart';
@@ -53,6 +54,7 @@ class OutletConfig with _$OutletConfig {
     CustomMandatory? customMandatory,
     String? merchantCode,
     String? merchantId,
+    @JsonKey(name: 'custom_fields') CustomFields? customFields,
   }) = _OutletConfig;
 
   factory OutletConfig.fromJson(Map<String, dynamic> json) =>
