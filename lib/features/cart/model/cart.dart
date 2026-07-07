@@ -71,7 +71,10 @@ class Cart with _$Cart {
     String? deletedBy,
     String? deleteReason,
     String? promoCode,
-    @JsonKey(includeFromJson: false, includeToJson: false) List<XFile>? images,
+    @JsonKey(
+        fromJson: ModelConverter.listXfileFromJson,
+        toJson: ModelConverter.listXfileToJson)
+    List<XFile>? images,
     List<CustomerGroup>? customerGroup,
     bool? isOffline,
     CustomerVehicle? vehicle,

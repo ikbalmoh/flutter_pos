@@ -495,7 +495,7 @@ class ObjectBox {
           .build()
           .findIds();
       final int id = ids.isEmpty ? 0 : ids.first;
-      await transactionBox.putAsync(OfflineTransaction(
+      final offlinedTransaction = OfflineTransaction(
         id: id,
         transactionNo: transaction.transactionNo,
         shiftId: transaction.shiftId,
@@ -509,9 +509,12 @@ class ObjectBox {
                   .toList(),
             )
             .toJson()),
-      ));
-      log('Transaction Stored: $transaction');
-      return offlineTransactions();
+      );
+      log('Transaction Stored to DB: ${offlinedTransaction.transaction}');
+      await transactionBox.putAsync(offlinedTransaction);
+      final transactions = await offlineTransactions();
+      log('Stored Offline Transactions: ${transactions.map((t) => t.transactionNo)}');
+      return transactions;
     } catch (e) {
       log('Error storing transaction: $e');
       rethrow;
