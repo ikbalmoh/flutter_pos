@@ -526,7 +526,7 @@ class ObjectBox {
     String? transactionNo,
   }) async {
     Condition<OfflineTransaction> condition =
-        OfflineTransaction_.id.greaterThan(0);
+        OfflineTransaction_.id.greaterThan(0).and(OfflineTransaction_.transactionNo.notNull());
     if (shiftId != null && shiftId.isNotEmpty) {
       condition.and(
         OfflineTransaction_.shiftId.equals(shiftId),
@@ -543,7 +543,9 @@ class ObjectBox {
     List<Cart> transactions = [];
     for (var i = 0; i < offlineTransactions.length; i++) {
       Cart cart = Cart.fromJson(jsonDecode(offlineTransactions[i].transaction));
-      transactions.add(cart);
+      if (cart.transactionNo.isNotEmpty && cart.idOutlet.isNotEmpty) {
+        transactions.add(cart);
+      }
     }
     return transactions;
   }

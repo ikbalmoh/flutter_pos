@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:selleri/features/cart/model/cart_holded.dart';
@@ -74,7 +75,9 @@ class Cart with _$Cart {
     @JsonKey(
         fromJson: ModelConverter.listXfileFromJson,
         toJson: ModelConverter.listXfileToJson)
-    List<XFile>? images,
+    @Default([]) List<XFile>? images,
+    @JsonKey(name: 'image_notes', fromJson: ModelConverter.toStringList)
+    @Default([]) List<String>? imageNotes,
     List<CustomerGroup>? customerGroup,
     bool? isOffline,
     CustomerVehicle? vehicle,
@@ -164,11 +167,17 @@ class Cart with _$Cart {
 
   Future<Map<String, dynamic>> toTransactionPayload() async {
     List<MultipartFile> dataImages = [];
+    List<String> dataImageNotes = [];
     if (images != null && images!.isNotEmpty) {
       for (var i = 0; i < images!.length; i++) {
+        final file = File(images![i].path);
+        if (!await file.exists()) {
+          continue;
+        }
         final img = await MultipartFile.fromFile(images![i].path,
             filename: images![i].name);
         dataImages.add(img);
+        dataImageNotes.add(imageNotes?[i] ?? '');
       }
     }
     final jsonData = <String, dynamic>{
@@ -223,6 +232,7 @@ class Cart with _$Cart {
         ),
       ),
       "images": dataImages,
+      "image_notes": dataImageNotes,
       "person_in_charge": personInCharge,
       "tables": tables,
       "vehicle_id": vehicle?.idVehicle,

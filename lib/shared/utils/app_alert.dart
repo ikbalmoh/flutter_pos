@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:selleri/shared/widget/prompt.dart';
 
 enum AlertType { success, error, info }
 
@@ -147,5 +148,24 @@ class AppAlert {
             ),
           );
         });
+  }
+
+  static void prompt(
+    BuildContext context, {
+    String? title,
+    String? note,
+    void Function(String?)? onConfirm,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Prompt(
+          title: title ?? 'note'.tr(),
+          note: note ?? '',
+          onConfirm: onConfirm,
+        );
+      },
+    );
   }
 }

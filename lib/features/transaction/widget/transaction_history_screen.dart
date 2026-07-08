@@ -391,6 +391,7 @@ class _TransactionHistoryScreenState
                                             viewTransaction?.idTransaction ==
                                                 cart.idTransaction,
                                         onTap: () {
+                                          log('View Transaction: $cart');
                                           setState(() {
                                             viewTransaction = cart;
                                           });
