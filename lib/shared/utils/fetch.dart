@@ -24,7 +24,6 @@ Dio fetch() {
   final baseOption = BaseOptions(
     baseUrl: AppConfig.baseUrl,
     contentType: Headers.jsonContentType,
-    validateStatus: (int? status) => status != null,
     connectTimeout: Duration(minutes: 10),
     receiveTimeout: Duration(minutes: 10),
   );
@@ -134,21 +133,9 @@ class CustomInterceptors extends QueuedInterceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    final status = response.statusCode;
-    final isValid = status != null && status >= 200 && status < 300;
-    if (!isValid) {
-      throw DioException.badResponse(
-        statusCode: status!,
-        requestOptions: response.requestOptions,
-        response: response,
-      );
-    }
-    super.onResponse(response, handler);
-  }
-
-  @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
+    log('request error: ${err.response?.statusCode}');
+
     bool isJson = err.response?.data != null
         ? isJSON(jsonEncode(err.response?.data))
         : false;
@@ -198,27 +185,45 @@ class CustomInterceptors extends QueuedInterceptor {
     );
 
     final isAuthEndpoint = err.requestOptions.path == ApiUrl.auth;
-    if (statusCode == 401 && !_isRefreshing && !isAuthEndpoint) {
-      _isRefreshing = true;
+    log('statusCode: $statusCode, isRefreshing: $_isRefreshing, isAuthEndpoint: $isAuthEndpoint');
+    if (statusCode == 401 && !isAuthEndpoint) {
       final tokenString = await storage.read(key: StoreKey.token.name);
       if (tokenString != null) {
-        final oldToken = Token.fromJson(json.decode(tokenString));
-        final newToken = await _tryRefreshToken(oldToken);
-        if (newToken != null) {
-          // Retry the original request with the refreshed access token.
+        final currentToken = Token.fromJson(json.decode(tokenString));
+        final currentTokenHeader = 'Bearer ${currentToken.accessToken}';
+        final failedTokenHeader = err.requestOptions.headers['Authorization'];
+
+        if (failedTokenHeader != null && failedTokenHeader != currentTokenHeader) {
+          // Token was already refreshed by a previous request in the queue.
+          // Retry the request with the new token immediately.
+          log('Token already refreshed, retrying request immediately.');
           final retryOptions = err.requestOptions
-            ..headers['Authorization'] = 'Bearer ${newToken.accessToken}';
+            ..headers['Authorization'] = currentTokenHeader;
           try {
             final retryResponse = await dio.fetch(retryOptions);
-            _isRefreshing = false;
             return handler.resolve(retryResponse);
           } catch (_) {
-            // Retry failed – fall through to sign-out below.
+            // Retry failed, fall through to sign-out
           }
+        } else if (!_isRefreshing) {
+          _isRefreshing = true;
+          final newToken = await _tryRefreshToken(currentToken);
+          if (newToken != null) {
+            // Retry the original request with the refreshed access token.
+            final retryOptions = err.requestOptions
+              ..headers['Authorization'] = 'Bearer ${newToken.accessToken}';
+            try {
+              final retryResponse = await dio.fetch(retryOptions);
+              _isRefreshing = false;
+              return handler.resolve(retryResponse);
+            } catch (_) {
+              // Retry failed – fall through to sign-out below.
+            }
+          }
+          _isRefreshing = false;
         }
       }
 
-      _isRefreshing = false;
       // Refresh failed or no token stored – sign out.
       await storage.delete(key: StoreKey.token.name);
       log('Session expired, signing out.');

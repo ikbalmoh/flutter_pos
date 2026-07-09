@@ -421,8 +421,12 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void addNote({String? notes, List<XFile>? images}) {
-    state = state.copyWith(notes: notes, images: images);
+  void addNote({String? notes, List<XFile>? images, List<String>? imageNotes}) {
+    state = state.copyWith(
+      notes: notes,
+      images: images,
+      imageNotes: imageNotes,
+    );
   }
 
   Future<void> setPic(PersonInCharge? pic) {
@@ -491,7 +495,8 @@ class Cart extends _$Cart {
       if (!isConnected) {
         crashlytics.recordError(
             'Store transaction aborted! connectivity is disconnected', null,
-            fatal: false, information: [(await state.toTransactionPayload()).toString()]);
+            fatal: false,
+            information: [(await state.toTransactionPayload()).toString()]);
         return;
       }
 

@@ -21,7 +21,7 @@ class TransactionApi {
         {"transactions": transactionJsons},
         ListFormat.multiCompatible,
       );
-      log('TRANSACTIONS TO STORE: ${transactionJsons.length}');
+      log('TRANSACTIONS TO STORE: $transactionJsons');
       if (formData.files.isNotEmpty) {
         log('TRANSACTION FILES: ${formData.files}');
       }

@@ -53,6 +53,7 @@ class OfflineTransactions extends _$OfflineTransactions {
 
     final List<model.Cart> currentTransactions = state.value ?? [];
     try {
+      final wasLoading = state.isLoading;
       final stored = await objectBox.putTransaction(transaction);
       state = AsyncData(stored);
 
@@ -66,7 +67,7 @@ class OfflineTransactions extends _$OfflineTransactions {
       }
 
       // Flag for re-sync if a sync cycle is currently in flight.
-      if (state.isLoading) {
+      if (wasLoading) {
         _syncNeeded = true;
       }
     } catch (e, stack) {
@@ -161,7 +162,6 @@ class OfflineTransactions extends _$OfflineTransactions {
             .updateTransactions(syncedTransactions);
       }
 
-      state = AsyncData(await objectBox.offlineTransactions());
       ref.invalidate(currentShiftInfoNotifierProvider);
 
       analytics.logEvent(
@@ -192,8 +192,9 @@ class OfflineTransactions extends _$OfflineTransactions {
               .toString(),
         ],
       );
-      state = AsyncData(transactions);
       rethrow;
+    } finally {
+      state = AsyncData(await objectBox.offlineTransactions());
     }
   }
 

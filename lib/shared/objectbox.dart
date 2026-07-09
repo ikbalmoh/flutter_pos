@@ -495,7 +495,7 @@ class ObjectBox {
           .build()
           .findIds();
       final int id = ids.isEmpty ? 0 : ids.first;
-      await transactionBox.putAsync(OfflineTransaction(
+      final offlinedTransaction = OfflineTransaction(
         id: id,
         transactionNo: transaction.transactionNo,
         shiftId: transaction.shiftId,
@@ -509,9 +509,12 @@ class ObjectBox {
                   .toList(),
             )
             .toJson()),
-      ));
-      log('Transaction Stored: $transaction');
-      return offlineTransactions();
+      );
+      log('Transaction Stored to DB: ${offlinedTransaction.transaction}');
+      await transactionBox.putAsync(offlinedTransaction);
+      final transactions = await offlineTransactions();
+      log('Stored Offline Transactions: ${transactions.map((t) => t.transactionNo)}');
+      return transactions;
     } catch (e) {
       log('Error storing transaction: $e');
       rethrow;
@@ -523,7 +526,7 @@ class ObjectBox {
     String? transactionNo,
   }) async {
     Condition<OfflineTransaction> condition =
-        OfflineTransaction_.id.greaterThan(0);
+        OfflineTransaction_.id.greaterThan(0).and(OfflineTransaction_.transactionNo.notNull());
     if (shiftId != null && shiftId.isNotEmpty) {
       condition.and(
         OfflineTransaction_.shiftId.equals(shiftId),
@@ -540,7 +543,9 @@ class ObjectBox {
     List<Cart> transactions = [];
     for (var i = 0; i < offlineTransactions.length; i++) {
       Cart cart = Cart.fromJson(jsonDecode(offlineTransactions[i].transaction));
-      transactions.add(cart);
+      if (cart.transactionNo.isNotEmpty && cart.idOutlet.isNotEmpty) {
+        transactions.add(cart);
+      }
     }
     return transactions;
   }

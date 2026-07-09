@@ -37,6 +37,7 @@ class _ConfirmStoreTransactionState
     extends ConsumerState<ConfirmStoreTransaction> {
   final noteController = TextEditingController();
   List<XFile> images = [];
+  List<String> imageNotes = [];
   bool printKitchen = false;
 
   @override
@@ -60,6 +61,7 @@ class _ConfirmStoreTransactionState
       if (image == null) return;
       setState(() {
         images = images..add(image);
+        imageNotes = imageNotes..add('');
       });
     } on PlatformException catch (e) {
       log('Failed to pick image: $e');
@@ -68,15 +70,16 @@ class _ConfirmStoreTransactionState
 
   void onDeleteImage(int index) {
     List<XFile> imgs = List.from(images);
+    List<String> imgNotes = List.from(imageNotes);
     imgs.removeAt(index);
+    imgNotes.removeAt(index);
     setState(() {
       images = imgs;
+      imageNotes = imgNotes;
     });
   }
 
   void onSubmit(BuildContext context) async {
-    // context.pop();
-
     model.Cart cart = ref.watch(cartProvider);
 
     if (cart.totalPayment < cart.grandTotal) {
@@ -90,7 +93,11 @@ class _ConfirmStoreTransactionState
 
     final cartAction = ref.read(cartProvider.notifier);
 
-    cartAction.addNote(notes: noteController.text, images: images);
+    cartAction.addNote(
+      notes: noteController.text,
+      images: images,
+      imageNotes: imageNotes,
+    );
 
     bool isPicRequired = false;
     final outletState = ref.read(outletProvider).value;
@@ -177,7 +184,7 @@ class _ConfirmStoreTransactionState
     bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
     double height =
-        MediaQuery.of(context).size.height * (isKeyboardVisible ? 0.95 : 0.7);
+        MediaQuery.of(context).size.height * (isKeyboardVisible ? 0.95 : 0.8);
 
     OutletConfig outletConfig =
         (ref.watch(outletProvider).value as OutletSelected).config;
@@ -331,64 +338,76 @@ class _ConfirmStoreTransactionState
                   const SizedBox(
                     height: 15,
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 5),
+                        child: Text(
                           'attachments'.tr(),
                           style: labelStyle,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Wrap(
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Row(
+                          spacing: 10,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: List.generate(images.length, (index) {
                             XFile image = images[index];
                             return PickedImage(
                               source: image.path,
                               sourceType: SourceType.path,
                               onDelete: () => onDeleteImage(index),
+                              note: imageNotes.length > index
+                                  ? imageNotes[index]
+                                  : null,
+                              size: 120,
+                              withNote: true,
+                              onAddNote: (note) => setState(() {
+                                imageNotes[index] = note;
+                              }),
                             );
                           }),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.blueGrey.shade600,
-                                backgroundColor: Colors.blueGrey.shade50,
-                              ),
-                              icon: const Icon(
-                                CupertinoIcons.camera_fill,
-                                size: 18,
-                              ),
-                              onPressed: () =>
-                                  pickImage(source: ImageSource.camera),
-                              label: Text('photo'.tr()),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.blue.shade500,
                             ),
-                            const SizedBox(
-                              width: 10,
+                            icon: const Icon(
+                              CupertinoIcons.camera_fill,
+                              size: 18,
                             ),
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.blueGrey.shade600,
-                                backgroundColor: Colors.blueGrey.shade50,
-                              ),
-                              icon: const Icon(
-                                CupertinoIcons.photo_fill_on_rectangle_fill,
-                                size: 18,
-                              ),
-                              onPressed: pickImage,
-                              label: Text('image'.tr()),
+                            onPressed: () =>
+                                pickImage(source: ImageSource.camera),
+                            label: Text('photo'.tr()),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.blue.shade500,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            icon: const Icon(
+                              CupertinoIcons.photo_fill_on_rectangle_fill,
+                              size: 18,
+                            ),
+                            onPressed: pickImage,
+                            label: Text('image'.tr()),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -397,6 +416,7 @@ class _ConfirmStoreTransactionState
               Column(
                 spacing: 5,
                 children: [
+                  Divider(thickness: 0.2),
                   if (hasTableAddon == true) ...[
                     SelectTable(),
                     Padding(
