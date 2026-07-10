@@ -11,6 +11,7 @@ import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/features/customer/provider/customer_list_provider.dart';
 import 'package:selleri/features/customer/widget/customer_form.dart';
+import 'package:selleri/shared/model/custom_field.dart';
 import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
 import 'package:selleri/shared/widget/search_app_bar.dart';
@@ -92,16 +93,17 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedCustomer = ref.watch(cartProvider).idCustomer;
-    final selectedVehicle = ref.watch(cartProvider).vehicle;
+    final cart = ref.watch(cartProvider);
+    final selectedCustomer = cart.idCustomer;
+    final selectedVehicle = cart.vehicle;
 
-    void onSelectCustomer(customer, {CustomerVehicle? vehicle}) {
+    void onSelectCustomer(customer, {CustomerVehicle? vehicle, List<CustomField>? customFields}) {
       while (context.canPop() == true) {
         context.pop();
       }
       ref
           .read(cartProvider.notifier)
-          .selectCustomer(customer, vehicle: vehicle);
+          .selectCustomer(customer, vehicle: vehicle, customFields: customFields);
     }
 
     void showCustomerSheet(Customer customer) {
@@ -116,6 +118,7 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
           onEdit: onEditCustomer,
           isSelected: selectedCustomer == customer.idCustomer,
           vehicle: selectedVehicle,
+          customFields: cart.customFields,
         ),
       );
     }

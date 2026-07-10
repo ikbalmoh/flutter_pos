@@ -6,6 +6,7 @@ import 'package:selleri/features/cart/model/cart_holded.dart';
 import 'package:selleri/features/cart/model/cart_payment.dart';
 import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
+import 'package:selleri/features/cart/model/transaction_image.dart';
 import 'package:selleri/features/customer/model/customer_vehicle.dart';
 import 'package:selleri/shared/model/custom_field.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
@@ -83,6 +84,7 @@ class Cart with _$Cart {
     bool? isOffline,
     CustomerVehicle? vehicle,
     @JsonKey(name: 'custom_fields') @Default([]) List<CustomField>? customFields,
+    @JsonKey(name: 'transaction_images') @Default([]) List<TransactionImage>? transactionImages,
   }) = _Cart;
 
   factory Cart.initial() => Cart(
@@ -161,6 +163,16 @@ class Cart with _$Cart {
     json['promotions'] = json['promotions'] ?? [];
     json['vouchers'] = json['vouchers'] ?? [];
     json['custom_fields'] = json['custom_fields'] ?? [];
+
+    // Normalize API image objects [{image_path, image_notes}] into transactionImages
+    final rawImages = json['images'];
+    if (rawImages is List && rawImages.isNotEmpty && rawImages.first is Map) {
+      json['transaction_images'] = rawImages;
+      json['images'] = [];
+    } else {
+      json['transaction_images'] = json['transaction_images'] ?? [];
+    }
+
     for (var item in json['items']) {
       item['item_name'] = item['name'];
       item['details'] = item['details'] != null

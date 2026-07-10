@@ -6,9 +6,10 @@ import 'package:selleri/shared/widget/custom_field_input.dart';
 
 class CustomFieldsForm extends StatelessWidget {
   const CustomFieldsForm(
-      {super.key, required this.fields, this.onValuesChange});
+      {super.key, required this.fields, this.onValuesChange, this.title});
 
   final List<model.CustomField> fields;
+  final String? title;
   final ValueChanged<List<model.CustomField>>? onValuesChange;
 
   void show(BuildContext context) {
@@ -21,6 +22,7 @@ class CustomFieldsForm extends StatelessWidget {
           return _CustomFieldsSheet(
             initialFields: fields,
             onValuesChange: onValuesChange,
+            title: title,
           );
         });
   }
@@ -35,10 +37,12 @@ class _CustomFieldsSheet extends StatefulWidget {
   const _CustomFieldsSheet({
     required this.initialFields,
     this.onValuesChange,
+    this.title,
   });
 
   final List<model.CustomField> initialFields;
   final ValueChanged<List<model.CustomField>>? onValuesChange;
+  final String? title;
 
   @override
   State<_CustomFieldsSheet> createState() => _CustomFieldsSheetState();
@@ -65,9 +69,13 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
           child: Column(
             children: [
               AppBar(
-                title: Text('custom_field'.tr()),
+                title: Text(widget.title ?? 'custom_field'.tr()),
                 automaticallyImplyLeading: false,
-                actions: [IconButton(icon: const Icon(Icons.close), onPressed: () => context.pop())],
+                actions: [
+                  IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => context.pop())
+                ],
               ),
               Expanded(
                 child: SingleChildScrollView(

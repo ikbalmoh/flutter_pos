@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' hide AppBar;
 import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:selleri/app/widget/app_theme.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
@@ -18,6 +19,7 @@ import 'package:selleri/features/pos/widget/checkout/checkout_screen.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:selleri/shared/utils/share_file.dart';
+import 'package:selleri/features/transaction/widget/component/transaction_detail_modal.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -164,7 +166,7 @@ class _TransactionDetailScreenState
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('transaction_detail'.tr()),
+            Text('transaction'.tr()),
             Text(
               widget.cart.transactionNo,
               style: Theme.of(context)
@@ -175,40 +177,43 @@ class _TransactionDetailScreenState
           ],
         ),
         actions: [
-          transaction?.deletedAt == null &&
-                  transaction?.shiftId == currentShift?.id
-              ? MenuAnchor(
-                  style: MenuStyle(backgroundColor:
-                      WidgetStateProperty.resolveWith<Color?>(
-                          (Set<WidgetState> states) {
-                    return Colors.white;
-                  })),
-                  menuChildren: [
-                    MenuItemButton(
-                      onPressed: () => onCancelTransaction(context),
-                      leadingIcon: const Icon(
-                        CupertinoIcons.xmark_circle_fill,
-                        color: Colors.red,
-                      ),
-                      child: Text('cancel_transaction'.tr()),
-                    ),
-                  ],
-                  builder: (BuildContext context, MenuController controller,
-                      Widget? child) {
-                    return IconButton(
-                      onPressed: () {
-                        if (controller.isOpen) {
-                          controller.close();
-                        } else {
-                          controller.open();
-                        }
-                      },
-                      icon: const Icon(Icons.more_vert),
-                      tooltip: 'show_menu'.tr(),
-                    );
-                  },
-                )
-              : Container()
+          MenuAnchor(
+            style: menuStyle,
+            alignmentOffset: Offset(-160, -10),
+            menuChildren: [
+              MenuItemButton(
+                onPressed: () => TransactionDetailModal(cart: widget.cart).show(context),
+                leadingIcon: const Icon(CupertinoIcons.doc_on_clipboard),
+                style: buttonMenuStyle,
+                child: Text('transaction_detail'.tr()),
+              ),
+              if (transaction?.deletedAt == null &&
+                  transaction?.shiftId == currentShift?.id)
+                MenuItemButton(
+                  onPressed: () => onCancelTransaction(context),
+                  leadingIcon: const Icon(
+                    CupertinoIcons.xmark_circle_fill,
+                    color: Colors.red,
+                  ),
+                  style: buttonMenuStyle,
+                  child: Text('cancel_transaction'.tr()),
+                ),
+            ],
+            builder: (BuildContext context, MenuController controller,
+                Widget? child) {
+              return IconButton(
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+                icon: const Icon(Icons.more_vert),
+                tooltip: 'show_menu'.tr(),
+              );
+            },
+          ),
         ],
       ),
       body: transaction == null
