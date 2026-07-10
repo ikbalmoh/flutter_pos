@@ -35,11 +35,11 @@ class ModelConverter {
     return value;
   }
 
-  static int? dynamicToInt(dynamic value) {
+  static int dynamicToInt(dynamic value) {
     if (value == null) {
-      return null;
+      return 0;
     } else if (value is String) {
-      return null;
+      return 0;
     }
     return value;
   }

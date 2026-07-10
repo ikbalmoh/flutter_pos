@@ -10,9 +10,11 @@ class DateInput extends StatelessWidget {
     this.firstDate,
     this.lastDate,
     this.value,
+    this.isRequired = false,
   });
 
   final String label;
+  final bool? isRequired;
   final DateTime? value;
   final Function(DateTime?) onChange;
   final DateTime? firstDate;
@@ -36,10 +38,22 @@ class DateInput extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       spacing: 8,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Colors.blueGrey.shade600, fontWeight: FontWeight.w500),
+        Text.rich(
+          TextSpan(
+            text: label,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Colors.blueGrey.shade600, fontWeight: FontWeight.w500),
+            children: [
+              TextSpan(
+                text: isRequired ?? false ? ' *' : '',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
         ),
         Stack(
           children: [
