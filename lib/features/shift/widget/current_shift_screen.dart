@@ -110,8 +110,11 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
     return Scaffold(
       backgroundColor: isTablet ? Colors.blueGrey.shade50 : Colors.white,
       body: RefreshIndicator(
-        onRefresh: () =>
+        onRefresh: () async {
+          await Future.wait([
             ref.read(currentShiftInfoNotifierProvider.notifier).reload(),
+          ]);
+        },
         child: shift != null
             ? ref.watch(currentShiftInfoNotifierProvider).when(
                   data: (data) {
