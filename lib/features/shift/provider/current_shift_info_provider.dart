@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/shift/model/shift.dart' as model;
 import 'package:selleri/features/shift/model/shift_info.dart';
@@ -16,8 +18,26 @@ class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
   FutureOr<ShiftInfo?> build() async {
     final model.Shift? shift = ref.watch(shiftNotifierProvider).value;
     if (shift != null) {
+      bool didDispose = false;
+      ref.onDispose(() => didDispose = true);
+
+      await Future<void>.delayed(const Duration(milliseconds: 1000));
+      if (didDispose) return null;
+
       try {
-        return ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
+        final ShiftInfo? shiftInfo =
+            await ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
+        if (shiftInfo != null) {
+          log('current shift: $shiftInfo');
+          final config =
+              (ref.read(outletProvider).value as OutletSelected).config;
+          if (config.addOns?.contains('accounting') == true) {
+            ref
+                .read(outletProvider.notifier)
+                .refreshConfig(only: ['saldo_akun_kas']);
+          }
+        }
+        return shiftInfo;
       } catch (e) {
         return null;
       }
@@ -33,9 +53,13 @@ class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
         final info =
             await ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
         state = AsyncData(info);
-        ref
-            .read(outletProvider.notifier)
-            .refreshConfig(only: ['saldo_akun_kas']);
+        final config =
+            (ref.read(outletProvider).value as OutletSelected).config;
+        if (config.addOns?.contains('accounting') == true) {
+          ref
+              .read(outletProvider.notifier)
+              .refreshConfig(only: ['saldo_akun_kas']);
+        }
       } else {
         state = AsyncData(state.value);
       }

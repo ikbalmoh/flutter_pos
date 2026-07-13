@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/shift/model/shift_info.dart';
 import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
@@ -27,6 +28,9 @@ class ActiveShiftInfo extends ConsumerWidget {
 
     final bool isOnline =
         ref.watch(connectivityStatusProvider) == ConnectivityState.connected;
+
+    final outlet = ref.watch(outletProvider).value as OutletSelected;
+    final config = outlet.config;
 
     void onPrint() async {
       try {
@@ -70,32 +74,34 @@ class ActiveShiftInfo extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'cash'.tr(),
-                                style: textTheme.bodySmall
-                                    ?.copyWith(color: Colors.black54),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Rp'),
-                                  Text(
-                                    CurrencyFormat.currency(
-                                      shiftInfo.summary.expectedCashEnd,
-                                      symbol: false,
+                          if (config.addOns != null &&
+                              config.addOns!.contains('accounting'))
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'account_balance'.tr(),
+                                  style: textTheme.bodySmall
+                                      ?.copyWith(color: Colors.black54),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Rp'),
+                                    Text(
+                                      CurrencyFormat.currency(
+                                        config.saldoAkunKas,
+                                        symbol: false,
+                                      ),
+                                      style: textTheme.headlineMedium?.copyWith(
+                                          fontWeight: FontWeight.w600),
                                     ),
-                                    style: textTheme.headlineMedium
-                                        ?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           showPrintButton == true
                               ? IconButton(
                                   onPressed: onPrint,

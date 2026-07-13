@@ -406,5 +406,6 @@
   "other": "Other",
   "please_recheck_x": "Please recheck the {}",
   "custom_field": "Custom Field",
-  "customer_ncustomer_notesote": "Customer Notes"
+  "customer_notes": "Customer Notes",
+  "account_balance": "Account Balance"
 }
