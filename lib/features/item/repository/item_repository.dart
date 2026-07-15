@@ -199,7 +199,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       );
 
       final int total = firstRes.hits.total.value;
-      final List<Item> allItems = firstRes.hits.sources(Item.fromJson);
+      final List<Item> allItems = firstRes.hits.sources(Item.fromJsonData);
 
       log('ES: Got ${allItems.length}/$total items (page 1)');
       onProgress?.call(allItems.length, total);
