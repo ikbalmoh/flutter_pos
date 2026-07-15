@@ -98,7 +98,7 @@ class Items extends _$Items {
       progressCallback(progress);
 
       final DateTime startLoad = DateTime.now();
-      List<Item> items = await itemRepository.fetchItems(
+      List<Item> items = await itemRepository.fetchElasticItems(
         fullSync: fullSync,
         page: fullSync ? 1 : null,
         onProgress: (current, total) {
@@ -173,7 +173,7 @@ class Items extends _$Items {
 
         List<Item> items = await ref
             .read(itemRepositoryProvider)
-            .fetchItems(fromLastSync: true, page: 1);
+            .fetchElasticItems(fromLastSync: true);
 
         objectBox.putItems(items);
         log('SYNCED ITEMS: $items');
@@ -187,7 +187,7 @@ class Items extends _$Items {
             messages.add("${'and'.tr()} ${items[1].itemName}");
           }
           messages.add('synced'.tr().toLowerCase());
-          AppAlert.toast(messages.join(' ')); 
+          AppAlert.toast(messages.join(' '));
         }
       }
 
@@ -246,6 +246,7 @@ class Items extends _$Items {
       List<Map<String, dynamic>> attributes =
           variants.map<Map<String, dynamic>>((v) {
         return {
+          'id_item': idItem,
           "id_variant": v.idVariant,
           "item_price": v.itemPrice,
           "sku_number": v.skuNumber,

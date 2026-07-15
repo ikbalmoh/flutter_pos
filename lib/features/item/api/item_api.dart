@@ -110,7 +110,7 @@ class ItemApi {
             .build()
             .findFirst();
 
-        v['id_item'] = v['item_id'];
+        v['id_item'] = idItem;
         v['id'] = existVariant?.id ?? 0;
         v['variant_name'] = existVariant?.variantName ?? '';
         v['stock_item'] = existVariant?.stockItem ?? 0;

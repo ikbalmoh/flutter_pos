@@ -30,13 +30,13 @@ class ItemInfo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<String> promotionsIds = variant != null
-        ? List.from(variant!.promotions!)
+        ? List.from(variant!.promotions)
         : List.from(item.promotions);
 
     if (variant == null && item.variants.isNotEmpty) {
       for (ItemVariant variant in item.variants) {
-        if (variant.promotions != null) {
-          promotionsIds = promotionsIds..addAll(variant.promotions!);
+        if (variant.promotions.isNotEmpty) {
+          promotionsIds = promotionsIds..addAll(variant.promotions);
         }
       }
     }
