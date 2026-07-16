@@ -10,15 +10,15 @@ import 'package:selleri/features/item/model/category.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_adjustment.dart';
+import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/features/adjustment/api/adjustment_api.dart';
 import 'package:selleri/features/item/api/item_api.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
+import 'package:selleri/shared/utils/exception.dart';
 
 part 'item_repository.g.dart';
-
-String syncKey = 'LAST_UPDATE/ITEMS';
 
 @riverpod
 ItemRepository itemRepository(Ref ref) => ItemRepository(ref);
@@ -85,7 +85,7 @@ class ItemRepository implements ItemRepositoryProtocol {
   }) async {
     int? lastUpdate;
     if (fromLastSync == true) {
-      String? lastSync = await storage.read(key: syncKey);
+      String? lastSync = await storage.read(key: StoreKey.lastSync.name);
       DateTime syncDateTime = lastSync != null
           ? DateTime.fromMillisecondsSinceEpoch(int.parse(lastSync))
           : DateTime.now();
@@ -126,6 +126,10 @@ class ItemRepository implements ItemRepositoryProtocol {
           onProgress: onProgress,
         );
       }
+      storage.write(
+        key: StoreKey.lastSync.name,
+        value: DateTime.now().millisecondsSinceEpoch.toString(),
+      );
       return items;
     } on DioException catch (e, st) {
       log('fetchItems Error: ${e.response?.data} $st');
@@ -134,11 +138,6 @@ class ItemRepository implements ItemRepositoryProtocol {
       throw Exception(e.message);
     } catch (e) {
       rethrow;
-    } finally {
-      storage.write(
-        key: syncKey,
-        value: DateTime.now().millisecondsSinceEpoch.toString(),
-      );
     }
   }
 
@@ -180,7 +179,7 @@ class ItemRepository implements ItemRepositoryProtocol {
     try {
       DateTime? lastUpdate;
       if (fromLastSync == true) {
-        String? lastSync = await storage.read(key: syncKey);
+        String? lastSync = await storage.read(key: StoreKey.lastSync.name);
         lastUpdate = lastSync != null
             ? DateTime.fromMillisecondsSinceEpoch(int.parse(lastSync))
             : DateTime.now();
@@ -217,23 +216,29 @@ class ItemRepository implements ItemRepositoryProtocol {
           from: (i + 1) * pageSize,
           size: pageSize,
         );
-        allItems.addAll(res.hits.sources(Item.fromJson));
+        allItems.addAll(res.hits.sources(Item.fromJsonData));
         onProgress?.call(allItems.length, total);
         log('ES: Got ${allItems.length}/$total items (page ${i + 2})');
       }
 
       log('ES: Fetched all ${allItems.length}/$total items');
+
+      storage.write(
+        key: StoreKey.lastSync.name,
+        value: DateTime.now().millisecondsSinceEpoch.toString(),
+      );
+
       return allItems;
-    } on DioException catch (e, trace) {
+    } catch (e, trace) {
       log('Fetch elastic items Error: $e => $trace');
-      // fallback to fetchItems if index not found
-      if (e.response?.statusCode == 404) {
-        FirebaseCrashlytics.instance.recordError(
-          'ES index not available',
-          trace,
-          information: ['${e.response}'],
-          fatal: false,
-        );
+      FirebaseCrashlytics.instance.recordError(
+        e is NotFoundException ? 'Elasticsearch index not available' : 'Elasticsearch error',
+        trace,
+        information: [e.toString()],
+        fatal: false,
+      );
+      // Fallback when the index existence check throws (index not found).
+      if (e is NotFoundException) {
         return fetchItems(
           idCategory: idCategory,
           fromLastSync: fromLastSync,
@@ -243,9 +248,6 @@ class ItemRepository implements ItemRepositoryProtocol {
           onProgress: onProgress,
         );
       }
-      rethrow;
-    } catch (e, trace) {
-      log('Fetch elastic items Error: $e => $trace');
       rethrow;
     }
   }

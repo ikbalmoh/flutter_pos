@@ -5,9 +5,8 @@ import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/elastic/model/elastic.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/utils/exception.dart';
 import 'package:selleri/shared/utils/formater.dart';
-
-String syncKey = 'LAST_UPDATE/ITEMS';
 
 abstract class ElasticRepositoryInterface {
   Future<ElasticResponse> items();
@@ -34,34 +33,42 @@ class ElasticRepository implements ElasticRepositoryInterface {
     int? size = 10,
     Function(int current, int total)? onProgress,
   }) async {
-    final index = '/selleri_${companyId}_outlet_${outletId}_item';
-    final Map<String, dynamic> data = {
-      // 'pretty': 'true',
-      'size': size,
-      'from': from,
-    };
+    final index = '/selleri_tenant_${companyId}_outlet_${outletId}_item';
 
-    final query = {};
-
-    if (lastUpdate != null) {
-      query['range'] = {
-        'updated_at': {
-          'gte': DateTimeFormater.dateToString(lastUpdate),
-          'lt': DateTimeFormater.dateToString(DateTime.now()),
-        },
+    try {
+      final Map<String, dynamic> data = {
+        // 'pretty': 'true',
+        'size': size,
+        'from': from,
       };
-    }
 
-    if (idCategory != null) {
-      query['match'] = {'id_category': idCategory};
-    }
+      final query = {};
 
-    if (query.isNotEmpty) {
-      data['query'] = query;
-    }
+      if (lastUpdate != null) {
+        query['range'] = {
+          'updated_at': {
+            'gte': DateTimeFormater.dateToString(lastUpdate.copyWith(hour: 0, minute: 0, second: 0)),
+            'lt': DateTimeFormater.dateToString(DateTime.now()),
+          },
+        };
+      }
 
-    final res = await api.post('$index/_search', data: data);
-    return ElasticResponse.fromJson(res.data);
+      if (idCategory != null) {
+        query['match'] = {'id_category': idCategory};
+      }
+
+      if (query.isNotEmpty) {
+        data['query'] = query;
+      }
+
+      final res = await api.post('$index/_search', data: data);
+      return ElasticResponse.fromJson(res.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        throw NotFoundException();
+      }
+      rethrow;
+    }
   }
 }
 
