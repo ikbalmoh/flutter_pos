@@ -17,11 +17,11 @@ class ItemVariant with _$ItemVariant {
     @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double stockItem,
     required String idItem,
-    required String variantName,
-    required double itemPrice,
-    String? skuNumber,
-    String? barcodeNumber,
-    List<String>? promotions,
+    @Default('') String variantName,
+    @Default(0.0) double itemPrice,
+    @Default('') String skuNumber,
+    @Default('') String barcodeNumber,
+    @Default([]) List<String> promotions,
   }) = _ItemVariant;
 
   factory ItemVariant.fromJson(Map<String, dynamic> json) =>

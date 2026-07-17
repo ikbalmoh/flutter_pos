@@ -68,8 +68,7 @@ class VariantItem extends StatelessWidget {
                       Wrap(
                         spacing: 5,
                         children: [
-                          if (variant.promotions != null &&
-                              variant.promotions!.isNotEmpty)
+                          if (variant.promotions.isNotEmpty)
                             const PromotionBadge(),
                           StockBadge(
                             stockItem: variant.stockItem,

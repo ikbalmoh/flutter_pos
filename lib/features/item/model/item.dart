@@ -50,6 +50,9 @@ class Item with _$Item {
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 
   factory Item.fromJsonData(Map<String, dynamic> json) {
+    // Always work with a mutable copy — the _source map from Elasticsearch
+    // (returned by Dio) is unmodifiable and cannot be mutated directly.
+    json = Map<String, dynamic>.from(json);
     Item? existItem = objectBox.getItem(json['id_item']);
     if (existItem != null) {
       final Map<String, dynamic> itemJson = existItem.toJson();

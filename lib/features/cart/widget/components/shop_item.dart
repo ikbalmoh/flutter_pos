@@ -30,7 +30,7 @@ class ShopItem extends StatelessWidget {
 
     if (!hasPromotions && item.variants.isNotEmpty) {
       var variantPromotions = item.variants.firstWhereOrNull(
-          (variant) => variant.promotions?.isNotEmpty ?? false);
+          (variant) => variant.promotions.isNotEmpty);
       if (variantPromotions != null) {
         hasPromotions = true;
       }
