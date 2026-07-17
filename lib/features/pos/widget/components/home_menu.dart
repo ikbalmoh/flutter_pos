@@ -141,9 +141,7 @@ class HomeMenu extends ConsumerWidget {
                       ],
                     ),
                   ),
-                if (cart.idCustomer != null &&
-                    cart.customFields != null &&
-                    cart.customFields!.isNotEmpty)
+                if (cart.customFields?.isNotEmpty ?? false)
                   MenuItemButton(
                     onPressed: () => CustomFieldsForm(
                       title: 'customer_notes'.tr(),
