@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/elastic/model/elastic.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
+import 'package:selleri/features/outlet/repository/outlet_repository.dart';
 import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/utils/exception.dart';
 import 'package:selleri/shared/utils/formater.dart';
@@ -14,15 +15,17 @@ abstract class ElasticRepositoryInterface {
 
 class ElasticRepository implements ElasticRepositoryInterface {
   final Dio api;
-  final String companyId;
-  final String outletId;
+  final String? companyId;
+  final String? outletId;
+  final Ref ref;
 
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   ElasticRepository({
     required this.api,
-    required this.companyId,
-    required this.outletId,
+    this.companyId,
+    this.outletId,
+    required this.ref,
   });
 
   @override
@@ -33,11 +36,35 @@ class ElasticRepository implements ElasticRepositoryInterface {
     int? size = 10,
     Function(int current, int total)? onProgress,
   }) async {
-    final index = '/selleri_tenant_${companyId}_outlet_${outletId}_item';
+    String? activeCompanyId = companyId;
+    if (activeCompanyId == null) {
+      final authState = ref.read(authProvider).value;
+      if (authState is Authenticated) {
+        activeCompanyId = authState.user.user.company.idCompany;
+      }
+    }
+
+    String? activeOutletId = outletId;
+    if (activeOutletId == null) {
+      final outletState = ref.read(outletProvider).value;
+      if (outletState is OutletSelected) {
+        activeOutletId = outletState.outlet.idOutlet;
+      } else {
+        // Fallback: Try reading the selected outlet from database/secure storage directly
+        final outletRepo = ref.read(outletRepositoryProvider);
+        final outlet = await outletRepo.retrieveOutlet();
+        activeOutletId = outlet?.idOutlet;
+      }
+    }
+
+    if (activeCompanyId == null || activeOutletId == null) {
+      throw Exception('Missing companyId ($activeCompanyId) or outletId ($activeOutletId)');
+    }
+
+    final index = '/selleri_tenant_${activeCompanyId}_outlet_${activeOutletId}_item';
 
     try {
       final Map<String, dynamic> data = {
-        // 'pretty': 'true',
         'size': size,
         'from': from,
       };
@@ -80,15 +107,21 @@ final elasticRepositoryProvider = Provider<ElasticRepository>((ref) {
     ),
   );
 
-  final auth = ref.read(authProvider).value as Authenticated;
-  final outlet = ref.read(outletProvider).value as OutletSelected;
+  final authState = ref.read(authProvider).value;
+  final outletState = ref.read(outletProvider).value;
 
-  final String companyId = auth.user.user.company.idCompany;
-  final String outletId = outlet.outlet.idOutlet;
+  final String? companyId = authState is Authenticated
+      ? authState.user.user.company.idCompany
+      : null;
+
+  final String? outletId = outletState is OutletSelected
+      ? outletState.outlet.idOutlet
+      : null;
 
   return ElasticRepository(
     api: dio,
     companyId: companyId,
     outletId: outletId,
+    ref: ref,
   );
 });

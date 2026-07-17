@@ -10,6 +10,7 @@ import 'package:selleri/shared/widget/error_handler.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
 import 'package:selleri/features/outlet/widget/outlet_loading_status.dart';
 import 'package:selleri/features/outlet/widget/select_outlet_prompt.dart';
+import 'package:selleri/shared/widget/update_patcher.dart';
 import 'outlet_item.dart';
 import 'package:selleri/features/outlet/provider/outlet_list_provider.dart';
 
@@ -55,8 +56,7 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     final height = MediaQuery.of(context).size.height;
-    final isSelecting =
-        ref.watch(appStartProvider).value is AppSelectingOutlet;
+    final isSelecting = ref.watch(appStartProvider).value is AppSelectingOutlet;
     final outletList = ref.watch(outletListProvider);
     return Scaffold(
       backgroundColor: Colors.teal.shade400,
@@ -134,35 +134,35 @@ class _SelectOutletScreenState extends ConsumerState<SelectOutletScreen> {
                         child: isSelecting
                             ? OutletLoadingStatus()
                             : outletList.when(
-                                  data: (data) {
-                                    setState(() => _isLoading = false);
-                                    return buildOutletLists(context, data);
-                                  },
-                                  error: (error, stack) => ErrorHandler(
-                                    error: error,
-                                    stackTrace: stack.toString(),
-                                    onRetry: () => ref
-                                        .read(outletListProvider.notifier)
-                                        .fetchOutletList(),
-                                  ),
-                                  loading: () => Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: List.generate(
-                                        5,
-                                        (index) => ItemListSkeleton(
-                                              leading: false,
-                                            )),
-                                  ),
+                                data: (data) {
+                                  setState(() => _isLoading = false);
+                                  return buildOutletLists(context, data);
+                                },
+                                error: (error, stack) => ErrorHandler(
+                                  error: error,
+                                  stackTrace: stack.toString(),
+                                  onRetry: () => ref
+                                      .read(outletListProvider.notifier)
+                                      .fetchOutletList(),
                                 ),
+                                loading: () => Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(
+                                      5,
+                                      (index) => ItemListSkeleton(
+                                            leading: false,
+                                          )),
+                                ),
+                              ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
+            const UpdatePatcher()
           ],
         ),
       ),
@@ -179,9 +179,9 @@ class CompanyIcon extends ConsumerWidget {
 
     return authState.when(
         error: (e, stack) => ErrorHandler(
-          error: e,
-          stackTrace: stack.toString(),
-        ),
+              error: e,
+              stackTrace: stack.toString(),
+            ),
         data: (s) {
           if (s is Authenticated) {
             return Column(
