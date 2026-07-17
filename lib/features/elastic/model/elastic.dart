@@ -1,3 +1,5 @@
+import 'dart:developer';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'elastic.freezed.dart';
@@ -75,8 +77,21 @@ class ElasticHit with _$ElasticHit {
   const ElasticHit._();
 
   /// Deserializes [source] into [T] using [fromJson].
-  T? mapSource<T>(T Function(Map<String, dynamic>) fromJson) =>
-      source != null ? fromJson(source!) : null;
+  T? mapSource<T>(T Function(Map<String, dynamic>) fromJson) {
+    if (source == null) return null;
+    try {
+      return fromJson(source!);
+    } catch (e, stack) {
+      log('Error mapping ElasticHit source to $T: $e\n$stack');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        reason: 'Error mapping ElasticHit source to $T: ${source.toString()}',
+        fatal: false,
+      );
+      return null;
+    }
+  }
 
   factory ElasticHit.fromJson(Map<String, dynamic> json) =>
       _$ElasticHitFromJson(json);
