@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:selleri/app/widget/app_theme.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
@@ -12,6 +13,7 @@ import 'package:selleri/shared/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/holded/widget/components/hold_form.dart';
 import 'package:selleri/features/pos/widget/add_extra_item_form.dart';
+import 'package:selleri/shared/widget/custom_fields_form.dart';
 
 class HomeMenu extends ConsumerWidget {
   const HomeMenu({super.key});
@@ -56,28 +58,8 @@ class HomeMenu extends ConsumerWidget {
       );
     }
 
-    ButtonStyle menuStyle = ButtonStyle(
-      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-      ),
-      padding: WidgetStateProperty.all<EdgeInsets?>(
-          EdgeInsets.symmetric(horizontal: 15)),
-    );
-
     return MenuAnchor(
-      style: MenuStyle(
-        backgroundColor: WidgetStateProperty.all<Color?>(Colors.white),
-        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
-          ),
-        ),
-        padding: WidgetStateProperty.all<EdgeInsets?>(EdgeInsets.all(5)),
-        elevation: WidgetStateProperty.all<double>(15),
-        shadowColor: WidgetStateProperty.all<Color>(Colors.grey.shade50),
-      ),
+      style: menuStyle,
       alignmentOffset: Offset(
           ref.watch(shiftNotifierProvider).value == null ? 0 : -160, -10),
       builder:
@@ -136,7 +118,7 @@ class HomeMenu extends ConsumerWidget {
                             tooltip: 'unselect'.tr(),
                           )
                         : null,
-                    style: menuStyle.copyWith(
+                    style: buttonMenuStyle.copyWith(
                       padding: WidgetStateProperty.all<EdgeInsets?>(
                         EdgeInsets.only(left: 15, right: 5),
                       ),
@@ -159,6 +141,21 @@ class HomeMenu extends ConsumerWidget {
                       ],
                     ),
                   ),
+                if (cart.idCustomer != null &&
+                    cart.customFields != null &&
+                    cart.customFields!.isNotEmpty)
+                  MenuItemButton(
+                    onPressed: () => CustomFieldsForm(
+                      title: 'customer_notes'.tr(),
+                      fields: cart.customFields!,
+                      onValuesChange: (values) => ref
+                          .read(cartProvider.notifier)
+                          .setCustomField(values),
+                    ).show(context),
+                    leadingIcon: Icon(CupertinoIcons.list_dash),
+                    style: buttonMenuStyle,
+                    child: Text('customer_notes'.tr()),
+                  ),
                 if (outlet.config.extraItem == true)
                   MenuItemButton(
                     onPressed: showAddExtraItem,
@@ -166,7 +163,7 @@ class HomeMenu extends ConsumerWidget {
                       CupertinoIcons.cart_badge_plus,
                       color: Colors.blue.shade700,
                     ),
-                    style: menuStyle,
+                    style: buttonMenuStyle,
                     child: Text('extra_item'.tr()),
                   ),
                 PopupMenuDivider(),
@@ -176,7 +173,7 @@ class HomeMenu extends ConsumerWidget {
                     CupertinoIcons.doc,
                     color: Colors.blueGrey.shade500,
                   ),
-                  style: menuStyle,
+                  style: buttonMenuStyle,
                   child: Text('new_transaction'.tr()),
                 ),
                 MenuItemButton(
@@ -185,7 +182,7 @@ class HomeMenu extends ConsumerWidget {
                     CupertinoIcons.folder,
                     color: Colors.blueGrey.shade500,
                   ),
-                  style: menuStyle,
+                  style: buttonMenuStyle,
                   child: Text('holded_transactions'.tr()),
                 ),
                 if (outlet.config.addOns!.contains("table"))
@@ -197,7 +194,7 @@ class HomeMenu extends ConsumerWidget {
                           ? Colors.blueGrey.shade500
                           : Colors.green.shade600,
                     ),
-                    style: menuStyle,
+                    style: buttonMenuStyle,
                     child: Text(
                       cart.tables == null || cart.tables!.isEmpty
                           ? 'table'.tr()
@@ -210,7 +207,7 @@ class HomeMenu extends ConsumerWidget {
                     CupertinoIcons.tags,
                     color: Colors.amber.shade800,
                   ),
-                  style: menuStyle,
+                  style: buttonMenuStyle,
                   child: Text('promotion_list'.tr()),
                 ),
                 MenuItemButton(
@@ -219,7 +216,7 @@ class HomeMenu extends ConsumerWidget {
                     CupertinoIcons.plus_square_on_square,
                     color: Colors.teal.shade700,
                   ),
-                  style: menuStyle,
+                  style: buttonMenuStyle,
                   child: Text('add_item'.tr()),
                 ),
                 PopupMenuDivider(),
@@ -230,7 +227,7 @@ class HomeMenu extends ConsumerWidget {
                       ref.watch(appSettingsProvider).itemLayoutGrid
                           ? CupertinoIcons.rectangle_grid_1x2
                           : CupertinoIcons.square_grid_2x2_fill),
-                  style: menuStyle,
+                  style: buttonMenuStyle,
                   child: Text(
                     ref.watch(appSettingsProvider).itemLayoutGrid
                         ? 'list_view'.tr()
@@ -250,7 +247,7 @@ class HomeMenu extends ConsumerWidget {
               color: Colors.blueGrey.shade400,
             ),
           ),
-          style: menuStyle,
+          style: buttonMenuStyle,
           child: Text(ref.watch(printerProvider).value?.name ?? 'Printer'),
         ),
       ],

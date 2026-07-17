@@ -7,26 +7,28 @@ class DateInput extends StatelessWidget {
     super.key,
     required this.label,
     required this.onChange,
-    required this.firstDate,
-    required this.lastDate,
+    this.firstDate,
+    this.lastDate,
     this.value,
+    this.isRequired = false,
   });
 
   final String label;
+  final bool? isRequired;
   final DateTime? value;
   final Function(DateTime?) onChange;
-  final DateTime firstDate;
-  final DateTime lastDate;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   @override
   Widget build(BuildContext context) {
     void pickDate() async {
       final date = await showDatePicker(
         context: context,
-        firstDate: firstDate,
-        lastDate: lastDate,
+        firstDate: firstDate ?? DateTime.now(),
+        lastDate: lastDate ?? DateTime.now().add(const Duration(days: 365)),
         barrierLabel: label,
-        initialDate: value,
+        initialDate: value ?? DateTime.now(),
       );
       onChange(date);
     }
@@ -36,10 +38,22 @@ class DateInput extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       spacing: 8,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Colors.blueGrey.shade600, fontWeight: FontWeight.w500),
+        Text.rich(
+          TextSpan(
+            text: label,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Colors.blueGrey.shade600, fontWeight: FontWeight.w500),
+            children: [
+              TextSpan(
+                text: isRequired ?? false ? ' *' : '',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
         ),
         Stack(
           children: [

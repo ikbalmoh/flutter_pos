@@ -105,6 +105,7 @@ class TransactionApi {
     try {
       final json = cart.toJson();
       final List<Map<String, dynamic>> data = [json];
+      log('hold transaction: $data');
       final res = await api.post(ApiUrl.hold, data: data);
 
       return res.data['data'];

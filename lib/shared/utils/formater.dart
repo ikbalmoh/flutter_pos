@@ -58,6 +58,16 @@ class DateTimeFormater {
     return null;
   }
 
+  static String dateFromString(String? value) {
+    if (value == null) {
+      return '-';
+    }
+    if (isDate(value)) {
+      return dateToString(DateTime.parse(value));
+    }
+    return '-';
+  }
+
   static int stringToTimestamp(dynamic value) {
     int result = DateTime.now().millisecondsSinceEpoch;
     if (value is int || value is num) {

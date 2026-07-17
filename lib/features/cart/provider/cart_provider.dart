@@ -20,11 +20,13 @@ import 'package:selleri/features/item/model/item_package.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
+import 'package:selleri/features/shift/model/shift.dart';
 import 'package:selleri/features/table/model/table.dart' as table_model;
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
 import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/model/custom_field.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
@@ -47,6 +49,7 @@ class Cart extends _$Cart {
 
   @override
   model.Cart build() {
+    initCart();
     return model.Cart.initial();
   }
 
@@ -60,11 +63,12 @@ class Cart extends _$Cart {
         return;
       }
 
-      final outletState = ref.read(outletProvider).value as OutletSelected;
+      final OutletSelected outletState =
+          await ref.read(outletProvider.future) as OutletSelected;
 
       final authState = await ref.read(authProvider.future) as Authenticated;
 
-      final shift = ref.read(shiftNotifierProvider).value;
+      final Shift? shift = await ref.read(shiftNotifierProvider.future);
 
       if (shift == null) {
         log('Shift is not started');
@@ -92,6 +96,8 @@ class Cart extends _$Cart {
         customerGroup: customerGroup,
         customerName: customerName,
         idCustomer: idCustomer,
+        customFields:
+            outletState.config.customFields?.modules.transaction ?? [],
       );
 
       log('Cart Initialized: ${state.toString()}');
@@ -389,12 +395,14 @@ class Cart extends _$Cart {
         : 0;
   }
 
-  void selectCustomer(Customer? customer, {CustomerVehicle? vehicle}) {
+  void selectCustomer(Customer? customer,
+      {CustomerVehicle? vehicle, List<CustomField>? customFields}) {
     state = state.copyWith(
       customerName: customer?.customerName,
       idCustomer: customer?.idCustomer,
       customerGroup: customer?.groups,
       vehicle: vehicle,
+      customFields: customFields ?? state.customFields,
     );
     applyPromotions([]);
   }
@@ -1137,5 +1145,9 @@ class Cart extends _$Cart {
     final tables = state.tables ?? [];
     state = state.copyWith(tables: []);
     ref.read(tablesProvider().notifier).clearTables(tables);
+  }
+
+  void setCustomField(List<CustomField> customFields) {
+    state = state.copyWith(customFields: customFields);
   }
 }

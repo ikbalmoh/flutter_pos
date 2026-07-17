@@ -159,6 +159,7 @@ class AppAlert {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.white,
       builder: (context) {
         return Prompt(
           title: title ?? 'note'.tr(),

@@ -14,15 +14,16 @@ class CartPayment with _$CartPayment {
       fromJson: DateTimeFormater.stringToTimestamp,
       toJson: DateTimeFormater.msTosecond,
     )
+    @JsonKey(fromJson: ModelConverter.dynamicToInt)
     int? payDate,
-    String? id,
+    @JsonKey(fromJson: ModelConverter.dynamicToString) String? id,
     required String paymentMethodId,
     @JsonKey(fromJson: ModelConverter.nullableToString)
     required String paymentName,
     required double paymentValue,
     String? shiftId,
-    String? reference,
-    String? createdBy,
+    @JsonKey(fromJson: ModelConverter.dynamicToString) String? reference,
+    @JsonKey(fromJson: ModelConverter.dynamicToString) String? createdBy,
   }) = _CartPayment;
 
   factory CartPayment.fromJson(Map<String, dynamic> json) =>

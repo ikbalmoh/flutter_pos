@@ -134,7 +134,7 @@ class CustomInterceptors extends QueuedInterceptor {
 
   @override
   Future onError(DioException err, ErrorInterceptorHandler handler) async {
-    log('request error: ${err.response?.statusCode}');
+    log('request error: $err');
 
     bool isJson = err.response?.data != null
         ? isJSON(jsonEncode(err.response?.data))

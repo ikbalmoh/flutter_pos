@@ -6,7 +6,9 @@ import 'package:selleri/features/cart/model/cart_holded.dart';
 import 'package:selleri/features/cart/model/cart_payment.dart';
 import 'package:selleri/features/cart/model/cart_promotion.dart';
 import 'package:selleri/features/cart/model/cart_voucher.dart';
+import 'package:selleri/features/cart/model/transaction_image.dart';
 import 'package:selleri/features/customer/model/customer_vehicle.dart';
+import 'package:selleri/shared/model/custom_field.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 import 'package:selleri/features/customer/model/customer_group.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
@@ -81,6 +83,8 @@ class Cart with _$Cart {
     List<CustomerGroup>? customerGroup,
     bool? isOffline,
     CustomerVehicle? vehicle,
+    @JsonKey(name: 'custom_fields') @Default([]) List<CustomField>? customFields,
+    @JsonKey(name: 'transaction_images') @Default([]) List<TransactionImage>? transactionImages,
   }) = _Cart;
 
   factory Cart.initial() => Cart(
@@ -109,6 +113,7 @@ class Cart with _$Cart {
         outletName: '', // define on initCart
         shiftId: '', // define on initCart
         isApp: true,
+        customFields: [],
       );
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
@@ -138,6 +143,7 @@ class Cart with _$Cart {
     data['promotions'] = data['promotions'] ?? [];
     data['vouchers'] = data['vouchers'] ?? [];
     data['vehicle'] = data['vehicle'] is Map ? data['vehicle'] : null;
+    data['custom_fields'] = data['custom_fields'] ?? [];
     Cart cart = Cart.fromJson(data);
     cart = cart.copyWith(
         payments: cart.payments
@@ -156,6 +162,17 @@ class Cart with _$Cart {
         DateTimeFormater.stringToTimestamp(json['transaction_date']);
     json['promotions'] = json['promotions'] ?? [];
     json['vouchers'] = json['vouchers'] ?? [];
+    json['custom_fields'] = json['custom_fields'] ?? [];
+
+    // Normalize API image objects [{image_path, image_notes}] into transactionImages
+    final rawImages = json['images'];
+    if (rawImages is List && rawImages.isNotEmpty && rawImages.first is Map) {
+      json['transaction_images'] = rawImages;
+      json['images'] = [];
+    } else {
+      json['transaction_images'] = json['transaction_images'] ?? [];
+    }
+
     for (var item in json['items']) {
       item['item_name'] = item['name'];
       item['details'] = item['details'] != null
@@ -236,6 +253,7 @@ class Cart with _$Cart {
       "person_in_charge": personInCharge,
       "tables": tables,
       "vehicle_id": vehicle?.idVehicle,
+      "custom_fields": customFields?.map((e) => e.toJson()).toList(),
     };
     if (deletedAt != null) {
       jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);

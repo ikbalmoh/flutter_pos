@@ -204,3 +204,25 @@ class SlidePageTransition extends PageTransitionsBuilder {
     );
   }
 }
+
+MenuStyle menuStyle = MenuStyle(
+  backgroundColor: WidgetStateProperty.all<Color?>(Colors.white),
+  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(25.0),
+    ),
+  ),
+  padding: WidgetStateProperty.all<EdgeInsets?>(EdgeInsets.all(5)),
+  elevation: WidgetStateProperty.all<double>(15),
+  shadowColor: WidgetStateProperty.all<Color>(Colors.grey.shade50),
+);
+
+ButtonStyle buttonMenuStyle = ButtonStyle(
+  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  padding: WidgetStateProperty.all<EdgeInsets?>(
+      EdgeInsets.symmetric(horizontal: 15)),
+);
