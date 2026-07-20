@@ -108,8 +108,16 @@ class CustomFieldInput extends StatelessWidget {
           },
         );
       case model.FieldType.radioButton:
+        bool? boolValue;
+        if (value is bool) {
+          boolValue = value;
+        } else if (value != null && value.toString().isNotEmpty) {
+          final str = value.toString().toLowerCase();
+          boolValue = str == 'true' || str == '1';
+        }
+
         return FormField<bool>(
-          initialValue: value,
+          initialValue: boolValue,
           validator: validate,
           builder: (state) {
             return Column(
@@ -122,7 +130,7 @@ class CustomFieldInput extends StatelessWidget {
                     state.didChange(val);
                     onValueChange?.call(val);
                   },
-                  groupValue: value,
+                  groupValue: boolValue,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     spacing: 10,

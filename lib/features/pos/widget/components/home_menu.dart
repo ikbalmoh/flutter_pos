@@ -141,18 +141,21 @@ class HomeMenu extends ConsumerWidget {
                       ],
                     ),
                   ),
-                if (cart.customFields?.isNotEmpty ?? false)
+                if (outlet
+                        .config.customFields?.modules.transaction?.isNotEmpty ??
+                    false)
                   MenuItemButton(
                     onPressed: () => CustomFieldsForm(
-                      title: 'customer_notes'.tr(),
-                      fields: cart.customFields!,
+                      title: 'custom_field'.tr(),
+                      fields:
+                          outlet.config.customFields?.modules.transaction ?? [],
                       onValuesChange: (values) => ref
                           .read(cartProvider.notifier)
                           .setCustomField(values),
                     ).show(context),
                     leadingIcon: Icon(CupertinoIcons.list_dash),
                     style: buttonMenuStyle,
-                    child: Text('customer_notes'.tr()),
+                    child: Text('custom_field'.tr()),
                   ),
                 if (outlet.config.extraItem == true)
                   MenuItemButton(
