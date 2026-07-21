@@ -24,7 +24,7 @@ AuthRepository authRepository(Ref ref) => AuthRepository(ref);
 abstract class AuthRepositoryProtocol {
   Future<AuthState> login(String username, String password);
   Future<void> logout();
-  Future<User?> fetchUser();
+  Future<User?> fetchUser({String? accessToken});
 }
 
 class AuthRepository implements AuthRepositoryProtocol {
@@ -52,7 +52,7 @@ class AuthRepository implements AuthRepositoryProtocol {
       const storage = FlutterSecureStorage();
       await storage.delete(key: StoreKey.user.name);
 
-      User? user = await fetchUser();
+      User? user = await fetchUser(accessToken: token.accessToken);
       if (user != null) {
         return Authenticated(user: user, token: token);
       }
@@ -108,7 +108,7 @@ class AuthRepository implements AuthRepositoryProtocol {
   }
 
   @override
-  Future<User?> fetchUser() async {
+  Future<User?> fetchUser({String? accessToken}) async {
     const storage = FlutterSecureStorage();
     String? userString = await storage.read(key: StoreKey.user.name);
 
@@ -122,7 +122,12 @@ class AuthRepository implements AuthRepositoryProtocol {
     final api = _ref.watch(authApiProvider);
 
     try {
-      final json = await api.user();
+      // When accessToken is provided (e.g. right after login), pass it
+      // directly as a header override so we don't depend on
+      // FlutterSecureStorage being immediately readable by the interceptor.
+      final json = await api.user(
+        accessToken: accessToken,
+      );
       final user = User.fromJson(json);
       log('Online User: ${user.user.name}');
       await storage.write(key: StoreKey.user.name, value: user.toString());

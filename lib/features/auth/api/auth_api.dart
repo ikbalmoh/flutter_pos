@@ -26,8 +26,13 @@ class AuthApi {
     return res.data;
   }
 
-  Future user() async {
-    final res = await api.get(ApiUrl.user);
+  Future user({String? accessToken}) async {
+    final res = await api.get(
+      ApiUrl.user,
+      options: accessToken != null
+          ? Options(headers: {'Authorization': 'Bearer $accessToken'})
+          : null,
+    );
     return res.data;
   }
 
