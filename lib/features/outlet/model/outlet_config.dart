@@ -55,6 +55,10 @@ class OutletConfig with _$OutletConfig {
     String? merchantCode,
     String? merchantId,
     @JsonKey(name: 'custom_fields') CustomFields? customFields,
+    @JsonKey(name: 'show_work_duration') @Default(false) bool? showWorkDuration,
+    @JsonKey(name: 'show_cash_account_balance')
+    @Default(false)
+    bool? showCashAccountBalance,
   }) = _OutletConfig;
 
   factory OutletConfig.fromJson(Map<String, dynamic> json) =>

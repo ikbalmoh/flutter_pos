@@ -17,7 +17,7 @@ class _CashBalanceState extends ConsumerState<CashBalance> {
     final outletState = ref.watch(outletProvider).value;
     return outletState is OutletSelected
         ? ActionChip(
-            tooltip: 'cash_balance'.tr(),
+            tooltip: 'account_balance'.tr(),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),

@@ -74,7 +74,8 @@ class ActiveShiftInfo extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          if (config.addOns != null &&
+                          if (config.showCashAccountBalance == true &&
+                              config.addOns != null &&
                               config.addOns!.contains('accounting'))
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
