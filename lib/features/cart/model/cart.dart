@@ -85,6 +85,7 @@ class Cart with _$Cart {
     CustomerVehicle? vehicle,
     @JsonKey(name: 'custom_fields') @Default([]) List<CustomField>? customFields,
     @JsonKey(name: 'transaction_images') @Default([]) List<TransactionImage>? transactionImages,
+    @JsonKey(includeToJson: false, includeFromJson: false) @Default(false) bool skipCustomField,
   }) = _Cart;
 
   factory Cart.initial() => Cart(

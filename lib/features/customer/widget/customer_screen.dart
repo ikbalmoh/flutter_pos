@@ -97,13 +97,13 @@ class _CustomerScreenState extends ConsumerState<CustomerScreen> {
     final selectedCustomer = cart.idCustomer;
     final selectedVehicle = cart.vehicle;
 
-    void onSelectCustomer(customer, {CustomerVehicle? vehicle, List<CustomField>? customFields}) {
+    void onSelectCustomer(customer, {CustomerVehicle? vehicle, List<CustomField>? customFields, bool skipCustomField = false}) {
       while (context.canPop() == true) {
         context.pop();
       }
       ref
           .read(cartProvider.notifier)
-          .selectCustomer(customer, vehicle: vehicle, customFields: customFields);
+          .selectCustomer(customer, vehicle: vehicle, customFields: customFields, skipCustomField: skipCustomField);
     }
 
     void showCustomerSheet(Customer customer) {

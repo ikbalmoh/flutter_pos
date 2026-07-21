@@ -65,6 +65,8 @@ class CustomFieldInput extends StatelessWidget {
           onChange: (value) => onValueChange?.call(value),
           validator: validate,
           inputType: TextInputType.multiline,
+          maxLines: 3,
+          minLines: 2,
         );
       case model.FieldType.date:
         DateTime? dateValue;

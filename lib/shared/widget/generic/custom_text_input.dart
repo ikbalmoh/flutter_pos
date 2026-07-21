@@ -11,6 +11,8 @@ class CustomTextInput extends StatelessWidget {
     this.onChange,
     this.inputType = TextInputType.text,
     this.validator,
+    this.minLines,
+    this.maxLines,
   });
 
   final TextEditingController? controller;
@@ -21,6 +23,7 @@ class CustomTextInput extends StatelessWidget {
   final ValueChanged<String>? onChange;
   final TextInputType inputType;
   final String? Function(String?)? validator;
+  final int? maxLines, minLines;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +33,8 @@ class CustomTextInput extends StatelessWidget {
       onChanged: onChange,
       keyboardType: inputType,
       validator: validator,
+      maxLines: maxLines,
+      minLines: minLines,
       decoration: InputDecoration(
         label: Text.rich(
           TextSpan(

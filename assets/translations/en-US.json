@@ -405,7 +405,8 @@
   "payment_success": "Payment Success",
   "other": "Other",
   "please_recheck_x": "Please recheck the {}",
-  "custom_field": "Additional Field",
+  "additional_information": "Additional Information",
   "customer_notes": "Customer Notes",
-  "account_balance": "Account Balance"
+  "account_balance": "Account Balance",
+  "skip": "Skip"
 }

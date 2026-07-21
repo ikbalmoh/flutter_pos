@@ -146,16 +146,19 @@ class HomeMenu extends ConsumerWidget {
                     false)
                   MenuItemButton(
                     onPressed: () => CustomFieldsForm(
-                      title: 'custom_field'.tr(),
+                      title: 'additional_information'.tr(),
                       fields:
-                          outlet.config.customFields?.modules.transaction ?? [],
+                          cart.customFields ?? [],
                       onValuesChange: (values) => ref
                           .read(cartProvider.notifier)
                           .setCustomField(values),
+                      onSkip: () => ref
+                          .read(cartProvider.notifier)
+                          .setSkipCustomField(true),
                     ).show(context),
                     leadingIcon: Icon(CupertinoIcons.list_dash),
                     style: buttonMenuStyle,
-                    child: Text('custom_field'.tr()),
+                    child: Text('additional_information'.tr()),
                   ),
                 if (outlet.config.extraItem == true)
                   MenuItemButton(

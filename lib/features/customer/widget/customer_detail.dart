@@ -13,7 +13,7 @@ class CustomerDetail extends ConsumerStatefulWidget {
   final Customer customer;
   final List<CustomField>? customFields;
   final Function(Customer,
-      {CustomerVehicle? vehicle, List<CustomField>? customFields}) onSelect;
+      {CustomerVehicle? vehicle, List<CustomField>? customFields, bool skipCustomField}) onSelect;
   final Function(Customer) onEdit;
   final bool isSelected;
   final CustomerVehicle? vehicle;
@@ -35,6 +35,7 @@ class CustomerDetail extends ConsumerStatefulWidget {
 class _CustomerDetailState extends ConsumerState<CustomerDetail> {
   CustomerVehicle? selectedVehicle;
   List<CustomField> customFields = [];
+  bool skipCustomField = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -57,7 +58,10 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
     List<String> customerMandatory =
         outletConfig.config.customMandatory?.customers ?? [];
 
-    bool vehicleEnabled = customerMandatory.contains('vehicle');
+    final bool vehicleEnabled = customerMandatory.contains('vehicle');
+    final bool customFieldEnabled =
+        outletConfig.config.customFields?.modules.transaction?.isNotEmpty ??
+            false;
 
     bool isExpired = widget.customer.expiredDate != null
         ? DateTimeFormater.stringToDateTime(widget.customer.expiredDate!)!
@@ -76,6 +80,7 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
               widget.customer,
               vehicle: selectedVehicle,
               customFields: customFields,
+              skipCustomField: skipCustomField,
             );
           }
         },
@@ -157,54 +162,12 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                     ),
                     Form(
                       key: _formKey,
-                      child: Card(
-                        color: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.circular(15),
-                            side: BorderSide(
-                              color: Colors.grey.shade200,
-                              width: 1,
-                            )),
-                        child: Column(
-                          children: [
-                            if (vehicleEnabled) vehicleCard(),
-                            if (customFields.isNotEmpty) ...[
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Divider(
-                                color: Colors.grey.shade200,
-                                height: 5,
-                                thickness: 1,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  spacing: 15,
-                                  children: customFields.map((field) {
-                                    return CustomFieldInput(
-                                      field: field,
-                                      value: field.value,
-                                      onValueChange: (value) {
-                                        setState(() {
-                                          customFields = customFields.map((f) {
-                                            if (f.id == field.id) {
-                                              return f.copyWith(value: value);
-                                            }
-                                            return f;
-                                          }).toList();
-                                        });
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ]
-                          ],
-                        ),
+                      child: Column(
+                        spacing: 10,
+                        children: [
+                          if (vehicleEnabled) vehicleCard(),
+                          if (customFieldEnabled) additionalInformation(),
+                        ],
                       ),
                     ),
                   ],
@@ -319,81 +282,159 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
   }
 
   Widget vehicleCard() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding:
-              const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 8),
-          child: Text('select_x'.tr(args: ['vehicle'.tr()])),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(0),
-          itemBuilder: (context, idx) {
-            if (idx == 0) {
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(15),
+          side: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1,
+          )),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 8),
+            child: Text('select_x'.tr(args: ['vehicle'.tr()])),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 12),
+            itemBuilder: (context, idx) {
+              if (idx == 0) {
+                return ListTile(
+                  onTap: () => setState(() {
+                    selectedVehicle = null;
+                  }),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  dense: false,
+                  title: Text('without_vehicle'.tr()),
+                  horizontalTitleGap: 10,
+                  leading: Icon(
+                    Icons.person,
+                    size: 20,
+                  ),
+                  trailing: Icon(
+                    selectedVehicle == null
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off_rounded,
+                    size: 18,
+                    color:
+                        selectedVehicle == null ? Colors.teal : Colors.blueGrey,
+                  ),
+                  visualDensity: VisualDensity.compact,
+                  minVerticalPadding: 0,
+                  minTileHeight: 0,
+                );
+              }
+              final vehicle = widget.customer.vehicles![idx - 1];
               return ListTile(
                 onTap: () => setState(() {
-                  selectedVehicle = null;
+                  selectedVehicle = vehicle;
                 }),
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                dense: false,
-                title: Text('without_vehicle'.tr()),
+                dense: true,
+                title: Text(
+                  vehicle.licensePlate.isNotEmpty
+                      ? vehicle.licensePlate.toUpperCase()
+                      : '-',
+                ),
+                subtitle:
+                    Text('${vehicle.vehicleType} - ${vehicle.vehicleBrand}'),
                 horizontalTitleGap: 10,
                 leading: Icon(
-                  Icons.person,
+                  Icons.drive_eta_rounded,
                   size: 20,
                 ),
                 trailing: Icon(
-                  selectedVehicle == null
-                      ? Icons.radio_button_checked
+                  selectedVehicle == vehicle
+                      ? Icons.radio_button_checked_rounded
                       : Icons.radio_button_off_rounded,
                   size: 18,
-                  color:
-                      selectedVehicle == null ? Colors.teal : Colors.blueGrey,
+                  color: selectedVehicle == vehicle
+                      ? Colors.teal
+                      : Colors.blueGrey,
                 ),
                 visualDensity: VisualDensity.compact,
                 minVerticalPadding: 0,
                 minTileHeight: 0,
               );
-            }
-            final vehicle = widget.customer.vehicles![idx - 1];
-            return ListTile(
-              onTap: () => setState(() {
-                selectedVehicle = vehicle;
-              }),
-              contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              dense: true,
-              title: Text(
-                vehicle.licensePlate.isNotEmpty
-                    ? vehicle.licensePlate.toUpperCase()
-                    : '-',
+            },
+            itemCount: widget.customer.vehicles!.length + 1,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget additionalInformation() {
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(15),
+          side: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1,
+          )),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('additional_information'.tr()),
+                SizedBox(
+                  height: 35,
+                  width: 45,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Switch(
+                      value: !skipCustomField,
+                      onChanged: (v) => setState(() {
+                        skipCustomField = !v;
+                      }),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (!skipCustomField)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 15,
+                children: customFields.map((field) {
+                  return CustomFieldInput(
+                    field: field,
+                    value: field.value,
+                    onValueChange: (value) {
+                      setState(() {
+                        customFields = customFields.map((f) {
+                          if (f.id == field.id) {
+                            return f.copyWith(value: value);
+                          }
+                          return f;
+                        }).toList();
+                      });
+                    },
+                  );
+                }).toList(),
               ),
-              subtitle:
-                  Text('${vehicle.vehicleType} - ${vehicle.vehicleBrand}'),
-              horizontalTitleGap: 10,
-              leading: Icon(
-                Icons.drive_eta_rounded,
-                size: 20,
-              ),
-              trailing: Icon(
-                selectedVehicle == vehicle
-                    ? Icons.radio_button_checked_rounded
-                    : Icons.radio_button_off_rounded,
-                size: 18,
-                color:
-                    selectedVehicle == vehicle ? Colors.teal : Colors.blueGrey,
-              ),
-              visualDensity: VisualDensity.compact,
-              minVerticalPadding: 0,
-              minTileHeight: 0,
-            );
-          },
-          itemCount: widget.customer.vehicles!.length + 1,
-        )
-      ],
+            ),
+        ],
+      ),
     );
   }
 }

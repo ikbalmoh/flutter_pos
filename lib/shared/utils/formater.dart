@@ -46,7 +46,7 @@ class CurrencyFormat {
 class DateTimeFormater {
   static String dateToString(DateTime value,
       {String? format = 'y-MM-dd HH:mm:ss'}) {
-    return DateFormat(format).format(value);
+    return DateFormat(format, 'id_ID').format(value);
   }
 
   static DateTime? stringToDateTime(String? value) {
@@ -58,12 +58,12 @@ class DateTimeFormater {
     return null;
   }
 
-  static String dateFromString(String? value) {
+  static String dateFromString(String? value, {String? format = 'y-MM-dd'}) {
     if (value == null) {
       return '-';
     }
     if (isDate(value)) {
-      return dateToString(DateTime.parse(value));
+      return dateToString(DateTime.parse(value), format: format);
     }
     return '-';
   }
@@ -88,7 +88,7 @@ class DateTimeFormater {
   static String msToString(int value, {String? format = 'y-MM-dd HH:mm:ss'}) {
     int ms = value;
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(ms);
-    return dateToString(dateTime, format: format);
+    return DateFormat(format, 'id_ID').format(dateTime);
   }
 
   static int msTosecond(dynamic value) {

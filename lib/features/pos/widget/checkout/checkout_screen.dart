@@ -9,6 +9,7 @@ import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/holded/widget/components/hold_button.dart';
 import 'package:selleri/features/pos/widget/checkout/add_rounding.dart';
 import 'package:selleri/features/pos/widget/checkout/confirm_store_transaction.dart';
+import 'package:selleri/features/pos/widget/checkout/custom_fields_summary.dart';
 import 'package:selleri/features/pos/widget/checkout/discount_promotion/discount_promotion.dart';
 import 'package:selleri/features/cart/widget/components/order_summary/order_summary.dart';
 import 'package:selleri/features/pos/widget/checkout/payment/payment.dart';
@@ -299,6 +300,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    const CustomFieldsSummary(),
                                     const DiscountPromotion(),
                                     paymentDetails,
                                   ],
@@ -325,6 +327,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen>
                                                 const EdgeInsets.only(top: 10),
                                             child: cartPreview,
                                           ),
+                                          const CustomFieldsSummary(),
                                           const DiscountPromotion(),
                                           paymentDetails,
                                         ],

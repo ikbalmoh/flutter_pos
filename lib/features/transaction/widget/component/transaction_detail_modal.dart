@@ -92,7 +92,7 @@ class _TransactionDetailSheet extends StatelessWidget {
                   children: [
                     if (hasCustomFields) ...[
                       _SectionTitle(
-                        title: 'custom_field'.tr(),
+                        title: 'additional_information'.tr(),
                         icon: CupertinoIcons.person,
                       ),
                       const SizedBox(height: 8),

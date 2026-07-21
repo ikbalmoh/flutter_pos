@@ -6,11 +6,12 @@ import 'package:selleri/shared/widget/custom_field_input.dart';
 
 class CustomFieldsForm extends StatelessWidget {
   const CustomFieldsForm(
-      {super.key, required this.fields, this.onValuesChange, this.title});
+      {super.key, required this.fields, this.onValuesChange, this.onSkip, this.title});
 
   final List<model.CustomField> fields;
   final String? title;
   final ValueChanged<List<model.CustomField>>? onValuesChange;
+  final VoidCallback? onSkip;
 
   void show(BuildContext context) {
     showModalBottomSheet(
@@ -22,6 +23,7 @@ class CustomFieldsForm extends StatelessWidget {
           return _CustomFieldsSheet(
             initialFields: fields,
             onValuesChange: onValuesChange,
+            onSkip: onSkip,
             title: title,
           );
         });
@@ -37,11 +39,13 @@ class _CustomFieldsSheet extends StatefulWidget {
   const _CustomFieldsSheet({
     required this.initialFields,
     this.onValuesChange,
+    this.onSkip,
     this.title,
   });
 
   final List<model.CustomField> initialFields;
   final ValueChanged<List<model.CustomField>>? onValuesChange;
+  final VoidCallback? onSkip;
   final String? title;
 
   @override
@@ -69,7 +73,7 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
           child: Column(
             children: [
               AppBar(
-                title: Text(widget.title ?? 'custom_field'.tr()),
+                title: Text(widget.title ?? 'additional_information'.tr()),
                 automaticallyImplyLeading: false,
                 actions: [
                   IconButton(
@@ -103,14 +107,27 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    widget.onValuesChange?.call(fields);
-                    context.pop();
-                  }
-                },
-                child: Text('save'.tr()),
+              Row(
+                spacing: 10,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        widget.onSkip?.call();
+                        context.pop();
+                      },
+                      child: Text('skip'.tr())),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          widget.onValuesChange?.call(fields);
+                          context.pop();
+                        }
+                      },
+                      child: Text('save'.tr()),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

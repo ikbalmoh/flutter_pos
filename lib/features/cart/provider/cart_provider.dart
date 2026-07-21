@@ -396,13 +396,14 @@ class Cart extends _$Cart {
   }
 
   void selectCustomer(Customer? customer,
-      {CustomerVehicle? vehicle, List<CustomField>? customFields}) {
+      {CustomerVehicle? vehicle, List<CustomField>? customFields, bool skipCustomField = false}) {
     state = state.copyWith(
       customerName: customer?.customerName,
       idCustomer: customer?.idCustomer,
       customerGroup: customer?.groups,
       vehicle: vehicle,
       customFields: customFields ?? state.customFields,
+      skipCustomField: skipCustomField,
     );
     applyPromotions([]);
   }
@@ -1148,6 +1149,10 @@ class Cart extends _$Cart {
   }
 
   void setCustomField(List<CustomField> customFields) {
-    state = state.copyWith(customFields: customFields);
+    state = state.copyWith(customFields: customFields, skipCustomField: false);
+  }
+
+  void setSkipCustomField(bool skip) {
+    state = state.copyWith(skipCustomField: skip);
   }
 }
