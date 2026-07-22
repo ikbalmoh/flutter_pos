@@ -128,7 +128,7 @@ class ItemRepository implements ItemRepositoryProtocol {
       }
       storage.write(
         key: StoreKey.lastSync.name,
-        value: DateTime.now().millisecondsSinceEpoch.toString(),
+        value: DateTime.now().toLocal().millisecondsSinceEpoch.toString(),
       );
       return items;
     } on DioException catch (e, st) {

@@ -75,7 +75,7 @@ class ElasticRepository implements ElasticRepositoryInterface {
         query['range'] = {
           'updated_at': {
             'gte': DateTimeFormater.dateToString(lastUpdate.copyWith(hour: 0, minute: 0, second: 0)),
-            'lt': DateTimeFormater.dateToString(DateTime.now()),
+            'lte': DateTimeFormater.dateToString(DateTime.now()),
           },
         };
       }
