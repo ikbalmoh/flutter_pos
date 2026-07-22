@@ -151,6 +151,7 @@ class ShiftNotifier extends _$ShiftNotifier {
       await _shiftRepository.close(currentShift.id, payload);
 
       if (reopen) {
+        state = const AsyncData(null);
         await openShift(closeAmount);
       } else {
         state = const AsyncData(null);
