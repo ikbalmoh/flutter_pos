@@ -396,7 +396,9 @@ class Cart extends _$Cart {
   }
 
   void selectCustomer(Customer? customer,
-      {CustomerVehicle? vehicle, List<CustomField>? customFields, bool skipCustomField = false}) {
+      {CustomerVehicle? vehicle,
+      List<CustomField>? customFields,
+      bool skipCustomField = false}) {
     state = state.copyWith(
       customerName: customer?.customerName,
       idCustomer: customer?.idCustomer,
@@ -1153,6 +1155,16 @@ class Cart extends _$Cart {
   }
 
   void setSkipCustomField(bool skip) {
-    state = state.copyWith(skipCustomField: skip);
+    List<CustomField> customFields =
+        (ref.read(outletProvider).value as OutletSelected)
+                .config
+                .customFields
+                ?.modules
+                .transaction ??
+            [];
+    state = state.copyWith(
+      skipCustomField: skip,
+      customFields: customFields,
+    );
   }
 }
