@@ -31,7 +31,7 @@ class ElasticRepository implements ElasticRepositoryInterface {
   @override
   Future<ElasticResponse> items({
     String? idCategory,
-    DateTime? lastUpdate,
+    int? lastUpdate,
     int? from = 0,
     int? size = 10,
     Function(int current, int total)? onProgress,
@@ -73,9 +73,8 @@ class ElasticRepository implements ElasticRepositoryInterface {
 
       if (lastUpdate != null) {
         query['range'] = {
-          'updated_at': {
-            'gte': DateTimeFormater.dateToString(lastUpdate.copyWith(hour: 0, minute: 0, second: 0)),
-            'lte': DateTimeFormater.dateToString(DateTime.now()),
+          'updated_at_ms': {
+            'gt': lastUpdate,
           },
         };
       }

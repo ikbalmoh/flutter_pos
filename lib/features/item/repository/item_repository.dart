@@ -177,13 +177,12 @@ class ItemRepository implements ItemRepositoryProtocol {
     Function(int current, int total)? onProgress,
   }) async {
     try {
-      DateTime? lastUpdate;
+      int? lastUpdate;
       if (fromLastSync == true) {
         String? lastSync = await storage.read(key: StoreKey.lastSync.name);
         lastUpdate = lastSync != null
-            ? DateTime.fromMillisecondsSinceEpoch(int.parse(lastSync)).toLocal()
-            : DateTime.now().toLocal();
-        lastUpdate = lastUpdate.subtract(const Duration(hours: 1));
+            ? int.parse(lastSync)
+            : DateTime.now().microsecondsSinceEpoch;
       }
 
       const int pageSize = 200;

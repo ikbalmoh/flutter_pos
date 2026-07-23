@@ -582,7 +582,8 @@ class CloseShiftError extends StatelessWidget {
               Text(
                 error ?? '',
                 style:
-                    textTheme.bodySmall?.copyWith(color: Colors.grey.shade500),
+                    textTheme.bodyMedium?.copyWith(color: Colors.grey.shade500),
+                textAlign: TextAlign.center,
               ),
             ],
           )),

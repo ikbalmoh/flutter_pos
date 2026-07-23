@@ -80,27 +80,47 @@ class ItemInfo extends ConsumerWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      variant?.barcodeNumber != null || item.barcode != null
-                          ? Row(
-                              children: [
-                                const Icon(
-                                  CupertinoIcons.barcode_viewfinder,
-                                  size: 16,
-                                  color: Colors.grey,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  variant?.barcodeNumber ?? item.barcode!,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(color: Colors.grey.shade700),
-                                )
-                              ],
+                      if (item.updatedAt != null)
+                        Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.clock,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              DateTimeFormater.dateToString(item.updatedAt!, format: 'dd/MM/y HH:mm:ss'),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(color: Colors.grey.shade700),
                             )
-                          : Container()
+                          ],
+                        ),
+                      if (variant?.barcodeNumber != null ||
+                          item.barcode != null)
+                        Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.barcode_viewfinder,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              variant?.barcodeNumber ?? item.barcode!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(color: Colors.grey.shade700),
+                            )
+                          ],
+                        ),
                     ],
                   ),
                 ),

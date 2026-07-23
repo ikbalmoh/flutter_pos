@@ -39,6 +39,8 @@ class Item with _$Item {
     @Property(type: PropertyType.date)
     @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
     DateTime? expiredDate,
+    @JsonKey(fromJson: DateTimeFormater.stringToDateTime)
+    DateTime? updatedAt,
     @Property(type: PropertyType.dateNano) DateTime? lastAdjustment,
     required List<String> promotions,
     bool? hasPromo,
