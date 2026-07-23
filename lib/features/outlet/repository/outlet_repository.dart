@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/features/elastic/repository/elastic_repository.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
@@ -103,7 +104,19 @@ class OutletRepository implements OutletRepositoryProtocol {
     List<String>? only = const [],
     OutletConfig? current,
   }) async {
+    try {
+      final elasticConfig =
+          await _ref.read(elasticRepositoryProvider).outletConfig();
+
+      saveOutletConfig(elasticConfig);
+
+      return elasticConfig;
+    } catch (e) {
+      log('ES outlet config error: $e');
+    }
+
     final api = _ref.watch(outletApiProvider);
+
     try {
       var configJson = await api.configs(idOutlet, only: only);
 

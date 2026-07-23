@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/elastic/model/elastic.dart';
+import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
 import 'package:selleri/shared/constants/app_config.dart';
@@ -10,6 +14,7 @@ import 'package:selleri/shared/utils/exception.dart';
 
 abstract class ElasticRepositoryInterface {
   Future<ElasticResponse> items();
+  Future<OutletConfig> outletConfig();
 }
 
 class ElasticRepository implements ElasticRepositoryInterface {
@@ -57,10 +62,12 @@ class ElasticRepository implements ElasticRepositoryInterface {
     }
 
     if (activeCompanyId == null || activeOutletId == null) {
-      throw Exception('Missing companyId ($activeCompanyId) or outletId ($activeOutletId)');
+      throw Exception(
+          'Missing companyId ($activeCompanyId) or outletId ($activeOutletId)');
     }
 
-    final index = '/selleri_tenant_${activeCompanyId}_outlet_${activeOutletId}_item';
+    final index =
+        '/selleri_tenant_${activeCompanyId}_outlet_${activeOutletId}_item';
 
     try {
       final Map<String, dynamic> data = {
@@ -95,6 +102,46 @@ class ElasticRepository implements ElasticRepositoryInterface {
       rethrow;
     }
   }
+
+  @override
+  Future<OutletConfig> outletConfig() async {
+    final index = '/selleri_tenant_${companyId}_config';
+
+    final data = {
+      "query": {
+        "term": {
+          "_id": {"value": outletId}
+        }
+      },
+      "size": 1,
+      "from": 0,
+    };
+
+    try {
+      final res = await api.post('$index/_search', data: data);
+      final elastic = ElasticResponse.fromJson(res.data);
+      final List<OutletConfig> sources =
+          elastic.hits.sources(OutletConfig.fromJson);
+      if (sources.isEmpty) {
+        throw NotFoundException();
+      }
+      return sources.first;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        throw NotFoundException();
+      }
+      rethrow;
+    } on NotFoundException {
+      log('Outlet config not available on ES');
+      FirebaseCrashlytics.instance.recordError(
+        'Outlet config not available on ES',
+        null,
+        information: [index],
+        fatal: false,
+      );
+      throw NotFoundException();
+    }
+  }
 }
 
 final elasticRepositoryProvider = Provider<ElasticRepository>((ref) {
@@ -108,13 +155,11 @@ final elasticRepositoryProvider = Provider<ElasticRepository>((ref) {
   final authState = ref.read(authProvider).value;
   final outletState = ref.read(outletProvider).value;
 
-  final String? companyId = authState is Authenticated
-      ? authState.user.user.company.idCompany
-      : null;
+  final String? companyId =
+      authState is Authenticated ? authState.user.user.company.idCompany : null;
 
-  final String? outletId = outletState is OutletSelected
-      ? outletState.outlet.idOutlet
-      : null;
+  final String? outletId =
+      outletState is OutletSelected ? outletState.outlet.idOutlet : null;
 
   return ElasticRepository(
     api: dio,

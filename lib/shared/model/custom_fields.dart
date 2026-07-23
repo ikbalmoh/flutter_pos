@@ -7,7 +7,8 @@ part 'custom_fields.g.dart';
 @freezed
 class CustomFields with _$CustomFields {
   const factory CustomFields({
-    @JsonKey(name: 'modules') required CustomFieldsModules modules,
+    @JsonKey(name: 'modules', fromJson: _modulesFromJson)
+    required CustomFieldsModules modules,
   }) = _CustomFields;
 
   factory CustomFields.fromJson(Map<String, dynamic> json) =>
@@ -22,4 +23,11 @@ class CustomFieldsModules with _$CustomFieldsModules {
 
   factory CustomFieldsModules.fromJson(Map<String, dynamic> json) =>
       _$CustomFieldsModulesFromJson(json);
+}
+
+CustomFieldsModules _modulesFromJson(dynamic value) {
+  if (value is Map<String, dynamic>) {
+    return CustomFieldsModules.fromJson(value);
+  }
+  return const CustomFieldsModules();
 }
