@@ -6,7 +6,11 @@ import 'package:selleri/shared/widget/custom_field_input.dart';
 
 class CustomFieldsForm extends StatelessWidget {
   const CustomFieldsForm(
-      {super.key, required this.fields, this.onValuesChange, this.onSkip, this.title});
+      {super.key,
+      required this.fields,
+      this.onValuesChange,
+      this.onSkip,
+      this.title});
 
   final List<model.CustomField> fields;
   final String? title;
@@ -20,11 +24,17 @@ class CustomFieldsForm extends StatelessWidget {
         backgroundColor: Colors.white,
         useSafeArea: true,
         builder: (context) {
-          return _CustomFieldsSheet(
-            initialFields: fields,
-            onValuesChange: onValuesChange,
-            onSkip: onSkip,
-            title: title,
+          return DraggableScrollableSheet(
+            minChildSize: 0.3,
+            maxChildSize: 0.9,
+            expand: false,
+            builder: (context, scrollController) => _CustomFieldsSheet(
+              initialFields: fields,
+              onValuesChange: onValuesChange,
+              onSkip: onSkip,
+              title: title,
+              scrollController: scrollController,
+            ),
           );
         });
   }
@@ -41,12 +51,14 @@ class _CustomFieldsSheet extends StatefulWidget {
     this.onValuesChange,
     this.onSkip,
     this.title,
+    this.scrollController,
   });
 
   final List<model.CustomField> initialFields;
   final ValueChanged<List<model.CustomField>>? onValuesChange;
   final VoidCallback? onSkip;
   final String? title;
+  final ScrollController? scrollController;
 
   @override
   State<_CustomFieldsSheet> createState() => _CustomFieldsSheetState();
@@ -64,73 +76,98 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              AppBar(
-                title: Text(widget.title ?? 'additional_information'.tr()),
-                automaticallyImplyLeading: false,
-                actions: [
-                  IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => context.pop())
-                ],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: fields.map((field) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
-                        child: CustomFieldInput(
-                          field: field,
-                          value: field.value,
-                          onValueChange: (value) {
-                            setState(() {
-                              fields = fields.map((f) {
-                                if (f.id == field.id) {
-                                  return f.copyWith(value: value);
-                                }
-                                return f;
-                              }).toList();
-                            });
-                          },
-                        ),
-                      );
-                    }).toList(),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 10,
+        left: 15,
+        right: 15,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 12),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 0.5,
+                    color: Colors.blueGrey.shade100,
                   ),
                 ),
               ),
-              Row(
-                spacing: 10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(
-                      onPressed: () {
-                        widget.onSkip?.call();
-                        context.pop();
-                      },
-                      child: Text('skip'.tr())),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          widget.onValuesChange?.call(fields);
-                          context.pop();
-                        }
-                      },
-                      child: Text('save'.tr()),
-                    ),
+                  Text(
+                    widget.title ?? 'additional_information'.tr(),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => context.pop(),
+                    visualDensity: VisualDensity.comfortable,
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: widget.scrollController,
+                padding: const EdgeInsets.only(top: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: fields.map((field) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      child: CustomFieldInput(
+                        field: field,
+                        value: field.value,
+                        onValueChange: (value) {
+                          setState(() {
+                            fields = fields.map((f) {
+                              if (f.id == field.id) {
+                                return f.copyWith(value: value);
+                              }
+                              return f;
+                            }).toList();
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            Row(
+              spacing: 10,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      context.pop();
+                      widget.onSkip?.call();
+                    },
+                    child: Text('skip'.tr())),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        widget.onValuesChange?.call(fields);
+                        context.pop();
+                      }
+                    },
+                    child: Text('save'.tr()),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -178,7 +178,7 @@ class ItemCart with _$ItemCart {
       details: item.packageItems
           .map(
             (pkg) => ItemCartDetail(
-              itemId: pkg.idItem,
+              idItem: pkg.idItem,
               name: pkg.itemName,
               variantId: pkg.variantId,
               quantity: pkg.quantityItem,

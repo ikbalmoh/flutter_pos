@@ -11,12 +11,14 @@ class PaymentForm extends StatefulWidget {
   final CartPayment? cartPayment;
   final double? insufficient;
   final bool isCash;
+  final Function(String paymentMethodId) onRemovePayment;
   const PaymentForm({
     super.key,
     required this.method,
     this.cartPayment,
     this.insufficient,
     this.isCash = false,
+    required this.onRemovePayment,
   });
 
   @override
@@ -50,12 +52,8 @@ class _PaymentFormState extends State<PaymentForm> {
   }
 
   void onDelete() {
-    final payment = CartPayment(
-      paymentMethodId: widget.method.id,
-      paymentName: widget.method.name,
-      paymentValue: 0,
-    );
-    context.pop(payment);
+    widget.onRemovePayment(widget.method.id);
+    context.pop();
   }
 
   void onSubmit() {

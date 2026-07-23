@@ -12,7 +12,7 @@ class ItemCartDetail with _$ItemCartDetail {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ItemCartDetail({
-    required String itemId,
+    required String idItem,
     required String name,
     required int? variantId,
     required int? quantity,
@@ -23,5 +23,5 @@ class ItemCartDetail with _$ItemCartDetail {
   factory ItemCartDetail.fromJson(Map<String, dynamic> json) =>
       _$ItemCartDetailFromJson(json);
 
-  Item? item() => objectBox.getItem(itemId);
+  Item? item() => objectBox.getItem(idItem);
 }

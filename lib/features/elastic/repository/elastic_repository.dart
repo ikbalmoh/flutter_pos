@@ -7,7 +7,6 @@ import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
 import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/utils/exception.dart';
-import 'package:selleri/shared/utils/formater.dart';
 
 abstract class ElasticRepositoryInterface {
   Future<ElasticResponse> items();

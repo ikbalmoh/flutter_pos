@@ -185,7 +185,7 @@ class Cart extends _$Cart {
       details: item.packageItems
           .map(
             (pkg) => ItemCartDetail(
-              itemId: pkg.idItem,
+              idItem: pkg.idItem,
               name: pkg.itemName,
               variantId: pkg.variantId,
               quantity: pkg.quantityItem,

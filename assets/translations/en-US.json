@@ -408,5 +408,7 @@
   "additional_information": "Additional Information",
   "customer_notes": "Customer Notes",
   "account_balance": "Account Balance",
-  "skip": "Skip"
+  "skip": "Skip",
+  "exact_change": "Uang Pas",
+  "add_nominal": "Add Amount"
 }

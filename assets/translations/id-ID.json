@@ -409,5 +409,7 @@
   "additional_information": "Informasi Tambahan",
   "customer_notes": "Catatan Pelanggan",
   "account_balance": "Saldo Akun",
-  "skip": "Lewati"
+  "skip": "Lewati",
+  "exact_change": "Uang Pas",
+  "add_nominal": "Input Nominal"
 }

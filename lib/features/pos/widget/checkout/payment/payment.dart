@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/cart/model/cart_payment.dart';
+import 'package:selleri/features/cart/widget/components/cash_payment_shortcut.dart';
 import 'package:selleri/features/pos/model/payment_method.dart';
 import 'package:selleri/features/pos/model/payment_type.dart';
 import 'package:selleri/features/cart/widget/components/payment_form.dart';
@@ -117,7 +118,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
       return;
     }
 
-// Show payment sheet to input payment amount
+    // Show payment sheet to input payment amount
     CartPayment? payment = await showModalBottomSheet(
       backgroundColor: Colors.white,
       // ignore: use_build_context_synchronously
@@ -129,6 +130,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
           method: method,
           isCash: isCash,
           cartPayment: cartPayment,
+          onRemovePayment: widget.onRemovePayment,
           insufficient: (widget.cart.grandTotal -
               (hasQris ? 0 : widget.cart.totalPayment)),
         );
@@ -195,6 +197,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
                   leading: Icon(
@@ -223,7 +226,11 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
                           color: Colors.teal,
                           size: 18,
                         )
-                      : null,
+                      : Icon(
+                          Icons.circle_outlined,
+                          color: Colors.grey.shade500,
+                          size: 18,
+                        ),
                   onTap: cashPayment != null
                       ? () => onSelectMethod(cashPayment!)
                       : null,
@@ -231,6 +238,20 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
                   dense: true,
                   contentPadding: const EdgeInsets.only(left: 15, right: 25),
                 ),
+                if (cashUsed == null)
+                  CashPaymentShortcut(
+                    padding: const EdgeInsets.only(left: 50, right: 10),
+                    transactionAmount: widget.cart.grandTotal,
+                    onSelected: (value) {
+                      value == null
+                          ? onSelectMethod(cashPayment!)
+                          : widget.onAddPayment(CartPayment(
+                              paymentMethodId: cashPayment!.id,
+                              paymentName: cashPayment!.name,
+                              paymentValue: value,
+                            ));
+                    },
+                  ),
                 ExpansionPanelList(
                   elevation: 0,
                   dividerColor: Colors.grey.shade200,
