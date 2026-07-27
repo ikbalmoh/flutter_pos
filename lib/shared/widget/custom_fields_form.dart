@@ -18,6 +18,7 @@ class CustomFieldsForm extends StatelessWidget {
   final VoidCallback? onSkip;
 
   void show(BuildContext context) {
+    final sheetController = DraggableScrollableController();
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -25,6 +26,7 @@ class CustomFieldsForm extends StatelessWidget {
         useSafeArea: true,
         builder: (context) {
           return DraggableScrollableSheet(
+            controller: sheetController,
             minChildSize: 0.3,
             maxChildSize: 0.9,
             expand: false,
@@ -34,6 +36,7 @@ class CustomFieldsForm extends StatelessWidget {
               onSkip: onSkip,
               title: title,
               scrollController: scrollController,
+              draggableController: sheetController,
             ),
           );
         });
@@ -52,6 +55,7 @@ class _CustomFieldsSheet extends StatefulWidget {
     this.onSkip,
     this.title,
     this.scrollController,
+    this.draggableController,
   });
 
   final List<model.CustomField> initialFields;
@@ -59,6 +63,7 @@ class _CustomFieldsSheet extends StatefulWidget {
   final VoidCallback? onSkip;
   final String? title;
   final ScrollController? scrollController;
+  final DraggableScrollableController? draggableController;
 
   @override
   State<_CustomFieldsSheet> createState() => _CustomFieldsSheetState();
@@ -76,6 +81,22 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    if (isKeyboardVisible &&
+        widget.draggableController != null &&
+        widget.draggableController!.isAttached) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.draggableController!.isAttached &&
+            widget.draggableController!.size < 0.9) {
+          widget.draggableController!.animateTo(
+            0.9,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
+
     return Padding(
       padding: EdgeInsets.only(
         top: 10,

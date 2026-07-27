@@ -13,9 +13,14 @@ import 'package:uuid/uuid.dart';
 import 'package:selleri/features/item/model/item_suggestion.dart';
 
 class AddExtraItemForm extends ConsumerStatefulWidget {
-  const AddExtraItemForm({super.key, this.scrollController});
+  const AddExtraItemForm({
+    super.key,
+    this.scrollController,
+    this.draggableController,
+  });
 
   final ScrollController? scrollController;
+  final DraggableScrollableController? draggableController;
 
   @override
   ConsumerState<AddExtraItemForm> createState() => _AddExtraItemFormState();
@@ -87,17 +92,40 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
         .bodyMedium
         ?.copyWith(color: Colors.blueGrey.shade600);
 
-    return SizedBox(
-      height: (MediaQuery.of(context).size.height *
-          (MediaQuery.of(context).viewInsets.bottom > 0 ? 0.9 : 0.6)),
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    if (isKeyboardVisible &&
+        widget.draggableController != null &&
+        widget.draggableController!.isAttached) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.draggableController!.isAttached &&
+            widget.draggableController!.size < 0.9) {
+          widget.draggableController!.animateTo(
+            0.9,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.only(
-                  top: 5, left: 12.5, right: 12.5, bottom: 5),
+              padding: EdgeInsets.only(
+                top: 5,
+                left: 12.5,
+                right: 12.5,
+                bottom: 5,
+              ),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
@@ -125,10 +153,10 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
                 ],
               ),
             ),
-            Flexible(
+            Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(10).copyWith(
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+                controller: widget.scrollController,
+                padding: const EdgeInsets.all(10),
                 child: Card(
                   elevation: 0,
                   color: Colors.white,

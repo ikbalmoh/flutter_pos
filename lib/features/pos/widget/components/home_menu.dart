@@ -50,11 +50,22 @@ class HomeMenu extends ConsumerWidget {
     }
 
     void showAddExtraItem() {
+      final sheetController = DraggableScrollableController();
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
-        builder: (context) => const AddExtraItemForm(),
+        builder: (context) => DraggableScrollableSheet(
+          controller: sheetController,
+          expand: false,
+          initialChildSize: .5,
+          maxChildSize: .9,
+          minChildSize: .5,
+          builder: (context, controller) => AddExtraItemForm(
+            scrollController: controller,
+            draggableController: sheetController,
+          ),
+        ),
       );
     }
 
@@ -147,8 +158,7 @@ class HomeMenu extends ConsumerWidget {
                   MenuItemButton(
                     onPressed: () => CustomFieldsForm(
                       title: 'additional_information'.tr(),
-                      fields:
-                          cart.customFields ?? [],
+                      fields: cart.customFields ?? [],
                       onValuesChange: (values) => ref
                           .read(cartProvider.notifier)
                           .setCustomField(values),
