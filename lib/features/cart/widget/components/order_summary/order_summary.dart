@@ -54,6 +54,8 @@ class OrderSummary extends StatelessWidget {
         : textTheme.bodyLarge!
             .copyWith(color: Color(0xFFD32F2F), fontWeight: FontWeight.w700);
 
+    final showWorkDuration = outletState.config.showWorkDuration == true;
+
     Widget summaryContent = Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -102,6 +104,14 @@ class OrderSummary extends StatelessWidget {
               if (cart.tables != null && cart.tables!.isNotEmpty)
                 Text(
                   '${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}',
+                  style: infoStyle,
+                  textAlign: TextAlign.left,
+                ),
+              if (showWorkDuration)
+                Text(
+                  cart.holdAt != null
+                      ? '${'work_duration'.tr()}: ${DateTimeFormater.formatDuration(DateTime.fromMillisecondsSinceEpoch(cart.transactionDate).toLocal().difference(cart.holdAt!.toLocal()))}'
+                      : '${'work_duration'.tr()}: -',
                   style: infoStyle,
                   textAlign: TextAlign.left,
                 ),

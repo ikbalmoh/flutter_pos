@@ -184,6 +184,7 @@ class Transactions extends _$Transactions {
           withPrice: withPrice,
           cut: printer.cut,
           printIncludePpn: outlet.config.printIncludePpn ?? false,
+          showWorkDuration: outlet.config.showWorkDuration ?? false,
         );
       }
       ref.read(printerProvider.notifier).print(receipt);

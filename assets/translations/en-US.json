@@ -410,5 +410,9 @@
   "account_balance": "Account Balance",
   "skip": "Skip",
   "exact_change": "Uang Pas",
-  "add_nominal": "Add Amount"
+  "add_nominal": "Add Amount",
+  "work_duration": "Work Duration",
+  "day": "Day",
+  "hour": "Hour",
+  "minute": "Minute"
 }

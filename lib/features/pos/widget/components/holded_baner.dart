@@ -28,7 +28,7 @@ class HoldedBaner extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  DateTimeFormater.msToString(cart.transactionDate,
+                  DateTimeFormater.dateToString(cart.holdAt!,
                       format: 'dd MMM, HH:mm'),
                   style: const TextStyle(
                     color: Colors.white,

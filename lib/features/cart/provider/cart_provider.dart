@@ -599,6 +599,7 @@ class Cart extends _$Cart {
           isCopy: printCounter > 1,
           cut: printer.cut,
           printIncludePpn: outlet.config.printIncludePpn ?? false,
+          showWorkDuration: outlet.config.showWorkDuration ?? false,
         );
       }
 
@@ -673,7 +674,9 @@ class Cart extends _$Cart {
       ppnIsInclude: tax?.isInclude ?? true,
       taxName: taxable ? tax?.taxName : '',
       shiftId: ref.read(shiftNotifierProvider).value?.id ?? holded.shiftId,
-      holdAt: holded.dataHold.holdAt ?? DateTime.now(),
+      holdAt: holded.createdAt.toLocal(),
+      transactionDate:
+          DateTimeFormater.stringToTimestamp(holded.transactionDate.toLocale()),
       promotions: [],
       items: [],
     );
@@ -960,6 +963,7 @@ class Cart extends _$Cart {
       vouchers: [],
       subtotal: subtotal,
       promoCode: promoByCode?.promoCode,
+      transactionDate: DateTime.now().toLocal().millisecondsSinceEpoch,
     );
 
     calculateCart();
@@ -1165,6 +1169,12 @@ class Cart extends _$Cart {
     state = state.copyWith(
       skipCustomField: skip,
       customFields: customFields,
+    );
+  }
+
+  void setTransactionDate() {
+    state = state.copyWith(
+      transactionDate: DateTime.now().toLocal().millisecondsSinceEpoch,
     );
   }
 }

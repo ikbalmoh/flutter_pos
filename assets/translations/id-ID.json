@@ -411,5 +411,9 @@
   "account_balance": "Saldo Akun",
   "skip": "Lewati",
   "exact_change": "Uang Pas",
-  "add_nominal": "Input Nominal"
+  "add_nominal": "Input Nominal",
+  "work_duration": "Durasi Kerja",
+  "day": "Hari",
+  "hour": "Jam",
+  "minute": "Menit"
 }

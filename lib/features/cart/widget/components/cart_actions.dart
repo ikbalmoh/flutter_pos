@@ -60,6 +60,7 @@ class _CartActionsState extends ConsumerState<CartActions> {
           }
         }
       } else {
+        ref.read(cartProvider.notifier).setTransactionDate();
         context.push(Routes.checkout);
       }
     } catch (e) {

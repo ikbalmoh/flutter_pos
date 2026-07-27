@@ -1,6 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 import 'package:validators/validators.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CurrencyFormat {
   static String currency(
@@ -99,6 +100,16 @@ class DateTimeFormater {
       return value.toInt();
     }
     return (DateTime.now().millisecondsSinceEpoch / 1000).floor();
+  }
+
+  static String formatDuration(Duration duration) {
+    final days = duration.inDays;
+    final hours = duration.inHours.remainder(24).toString().padLeft(1, '0');
+    final minutes = duration.inMinutes.remainder(60).toString().padLeft(1, '0');
+    if (days > 0) {
+      return '$days ${'day'.tr()} $hours ${'hour'.tr()} $minutes ${'minutes'.tr()}';
+    }
+    return '$hours ${'hour'.tr()} $minutes ${'minutes'.tr()}';
   }
 }
 

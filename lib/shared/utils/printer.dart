@@ -33,6 +33,7 @@ class Printer {
     bool isHold = false,
     bool withPrice = true,
     bool printIncludePpn = false,
+    bool showWorkDuration = false,
   }) async {
     try {
       log('BUILD RECEIPT: $cart\n$outlet\n$attributes');
@@ -105,6 +106,17 @@ class Printer {
       if (cart.tables != null && cart.tables!.isNotEmpty) {
         bytes += generator
             .text('${'table'.tr()}: ${cart.tables?.join(', ') ?? '-'}');
+      }
+      if (showWorkDuration) {
+        if (cart.holdAt != null) {
+          bytes += generator.text(
+            '${'work_duration'.tr()}: ${DateTimeFormater.formatDuration(DateTime.fromMillisecondsSinceEpoch(cart.transactionDate).toLocal().difference(cart.holdAt!.toLocal()))}',
+          );
+        } else {
+          bytes += generator.text(
+            '${'work_duration'.tr()}: -',
+          );
+        }
       }
 
       bytes += generator.hr();
