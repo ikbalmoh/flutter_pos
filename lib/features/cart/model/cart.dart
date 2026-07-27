@@ -77,15 +77,23 @@ class Cart with _$Cart {
     @JsonKey(
         fromJson: ModelConverter.listXfileFromJson,
         toJson: ModelConverter.listXfileToJson)
-    @Default([]) List<XFile>? images,
+    @Default([])
+    List<XFile>? images,
     @JsonKey(name: 'image_notes', fromJson: ModelConverter.toStringList)
-    @Default([]) List<String>? imageNotes,
+    @Default([])
+    List<String>? imageNotes,
     List<CustomerGroup>? customerGroup,
     bool? isOffline,
     CustomerVehicle? vehicle,
-    @JsonKey(name: 'custom_fields') @Default([]) List<CustomField>? customFields,
-    @JsonKey(name: 'transaction_images') @Default([]) List<TransactionImage>? transactionImages,
-    @JsonKey(includeToJson: false, includeFromJson: false) @Default(false) bool skipCustomField,
+    @JsonKey(name: 'custom_fields')
+    @Default([])
+    List<CustomField>? customFields,
+    @JsonKey(name: 'transaction_images')
+    @Default([])
+    List<TransactionImage>? transactionImages,
+    @JsonKey(includeToJson: false, includeFromJson: false)
+    @Default(false)
+    bool skipCustomField,
   }) = _Cart;
 
   factory Cart.initial() => Cart(
@@ -255,6 +263,7 @@ class Cart with _$Cart {
       "tables": tables,
       "vehicle_id": vehicle?.idVehicle,
       "custom_fields": customFields?.map((e) => e.toJson()).toList(),
+      "hold_at": holdAt != null ? DateTimeFormater.dateToString(holdAt!) : null,
     };
     if (deletedAt != null) {
       jsonData['deleted_at'] = DateTimeFormater.dateToString(deletedAt!);

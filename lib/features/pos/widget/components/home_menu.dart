@@ -158,7 +158,9 @@ class HomeMenu extends ConsumerWidget {
                   MenuItemButton(
                     onPressed: () => CustomFieldsForm(
                       title: 'additional_information'.tr(),
-                      fields: cart.customFields ?? [],
+                      fields: outlet.config.customFields?.modules.transaction ??
+                          [],
+                      values: cart.customFields ?? [],
                       onValuesChange: (values) => ref
                           .read(cartProvider.notifier)
                           .setCustomField(values),

@@ -98,12 +98,15 @@ class _CartActionsState extends ConsumerState<CartActions> {
     } else if (hasUnfilledRequired) {
       CustomFieldsForm(
         title: 'additional_information'.tr(),
-        fields: customFieldFilled,
+        fields: customFieldConfig ?? [],
+        values: customFieldFilled,
         onValuesChange: (values) {
+          context.pop();
           ref.read(cartProvider.notifier).setCustomField(values);
           continueToPayment(context);
         },
         onSkip: () {
+          context.pop();
           ref.read(cartProvider.notifier).setSkipCustomField(true);
           continueToPayment(context);
         },

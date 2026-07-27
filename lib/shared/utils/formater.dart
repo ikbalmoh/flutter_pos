@@ -106,9 +106,9 @@ class DateTimeFormater {
     final hours = duration.inHours.remainder(24).toString().padLeft(1, '0');
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(1, '0');
     if (days > 0) {
-      return '$days ${'day'.tr()} $hours ${'hour'.tr()} $minutes ${'minutes'.tr()}';
+      return '$days ${'day'.tr()} $hours ${'hour'.tr()} $minutes ${'minute'.tr()}';
     }
-    return '$hours ${'hour'.tr()} $minutes ${'minutes'.tr()}';
+    return '$hours ${'hour'.tr()} $minutes ${'minute'.tr()}';
   }
 }
 

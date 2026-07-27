@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -5,14 +6,17 @@ import 'package:selleri/shared/model/custom_field.dart' as model;
 import 'package:selleri/shared/widget/custom_field_input.dart';
 
 class CustomFieldsForm extends StatelessWidget {
-  const CustomFieldsForm(
-      {super.key,
-      required this.fields,
-      this.onValuesChange,
-      this.onSkip,
-      this.title});
+  const CustomFieldsForm({
+    super.key,
+    required this.fields,
+    this.values = const [],
+    this.onValuesChange,
+    this.onSkip,
+    this.title,
+  });
 
   final List<model.CustomField> fields;
+  final List<model.CustomField> values;
   final String? title;
   final ValueChanged<List<model.CustomField>>? onValuesChange;
   final VoidCallback? onSkip;
@@ -32,6 +36,7 @@ class CustomFieldsForm extends StatelessWidget {
             expand: false,
             builder: (context, scrollController) => _CustomFieldsSheet(
               initialFields: fields,
+              values: values,
               onValuesChange: onValuesChange,
               onSkip: onSkip,
               title: title,
@@ -51,6 +56,7 @@ class CustomFieldsForm extends StatelessWidget {
 class _CustomFieldsSheet extends StatefulWidget {
   const _CustomFieldsSheet({
     required this.initialFields,
+    this.values = const [],
     this.onValuesChange,
     this.onSkip,
     this.title,
@@ -59,6 +65,7 @@ class _CustomFieldsSheet extends StatefulWidget {
   });
 
   final List<model.CustomField> initialFields;
+  final List<model.CustomField> values;
   final ValueChanged<List<model.CustomField>>? onValuesChange;
   final VoidCallback? onSkip;
   final String? title;
@@ -145,11 +152,14 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: fields.map((field) {
+                    final fieldValue = widget.values
+                        .firstWhereOrNull((v) => v.id == field.id)
+                        ?.value;
                     return Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: CustomFieldInput(
                         field: field,
-                        value: field.value,
+                        value: fieldValue,
                         onValueChange: (value) {
                           setState(() {
                             fields = fields.map((f) {

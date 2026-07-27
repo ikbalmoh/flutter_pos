@@ -60,7 +60,8 @@ class CustomFieldsSummary extends ConsumerWidget {
                       onChanged: (v) => isSkipped
                           ? CustomFieldsForm(
                               title: 'additional_information'.tr(),
-                              fields: customFields,
+                              fields: customFieldsConfig,
+                              values: customFields,
                               onValuesChange: (values) => ref
                                   .read(cartProvider.notifier)
                                   .setCustomField(values),

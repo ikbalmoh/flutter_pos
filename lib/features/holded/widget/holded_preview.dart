@@ -230,6 +230,8 @@ class _HoldedPreviewState extends ConsumerState<HoldedPreview> {
                   taxable: config?.taxable ?? false,
                   cart: widget.cartHolded.dataHold.copyWith(
                     transactionNo: widget.cartHolded.transactionNo,
+                    transactionDate: DateTime.now().toLocal().millisecondsSinceEpoch,
+                    holdAt: widget.cartHolded.createdAt.toLocal(),
                   ),
                   radius: const Radius.circular(5),
                   outletState:
