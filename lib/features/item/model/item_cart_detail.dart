@@ -6,17 +6,18 @@ import 'package:selleri/shared/utils/model_converter.dart';
 part 'item_cart_detail.freezed.dart';
 part 'item_cart_detail.g.dart';
 
+
 @freezed
 class ItemCartDetail with _$ItemCartDetail {
   const ItemCartDetail._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ItemCartDetail({
-    required String idItem,
+    @JsonKey(name: 'id_item', readValue: _readIdItem) required String idItem,
     required String name,
-    required int? variantId,
+    @JsonKey(name: 'variant_id') required int? variantId,
     required int? quantity,
-    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
+    @JsonKey(name: 'item_price', fromJson: ModelConverter.dynamicToDouble)
     required double itemPrice,
   }) = _ItemCartDetail;
 
@@ -25,3 +26,5 @@ class ItemCartDetail with _$ItemCartDetail {
 
   Item? item() => objectBox.getItem(idItem);
 }
+
+Object? _readIdItem(Map map, String key) => map['id_item'] ?? map['item_id'];
