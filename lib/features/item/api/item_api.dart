@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:selleri/features/item/model/item_suggestion.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/shared/objectbox.dart';
@@ -122,6 +123,20 @@ class ItemApi {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<List<ItemSuggestion>> extraItemSuggestions(String q) async {
+    if (q.length < 3) {
+      return [];
+    }
+    Map<String, dynamic> query = {'q': q};
+    final res = await api.get(ApiUrl.listExtraItems, queryParameters: query);
+    List<Map<String, dynamic>> listJson =
+        List<Map<String, dynamic>>.from(res.data['data']);
+    List<ItemSuggestion> listSuggestion = listJson.map((v) {
+      return ItemSuggestion.fromJson(v);
+    }).toList();
+    return listSuggestion;
   }
 }
 

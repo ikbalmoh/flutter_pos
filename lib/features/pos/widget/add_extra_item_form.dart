@@ -5,9 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
+import 'package:selleri/features/item/provider/extra_item_suggestions.dart';
 import 'package:selleri/shared/widget/generic/qty_editor.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:uuid/uuid.dart';
+
+import 'package:selleri/features/item/model/item_suggestion.dart';
 
 class AddExtraItemForm extends ConsumerStatefulWidget {
   const AddExtraItemForm({super.key, this.scrollController});
@@ -135,24 +138,60 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(
-                                left: 0, bottom: 5, right: 0),
-                            label: Text(
-                              'item_name'.tr(),
-                              style: labelStyle,
-                            ),
-                            alignLabelWithHint: true,
-                          ),
-                          controller: _itemNameController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'enter_x'.tr(args: ['item_name'.tr()]);
+                        Autocomplete<ItemSuggestion>(
+                          displayStringForOption: (ItemSuggestion option) =>
+                              option.itemName,
+                          optionsBuilder:
+                              (TextEditingValue textEditingValue) async {
+                            if (textEditingValue.text.length < 3) {
+                              return const Iterable<ItemSuggestion>.empty();
                             }
-                            return null;
+                            try {
+                              final suggestions = await ref.read(
+                                extraItemSuggestionsProvider(
+                                        textEditingValue.text)
+                                    .future,
+                              );
+                              return suggestions;
+                            } catch (_) {
+                              return const Iterable<ItemSuggestion>.empty();
+                            }
                           },
-                          autofocus: true,
+                          onSelected: (ItemSuggestion selection) {
+                            _itemNameController.text = selection.itemName;
+                          },
+                          fieldViewBuilder: (
+                            BuildContext context,
+                            TextEditingController textEditingController,
+                            FocusNode focusNode,
+                            VoidCallback onFieldSubmitted,
+                          ) {
+                            textEditingController.addListener(() {
+                              _itemNameController.text =
+                                  textEditingController.text;
+                            });
+
+                            return TextFormField(
+                              controller: textEditingController,
+                              focusNode: focusNode,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 0, bottom: 5, right: 0),
+                                label: Text(
+                                  'item_name'.tr(),
+                                  style: labelStyle,
+                                ),
+                                alignLabelWithHint: true,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'enter_x'.tr(args: ['item_name'.tr()]);
+                                }
+                                return null;
+                              },
+                              autofocus: true,
+                            );
+                          },
                         ),
                         TextFormField(
                           keyboardType: TextInputType.number,
