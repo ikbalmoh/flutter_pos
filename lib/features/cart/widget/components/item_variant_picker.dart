@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/features/cart/widget/components/expired_badge.dart';
 import 'package:selleri/features/item/model/item.dart';
@@ -7,6 +8,7 @@ import 'package:selleri/features/item/model/item_variant.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/shared/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/shared/utils/formater.dart';
 import 'variant_item.dart';
 
 class ItemVariantPicker extends StatefulWidget {
@@ -102,6 +104,27 @@ class _ItemVariantPickerState extends State<ItemVariantPicker> {
                         widget.item.itemName,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
+                      if (widget.item.updatedAt != null)
+                        Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.clock,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              DateTimeFormater.dateToString(widget.item.updatedAt!,
+                                  format: 'dd/MM/y HH:mm:ss'),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(color: Colors.grey.shade700),
+                            )
+                          ],
+                        ),
                       ExpiredBadge(
                         item: widget.item,
                         padding: EdgeInsets.all(0),
