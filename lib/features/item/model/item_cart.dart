@@ -212,8 +212,11 @@ class ItemCart with _$ItemCart {
         "promotion_id": promotion?.promotionId,
         "total": total,
         "note": note,
-        "item_name":
-            idVariant != null ? [itemName, variantName].join(' - ') : itemName,
+        "item_name": idVariant != null
+            ? [itemName.trim(), variantName?.trim()]
+                .where((name) => name != null && name.isNotEmpty)
+                .join(' - ')
+            : itemName,
         "pic_detail_id": picDetailId,
         "details": isPackage && details.isNotEmpty
             ? details.map((itemPackage) => itemPackage.toJson()).toList()
