@@ -16,6 +16,7 @@ class ApiUrl {
   static const String changeOpenAmount = '/shifts/{id}/change-open-amount';
   static const String customers = '/customers';
   static const String transaction = '/lists/sales-transactions';
+  static const String storeTransaction = '/sales-transactions';
   static const String hold = '/hold-transaction';
   static const String storeFcmToken = '/fcm-token/store';
   static const String shifts = '/shifts';

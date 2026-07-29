@@ -26,7 +26,7 @@ class TransactionApi {
         log('TRANSACTION FILES: ${formData.files}');
       }
       final res = await api.post(
-        ApiUrl.transaction,
+        ApiUrl.storeTransaction,
         data: formData,
         options: Options(
           contentType: Headers.multipartFormDataContentType,
@@ -65,7 +65,7 @@ class TransactionApi {
         'shift_id': shiftId,
         'q_table': table,
       };
-      final res = await api.get(ApiUrl.transaction, queryParameters: params);
+      final res = await api.get(ApiUrl.storeTransaction, queryParameters: params);
       final data = res.data['data'];
       final pagination = Pagination<Cart>.fromJson(data, (transaction) {
         return Cart.fromTransaction(transaction as Map<String, dynamic>);

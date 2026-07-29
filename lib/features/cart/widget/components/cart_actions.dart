@@ -33,9 +33,11 @@ class _CartActionsState extends ConsumerState<CartActions> {
   bool isLoading = false;
 
   void continueToPayment(BuildContext context) async {
-    setState(() {
-      isLoading = true;
-    });
+    if (context.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
     try {
       final promotions = ref.read(promotionsProvider);
       final appliedPromotions = ref.read(cartProvider).promotions;
@@ -61,14 +63,18 @@ class _CartActionsState extends ConsumerState<CartActions> {
         }
       } else {
         ref.read(cartProvider.notifier).setTransactionDate();
-        context.push(Routes.checkout);
+        if (context.mounted) {
+          context.push(Routes.checkout);
+        }
       }
     } catch (e) {
       AppAlert.toast(e.toString());
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (context.mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 

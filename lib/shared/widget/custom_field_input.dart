@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:selleri/shared/widget/generic/custom_text_input.dart';
@@ -129,10 +131,11 @@ class CustomFieldInput extends StatelessWidget {
                 labelWidget(context, state.hasError),
                 RadioGroup<bool>(
                   onChanged: (val) {
+                    log('select $val');
                     state.didChange(val);
                     onValueChange?.call(val);
                   },
-                  groupValue: boolValue,
+                  groupValue: state.value,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     spacing: 10,
