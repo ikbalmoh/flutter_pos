@@ -206,6 +206,7 @@ class ItemCart with _$ItemCart {
         "variant_id": idVariant,
         "quantity": quantity,
         "price": price,
+        "purchase_price": purchasePrice,
         "discount_is_percent": discountIsPercent ? 1 : 0,
         "discount": discount,
         "discount_total": discountTotal,

@@ -12,6 +12,8 @@ import 'package:uuid/uuid.dart';
 
 import 'package:selleri/features/item/model/item_suggestion.dart';
 
+const bool hidePurchasePrice = true;
+
 class AddExtraItemForm extends ConsumerStatefulWidget {
   const AddExtraItemForm({
     super.key,
@@ -221,34 +223,35 @@ class _AddExtraItemFormState extends ConsumerState<AddExtraItemForm> {
                             );
                           },
                         ),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(
-                                left: 0, top: 10, bottom: 5, right: 0),
-                            label: Text(
-                              'purchase_price'.tr(),
-                              style: labelStyle,
+                        if (!hidePurchasePrice)
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 0, top: 10, bottom: 5, right: 0),
+                              label: Text(
+                                'purchase_price'.tr(),
+                                style: labelStyle,
+                              ),
+                              alignLabelWithHint: true,
                             ),
-                            alignLabelWithHint: true,
+                            onChanged: (value) => setState(() {
+                              itemPurchasePrice = _purchasePriceFormater
+                                  .getUnformattedValue()
+                                  .toDouble();
+                            }),
+                            inputFormatters: <TextInputFormatter>[
+                              _purchasePriceFormater
+                            ],
+                            controller: _purchasePriceController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'enter_x'
+                                    .tr(args: ['purchase_price'.tr()]);
+                              }
+                              return null;
+                            },
                           ),
-                          onChanged: (value) => setState(() {
-                            itemPurchasePrice = _purchasePriceFormater
-                                .getUnformattedValue()
-                                .toDouble();
-                          }),
-                          inputFormatters: <TextInputFormatter>[
-                            _purchasePriceFormater
-                          ],
-                          controller: _purchasePriceController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'enter_x'
-                                  .tr(args: ['purchase_price'.tr()]);
-                            }
-                            return null;
-                          },
-                        ),
                         TextFormField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
