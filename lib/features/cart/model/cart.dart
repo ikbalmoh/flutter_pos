@@ -24,7 +24,7 @@ class Cart with _$Cart {
 
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Cart({
-    required String createdBy,
+    @Default('') String createdBy,
     @JsonKey(
       fromJson: DateTimeFormater.stringToTimestamp,
       toJson: DateTimeFormater.msTosecond,
@@ -64,10 +64,10 @@ class Cart with _$Cart {
     String? personInCharge,
     DateTime? holdAt,
     @JsonKey(fromJson: ModelConverter.nullableToString) String? createdName,
-    required List<ItemCart> items,
-    required List<CartPayment> payments,
-    required List<CartPromotion> promotions,
-    required List<CartVoucher> vouchers,
+    @Default([]) List<ItemCart> items,
+    @Default([]) List<CartPayment> payments,
+    @Default([]) List<CartPromotion> promotions,
+    @Default([]) List<CartVoucher> vouchers,
     @JsonKey(fromJson: ModelConverter.toStringList) List<String>? tables,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool isApp,
     DateTime? deletedAt,
@@ -182,12 +182,15 @@ class Cart with _$Cart {
       json['transaction_images'] = json['transaction_images'] ?? [];
     }
 
-    for (var item in json['items']) {
-      item['item_name'] = item['name'];
-      item['details'] = item['details'] != null
-          ? List<Map<String, dynamic>>.from(item['details'])
-          : [];
+    if (json['items'] != null) {
+      for (var item in json['items']) {
+        item['item_name'] = item['name'];
+        item['details'] = item['details'] != null
+            ? List<Map<String, dynamic>>.from(item['details'])
+            : [];
+      }
     }
+
     return Cart.fromJson(json);
   }
 

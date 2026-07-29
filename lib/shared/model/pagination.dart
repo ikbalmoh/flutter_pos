@@ -8,12 +8,12 @@ class Pagination<T> with _$Pagination<T> {
   @JsonSerializable(
       fieldRename: FieldRename.snake, genericArgumentFactories: true)
   const factory Pagination({
-    required int currentPage,
-    required int lastPage,
-    required int total,
-    int? from,
-    int? to,
-    bool? loading,
+    @Default(0) int currentPage,
+    @Default(0) int lastPage,
+    @Default(0) int total,
+    @Default(0) int? from,
+    @Default(0) int? to,
+    @Default(false) bool? loading,
     List<T>? data,
   }) = _Pagination<T>;
 
