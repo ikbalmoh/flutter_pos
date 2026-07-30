@@ -309,10 +309,19 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                   left: 0, bottom: 5, right: 0),
-                              label: Text(
-                                'item_name'.tr(),
-                                style: labelStyle,
-                              ),
+                              label: Text.rich(TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'item_name'.tr(),
+                                    style: labelStyle,
+                                  ),
+                                  TextSpan(
+                                    text: ' *',
+                                    style:
+                                        labelStyle?.copyWith(color: Colors.red),
+                                  ),
+                                ],
+                              )),
                               alignLabelWithHint: true,
                             ),
                             controller: _itemNameController,
@@ -328,10 +337,19 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                   left: 0, top: 10, bottom: 5, right: 0),
-                              label: Text(
-                                'price'.tr(),
-                                style: labelStyle,
-                              ),
+                              label: Text.rich(TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'price'.tr(),
+                                    style: labelStyle,
+                                  ),
+                                  TextSpan(
+                                    text: ' *',
+                                    style:
+                                        labelStyle?.copyWith(color: Colors.red),
+                                  ),
+                                ],
+                              )),
                               alignLabelWithHint: true,
                             ),
                             onChanged: (value) => setState(() {
@@ -374,6 +392,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                                         setState(() {
                                           stockControl = value;
                                         });
+                                        _formKey.currentState?.reset();
                                       },
                                     ),
                                   ),
@@ -387,9 +406,20 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.only(
                                     left: 0, top: 10, bottom: 5, right: 0),
-                                label: Text(
-                                  'initial_stock'.tr(),
-                                  style: labelStyle,
+                                label: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'initial_stock'.tr(),
+                                        style: labelStyle,
+                                      ),
+                                      TextSpan(
+                                        text: ' *',
+                                        style: labelStyle?.copyWith(
+                                            color: Colors.red),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 alignLabelWithHint: true,
                               ),
@@ -416,10 +446,19 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.only(
                                     left: 0, top: 10, bottom: 5, right: 0),
-                                label: Text(
-                                  'cost_price'.tr(),
-                                  style: labelStyle,
-                                ),
+                                label: Text.rich(TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'cost_price'.tr(),
+                                      style: labelStyle,
+                                    ),
+                                    TextSpan(
+                                      text: ' *',
+                                      style: labelStyle?.copyWith(
+                                          color: Colors.red),
+                                    ),
+                                  ],
+                                )),
                                 alignLabelWithHint: true,
                               ),
                               onChanged: (value) => setState(() {
@@ -483,20 +522,19 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  isTablet ? Container() : addVariants
+                  if (!isTablet) addVariants
                 ],
               ),
             )),
-            isTablet
-                ? SizedBox(
-                    width: MediaQuery.of(context).size.width - 400,
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: addVariants,
-                    ),
-                  )
-                : Container(),
+            if (isTablet)
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 400,
+                child: SingleChildScrollView(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: addVariants,
+                ),
+              ),
           ],
         ),
       ),
