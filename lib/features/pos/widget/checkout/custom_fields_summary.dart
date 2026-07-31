@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/shared/model/custom_field.dart';
 import 'package:selleri/shared/utils/formater.dart';
-import 'package:selleri/shared/widget/custom_fields_form.dart';
+import 'package:selleri/shared/widget/additional_fields_form.dart';
 
 class CustomFieldsSummary extends ConsumerWidget {
   const CustomFieldsSummary({super.key});
@@ -58,16 +59,22 @@ class CustomFieldsSummary extends ConsumerWidget {
                     child: Switch(
                       value: !isSkipped,
                       onChanged: (v) => isSkipped
-                          ? CustomFieldsForm(
+                          ? AdditionalFieldsForm(
                               title: 'additional_information'.tr(),
                               fields: customFieldsConfig,
                               values: customFields,
-                              onValuesChange: (values) => ref
-                                  .read(cartProvider.notifier)
-                                  .setCustomField(values),
-                              onSkip: () => ref
-                                  .read(cartProvider.notifier)
-                                  .setSkipCustomField(true),
+                              onValuesChange: (values) {
+                                ref
+                                    .read(cartProvider.notifier)
+                                    .setCustomField(values);
+                                if (context.mounted) context.pop();
+                              },
+                              onSkip: () {
+                                ref
+                                    .read(cartProvider.notifier)
+                                    .setSkipCustomField(true);
+                                if (context.mounted) context.pop();
+                              },
                             ).show(context)
                           : ref
                               .read(cartProvider.notifier)

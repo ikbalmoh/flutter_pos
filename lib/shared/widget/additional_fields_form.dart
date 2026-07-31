@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/shared/model/custom_field.dart' as model;
 import 'package:selleri/shared/widget/custom_field_input.dart';
 
-class CustomFieldsForm extends StatelessWidget {
-  const CustomFieldsForm({
+class AdditionalFieldsForm extends StatelessWidget {
+  const AdditionalFieldsForm({
     super.key,
     required this.fields,
     this.values = const [],
@@ -34,7 +34,7 @@ class CustomFieldsForm extends StatelessWidget {
             minChildSize: 0.3,
             maxChildSize: 0.9,
             expand: false,
-            builder: (context, scrollController) => _CustomFieldsSheet(
+            builder: (context, scrollController) => _AdditionalFieldsSheet(
               initialFields: fields,
               values: values,
               onValuesChange: onValuesChange,
@@ -53,8 +53,8 @@ class CustomFieldsForm extends StatelessWidget {
   }
 }
 
-class _CustomFieldsSheet extends StatefulWidget {
-  const _CustomFieldsSheet({
+class _AdditionalFieldsSheet extends StatefulWidget {
+  const _AdditionalFieldsSheet({
     required this.initialFields,
     this.values = const [],
     this.onValuesChange,
@@ -73,10 +73,10 @@ class _CustomFieldsSheet extends StatefulWidget {
   final DraggableScrollableController? draggableController;
 
   @override
-  State<_CustomFieldsSheet> createState() => _CustomFieldsSheetState();
+  State<_AdditionalFieldsSheet> createState() => _AdditionalFieldsSheetState();
 }
 
-class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
+class _AdditionalFieldsSheetState extends State<_AdditionalFieldsSheet> {
   late List<model.CustomField> fields;
   final _formKey = GlobalKey<FormState>();
 
@@ -181,7 +181,6 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
               children: [
                 TextButton(
                     onPressed: () {
-                      context.pop();
                       widget.onSkip?.call();
                     },
                     child: Text('skip'.tr())),
@@ -190,7 +189,6 @@ class _CustomFieldsSheetState extends State<_CustomFieldsSheet> {
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
                         widget.onValuesChange?.call(fields);
-                        context.pop();
                       }
                     },
                     child: Text('save'.tr()),

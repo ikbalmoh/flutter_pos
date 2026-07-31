@@ -13,7 +13,7 @@ import 'package:selleri/shared/router/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/holded/widget/components/hold_form.dart';
 import 'package:selleri/features/pos/widget/add_extra_item_form.dart';
-import 'package:selleri/shared/widget/custom_fields_form.dart';
+import 'package:selleri/shared/widget/additional_fields_form.dart';
 
 class HomeMenu extends ConsumerWidget {
   const HomeMenu({super.key});
@@ -156,17 +156,19 @@ class HomeMenu extends ConsumerWidget {
                         .config.customFields?.modules.transaction?.isNotEmpty ??
                     false)
                   MenuItemButton(
-                    onPressed: () => CustomFieldsForm(
+                    onPressed: () => AdditionalFieldsForm(
                       title: 'additional_information'.tr(),
                       fields: outlet.config.customFields?.modules.transaction ??
                           [],
                       values: cart.customFields ?? [],
-                      onValuesChange: (values) => ref
-                          .read(cartProvider.notifier)
-                          .setCustomField(values),
-                      onSkip: () => ref
-                          .read(cartProvider.notifier)
-                          .setSkipCustomField(true),
+                      onValuesChange: (values) {
+                        ref.read(cartProvider.notifier).setCustomField(values);
+                        if (context.mounted) context.pop();
+                      },
+                      onSkip: () {
+                        ref.read(cartProvider.notifier).setSkipCustomField(true);
+                        if (context.mounted) context.pop();
+                      },
                     ).show(context),
                     leadingIcon: Icon(CupertinoIcons.list_dash),
                     style: buttonMenuStyle,

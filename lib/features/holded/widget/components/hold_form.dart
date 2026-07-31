@@ -76,7 +76,7 @@ class _HoldFormState extends ConsumerState<HoldForm> {
     return PopScope(
       key: holdWidgetKey,
       canPop: !holding,
-      child: Padding(
+      child: SingleChildScrollView(
         padding: EdgeInsets.only(
           top: 20,
           left: 15,

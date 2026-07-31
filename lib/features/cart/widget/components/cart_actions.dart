@@ -15,7 +15,7 @@ import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:selleri/features/cart/model/cart.dart' as model;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/shared/widget/custom_fields_form.dart';
+import 'package:selleri/shared/widget/additional_fields_form.dart';
 
 class CartActions extends ConsumerStatefulWidget {
   const CartActions({
@@ -57,15 +57,11 @@ class _CartActionsState extends ConsumerState<CartActions> {
 
         if (promotions != null) {
           ref.read(cartProvider.notifier).applyPromotions(promotions);
-          if (context.mounted) {
-            context.push(Routes.checkout);
-          }
+          if (context.mounted) context.push(Routes.checkout);
         }
       } else {
         ref.read(cartProvider.notifier).setTransactionDate();
-        if (context.mounted) {
-          context.push(Routes.checkout);
-        }
+        if (context.mounted) context.push(Routes.checkout);
       }
     } catch (e) {
       AppAlert.toast(e.toString());
@@ -102,17 +98,17 @@ class _CartActionsState extends ConsumerState<CartActions> {
       AppAlert.toast('select_customer'.tr());
       context.push(Routes.customers);
     } else if (hasUnfilledRequired) {
-      CustomFieldsForm(
+      AdditionalFieldsForm(
         title: 'additional_information'.tr(),
         fields: customFieldConfig ?? [],
         values: customFieldFilled,
         onValuesChange: (values) {
-          context.pop();
+          if (context.mounted) context.pop();
           ref.read(cartProvider.notifier).setCustomField(values);
           continueToPayment(context);
         },
         onSkip: () {
-          context.pop();
+          if (context.mounted) context.pop();
           ref.read(cartProvider.notifier).setSkipCustomField(true);
           continueToPayment(context);
         },
