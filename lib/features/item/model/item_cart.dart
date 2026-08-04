@@ -25,23 +25,26 @@ class ItemCart with _$ItemCart {
     String? identifier,
     required String idItem,
     required String? idCategory,
-    required String itemName,
+    @Default('') String itemName,
     bool? isExtraItem,
     String? extraName,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool isPackage,
     @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool isManualPrice,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double price,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     double? purchasePrice,
     @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool manualDiscount,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double quantity,
-    required double discount,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double discount,
     @JsonKey(fromJson: ModelConverter.dynamicToBool)
     required bool discountIsPercent,
-    required double discountTotal,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double discountTotal,
     DateTime? addedAt,
-    required double total,
+    @JsonKey(fromJson: ModelConverter.dynamicToDouble) required double total,
     String? note,
     @JsonKey(fromJson: ModelConverter.dynamicToInt) int? idVariant,
     String? variantName,
