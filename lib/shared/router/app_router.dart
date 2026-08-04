@@ -18,6 +18,7 @@ import 'package:selleri/features/settings/widget/account_information_screen.dart
 import 'package:selleri/features/settings/widget/auto_print_screen.dart';
 import 'package:selleri/features/settings/widget/setting_screen.dart';
 import 'package:selleri/features/settings/widget/sync_screen.dart';
+import 'package:selleri/features/settings/widget/outlet_config_screen.dart';
 import 'package:selleri/features/shift/widget/shift_history_detail.dart';
 import 'package:selleri/features/shift/widget/shift_screen.dart';
 import 'package:selleri/app/widget/splash_screen.dart';
@@ -167,6 +168,11 @@ GoRouter router(Ref ref) {
           name: Routes.about,
           path: Routes.about,
           builder: (context, state) => const AboutAppScreen(),
+        ),
+        GoRoute(
+          name: Routes.outletConfig,
+          path: Routes.outletConfig,
+          builder: (context, state) => const OutletConfigScreen(),
         ),
         GoRoute(
           name: Routes.addItem,

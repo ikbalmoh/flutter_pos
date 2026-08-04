@@ -19,6 +19,7 @@ class Routes {
   static const String autoPrint = '/auto-print';
   static const String account = '/account';
   static const String about = '/about';
+  static const String outletConfig = '/outlet-config';
   static const String addItem = '/add-item';
   static const String manageVariant = '/manage-variant';
   static const String adjustments = '/adjustments';

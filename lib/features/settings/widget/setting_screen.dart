@@ -11,6 +11,7 @@ import 'package:selleri/features/settings/widget/account_information_screen.dart
 import 'package:selleri/features/settings/widget/auto_print_screen.dart';
 import 'package:selleri/features/settings/widget/printer/printer_setting.dart';
 import 'package:selleri/features/settings/widget/sync_screen.dart';
+import 'package:selleri/features/settings/widget/outlet_config_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -72,6 +73,14 @@ class _SettingScreenState extends State<SettingScreen> {
                     : Colors.white,
               ),
               ListTile(
+                leading: const Icon(CupertinoIcons.gear_alt_fill),
+                title: Text('outlet_config'.tr()),
+                onTap: () => onPressMenu(Routes.outletConfig),
+                tileColor: visibleSetting == Routes.outletConfig
+                    ? Colors.grey.shade100
+                    : Colors.white,
+              ),
+              ListTile(
                 leading: const Icon(CupertinoIcons.person_crop_circle_fill),
                 title: Text('account_info'.tr()),
                 onTap: () => onPressMenu(Routes.account),
@@ -115,7 +124,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                 ? const AccountInformation()
                                 : visibleSetting == Routes.about
                                     ? const AboutApp()
-                                    : Container())
+                                    : visibleSetting == Routes.outletConfig
+                                        ? const OutletConfigView()
+                                        : Container())
             : Container()
       ]),
     );
