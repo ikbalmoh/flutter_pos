@@ -9,8 +9,8 @@ import 'package:selleri/shared/objectbox.dart';
 part 'promotion.freezed.dart';
 part 'promotion.g.dart';
 
-@Freezed(addImplicitFinal: false)
-class Promotion with _$Promotion {
+@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
+abstract class Promotion with _$Promotion {
   @Entity(uid: 9072647444006103348, realClass: Promotion)
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory Promotion({

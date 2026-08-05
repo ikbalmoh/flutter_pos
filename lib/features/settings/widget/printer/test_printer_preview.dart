@@ -35,7 +35,7 @@ class TestPrinterPreview extends StatelessWidget {
                 'assets/images/icon-print.jpg',
                 height: 80,
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Icon(
+                errorBuilder: (_, _, _) => const Icon(
                   Icons.store,
                   size: 80,
                   color: Colors.black54,

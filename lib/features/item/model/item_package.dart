@@ -8,7 +8,7 @@ part 'item_package.freezed.dart';
 part 'item_package.g.dart';
 
 @Freezed(addImplicitFinal: false)
-class ItemPackage with _$ItemPackage {
+abstract class ItemPackage with _$ItemPackage {
   const ItemPackage._();
 
   @Entity(uid: 182247591934260991, realClass: ItemPackage)

@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/promotion/api/promotion_api.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';

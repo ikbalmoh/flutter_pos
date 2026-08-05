@@ -67,7 +67,7 @@ class Auth extends _$Auth {
   Future<void> logout({bool? skipLogout}) async {
     analytics.logEvent(name: 'logout');
     ref.read(fcmProvider.notifier).unsubscribe();
-    ref.read(shiftNotifierProvider.notifier).shiftLoading();
+    ref.read(shiftProvider.notifier).shiftLoading();
     try {
       log('API LOGOUT');
       if (skipLogout == true) {
@@ -87,7 +87,7 @@ class Auth extends _$Auth {
       ref.invalidate(itemsProvider);
       ref.invalidate(cartProvider);
       ref.invalidate(outletProvider);
-      ref.invalidate(shiftNotifierProvider);
+      ref.invalidate(shiftProvider);
     });
   }
 }

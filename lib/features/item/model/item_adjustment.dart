@@ -7,7 +7,7 @@ part 'item_adjustment.freezed.dart';
 part 'item_adjustment.g.dart';
 
 @freezed
-class ItemAdjustment with _$ItemAdjustment {
+abstract class ItemAdjustment with _$ItemAdjustment {
   const ItemAdjustment._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

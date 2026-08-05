@@ -39,14 +39,14 @@ class _ShiftHistoryDetailScreenState
 
   void onPrint() async {
     final shiftInfo =
-        ref.read(detailShiftInfoNotifierProvider(widget.shiftId)).value;
+        ref.read(detailShiftInfoProvider(widget.shiftId)).value;
     log('Print Shift History: $shiftInfo');
     if (shiftInfo == null) {
       return;
     }
     try {
       await ref
-          .read(shiftNotifierProvider.notifier)
+          .read(shiftProvider.notifier)
           .printShift(shiftInfo, throwError: true);
     } catch (e) {
       AppAlert.toast(e.toString());
@@ -62,7 +62,7 @@ class _ShiftHistoryDetailScreenState
               title: Text('shift_detail'.tr()),
             ),
       backgroundColor: Colors.blueGrey.shade50,
-      body: ref.watch(detailShiftInfoNotifierProvider(widget.shiftId)).when(
+      body: ref.watch(detailShiftInfoProvider(widget.shiftId)).when(
             data: (data) {
               final outletSelected =
                   ref.watch(outletProvider).value as OutletSelected;

@@ -8,7 +8,7 @@ part 'user.g.dart';
 part 'user.freezed.dart';
 
 @freezed
-class User with _$User {
+abstract class User with _$User {
   const User._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)
@@ -28,7 +28,7 @@ class User with _$User {
 }
 
 @freezed
-class UserAccount with _$UserAccount {
+abstract class UserAccount with _$UserAccount {
   const UserAccount._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

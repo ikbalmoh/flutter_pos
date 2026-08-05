@@ -11,8 +11,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'item.freezed.dart';
 part 'item.g.dart';
 
-@Freezed(addImplicitFinal: false)
-class Item with _$Item {
+@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
+abstract class Item with _$Item {
   @Entity(uid: 1396131410230828223, realClass: Item)
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory Item({
@@ -156,7 +156,7 @@ class PackageItemRelToManyConverter
 }
 
 @freezed
-class ScanItemResult with _$ScanItemResult {
+abstract class ScanItemResult with _$ScanItemResult {
   const factory ScanItemResult({
     Item? item,
     ItemVariant? variant,

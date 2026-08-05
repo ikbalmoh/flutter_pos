@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/shared/utils/fetch.dart';

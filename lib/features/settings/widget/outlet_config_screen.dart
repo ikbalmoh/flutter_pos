@@ -136,6 +136,8 @@ class _OutletConfigViewState extends ConsumerState<OutletConfigView> {
       'print_include_ppn': config.printIncludePpn,
       'show_work_duration': config.showWorkDuration,
       'show_cash_account_balance': config.showCashAccountBalance,
+      'customer_mandatory_fields': '-',
+      // 'customer_mandatory_fields': config.customMandatory != null ? config.customMandatory!.customers!.isEmpty ? '-' : config.customMandatory!.customers!.join(', ') : '-',
     };
 
     return Scaffold(

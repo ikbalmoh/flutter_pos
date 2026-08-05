@@ -4,7 +4,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'payment_type.freezed.dart';
 
 @freezed
-class PaymentType with _$PaymentType {
+abstract class PaymentType with _$PaymentType {
+  const PaymentType._();
+
   const factory PaymentType({
     required int id,
     required String name,

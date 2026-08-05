@@ -6,7 +6,9 @@ part 'table.freezed.dart';
 part 'table.g.dart';
 
 @freezed
-class Table with _$Table {
+abstract class Table with _$Table {
+  const Table._();
+
   @JsonSerializable(fieldRename: FieldRename.snake, createToJson: true)
   const factory Table({
     required String id,
@@ -30,7 +32,7 @@ class Table with _$Table {
 }
 
 @freezed
-class TableConfig with _$TableConfig {
+abstract class TableConfig with _$TableConfig {
   @JsonSerializable(fieldRename: FieldRename.snake, createToJson: true)
   const factory TableConfig({
     required int totalFloor,

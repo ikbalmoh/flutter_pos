@@ -8,7 +8,7 @@ part 'item_cart_detail.g.dart';
 
 
 @freezed
-class ItemCartDetail with _$ItemCartDetail {
+abstract class ItemCartDetail with _$ItemCartDetail {
   const ItemCartDetail._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

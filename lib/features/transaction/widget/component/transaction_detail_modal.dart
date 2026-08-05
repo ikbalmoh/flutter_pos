@@ -251,14 +251,14 @@ class _ImageThumbnail extends StatelessWidget {
                 width: 130,
                 height: 130,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _placeholder(),
+                errorBuilder: (_, _, _) => _placeholder(),
               )
             : Image.file(
                 File(source),
                 width: 130,
                 height: 130,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _placeholder(),
+                errorBuilder: (_, _, _) => _placeholder(),
               ),
       ),
     );

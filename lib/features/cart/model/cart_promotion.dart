@@ -6,7 +6,7 @@ part 'cart_promotion.freezed.dart';
 part 'cart_promotion.g.dart';
 
 @freezed
-class CartPromotion with _$CartPromotion {
+abstract class CartPromotion with _$CartPromotion {
   const CartPromotion._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

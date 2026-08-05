@@ -30,7 +30,7 @@ class Notification extends _$Notification {
     }
   }
 
-  markAsReaded(int id) {
+  void markAsReaded(int id) {
     log('mark as readed $id');
     final notifications = state.value!
         .map((notif) => notif.id == id ? notif.copyWith(isReaded: true) : notif)

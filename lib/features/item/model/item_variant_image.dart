@@ -5,7 +5,9 @@ part 'item_variant_image.freezed.dart';
 part 'item_variant_image.g.dart';
 
 @freezed
-class ItemVariantImage with _$ItemVariantImage {
+abstract class ItemVariantImage with _$ItemVariantImage {
+  const ItemVariantImage._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   factory ItemVariantImage({
     required String idItem,

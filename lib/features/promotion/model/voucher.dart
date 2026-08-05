@@ -6,7 +6,7 @@ part 'voucher.freezed.dart';
 part 'voucher.g.dart';
 
 @freezed
-class Voucher with _$Voucher {
+abstract class Voucher with _$Voucher {
   const Voucher._();
 
   @JsonSerializable(fieldRename: FieldRename.snake, createToJson: true)

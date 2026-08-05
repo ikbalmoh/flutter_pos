@@ -16,7 +16,7 @@ var uuid = const Uuid();
 class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
   @override
   FutureOr<ShiftInfo?> build() async {
-    final model.Shift? shift = ref.watch(shiftNotifierProvider).value;
+    final model.Shift? shift = ref.watch(shiftProvider).value;
     if (shift != null) {
       bool didDispose = false;
       ref.onDispose(() => didDispose = true);
@@ -48,7 +48,7 @@ class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
   Future<void> reload() async {
     state = const AsyncLoading();
     try {
-      final model.Shift? shift = ref.read(shiftNotifierProvider).value;
+      final model.Shift? shift = ref.read(shiftProvider).value;
       if (shift != null) {
         final info =
             await ref.read(shiftRepositoryProvider).getShiftInfo(shift.id);
@@ -70,7 +70,7 @@ class CurrentShiftInfoNotifier extends _$CurrentShiftInfoNotifier {
 
   Future<void> submitCashflow(Map<String, dynamic> data,
       {Function? onSubmited}) async {
-    final model.Shift? shift = ref.watch(shiftNotifierProvider).value;
+    final model.Shift? shift = ref.watch(shiftProvider).value;
     if (shift == null) {
       return;
     }

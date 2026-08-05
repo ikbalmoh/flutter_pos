@@ -11,7 +11,9 @@ part 'elastic.g.dart';
 // ---------------------------------------------------------------------------
 
 @freezed
-class ElasticResponse with _$ElasticResponse {
+abstract class ElasticResponse with _$ElasticResponse {
+  const ElasticResponse._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ElasticResponse({
     required int took,
@@ -29,7 +31,7 @@ class ElasticResponse with _$ElasticResponse {
 // ---------------------------------------------------------------------------
 
 @freezed
-class ElasticShards with _$ElasticShards {
+abstract class ElasticShards with _$ElasticShards {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ElasticShards({
     required int total,
@@ -47,7 +49,7 @@ class ElasticShards with _$ElasticShards {
 // ---------------------------------------------------------------------------
 
 @freezed
-class ElasticTotal with _$ElasticTotal {
+abstract class ElasticTotal with _$ElasticTotal {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ElasticTotal({
     required int value,
@@ -64,7 +66,7 @@ class ElasticTotal with _$ElasticTotal {
 // ---------------------------------------------------------------------------
 
 @freezed
-class ElasticHit with _$ElasticHit {
+abstract class ElasticHit with _$ElasticHit {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ElasticHit({
     @JsonKey(name: '_index') String? index,
@@ -102,7 +104,7 @@ class ElasticHit with _$ElasticHit {
 // ---------------------------------------------------------------------------
 
 @freezed
-class ElasticHits with _$ElasticHits {
+abstract class ElasticHits with _$ElasticHits {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ElasticHits({
     required ElasticTotal total,

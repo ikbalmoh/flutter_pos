@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/auth/model/token.dart';
 import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/utils/fetch.dart';

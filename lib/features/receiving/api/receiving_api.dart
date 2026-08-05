@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/shared/router/api_url.dart';
 import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/features/receiving/model/purchase_info.dart';

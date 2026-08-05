@@ -68,7 +68,7 @@ class Cart extends _$Cart {
 
       final authState = await ref.read(authProvider.future) as Authenticated;
 
-      final Shift? shift = await ref.read(shiftNotifierProvider.future);
+      final Shift? shift = await ref.read(shiftProvider.future);
 
       if (shift == null) {
         log('Shift is not started');
@@ -447,7 +447,7 @@ class Cart extends _$Cart {
 
   void addPayment(CartPayment payment) {
     final auth = ref.read(authProvider).value as Authenticated;
-    final shift = ref.read(shiftNotifierProvider).value;
+    final shift = ref.read(shiftProvider).value;
     final outlet = ref.read(outletProvider).value as OutletSelected;
 
     payment = payment.copyWith(
@@ -513,7 +513,7 @@ class Cart extends _$Cart {
 
       final api = ref.watch(transactionApiProvider);
 
-      final shift = ref.read(shiftNotifierProvider).value;
+      final shift = ref.read(shiftProvider).value;
       if (shift == null) {
         crashlytics.recordError(
           'Store transaction failed because shift is null, store transaction aborted',
@@ -673,7 +673,7 @@ class Cart extends _$Cart {
       ppn: tax?.percentage ?? 0,
       ppnIsInclude: tax?.isInclude ?? true,
       taxName: taxable ? tax?.taxName : '',
-      shiftId: ref.read(shiftNotifierProvider).value?.id ?? holded.shiftId,
+      shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
       holdAt: holded.createdAt.toLocal(),
       transactionDate:
           DateTimeFormater.stringToTimestamp(holded.transactionDate.toLocale()),

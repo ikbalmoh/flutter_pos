@@ -13,7 +13,6 @@ import 'package:selleri/features/auth/api/auth_api.dart';
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
 import 'package:selleri/features/auth/repository/token_repository.dart';
 import 'package:selleri/features/auth/provider/auth_state.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 
 part 'auth_repository.g.dart';

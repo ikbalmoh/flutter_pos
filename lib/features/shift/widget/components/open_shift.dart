@@ -81,7 +81,7 @@ class _OpenShiftState extends ConsumerState<OpenShift> {
         ),
         TextButton(
             onPressed: () {
-              ref.read(shiftNotifierProvider.notifier).openShift(
+              ref.read(shiftProvider.notifier).openShift(
                     amount,
                   );
               context.pop();

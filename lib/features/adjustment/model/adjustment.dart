@@ -5,7 +5,9 @@ part 'adjustment.freezed.dart';
 part 'adjustment.g.dart';
 
 @freezed
-class Adjustment with _$Adjustment {
+abstract class Adjustment with _$Adjustment {
+  const Adjustment._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Adjustment({
     required DateTime date,

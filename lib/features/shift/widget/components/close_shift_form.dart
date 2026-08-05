@@ -140,7 +140,7 @@ class _CloseShiftFormState extends ConsumerState<CloseShiftForm> {
     });
     final summary = widget.shift.summary;
     try {
-      await ref.read(shiftNotifierProvider.notifier).closeShift(
+      await ref.read(shiftProvider.notifier).closeShift(
             widget.shift,
             closeAmount: amount,
             diffAmount: diffAmount(),

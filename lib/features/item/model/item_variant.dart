@@ -5,8 +5,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'item_variant.freezed.dart';
 part 'item_variant.g.dart';
 
-@Freezed(addImplicitFinal: false)
-class ItemVariant with _$ItemVariant {
+@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
+abstract class ItemVariant with _$ItemVariant {
   const ItemVariant._();
 
   @Entity(uid: 4358767868100185192, realClass: ItemVariant)

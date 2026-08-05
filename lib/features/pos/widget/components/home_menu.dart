@@ -72,7 +72,7 @@ class HomeMenu extends ConsumerWidget {
     return MenuAnchor(
       style: menuStyle,
       alignmentOffset: Offset(
-          ref.watch(shiftNotifierProvider).value == null ? 0 : -160, -10),
+          ref.watch(shiftProvider).value == null ? 0 : -160, -10),
       builder:
           (BuildContext context, MenuController controller, Widget? child) {
         return IconButton(
@@ -102,7 +102,7 @@ class HomeMenu extends ConsumerWidget {
         );
       },
       menuChildren: [
-        ...ref.watch(shiftNotifierProvider).value == null
+        ...ref.watch(shiftProvider).value == null
             ? []
             : [
                 if (!isTablet)

@@ -6,7 +6,9 @@ part 'custom_field.freezed.dart';
 part 'custom_field.g.dart';
 
 @freezed
-class CustomField with _$CustomField {
+abstract class CustomField with _$CustomField {
+  const CustomField._();
+
   const factory CustomField({
     required String id,
     required String label,

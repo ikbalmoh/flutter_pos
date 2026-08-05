@@ -10,7 +10,7 @@ part 'outlet_config.freezed.dart';
 part 'outlet_config.g.dart';
 
 @freezed
-class OutletConfig with _$OutletConfig {
+abstract class OutletConfig with _$OutletConfig {
   const OutletConfig._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)
@@ -66,7 +66,7 @@ class OutletConfig with _$OutletConfig {
 }
 
 @freezed
-class Akun with _$Akun {
+abstract class Akun with _$Akun {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Akun({
     required int idAkun,
@@ -85,7 +85,7 @@ class Akun with _$Akun {
 }
 
 @freezed
-class AttributeReceipts with _$AttributeReceipts {
+abstract class AttributeReceipts with _$AttributeReceipts {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory AttributeReceipts({
     String? headers,
@@ -105,7 +105,7 @@ class AttributeReceipts with _$AttributeReceipts {
 }
 
 @freezed
-class CustomMandatory with _$CustomMandatory {
+abstract class CustomMandatory with _$CustomMandatory {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory CustomMandatory({
     List<String>? customers,
@@ -122,7 +122,7 @@ class CustomMandatory with _$CustomMandatory {
 }
 
 @freezed
-class PersonInCharge with _$PersonInCharge {
+abstract class PersonInCharge with _$PersonInCharge {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PersonInCharge({
     required String id,
@@ -143,7 +143,7 @@ class PersonInCharge with _$PersonInCharge {
 }
 
 @freezed
-class PinSetting with _$PinSetting {
+abstract class PinSetting with _$PinSetting {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PinSetting({
     required String name,
@@ -186,7 +186,7 @@ class RefundReason {
 }
 
 @freezed
-class Subscriptions with _$Subscriptions {
+abstract class Subscriptions with _$Subscriptions {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Subscriptions({
     required SubscriptionLimit transaction,
@@ -204,7 +204,7 @@ class Subscriptions with _$Subscriptions {
 }
 
 @freezed
-class SubscriptionLimit with _$SubscriptionLimit {
+abstract class SubscriptionLimit with _$SubscriptionLimit {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory SubscriptionLimit({
     required int max,
@@ -222,7 +222,7 @@ class SubscriptionLimit with _$SubscriptionLimit {
 }
 
 @freezed
-class Tax with _$Tax {
+abstract class Tax with _$Tax {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Tax({
     required String taxName,
@@ -240,7 +240,7 @@ class Tax with _$Tax {
 }
 
 @freezed
-class UserHasPin with _$UserHasPin {
+abstract class UserHasPin with _$UserHasPin {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory UserHasPin({
     required String userId,

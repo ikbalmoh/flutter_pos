@@ -5,7 +5,9 @@ part 'shift_cashflows.freezed.dart';
 part 'shift_cashflows.g.dart';
 
 @freezed
-class ShiftCashFlows with _$ShiftCashFlows {
+abstract class ShiftCashFlows with _$ShiftCashFlows {
+  const ShiftCashFlows._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ShiftCashFlows({
     required List<ShiftCashflow> data,

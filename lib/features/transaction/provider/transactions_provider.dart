@@ -64,7 +64,7 @@ class Transactions extends _$Transactions {
       final outlet = ref.read(outletProvider).value as OutletSelected;
       String? shiftId;
       if (currentShift == true) {
-        shiftId = ref.read(shiftNotifierProvider).value?.id;
+        shiftId = ref.read(shiftProvider).value?.id;
       }
 
       Pagination<Cart> transactions = await api.transactions(

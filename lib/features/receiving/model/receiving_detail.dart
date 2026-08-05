@@ -5,7 +5,9 @@ part 'receiving_detail.freezed.dart';
 part 'receiving_detail.g.dart';
 
 @freezed
-class ReceivingDetail with _$ReceivingDetail {
+abstract class ReceivingDetail with _$ReceivingDetail {
+  const ReceivingDetail._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ReceivingDetail({
     required String id,

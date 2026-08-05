@@ -5,7 +5,9 @@ part 'purchase_info.freezed.dart';
 part 'purchase_info.g.dart';
 
 @freezed
-class PurchaseInfo with _$PurchaseInfo {
+abstract class PurchaseInfo with _$PurchaseInfo {
+  const PurchaseInfo._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PurchaseInfo({
     required String refNumber,

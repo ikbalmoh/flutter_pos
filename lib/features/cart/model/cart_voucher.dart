@@ -5,7 +5,9 @@ part 'cart_voucher.freezed.dart';
 part 'cart_voucher.g.dart';
 
 @freezed
-class CartVoucher with _$CartVoucher {
+abstract class CartVoucher with _$CartVoucher {
+  const CartVoucher._();
+
   @JsonSerializable(fieldRename: FieldRename.snake, createToJson: true)
   const factory CartVoucher({
     required String id,

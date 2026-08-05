@@ -4,7 +4,9 @@ part 'shift.freezed.dart';
 part 'shift.g.dart';
 
 @freezed
-class Shift with _$Shift {
+abstract class Shift with _$Shift {
+  const Shift._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Shift({
     required String id,

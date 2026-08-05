@@ -8,6 +8,7 @@ import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/fcm/provider/fcm_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/router/app_router.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
@@ -26,6 +27,8 @@ class _AppState extends ConsumerState<App> {
 
     // Initialize FCM once — reading the provider triggers its build()
     // which sets up listeners for auth/outlet changes internally.
+    ref.read(appConfigProvider);
+
     ref.read(fcmProvider);
 
     // Listen for connectivity changes and sync offline transactions when

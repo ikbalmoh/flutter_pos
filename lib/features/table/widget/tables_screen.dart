@@ -73,7 +73,7 @@ class _TablesScreenState extends ConsumerState<TablesScreen> {
         context: context, builder: (context) => EditTableDialog(table: table));
   }
 
-  void onSelectFloor(floor) {
+  void onSelectFloor(int floor) {
     setState(() {
       currentFloor = floor;
     });

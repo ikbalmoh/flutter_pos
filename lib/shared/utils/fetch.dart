@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/auth/model/token.dart';

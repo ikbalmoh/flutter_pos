@@ -15,7 +15,6 @@ import 'package:selleri/shared/widget/generic/date_picker.dart';
 import 'package:selleri/shared/widget/generic/item_list_skeleton.dart';
 import 'package:selleri/shared/widget/search_app_bar.dart';
 import 'package:selleri/features/promotion/widget/promotion_type_filter.dart';
-import 'package:selleri/shared/widget/loading_widget.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -257,7 +256,6 @@ class _PromotionsScreenState extends ConsumerState<PromotionsScreen> {
                       error: error.toString(),
                       stackTrace: stackTrace.toString(),
                     ),
-                  _ => const LoadingIndicator(color: Colors.teal)
                 }),
           ),
         ],

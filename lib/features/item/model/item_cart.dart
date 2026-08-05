@@ -17,7 +17,7 @@ part 'item_cart.g.dart';
 var uuid = const Uuid();
 
 @freezed
-class ItemCart with _$ItemCart {
+abstract class ItemCart with _$ItemCart {
   const ItemCart._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

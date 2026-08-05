@@ -48,7 +48,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.invalidate(shiftNotifierProvider);
+      ref.invalidate(shiftProvider);
     });
   }
 
@@ -91,7 +91,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
         });
 
     if (newAmount != shiftInfo.summary.startingCash) {
-      ref.read(shiftNotifierProvider.notifier).updateOpenAmount(newAmount);
+      ref.read(shiftProvider.notifier).updateOpenAmount(newAmount);
       AppAlert.toast('open_amount_updated_x'
           .tr(args: [CurrencyFormat.currency(newAmount)]));
     }
@@ -100,7 +100,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final model.Shift? shift = ref.watch(shiftNotifierProvider).value;
+    final model.Shift? shift = ref.watch(shiftProvider).value;
 
     final bool isOnline =
         ref.watch(connectivityStatusProvider) == ConnectivityState.connected;
@@ -112,11 +112,11 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
       body: RefreshIndicator(
         onRefresh: () async {
           await Future.wait([
-            ref.read(currentShiftInfoNotifierProvider.notifier).reload(),
+            ref.read(currentShiftInfoProvider.notifier).reload(),
           ]);
         },
         child: shift != null
-            ? ref.watch(currentShiftInfoNotifierProvider).when(
+            ? ref.watch(currentShiftInfoProvider).when(
                   data: (data) {
                     if (isTablet) {
                       return Padding(
@@ -242,7 +242,7 @@ class _CurrentShiftScreenState extends ConsumerState<CurrentShiftScreen>
             : const ShiftInactive(),
       ),
       floatingActionButton: isOnline && viewSummary == 'cashflow'
-          ? ref.watch(currentShiftInfoNotifierProvider).when(
+          ? ref.watch(currentShiftInfoProvider).when(
               data: (data) => data != null
                   ? FloatingActionButton.extended(
                       onPressed: onShowCashflowForm,

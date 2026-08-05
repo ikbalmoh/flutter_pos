@@ -7,7 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/elastic/repository/elastic_repository.dart';
 import 'package:selleri/features/item/model/category.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_adjustment.dart';
 import 'package:selleri/shared/constants/store_key.dart';
@@ -48,8 +47,8 @@ class ItemRepository implements ItemRepositoryProtocol {
 
   @override
   Future<List<Category>> fetchCategoris() async {
+    final api = ref.read(itemApiProvider);
     try {
-      final api = ref.watch(itemApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return [];
@@ -83,6 +82,7 @@ class ItemRepository implements ItemRepositoryProtocol {
     int? page,
     Function(int current, int total)? onProgress,
   }) async {
+    final api = ref.read(itemApiProvider);
     int? lastUpdate;
     if (fromLastSync == true) {
       String? lastSync = await storage.read(key: StoreKey.lastSync.name);
@@ -97,7 +97,6 @@ class ItemRepository implements ItemRepositoryProtocol {
     }
 
     try {
-      final api = ref.watch(itemApiProvider);
       final outlet = await outletState.retrieveOutlet();
       if (outlet == null) {
         return [];
@@ -148,11 +147,11 @@ class ItemRepository implements ItemRepositoryProtocol {
     String? search,
     String? idCategory,
   }) async {
+    final api = ref.read(adjustmentApiProvider);
     late final outletState = ref.read(outletRepositoryProvider);
 
     final outlet = await outletState.retrieveOutlet();
 
-    final api = ref.watch(adjustmentApiProvider);
     try {
       var items = await api.itemsForAdjustment(
         idOutlet: outlet!.idOutlet,
@@ -176,6 +175,7 @@ class ItemRepository implements ItemRepositoryProtocol {
     int? page = 0,
     Function(int current, int total)? onProgress,
   }) async {
+    final esRepo = ref.read(elasticRepositoryProvider);
     try {
       int? lastUpdate;
       if (fromLastSync == true) {
@@ -186,7 +186,6 @@ class ItemRepository implements ItemRepositoryProtocol {
       }
 
       const int pageSize = 200;
-      final esRepo = ref.read(elasticRepositoryProvider);
 
       // First page — also gives us the total count.
       final firstRes = await esRepo.items(

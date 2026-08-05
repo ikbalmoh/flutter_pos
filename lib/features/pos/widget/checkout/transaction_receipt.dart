@@ -64,10 +64,11 @@ class _TransactionReceiptState extends ConsumerState<TransactionReceipt> {
       setState(() {
         sharing = false;
       });
-      final shareResult = await Share.shareXFiles([xFile],
+      final shareResult = await SharePlus.instance.share(ShareParams(
+          files: [xFile],
           subject: title,
           sharePositionOrigin:
-              shareButtonBox!.localToGlobal(Offset.zero) & shareButtonBox.size);
+              shareButtonBox!.localToGlobal(Offset.zero) & shareButtonBox.size));
       if (shareResult.status == ShareResultStatus.success) {
         AppAlert.toast('receipt_shared'.tr());
       }
