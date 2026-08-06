@@ -52,8 +52,8 @@ class QRISApi {
   }
 }
 
-final qrisApiProvider = FutureProvider<QRISApi>((ref) async {
-  final appConfig = await ref.read(appConfigProvider.future);
+final qrisApiProvider = Provider<QRISApi>((ref) {
+  final appConfig = ref.read(appConfigProvider).requireValue;
   final dio = Dio(
     BaseOptions(
       baseUrl: appConfig.qrisHost!,

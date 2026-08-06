@@ -32,8 +32,8 @@ class PaymentDetails extends ConsumerStatefulWidget {
 }
 
 class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
-  late PaymentMethod? cashPayment;
-  late PaymentMethod? qrisPayment;
+  PaymentMethod? cashPayment;
+  PaymentMethod? qrisPayment;
 
   List<PaymentType> paymentTypes = [];
 
@@ -78,7 +78,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
       ),
     ].where((p) => availablePaymentTypes.contains(p.id)).toList();
 
-    final appConfig = await ref.read(appConfigProvider.future);
+    final appConfig = ref.read(appConfigProvider).requireValue;
 
     setState(() {
       cashPayment = widget.paymentMethods.firstWhereOrNull((p) => p.type == 1);
@@ -104,7 +104,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
 
     final bool isCash = method.type == 1;
 
-    final appConfig = await ref.read(appConfigProvider.future);
+    final appConfig = ref.read(appConfigProvider).requireValue;
     final qrisPaymentTypeId = appConfig.qrisPaymentType ?? 6;
 
     if (method.type == qrisPaymentTypeId) {

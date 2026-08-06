@@ -19,7 +19,7 @@ import 'package:selleri/shared/utils/exception.dart';
 
 part 'item_repository.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 ItemRepository itemRepository(Ref ref) => ItemRepository(ref);
 
 abstract class ItemRepositoryProtocol {
@@ -175,7 +175,7 @@ class ItemRepository implements ItemRepositoryProtocol {
     int? page = 0,
     Function(int current, int total)? onProgress,
   }) async {
-    final esRepo = await ref.read(elasticRepositoryProvider.future);
+    final esRepo = ref.read(elasticRepositoryProvider);
     try {
       int? lastUpdate;
       if (fromLastSync == true) {

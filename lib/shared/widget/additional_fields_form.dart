@@ -159,7 +159,7 @@ class _AdditionalFieldsSheetState extends State<_AdditionalFieldsSheet> {
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: CustomFieldInput(
                         field: field,
-                        value: fieldValue,
+                        value: fieldValue.toString(),
                         onValueChange: (value) {
                           setState(() {
                             fields = fields.map((f) {

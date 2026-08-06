@@ -16,7 +16,7 @@ abstract class PromotionRepositoryProtocol {
   Future<Voucher?> getVoucher(String code);
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 PromotionRepository promotionRepository(Ref ref) => PromotionRepository(ref);
 
 class PromotionRepository implements PromotionRepositoryProtocol {

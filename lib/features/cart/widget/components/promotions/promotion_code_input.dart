@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
-import 'package:selleri/features/promotion/provider/promotions_provider.dart';
+import 'package:selleri/features/promotion/provider/promotions_provider.dart' as p;
 import 'dart:developer';
+import 'package:selleri/features/promotion/repository/promotion_repository.dart';
 
 import 'package:selleri/features/cart/widget/components/promotions/cart_promotion_item.dart';
 
@@ -44,7 +45,7 @@ class _PromotionCodeInputState extends ConsumerState<PromotionCodeInput> {
   }
 
   bool isPromotionEligible(Promotion? promo) {
-    return ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
+    return p.isPromotionEligible(promo, ref.read(cartProvider));
   }
 
   void onSubmit(String code) async {
@@ -60,9 +61,7 @@ class _PromotionCodeInputState extends ConsumerState<PromotionCodeInput> {
       isLoading = true;
     });
     try {
-      Promotion? promo = await ref
-          .read(promotionsProvider.notifier)
-          .getPromotionByCode(controller.text);
+      Promotion? promo = await p.getPromotionByCode(ref.read(promotionRepositoryProvider), controller.text);
 
       setState(() {
         isLoading = false;

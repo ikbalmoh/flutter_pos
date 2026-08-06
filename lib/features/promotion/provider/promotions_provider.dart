@@ -26,7 +26,7 @@ class Promotions extends _$Promotions {
     return promotions.map((promo) {
       List<ItemCart> eligible = promo.type == 2
           ? []
-          : eligibleItems(promo, nonRewardItems);
+          : getEligibleItems(promo, nonRewardItems);
       return promo.copyWith(eligibleItems: eligible);
     }).toList();
   }
@@ -45,34 +45,34 @@ class Promotions extends _$Promotions {
     objectBox.putPromotions(promotions);
     return promotions;
   }
+}
 
-  Future<Promotion?> getPromotionByOrder(
-      {double? requirementMinimumOrder}) async {
-    log('GET PROMOTION BY ORDER');
-    List<Promotion> result = await objectBox
-        .promotionsStream(
-          type: 2,
-          active: true,
-          requirementMinimumOrder: requirementMinimumOrder,
-          needCode: false,
-        )
-        .first;
-    return result.isNotEmpty ? result.first : null;
+
+Future<Promotion?> getPromotionByOrder(
+    {double? requirementMinimumOrder}) async {
+  log('GET PROMOTION BY ORDER');
+  List<Promotion> result = await objectBox
+      .promotionsStream(
+        type: 2,
+        active: true,
+        requirementMinimumOrder: requirementMinimumOrder,
+        needCode: false,
+      )
+      .first;
+  return result.isNotEmpty ? result.first : null;
+}
+
+Future<Promotion?> getPromotionByCode(PromotionRepository repo, String code) async {
+  try {
+    log('GET PROMOTION BY CODE: $code');
+    Promotion? promo = await repo.getPromoByCode(code);
+    return promo;
+  } catch (_) {
+    rethrow;
   }
+}
 
-  Future<Promotion?> getPromotionByCode(String code) async {
-    try {
-      log('GET PROMOTION BY CODE: $code');
-      final PromotionRepository promotionRepository =
-          ref.read(promotionRepositoryProvider);
-      Promotion? promo = await promotionRepository.getPromoByCode(code);
-      return promo;
-    } catch (_) {
-      rethrow;
-    }
-  }
-
-  bool isPromotionEligible(Promotion? promo) {
+bool isPromotionEligible(Promotion? promo, model.Cart cart) {
     if (promo == null) {
       return false;
     }
@@ -129,8 +129,6 @@ class Promotions extends _$Promotions {
     if (!isTimeEligible) {
       return false;
     }
-
-    model.Cart cart = ref.read(cartProvider);
 
     if (promo.assignCustomer == 2) {
       if (cart.idCustomer == null) {
@@ -196,10 +194,10 @@ class Promotions extends _$Promotions {
       return false;
     }
 
-    return true;
-  }
+  return true;
+}
 
-  List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
+List<ItemCart> getEligibleItems(Promotion promo, List<ItemCart> items) {
     if (promo.type == 2 || promo.type == 4) {
       return [];
     }
@@ -232,16 +230,16 @@ class Promotions extends _$Promotions {
               item.quantity >= promo.requirementQuantity!.toInt())
           .toList();
     }
-    return eligibleItems;
-  }
+  return eligibleItems;
+}
 
-  /// Pure conflict resolver — takes current selection + toggled promo,
-  /// returns the new resolved selection list.
-  /// Selection state is NOT stored in the provider.
-  List<Promotion> resolveSelection(
-    List<Promotion> currentSelection,
-    Promotion promo,
-  ) {
+/// Pure conflict resolver — takes current selection + toggled promo,
+/// returns the new resolved selection list.
+/// Selection state is NOT stored in the provider.
+List<Promotion> resolveSelection(
+  List<Promotion> currentSelection,
+  Promotion promo,
+) {
     // Toggle off if already selected
     final int idx = currentSelection.indexWhere((p) => p.id == promo.id);
     if (idx >= 0) {
@@ -284,7 +282,6 @@ class Promotions extends _$Promotions {
       });
     }
 
-    result.add(promo);
-    return result;
-  }
+  result.add(promo);
+  return result;
 }

@@ -14,6 +14,11 @@ abstract class CustomField with _$CustomField {
     required String label,
     required String field,
     @JsonKey(name: 'type_data') required TypeData typeData,
+    @JsonKey(
+      name: 'module',
+      fromJson: ModelConverter.dynamicToString,
+      toJson: ModelConverter.dynamicToString,
+    )
     String? module,
     @JsonKey(name: 'input_type') FieldType? inputType,
     @JsonKey(
@@ -30,7 +35,12 @@ abstract class CustomField with _$CustomField {
     )
     @Default(0)
     int position,
-    dynamic value,
+    @JsonKey(
+      name: 'value',
+      fromJson: ModelConverter.dynamicToString,
+      toJson: ModelConverter.dynamicToString,
+    )
+    String? value,
   }) = _CustomField;
 
   factory CustomField.fromJson(Map<String, dynamic> json) =>

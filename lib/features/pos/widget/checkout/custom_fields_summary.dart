@@ -139,8 +139,7 @@ class CustomFieldsSummary extends ConsumerWidget {
     if (value == null) return '-';
 
     if (field.typeData == TypeData.boolean) {
-      if (value is bool) return value ? 'yes'.tr() : 'no'.tr();
-      final strVal = value.toString().toLowerCase();
+      final strVal = value.toLowerCase();
       if (strVal == 'true' || strVal == '1') return 'yes'.tr();
       if (strVal == 'false' || strVal == '0') return 'no'.tr();
     }

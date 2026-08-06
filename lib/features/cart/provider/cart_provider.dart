@@ -156,8 +156,9 @@ class Cart extends _$Cart {
       }
     }
 
-    final int cartIndex =
-        state.items.indexWhere((i) => i.identifier == identifier);
+    final int cartIndex = state.items.indexWhere(
+      (i) => i.identifier == identifier,
+    );
 
     if (cartIndex > -1) {
       final ItemCart existItem = state.items[cartIndex];
@@ -195,20 +196,24 @@ class Cart extends _$Cart {
           .toList(),
     );
 
-    log('ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}');
+    log(
+      'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}',
+    );
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);
     state = state.copyWith(items: items);
     calculateCart();
 
-    analytics.logAddToCart(items: [
-      AnalyticsEventItem(
-        itemName: itemCart.itemName,
-        itemId: itemCart.idItem,
-        price: itemCart.price,
-        quantity: itemCart.quantity.toInt(),
-      )
-    ]);
+    analytics.logAddToCart(
+      items: [
+        AnalyticsEventItem(
+          itemName: itemCart.itemName,
+          itemId: itemCart.idItem,
+          price: itemCart.price,
+          quantity: itemCart.quantity.toInt(),
+        ),
+      ],
+    );
   }
 
   void addExtraItemCart(ItemCart item) async {
@@ -226,20 +231,26 @@ class Cart extends _$Cart {
   }
 
   Future<void> removePromotion(String promotionId) async {
-    CartPromotion? promotion =
-        state.promotions.firstWhereOrNull((p) => p.promotionId == promotionId);
+    CartPromotion? promotion = state.promotions.firstWhereOrNull(
+      (p) => p.promotionId == promotionId,
+    );
 
     if (promotion != null) {
       List<ItemCart> items = List<ItemCart>.from(state.items)
-          .map((item) => item.isReward != true &&
-                  item.promotion?.promotionId == promotionId
-              ? item.copyWith(promotion: null)
-              : item)
+          .map(
+            (item) =>
+                item.isReward != true &&
+                    item.promotion?.promotionId == promotionId
+                ? item.copyWith(promotion: null)
+                : item,
+          )
           .toList();
 
       // Remove item reward
-      items.removeWhere((item) =>
-          item.isReward == true && item.promotion?.promotionId == promotionId);
+      items.removeWhere(
+        (item) =>
+            item.isReward == true && item.promotion?.promotionId == promotionId,
+      );
 
       List<CartPromotion> promotions = List.from(state.promotions);
 
@@ -249,10 +260,14 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  Future<void> updateQty(String idItem,
-      {int? idVariant, bool increment = true}) async {
-    final index = state.items
-        .indexWhere((i) => i.idItem == idItem && i.idVariant == idVariant);
+  Future<void> updateQty(
+    String idItem, {
+    int? idVariant,
+    bool increment = true,
+  }) async {
+    final index = state.items.indexWhere(
+      (i) => i.idItem == idItem && i.idVariant == idVariant,
+    );
 
     if (index < 0) {
       return;
@@ -269,10 +284,7 @@ class Cart extends _$Cart {
 
     List<CartPromotion> promotions = List.from(state.promotions);
     if (itemCart.promotion != null) {
-      itemCart = itemCart.copyWith(
-        discount: 0,
-        discountTotal: 0,
-      );
+      itemCart = itemCart.copyWith(discount: 0, discountTotal: 0);
     }
 
     ItemVariant? itemVariant = idVariant == null
@@ -285,17 +297,22 @@ class Cart extends _$Cart {
 
     if (outlet.config.stockMinus != true) {
       if (item.stockControl && itemCart.quantity + 1 > itemStock) {
-        throw 'max_qty_x'.tr(args: [
-          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
-        ]);
+        throw 'max_qty_x'.tr(
+          args: [
+            CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false),
+          ],
+        );
       }
     }
 
     double quantity = increment ? itemCart.quantity + 1 : itemCart.quantity - 1;
     double total = (itemCart.price * quantity) - itemCart.discountTotal;
     items[index] = itemCart.copyWith(quantity: quantity, total: total);
-    state =
-        state.copyWith(items: items, roundingValue: 0, promotions: promotions);
+    state = state.copyWith(
+      items: items,
+      roundingValue: 0,
+      promotions: promotions,
+    );
     if (itemCart.promotion != null) {
       removePromotion(itemCart.promotion!.promotionId);
     } else {
@@ -306,8 +323,9 @@ class Cart extends _$Cart {
   Future<void> updateItem(ItemCart itemCart) async {
     final outlet = ref.read(outletProvider).value as OutletSelected;
 
-    final index =
-        state.items.indexWhere((i) => i.identifier == itemCart.identifier);
+    final index = state.items.indexWhere(
+      (i) => i.identifier == itemCart.identifier,
+    );
     if (index > -1) {
       List<ItemCart> items = [...state.items];
 
@@ -320,16 +338,20 @@ class Cart extends _$Cart {
       ItemVariant? itemVariant = itemCart.idVariant == null
           ? null
           : objectBox.getItemVariant(
-              idItem: itemCart.idItem, variantId: itemCart.idVariant!);
+              idItem: itemCart.idItem,
+              variantId: itemCart.idVariant!,
+            );
 
       double itemStock = itemVariant?.stockItem ?? item.stockItem;
 
       if (item.stockControl &&
           outlet.config.stockMinus == false &&
           itemCart.quantity > itemStock) {
-        throw 'max_qty_x'.tr(args: [
-          CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false)
-        ]);
+        throw 'max_qty_x'.tr(
+          args: [
+            CurrencyFormat.currency(itemStock, decimalDigit: 2, symbol: false),
+          ],
+        );
       }
 
       double discount = itemCart.discount;
@@ -345,10 +367,7 @@ class Cart extends _$Cart {
         discount: discount,
         discountTotal: discountTotal,
       );
-      state = state.copyWith(
-        items: items,
-        roundingValue: 0,
-      );
+      state = state.copyWith(items: items, roundingValue: 0);
       if (itemCart.promotion != null) {
         removePromotion(itemCart.promotion!.promotionId);
       } else {
@@ -361,11 +380,15 @@ class Cart extends _$Cart {
     List<ItemCart> items = List.from(state.items);
     List<CartPromotion> promotions = List.from(state.promotions);
     ItemCart item = items.firstWhere((item) => item.identifier == identifier);
-    log('Remove ${item.isReward == true ? 'REWARD' : 'ITEM'} ${item.itemName}, promo ${item.promotion?.promotionName}');
-    items.removeWhere((i) =>
-        i.identifier == item.identifier ||
-        (i.isReward == true &&
-            i.promotion?.promotionId == item.promotion?.promotionId));
+    log(
+      'Remove ${item.isReward == true ? 'REWARD' : 'ITEM'} ${item.itemName}, promo ${item.promotion?.promotionName}',
+    );
+    items.removeWhere(
+      (i) =>
+          i.identifier == item.identifier ||
+          (i.isReward == true &&
+              i.promotion?.promotionId == item.promotion?.promotionId),
+    );
     promotions = promotions
       ..removeWhere(
         (p) =>
@@ -374,13 +397,18 @@ class Cart extends _$Cart {
       );
     if (item.isReward == true) {
       items = items
-          .map((i) => i.promotion?.promotionId == item.promotion?.promotionId
-              ? i.copyWith(promotion: null)
-              : i)
+          .map(
+            (i) => i.promotion?.promotionId == item.promotion?.promotionId
+                ? i.copyWith(promotion: null)
+                : i,
+          )
           .toList();
     }
-    state =
-        state.copyWith(items: items, promotions: promotions, roundingValue: 0);
+    state = state.copyWith(
+      items: items,
+      promotions: promotions,
+      roundingValue: 0,
+    );
     calculateCart();
     return true;
   }
@@ -395,10 +423,12 @@ class Cart extends _$Cart {
         : 0;
   }
 
-  void selectCustomer(Customer? customer,
-      {CustomerVehicle? vehicle,
-      List<CustomField>? customFields,
-      bool skipCustomField = false}) {
+  void selectCustomer(
+    Customer? customer, {
+    CustomerVehicle? vehicle,
+    List<CustomField>? customFields,
+    bool skipCustomField = false,
+  }) {
     state = state.copyWith(
       customerName: customer?.customerName,
       idCustomer: customer?.idCustomer,
@@ -419,10 +449,13 @@ class Cart extends _$Cart {
     calculateCart();
   }
 
-  void setDiscountTransaction(
-      {required double discount, required bool discIsPercent}) {
-    double discOverallTotal =
-        discIsPercent ? state.subtotal * (discount / 100) : discount;
+  void setDiscountTransaction({
+    required double discount,
+    required bool discIsPercent,
+  }) {
+    double discOverallTotal = discIsPercent
+        ? state.subtotal * (discount / 100)
+        : discount;
     state = state.copyWith(
       roundingValue: 0,
       discIsPercent: discIsPercent,
@@ -449,7 +482,7 @@ class Cart extends _$Cart {
     final auth = ref.read(authProvider).value as Authenticated;
     final shift = ref.read(shiftProvider).value;
     final outlet = ref.read(outletProvider).value as OutletSelected;
-    final config = await ref.read(appConfigProvider.future);
+    final config = ref.read(appConfigProvider).requireValue;
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
@@ -467,18 +500,23 @@ class Cart extends _$Cart {
     final bool isQrisPayment =
         qrisMethodIds?.contains(payment.paymentMethodId) ?? false;
 
-    log('addPayment: payment: $payment, qrisMethodIds: $qrisMethodIds, isQrisPayment? $isQrisPayment');
+    log(
+      'addPayment: payment: $payment, qrisMethodIds: $qrisMethodIds, isQrisPayment? $isQrisPayment',
+    );
     if (isQrisPayment) {
       // is qris payment, remove all other payments
       payments = [];
     } else if (qrisMethodIds?.contains(payment.paymentMethodId) == false) {
       // not qris payment, remove qris payment
       payments.removeWhere(
-          (p) => qrisMethodIds?.contains(p.paymentMethodId) ?? false);
+        (p) => qrisMethodIds?.contains(p.paymentMethodId) ?? false,
+      );
     }
 
-    int paymentIdx = payments.indexWhere((cp) =>
-        cp.createdAt == null && cp.paymentMethodId == payment.paymentMethodId);
+    int paymentIdx = payments.indexWhere(
+      (cp) =>
+          cp.createdAt == null && cp.paymentMethodId == payment.paymentMethodId,
+    );
 
     if (paymentIdx >= 0) {
       // Update payment
@@ -494,7 +532,8 @@ class Cart extends _$Cart {
   void removePayment(String paymentMethodId) {
     List<CartPayment> payments = List<CartPayment>.from(state.payments);
     payments.removeWhere(
-        (p) => p.paymentMethodId == paymentMethodId && p.createdAt == null);
+      (p) => p.paymentMethodId == paymentMethodId && p.createdAt == null,
+    );
     state = state.copyWith(payments: payments);
     calculateCart();
   }
@@ -506,9 +545,11 @@ class Cart extends _$Cart {
 
       if (!isConnected) {
         crashlytics.recordError(
-            'Store transaction aborted! connectivity is disconnected', null,
-            fatal: false,
-            information: [(await state.toTransactionPayload()).toString()]);
+          'Store transaction aborted! connectivity is disconnected',
+          null,
+          fatal: false,
+          information: [(await state.toTransactionPayload()).toString()],
+        );
         return;
       }
 
@@ -524,8 +565,10 @@ class Cart extends _$Cart {
         throw 'shift_not_opened'.tr();
       }
 
-      final String transactionNo =
-          state.transactionNo.trim().replaceFirst('BILL-', '').trim();
+      final String transactionNo = state.transactionNo
+          .trim()
+          .replaceFirst('BILL-', '')
+          .trim();
 
       analytics.logEvent(
         name: 'store_transaction',
@@ -538,20 +581,14 @@ class Cart extends _$Cart {
       );
 
       final res = await api.storeTransaction([
-        state.copyWith(
-          transactionNo: transactionNo,
-          shiftId: shift.id,
-        )
+        state.copyWith(transactionNo: transactionNo, shiftId: shift.id),
       ]);
 
       if (res.isEmpty) {
         throw 'transaction_error'.tr();
       }
 
-      state = state.copyWith(
-        transactionNo: transactionNo,
-        shiftId: shift.id,
-      );
+      state = state.copyWith(transactionNo: transactionNo, shiftId: shift.id);
 
       ref.invalidate(transactionsProvider);
     } catch (e) {
@@ -570,8 +607,9 @@ class Cart extends _$Cart {
         throw 'printer_not_connected'.tr();
       }
       if (printCounter > 1) {
-        final isAuthorize =
-            await AuthorizationHelper.authorize('print-receipt');
+        final isAuthorize = await AuthorizationHelper.authorize(
+          'print-receipt',
+        );
         if (!isAuthorize) {
           return;
         }
@@ -667,8 +705,9 @@ class Cart extends _$Cart {
 
     model.Cart cart = holded.dataHold.copyWith(
       idCustomer: holded.isCustomerActive ? holded.dataHold.idCustomer : null,
-      customerName:
-          holded.isCustomerActive ? holded.dataHold.customerName : null,
+      customerName: holded.isCustomerActive
+          ? holded.dataHold.customerName
+          : null,
       transactionNo: holded.transactionNo,
       idTransaction: holded.transactionId,
       ppn: tax?.percentage ?? 0,
@@ -676,8 +715,9 @@ class Cart extends _$Cart {
       taxName: taxable ? tax?.taxName : '',
       shiftId: ref.read(shiftProvider).value?.id ?? holded.shiftId,
       holdAt: holded.createdAt.toLocal(),
-      transactionDate:
-          DateTimeFormater.stringToTimestamp(holded.transactionDate.toLocale()),
+      transactionDate: DateTimeFormater.stringToTimestamp(
+        holded.transactionDate.toLocale(),
+      ),
       promotions: [],
       items: [],
     );
@@ -697,8 +737,10 @@ class Cart extends _$Cart {
 
     state = cart.copyWith(items: items);
 
-    List<Promotion> promotions = objectBox.getPromotions(
-            holded.dataHold.promotions.map((p) => p.promotionId).toList()) ??
+    List<Promotion> promotions =
+        objectBox.getPromotions(
+          holded.dataHold.promotions.map((p) => p.promotionId).toList(),
+        ) ??
         [];
     if (promotions.isNotEmpty) {
       applyPromotions(promotions);
@@ -727,9 +769,8 @@ class Cart extends _$Cart {
       return;
     }
 
-    final promotion = await ref
-        .read(promotionsProvider.notifier)
-        .getPromotionByOrder(requirementMinimumOrder: state.grandTotal);
+    final promotion =
+        await getPromotionByOrder(requirementMinimumOrder: state.grandTotal);
 
     if (promotion != null) {
       bool isPromotionAdded = state.promotions
@@ -740,24 +781,26 @@ class Cart extends _$Cart {
         return;
       }
 
-      List<CartPromotion> currentPromotions =
-          List<CartPromotion>.from(state.promotions)
-              .where((promo) => promo.type != 2)
-              .toList();
+      List<CartPromotion> currentPromotions = List<CartPromotion>.from(
+        state.promotions,
+      ).where((promo) => promo.type != 2).toList();
 
       double discountValue = promotion.discountType == true
           ? state.grandTotal * (promotion.rewardNominal / 100)
           : promotion.rewardNominal;
 
-      log('APPLY PROMOTION BY ORDER => $discountValue \n ${promotion.rewardMaximumAmount}');
+      log(
+        'APPLY PROMOTION BY ORDER => $discountValue \n ${promotion.rewardMaximumAmount}',
+      );
 
       if (promotion.discountType == false &&
           discountValue > promotion.rewardMaximumAmount!) {
         discountValue = promotion.rewardMaximumAmount!;
       }
 
-      final cartPromo = CartPromotion.fromData(promotion)
-          .copyWith(discountValue: discountValue);
+      final cartPromo = CartPromotion.fromData(
+        promotion,
+      ).copyWith(discountValue: discountValue);
       currentPromotions.add(cartPromo);
       state = state.copyWith(
         promotions: currentPromotions,
@@ -774,9 +817,10 @@ class Cart extends _$Cart {
 
     List<Promotion> promotions = [];
     for (Promotion promo in selectedPromotions) {
-      bool isEligible =
-          ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
-      log('PROMOTION ${promo.name}[${promo.type} - ${promo.typeName}] IS ${isEligible ? 'ELIGIBLE' : 'NOT ELIGIBLE'}');
+      bool isEligible = isPromotionEligible(promo, state);
+      log(
+        'PROMOTION ${promo.name}[${promo.type} - ${promo.typeName}] IS ${isEligible ? 'ELIGIBLE' : 'NOT ELIGIBLE'}',
+      );
       if (isEligible) {
         promotions.add(promo);
       }
@@ -784,29 +828,37 @@ class Cart extends _$Cart {
 
     List<ItemCart> items = List<ItemCart>.from(state.items)
         .where((item) => item.isReward != true)
-        .map((item) => item.promotion == null
-            ? item
-            : item.copyWith(
-                promotion: null,
-                discountTotal: 0,
-                discount: 0,
-                total: item.price * item.quantity,
-              ))
+        .map(
+          (item) => item.promotion == null
+              ? item
+              : item.copyWith(
+                  promotion: null,
+                  discountTotal: 0,
+                  discount: 0,
+                  total: item.price * item.quantity,
+                ),
+        )
         .toList();
 
-    List<Promotion> freeGiftpromotions =
-        promotions.where((promo) => promo.type == 1).toList();
+    List<Promotion> freeGiftpromotions = promotions
+        .where((promo) => promo.type == 1)
+        .toList();
 
-    Promotion? promotionByOrder =
-        promotions.firstWhereOrNull((promo) => promo.type == 2);
+    Promotion? promotionByOrder = promotions.firstWhereOrNull(
+      (promo) => promo.type == 2,
+    );
 
-    List<Promotion> promotionByProducts =
-        promotions.where((promo) => promo.type == 3).toList();
+    List<Promotion> promotionByProducts = promotions
+        .where((promo) => promo.type == 3)
+        .toList();
 
-    Promotion? freeTransactionGiftpromotions =
-        promotions.firstWhereOrNull((promo) => promo.type == 4);
+    Promotion? freeTransactionGiftpromotions = promotions.firstWhereOrNull(
+      (promo) => promo.type == 4,
+    );
 
-    log('ELIGIBLE PROMOTIONS\n1 => FREE GIFT: ${freeGiftpromotions.map((e) => e.name)}\n2 => BY ORDER: ${promotionByOrder?.name}\n3 => BY PRODUCTS: ${promotionByProducts.map((e) => e.name)}\n4 => FREE TRANSACTION GIFT: ${freeTransactionGiftpromotions?.name}');
+    log(
+      'ELIGIBLE PROMOTIONS\n1 => FREE GIFT: ${freeGiftpromotions.map((e) => e.name)}\n2 => BY ORDER: ${promotionByOrder?.name}\n3 => BY PRODUCTS: ${promotionByProducts.map((e) => e.name)}\n4 => FREE TRANSACTION GIFT: ${freeTransactionGiftpromotions?.name}',
+    );
 
     List<CartPromotion> cartPromotions = [];
 
@@ -820,14 +872,15 @@ class Cart extends _$Cart {
 
       CartPromotion cartPromo = CartPromotion.fromData(promo);
 
-      List<ItemCart> eligibleItems =
-          ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
+      List<ItemCart> eligibleItems = getEligibleItems(promo, items);
 
       // Filter out items already claimed by another Type 3 promo
       eligibleItems = eligibleItems
-          .where((item) =>
-              item.identifier == null ||
-              !claimedByType3.contains(item.identifier))
+          .where(
+            (item) =>
+                item.identifier == null ||
+                !claimedByType3.contains(item.identifier),
+          )
           .toList();
 
       if (eligibleItems.isEmpty) {
@@ -840,7 +893,9 @@ class Cart extends _$Cart {
         );
         itemCart = ItemCart.copyWithPromotion(itemCart, promotion: promo);
 
-        log('ITEM GET PROMO: ${itemCart.promotion?.promotionName} ${itemCart.promotion?.discountValue}');
+        log(
+          'ITEM GET PROMO: ${itemCart.promotion?.promotionName} ${itemCart.promotion?.discountValue}',
+        );
 
         cartPromotions.add(cartPromo);
         if (itemCart.identifier != null) {
@@ -875,23 +930,28 @@ class Cart extends _$Cart {
     for (var i = 0; i < freeGiftpromotions.length; i++) {
       Promotion promo = freeGiftpromotions[i];
 
-      List<ItemCart> eligibleItems =
-          ref.read(promotionsProvider.notifier).eligibleItems(promo, items);
+      List<ItemCart> eligibleItems = getEligibleItems(promo, items);
 
       // Filter out items already claimed by another Type 1 promo
       eligibleItems = eligibleItems
-          .where((item) =>
-              item.identifier == null ||
-              !claimedByType1.contains(item.identifier))
+          .where(
+            (item) =>
+                item.identifier == null ||
+                !claimedByType1.contains(item.identifier),
+          )
           .toList();
 
-      log('A GET B eligible items: ${eligibleItems.map((e) => e.itemName).toList()}');
+      log(
+        'A GET B eligible items: ${eligibleItems.map((e) => e.itemName).toList()}',
+      );
       if (promo.type == 1 && eligibleItems.isEmpty) {
         continue;
       }
       // Apply Rewards
       ScanItemResult? reward = objectBox.getPromotionReward(promotion: promo);
-      log('A GET B Promotion => ${promo.name}\nREWARD ITEM =>${reward.item?.itemName}\nREWARD Variant=>${reward.variant?.variantName}\n\n');
+      log(
+        'A GET B Promotion => ${promo.name}\nREWARD ITEM =>${reward.item?.itemName}\nREWARD Variant=>${reward.variant?.variantName}\n\n',
+      );
       if (reward.item != null) {
         for (ItemCart itemCart in eligibleItems) {
           int itemIdx = items.indexWhere(
@@ -953,10 +1013,9 @@ class Cart extends _$Cart {
     // PROMO BY CODE
     Promotion? promoByCode = promotions.firstWhereOrNull((p) => p.needCode);
 
-    log('APPLIED PROMOTION: ${cartPromotions.map((e) => [
-          e.promotionName,
-          e.discountValue
-        ].join(' - '))}');
+    log(
+      'APPLIED PROMOTION: ${cartPromotions.map((e) => [e.promotionName, e.discountValue].join(' - '))}',
+    );
 
     state = state.copyWith(
       items: items,
@@ -975,25 +1034,30 @@ class Cart extends _$Cart {
       double voucherValue = voucher.isPercent
           ? state.subtotal * (voucher.discountValue / 100)
           : voucher.discountValue;
-      state = state
-          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+      state = state.copyWith(
+        vouchers: [voucher.toCartVoucher(value: voucherValue)],
+      );
 
       setDiscountTransaction(
-          discIsPercent: voucher.isPercent, discount: voucher.discountValue);
+        discIsPercent: voucher.isPercent,
+        discount: voucher.discountValue,
+      );
     } else {
       double voucherValue = voucher.isPercent == true
           ? state.grandTotal * voucher.discountValue / 100
           : voucher.discountValue;
-      state = state
-          .copyWith(vouchers: [voucher.toCartVoucher(value: voucherValue)]);
+      state = state.copyWith(
+        vouchers: [voucher.toCartVoucher(value: voucherValue)],
+      );
 
       calculateCart();
     }
   }
 
   void removeVoucher() {
-    CartVoucher? discountVoucher = state.vouchers
-        .firstWhereOrNull((voucher) => voucher.voucherType == 'discount');
+    CartVoucher? discountVoucher = state.vouchers.firstWhereOrNull(
+      (voucher) => voucher.voucherType == 'discount',
+    );
     state = state.copyWith(vouchers: []);
     if (discountVoucher != null) {
       setDiscountTransaction(discount: 0, discIsPercent: false);
@@ -1009,8 +1073,9 @@ class Cart extends _$Cart {
     for (var item in state.items) {
       if (item.promotion == null) continue;
       CartPromotion itemPromo = item.promotion!;
-      int index =
-          promotions.indexWhere((p) => p.promotionId == itemPromo.promotionId);
+      int index = promotions.indexWhere(
+        (p) => p.promotionId == itemPromo.promotionId,
+      );
       if (index < 0) {
         promotions.add(itemPromo);
       } else {
@@ -1024,8 +1089,9 @@ class Cart extends _$Cart {
     // Include type 2 (by-order) promotions from state — they have no per-item marker
     for (var promo in state.promotions) {
       if (promo.type == 2) {
-        int index =
-            promotions.indexWhere((p) => p.promotionId == promo.promotionId);
+        int index = promotions.indexWhere(
+          (p) => p.promotionId == promo.promotionId,
+        );
         if (index < 0) {
           promotions.add(promo);
         }
@@ -1047,20 +1113,23 @@ class Cart extends _$Cart {
 
     double? subtotal = state.items.isNotEmpty
         ? state.items
-            .map((i) => i.total)
-            .reduce((value, total) => value + total)
+              .map((i) => i.total)
+              .reduce((value, total) => value + total)
         : 0;
 
     List<CartPromotion> promotions = List<CartPromotion>.from(state.promotions)
-        .where((p) =>
-            p.type == 2 &&
-                (p.requirementMinimumOrder != null &&
-                    p.requirementMinimumOrder! <= subtotal) ||
-            activePromoByProductIds.contains(p.promotionId))
+        .where(
+          (p) =>
+              p.type == 2 &&
+                  (p.requirementMinimumOrder != null &&
+                      p.requirementMinimumOrder! <= subtotal) ||
+              activePromoByProductIds.contains(p.promotionId),
+        )
         .toList();
 
-    CartVoucher? voucher =
-        state.vouchers.isNotEmpty ? state.vouchers.first : null;
+    CartVoucher? voucher = state.vouchers.isNotEmpty
+        ? state.vouchers.first
+        : null;
 
     double discOverallTotal = 0;
     double discPromotionsTotal = 0;
@@ -1071,8 +1140,9 @@ class Cart extends _$Cart {
       discPromotionsTotal = promoByOrder.discountIsPercent
           ? subtotal * (promoByOrder.discountNominal / 100)
           : promoByOrder.discountNominal;
-      promotions[promoByOrderIndex] =
-          promoByOrder.copyWith(discountValue: discPromotionsTotal);
+      promotions[promoByOrderIndex] = promoByOrder.copyWith(
+        discountValue: discPromotionsTotal,
+      );
     } else if (state.discOverall > 0) {
       discOverallTotal = state.discIsPercent
           ? subtotal * (state.discOverall / 100)
@@ -1081,9 +1151,7 @@ class Cart extends _$Cart {
         discOverallTotal = voucher.isPercent == true
             ? subtotal * (voucher.discountValue ?? 0) / 100
             : (voucher.discountValue ?? 0);
-        voucher = voucher.copyWith(
-          value: discOverallTotal,
-        );
+        voucher = voucher.copyWith(value: discOverallTotal);
       }
     }
 
@@ -1106,8 +1174,8 @@ class Cart extends _$Cart {
 
     double totalMoneyPayment = state.payments.isNotEmpty
         ? state.payments
-            .map((payment) => payment.paymentValue)
-            .reduce((payment, total) => payment + total)
+              .map((payment) => payment.paymentValue)
+              .reduce((payment, total) => payment + total)
         : 0;
 
     double totalVoucherPayment = 0;
@@ -1115,9 +1183,7 @@ class Cart extends _$Cart {
       totalVoucherPayment = voucher.isPercent == true
           ? grandTotal * (voucher.discountValue ?? 0) / 100
           : (voucher.discountValue ?? 0);
-      voucher = voucher.copyWith(
-        value: totalVoucherPayment,
-      );
+      voucher = voucher.copyWith(value: totalVoucherPayment);
     }
 
     double totalPayment = totalMoneyPayment + totalVoucherPayment;
@@ -1143,9 +1209,7 @@ class Cart extends _$Cart {
     if (state.transactionNo == '') {
       await initCart();
     }
-    state = state.copyWith(
-      tables: tables.map((table) => table.name).toList(),
-    );
+    state = state.copyWith(tables: tables.map((table) => table.name).toList());
     ref.read(tablesProvider().notifier).markTables(state.transactionNo, tables);
   }
 
@@ -1162,15 +1226,12 @@ class Cart extends _$Cart {
   void setSkipCustomField(bool skip) {
     List<CustomField> customFields =
         (ref.read(outletProvider).value as OutletSelected)
-                .config
-                .customFields
-                ?.modules
-                .transaction ??
-            [];
-    state = state.copyWith(
-      skipCustomField: skip,
-      customFields: customFields,
-    );
+            .config
+            .customFields
+            ?.modules
+            .transaction ??
+        [];
+    state = state.copyWith(skipCustomField: skip, customFields: customFields);
   }
 
   void setTransactionDate() {

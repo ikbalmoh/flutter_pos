@@ -63,25 +63,21 @@ class ElasticRepository implements ElasticRepositoryInterface {
 
     if (activeCompanyId == null || activeOutletId == null) {
       throw Exception(
-          'Missing companyId ($activeCompanyId) or outletId ($activeOutletId)');
+        'Missing companyId ($activeCompanyId) or outletId ($activeOutletId)',
+      );
     }
 
     final index =
         '/selleri_tenant_${activeCompanyId}_outlet_${activeOutletId}_item';
 
     try {
-      final Map<String, dynamic> data = {
-        'size': size,
-        'from': from,
-      };
+      final Map<String, dynamic> data = {'size': size, 'from': from};
 
       final query = {};
 
       if (lastUpdate != null) {
         query['range'] = {
-          'updated_at_ms': {
-            'gt': lastUpdate,
-          },
+          'updated_at_ms': {'gt': lastUpdate},
         };
       }
 
@@ -110,8 +106,8 @@ class ElasticRepository implements ElasticRepositoryInterface {
     final data = {
       "query": {
         "term": {
-          "_id": {"value": outletId}
-        }
+          "_id": {"value": outletId},
+        },
       },
       "size": 1,
       "from": 0,
@@ -120,8 +116,9 @@ class ElasticRepository implements ElasticRepositoryInterface {
     try {
       final res = await api.post('$index/_search', data: data);
       final elastic = ElasticResponse.fromJson(res.data);
-      final List<OutletConfig> sources =
-          elastic.hits.sources(OutletConfig.fromJson);
+      final List<OutletConfig> sources = elastic.hits.sources(
+        OutletConfig.fromJson,
+      );
       if (sources.isEmpty) {
         throw NotFoundException();
       }
@@ -144,8 +141,8 @@ class ElasticRepository implements ElasticRepositoryInterface {
   }
 }
 
-final elasticRepositoryProvider = FutureProvider<ElasticRepository>((ref) async {
-  final config = await ref.read(appConfigProvider.future);
+final elasticRepositoryProvider = Provider<ElasticRepository>((ref) {
+  final config = ref.read(appConfigProvider).requireValue;
   final Dio dio = Dio(
     BaseOptions(
       baseUrl: config.esHost ?? '',
@@ -156,11 +153,13 @@ final elasticRepositoryProvider = FutureProvider<ElasticRepository>((ref) async 
   final authState = ref.watch(authProvider).value;
   final outletState = ref.watch(outletProvider).value;
 
-  final String? companyId =
-      authState is Authenticated ? authState.user.user.company.idCompany : null;
+  final String? companyId = authState is Authenticated
+      ? authState.user.user.company.idCompany
+      : null;
 
-  final String? outletId =
-      outletState is OutletSelected ? outletState.outlet.idOutlet : null;
+  final String? outletId = outletState is OutletSelected
+      ? outletState.outlet.idOutlet
+      : null;
 
   return ElasticRepository(
     api: dio,

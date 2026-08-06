@@ -12,6 +12,7 @@ import 'package:selleri/features/promotion/provider/promotions_provider.dart';
 import 'package:selleri/features/cart/widget/components/promotions/cart_promotion_item.dart';
 import 'package:selleri/features/cart/widget/components/stock_badge.dart';
 import 'package:selleri/shared/utils/formater.dart';
+import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ItemInfo extends ConsumerWidget {
@@ -166,9 +167,10 @@ class ItemInfo extends ConsumerWidget {
                               shrinkWrap: true,
                               itemBuilder: (context, idx) {
                                 Promotion promo = promotions[idx];
-                                bool isEligible = ref
-                                    .read(promotionsProvider.notifier)
-                                    .isPromotionEligible(promo);
+                                bool isEligible = isPromotionEligible(
+                                  promo,
+                                  ref.read(cartProvider),
+                                );
                                 return Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 5),

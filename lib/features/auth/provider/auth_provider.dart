@@ -18,10 +18,9 @@ part 'auth_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class Auth extends _$Auth {
-  late final AuthRepository _authRepoistory = ref.read(authRepositoryProvider);
+  AuthRepository get _authRepoistory => ref.read(authRepositoryProvider);
 
-  late final TokenRepository _tokenRepository =
-      ref.read(tokenRepositoryProvider);
+  TokenRepository get _tokenRepository => ref.read(tokenRepositoryProvider);
 
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 

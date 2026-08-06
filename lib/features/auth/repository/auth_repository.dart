@@ -17,7 +17,7 @@ import 'package:selleri/shared/constants/store_key.dart';
 
 part 'auth_repository.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AuthRepository authRepository(Ref ref) => AuthRepository(ref);
 
 abstract class AuthRepositoryProtocol {
@@ -37,7 +37,7 @@ class AuthRepository implements AuthRepositoryProtocol {
     final OutletRepository outletRepository =
         _ref.read(outletRepositoryProvider);
 
-    final api = await _ref.read(authApiProvider.future);
+    final api = _ref.read(authApiProvider);
 
     try {
       final response = await api.login(username, password);
@@ -118,7 +118,7 @@ class AuthRepository implements AuthRepositoryProtocol {
       return user;
     }
 
-    final api = await _ref.read(authApiProvider.future);
+    final api = _ref.read(authApiProvider);
 
     try {
       // When accessToken is provided (e.g. right after login), pass it
@@ -142,7 +142,7 @@ class AuthRepository implements AuthRepositoryProtocol {
   }
 
   Future<bool> resetPassword(String email) async {
-    final api = await _ref.read(authApiProvider.future);
+    final api = _ref.read(authApiProvider);
 
     try {
       final status = await api.resetPassword(email);
@@ -156,7 +156,7 @@ class AuthRepository implements AuthRepositoryProtocol {
 
   @override
   Future<void> logout() async {
-    final api = await _ref.read(authApiProvider.future);
+    final api = _ref.read(authApiProvider);
 
     try {
       await api.logout();

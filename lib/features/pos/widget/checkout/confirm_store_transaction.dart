@@ -132,7 +132,7 @@ class _ConfirmStoreTransactionState
     bool? hasTableAddon = outletConfig.addOns?.contains('table');
 
     // check if using qris payment
-    final appConfig = await ref.read(appConfigProvider.future);
+    final appConfig = ref.read(appConfigProvider).requireValue;
     final qrisMethodIds = outletConfig.paymentMethods
             ?.where((p) => p.type == (appConfig.qrisPaymentType ?? 6))
             .map((e) => e.id)

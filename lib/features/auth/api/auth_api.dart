@@ -53,8 +53,8 @@ class AuthApi {
   }
 }
 
-final authApiProvider = FutureProvider<AuthApi>((ref) async {
+final authApiProvider = Provider<AuthApi>((ref) {
   final api = ref.watch(apiProvider);
-  final config = await ref.read(appConfigProvider.future);
+  final config = ref.read(appConfigProvider).requireValue;
   return AuthApi(api: api, config: config);
 });

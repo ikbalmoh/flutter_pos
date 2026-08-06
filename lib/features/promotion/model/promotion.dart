@@ -52,7 +52,7 @@ abstract class Promotion with _$Promotion {
     int? rewardItemPrice,
     List<String>? times,
     @AssignGroupRelToManyConverter() required ToMany<CustomerGroup> assignGroups,
-    @Default([]) List<ItemCart> eligibleItems,
+    @Default([]) @Transient() List<ItemCart> eligibleItems,
   }) = _Promotion;
 
   const Promotion._();
