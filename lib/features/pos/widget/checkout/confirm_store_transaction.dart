@@ -15,7 +15,7 @@ import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/pos/widget/checkout/payment/qris_payment_modal.dart';
 import 'package:selleri/features/pos/widget/select_table.dart';
 import 'package:selleri/features/settings/provider/app_settings_provider.dart';
-import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 import 'package:selleri/shared/widget/generic/picked_image.dart';
 import 'package:selleri/shared/widget/generic/custom_text_input.dart';
 import 'package:selleri/shared/widget/pic/pic_picker.dart';
@@ -132,8 +132,9 @@ class _ConfirmStoreTransactionState
     bool? hasTableAddon = outletConfig.addOns?.contains('table');
 
     // check if using qris payment
+    final appConfig = await ref.read(appConfigProvider.future);
     final qrisMethodIds = outletConfig.paymentMethods
-            ?.where((p) => p.type == AppConfig.qrisPaymentTypeId)
+            ?.where((p) => p.type == (appConfig.qrisPaymentType ?? 6))
             .map((e) => e.id)
             .toList() ??
         [];

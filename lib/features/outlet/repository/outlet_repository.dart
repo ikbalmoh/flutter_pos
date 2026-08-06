@@ -104,8 +104,8 @@ class OutletRepository implements OutletRepositoryProtocol {
     OutletConfig? current,
   }) async {
     try {
-      final elasticConfig =
-          await _ref.read(elasticRepositoryProvider).outletConfig();
+      final esRepo = await _ref.read(elasticRepositoryProvider.future);
+      final elasticConfig = await esRepo.outletConfig();
 
       saveOutletConfig(elasticConfig);
 

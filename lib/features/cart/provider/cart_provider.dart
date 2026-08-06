@@ -25,7 +25,6 @@ import 'package:selleri/features/table/model/table.dart' as table_model;
 import 'package:selleri/features/promotion/model/voucher.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/transaction/provider/transactions_provider.dart';
-import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/model/custom_field.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
@@ -34,6 +33,7 @@ import 'package:selleri/features/promotion/provider/promotions_provider.dart';
 import 'package:selleri/features/settings/provider/printer_provider.dart';
 import 'package:selleri/features/shift/provider/shift_notifier_provider.dart';
 import 'package:selleri/features/table/provider/tables_provider.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/formater.dart';
@@ -445,10 +445,11 @@ class Cart extends _$Cart {
     return Future.delayed(const Duration(milliseconds: 200));
   }
 
-  void addPayment(CartPayment payment) {
+  void addPayment(CartPayment payment) async {
     final auth = ref.read(authProvider).value as Authenticated;
     final shift = ref.read(shiftProvider).value;
     final outlet = ref.read(outletProvider).value as OutletSelected;
+    final config = await ref.read(appConfigProvider.future);
 
     payment = payment.copyWith(
       createdBy: auth.user.user.idUser,
@@ -460,7 +461,7 @@ class Cart extends _$Cart {
 
     // Check if payment is QRIS
     final qrisMethodIds = outlet.config.paymentMethods
-        ?.where((pm) => pm.type == AppConfig.qrisPaymentTypeId)
+        ?.where((pm) => pm.type == config.qrisPaymentType)
         .map((p) => p.id)
         .toList();
     final bool isQrisPayment =

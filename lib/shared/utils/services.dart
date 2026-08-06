@@ -10,7 +10,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_udid/flutter_udid.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:selleri/shared/constants/app_config.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/shared/utils/firebase.dart';
@@ -26,7 +25,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> initServices() async {
   log('INITIALIZING APP $appFlavor ...');
 
-  final bool isDev = ['dev', 'stage'].contains(appFlavor);
+
 
   await EasyLocalization.ensureInitialized();
 
@@ -36,8 +35,6 @@ Future<void> initServices() async {
     log('ERROR OCCURED:\n error => $error\n stack => $stack');
     return true;
   };
-
-  await AppConfig.init(isStage: isDev);
 
   String deviceId = await FlutterUdid.consistentUdid;
   String? deviceName = '';

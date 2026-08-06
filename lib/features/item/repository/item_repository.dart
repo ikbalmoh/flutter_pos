@@ -175,7 +175,7 @@ class ItemRepository implements ItemRepositoryProtocol {
     int? page = 0,
     Function(int current, int total)? onProgress,
   }) async {
-    final esRepo = ref.read(elasticRepositoryProvider);
+    final esRepo = await ref.read(elasticRepositoryProvider.future);
     try {
       int? lastUpdate;
       if (fromLastSync == true) {

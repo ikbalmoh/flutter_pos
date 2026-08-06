@@ -37,7 +37,7 @@ class AuthRepository implements AuthRepositoryProtocol {
     final OutletRepository outletRepository =
         _ref.read(outletRepositoryProvider);
 
-    final api = _ref.watch(authApiProvider);
+    final api = await _ref.read(authApiProvider.future);
 
     try {
       final response = await api.login(username, password);
@@ -118,7 +118,7 @@ class AuthRepository implements AuthRepositoryProtocol {
       return user;
     }
 
-    final api = _ref.watch(authApiProvider);
+    final api = await _ref.read(authApiProvider.future);
 
     try {
       // When accessToken is provided (e.g. right after login), pass it
@@ -142,7 +142,7 @@ class AuthRepository implements AuthRepositoryProtocol {
   }
 
   Future<bool> resetPassword(String email) async {
-    final api = _ref.watch(authApiProvider);
+    final api = await _ref.read(authApiProvider.future);
 
     try {
       final status = await api.resetPassword(email);
@@ -156,7 +156,7 @@ class AuthRepository implements AuthRepositoryProtocol {
 
   @override
   Future<void> logout() async {
-    final api = _ref.watch(authApiProvider);
+    final api = await _ref.read(authApiProvider.future);
 
     try {
       await api.logout();

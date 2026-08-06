@@ -15,7 +15,7 @@ class Qris extends _$Qris {
   Future<QrisState> build(String transactionNo, num amount) async {
     ref.onDispose(() => _statusTimer?.cancel());
 
-    final api = ref.read(qrisApiProvider);
+    final api = await ref.read(qrisApiProvider.future);
     final outlet = ref.read(outletProvider).value as OutletSelected;
     final merchantId = outlet.config.merchantId ?? '';
     final qrContent = await api.requestQris(
@@ -29,14 +29,18 @@ class Qris extends _$Qris {
     return QrisState(qrContent: qrContent);
   }
 
-  void _startPolling(
-      {required String transactionNo, required String merchantId}) {
+  void _startPolling({
+    required String transactionNo,
+    required String merchantId,
+  }) {
     _statusTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
       final String successCode = 'SUCCESS';
+      final qrisApi = await ref.read(qrisApiProvider.future);
       try {
-        final statusCode = await ref
-            .read(qrisApiProvider)
-            .checkStatus(transactionNo: transactionNo, merchantId: merchantId);
+        final statusCode = await qrisApi.checkStatus(
+          transactionNo: transactionNo,
+          merchantId: merchantId,
+        );
         if (statusCode == successCode) {
           _statusTimer?.cancel();
           state = AsyncData(state.requireValue.copyWith(isPaid: true));

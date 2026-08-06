@@ -11,18 +11,19 @@ import 'package:selleri/features/auth/model/token.dart';
 import 'package:selleri/features/auth/provider/auth_provider.dart';
 import 'package:selleri/features/auth/repository/token_repository.dart';
 import 'package:selleri/shared/exeptions/offline_exeption.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
+import 'package:selleri/shared/model/app_config.dart' as config_model;
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/router/api_url.dart';
 import 'package:validators/validators.dart';
-import 'package:selleri/shared/constants/app_config.dart';
 import 'dart:developer';
 import 'package:package_info_plus/package_info_plus.dart';
 
 const storage = FlutterSecureStorage();
 
-Dio fetch() {
+Dio fetch(config_model.AppConfig? config) {
   final baseOption = BaseOptions(
-    baseUrl: AppConfig.baseUrl,
+    baseUrl: config?.baseUrl ?? '',
     contentType: Headers.jsonContentType,
     connectTimeout: Duration(minutes: 10),
     receiveTimeout: Duration(minutes: 10),
@@ -36,12 +37,13 @@ Dio fetch() {
 class CustomInterceptors extends QueuedInterceptor {
   final Dio dio;
   Function? onSessionExpired;
+  config_model.AppConfig? config;
 
   /// A bare Dio instance used exclusively for the refresh-token call so that
   /// it does not go through CustomInterceptors and cause an infinite loop.
   late final Dio _refreshDio = Dio(
     BaseOptions(
-      baseUrl: AppConfig.baseUrl,
+      baseUrl: config?.baseUrl ?? '',
       contentType: Headers.jsonContentType,
       validateStatus: (status) => status != null,
     ),
@@ -52,6 +54,7 @@ class CustomInterceptors extends QueuedInterceptor {
   CustomInterceptors({
     required this.dio,
     this.onSessionExpired,
+    this.config,
   });
 
   @override
@@ -238,8 +241,10 @@ class CustomInterceptors extends QueuedInterceptor {
 
 final apiProvider = Provider<Dio>((ref) {
   final auth = ref.read(authProvider.notifier);
-  final Dio dio = fetch();
-
+  final config = ref.watch(appConfigProvider).requireValue;
+  
+  final Dio dio = fetch(config);
+ 
   ref.onDispose(dio.close);
 
   final isOffline =
@@ -253,6 +258,7 @@ final apiProvider = Provider<Dio>((ref) {
     ..interceptors.addAll([
       CustomInterceptors(
         dio: dio,
+        config: config,
         onSessionExpired: () => auth.logout(skipLogout: true),
       ),
     ]);

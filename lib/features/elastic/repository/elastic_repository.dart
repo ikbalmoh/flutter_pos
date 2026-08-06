@@ -9,7 +9,7 @@ import 'package:selleri/features/elastic/model/elastic.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
-import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 import 'package:selleri/shared/utils/exception.dart';
 
 abstract class ElasticRepositoryInterface {
@@ -144,16 +144,17 @@ class ElasticRepository implements ElasticRepositoryInterface {
   }
 }
 
-final elasticRepositoryProvider = Provider<ElasticRepository>((ref) {
+final elasticRepositoryProvider = FutureProvider<ElasticRepository>((ref) async {
+  final config = await ref.read(appConfigProvider.future);
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: AppConfig.esHost,
-      headers: {'Authorization': 'ApiKey ${AppConfig.esKey}'},
+      baseUrl: config.esHost ?? '',
+      headers: {'Authorization': 'ApiKey ${config.esKey}'},
     ),
   );
 
-  final authState = ref.read(authProvider).value;
-  final outletState = ref.read(outletProvider).value;
+  final authState = ref.watch(authProvider).value;
+  final outletState = ref.watch(outletProvider).value;
 
   final String? companyId =
       authState is Authenticated ? authState.user.user.company.idCompany : null;

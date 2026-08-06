@@ -8,7 +8,7 @@ import 'package:selleri/features/cart/widget/components/cash_payment_shortcut.da
 import 'package:selleri/features/pos/model/payment_method.dart';
 import 'package:selleri/features/pos/model/payment_type.dart';
 import 'package:selleri/features/cart/widget/components/payment_form.dart';
-import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 import 'package:selleri/shared/utils/authorization_helper.dart';
 import 'package:selleri/shared/utils/formater.dart';
 import 'payment_methods.dart';
@@ -43,8 +43,13 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
 
     WidgetsFlutterBinding.ensureInitialized();
 
-    final availablePaymentTypes =
-        widget.paymentMethods.map((p) => p.type).toSet();
+    initPaymentTypes();
+  }
+
+  void initPaymentTypes() async {
+    final availablePaymentTypes = widget.paymentMethods
+        .map((p) => p.type)
+        .toSet();
 
     final filteredPaymentTypes = [
       PaymentType(
@@ -55,53 +60,54 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
       ),
       PaymentType(
         id: 2,
-        icon: Icon(
-          Icons.credit_card_outlined,
-          color: Colors.amber.shade600,
-        ),
+        icon: Icon(Icons.credit_card_outlined, color: Colors.amber.shade600),
         name: 'Debit',
         isExpanded: false,
       ),
       PaymentType(
         id: 3,
-        icon: Icon(
-          Icons.credit_card,
-          color: Colors.red.shade700,
-        ),
+        icon: Icon(Icons.credit_card, color: Colors.red.shade700),
         name: 'Credit',
         isExpanded: false,
       ),
       PaymentType(
         id: 4,
-        icon: Icon(
-          Icons.wallet,
-          color: Colors.blue.shade900,
-        ),
+        icon: Icon(Icons.wallet, color: Colors.blue.shade900),
         name: 'payment_x'.tr(args: ['other'.tr()]),
         isExpanded: false,
       ),
     ].where((p) => availablePaymentTypes.contains(p.id)).toList();
 
+    final appConfig = await ref.read(appConfigProvider.future);
+
     setState(() {
       cashPayment = widget.paymentMethods.firstWhereOrNull((p) => p.type == 1);
-      qrisPayment = widget.paymentMethods
-          .firstWhereOrNull((p) => p.type == AppConfig.qrisPaymentTypeId);
+      final qrisPaymentTypeId = appConfig.qrisPaymentType ?? 6;
+
+      qrisPayment = widget.paymentMethods.firstWhereOrNull(
+        (p) => p.type == qrisPaymentTypeId,
+      );
       paymentTypes = filteredPaymentTypes;
     });
   }
 
   void onSelectMethod(PaymentMethod method) async {
     CartPayment? cartPayment = widget.cart.payments.firstWhereOrNull(
-        (payment) =>
-            payment.paymentMethodId == method.id && payment.id == null);
+      (payment) => payment.paymentMethodId == method.id && payment.id == null,
+    );
 
-    final bool hasQris = widget.cart.payments.firstWhereOrNull(
-            (payment) => payment.paymentMethodId == qrisPayment?.id) !=
+    final bool hasQris =
+        widget.cart.payments.firstWhereOrNull(
+          (payment) => payment.paymentMethodId == qrisPayment?.id,
+        ) !=
         null;
 
     final bool isCash = method.type == 1;
 
-    if (method.type == AppConfig.qrisPaymentTypeId) {
+    final appConfig = await ref.read(appConfigProvider.future);
+    final qrisPaymentTypeId = appConfig.qrisPaymentType ?? 6;
+
+    if (method.type == qrisPaymentTypeId) {
       if (cartPayment != null) {
         return;
       }
@@ -109,11 +115,13 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
       final isAuthorized = await AuthorizationHelper.authorize('make-payment');
       if (!isAuthorized) return;
 
-      widget.onAddPayment(CartPayment(
-        paymentMethodId: method.id,
-        paymentName: method.name,
-        paymentValue: widget.cart.grandTotal,
-      ));
+      widget.onAddPayment(
+        CartPayment(
+          paymentMethodId: method.id,
+          paymentName: method.name,
+          paymentValue: widget.cart.grandTotal,
+        ),
+      );
 
       return;
     }
@@ -131,7 +139,8 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
           isCash: isCash,
           cartPayment: cartPayment,
           onRemovePayment: widget.onRemovePayment,
-          insufficient: (widget.cart.grandTotal -
+          insufficient:
+              (widget.cart.grandTotal -
               (hasQris ? 0 : widget.cart.totalPayment)),
         );
       },
@@ -148,7 +157,8 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     final cashUsed = widget.cart.payments.firstWhereOrNull(
-        (payment) => payment.paymentMethodId == cashPayment?.id);
+      (payment) => payment.paymentMethodId == cashPayment?.id,
+    );
     return Card(
       margin: const EdgeInsets.all(10),
       color: Colors.white,
@@ -161,10 +171,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Text('payments'.tr(), style: textTheme.bodyLarge),
           ),
-          Divider(
-            height: 1,
-            color: Colors.blueGrey.shade50,
-          ),
+          Divider(height: 1, color: Colors.blueGrey.shade50),
           if (widget.cart.prevPayments().isNotEmpty)
             Column(
               children: [
@@ -180,14 +187,16 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
                 ),
                 PaymentMethods(
                   paymentMethods: widget.paymentMethods
-                      .where((p) => widget.cart
-                          .prevPayments()
-                          .map((pc) => pc.paymentMethodId)
-                          .contains(p.id))
+                      .where(
+                        (p) => widget.cart
+                            .prevPayments()
+                            .map((pc) => pc.paymentMethodId)
+                            .contains(p.id),
+                      )
                       .toList(),
                   cartPayments: widget.cart.payments,
                   isPrevious: true,
-                )
+                ),
               ],
             ),
           ClipRRect(
@@ -221,11 +230,7 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
                         )
                       : null,
                   trailing: cashUsed != null
-                      ? Icon(
-                          Icons.check_circle,
-                          color: Colors.teal,
-                          size: 18,
-                        )
+                      ? Icon(Icons.check_circle, color: Colors.teal, size: 18)
                       : Icon(
                           Icons.circle_outlined,
                           color: Colors.grey.shade500,
@@ -245,11 +250,13 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
                     onSelected: (value) {
                       value == null
                           ? onSelectMethod(cashPayment!)
-                          : widget.onAddPayment(CartPayment(
-                              paymentMethodId: cashPayment!.id,
-                              paymentName: cashPayment!.name,
-                              paymentValue: value,
-                            ));
+                          : widget.onAddPayment(
+                              CartPayment(
+                                paymentMethodId: cashPayment!.id,
+                                paymentName: cashPayment!.name,
+                                paymentValue: value,
+                              ),
+                            );
                     },
                   ),
                 ExpansionPanelList(
@@ -259,19 +266,22 @@ class _PaymentDetailsState extends ConsumerState<PaymentDetails> {
                   expandedHeaderPadding: const EdgeInsets.all(0),
                   expansionCallback: (int index, bool isExpanded) {
                     setState(() {
-                      paymentTypes[index] =
-                          paymentTypes[index].copyWith(isExpanded: isExpanded);
+                      paymentTypes[index] = paymentTypes[index].copyWith(
+                        isExpanded: isExpanded,
+                      );
                     });
                   },
-                  children:
-                      paymentTypes.map<ExpansionPanel>((PaymentType type) {
+                  children: paymentTypes.map<ExpansionPanel>((
+                    PaymentType type,
+                  ) {
                     final paymentMethods = widget.paymentMethods
                         .where((p) => p.type == type.id)
                         .toList();
-                    final bool anyPaymentUsed = widget.cart.payments.any((p) =>
-                        paymentMethods
-                            .map((p) => p.id)
-                            .contains(p.paymentMethodId));
+                    final bool anyPaymentUsed = widget.cart.payments.any(
+                      (p) => paymentMethods
+                          .map((p) => p.id)
+                          .contains(p.paymentMethodId),
+                    );
                     return ExpansionPanel(
                       backgroundColor: Colors.white,
                       canTapOnHeader: !anyPaymentUsed,
