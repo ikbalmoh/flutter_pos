@@ -749,17 +749,6 @@ class Cart extends _$Cart {
     }
   }
 
-  void removeHoldedCart() async {
-    final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
-    if (!isAuthorize) {
-      return;
-    }
-    final api = ref.watch(transactionApiProvider);
-    String idTransaction = state.idTransaction!;
-    initCart();
-    await api.deleteHoldedTransaction(idTransaction);
-  }
-
   void reopen(model.Cart cart) {
     state = cart;
   }
@@ -769,8 +758,9 @@ class Cart extends _$Cart {
       return;
     }
 
-    final promotion =
-        await getPromotionByOrder(requirementMinimumOrder: state.grandTotal);
+    final promotion = await getPromotionByOrder(
+      requirementMinimumOrder: state.grandTotal,
+    );
 
     if (promotion != null) {
       bool isPromotionAdded = state.promotions

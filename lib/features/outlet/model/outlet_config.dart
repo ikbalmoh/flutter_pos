@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/features/outlet/model/refund_reason.dart';
 import 'package:selleri/shared/model/custom_fields.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 
@@ -153,30 +154,6 @@ abstract class PinSetting with _$PinSetting {
 
   factory PinSetting.fromJson(Map<String, dynamic> json) =>
       _$PinSettingFromJson(json);
-
-  @override
-  String toString() {
-    final jsonData = toJson();
-    return json.encode(jsonData);
-  }
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class RefundReason {
-  String id;
-  String reason;
-  bool needNotes;
-
-  RefundReason({
-    required this.id,
-    required this.reason,
-    required this.needNotes,
-  });
-
-  factory RefundReason.fromJson(Map<String, dynamic> json) =>
-      _$RefundReasonFromJson(json);
-
-  Map<String, dynamic> toJson() => _$RefundReasonToJson(this);
 
   @override
   String toString() {

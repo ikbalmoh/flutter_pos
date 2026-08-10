@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/elastic/repository/elastic_repository.dart';
+import 'package:selleri/features/outlet/model/refund_reason.dart';
 import 'package:selleri/shared/constants/store_key.dart';
 import 'package:selleri/features/outlet/model/outlet.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
@@ -28,6 +29,8 @@ abstract class OutletRepositoryProtocol {
   Future<void> fetchOutletInfo(String idOutlet);
 
   Future<OutletConfig?> fetchOutletConfig(String idOutlet);
+
+  Future<List<RefundReason>> refundReasons({String? module = 'delete_hold'});
 }
 
 class OutletRepository implements OutletRepositoryProtocol {
@@ -128,6 +131,18 @@ class OutletRepository implements OutletRepositoryProtocol {
       saveOutletConfig(config);
 
       return config;
+    } on DioException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<RefundReason>> refundReasons({String? module = 'delete_hold'}) async {
+    final api = _ref.watch(outletApiProvider);
+    try {
+      return await api.refundReasons(module: module);
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {

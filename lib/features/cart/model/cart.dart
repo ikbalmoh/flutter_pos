@@ -152,7 +152,7 @@ abstract class Cart with _$Cart {
     data['promotions'] = data['promotions'] ?? [];
     data['vouchers'] = data['vouchers'] ?? [];
     data['vehicle'] = data['vehicle'] is Map ? data['vehicle'] : null;
-    data['custom_fields'] = data['custom_fields'] ?? [];
+    data['custom_fields'] = [];
     Cart cart = Cart.fromJson(data);
     cart = cart.copyWith(
         payments: cart.payments
