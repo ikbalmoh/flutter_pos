@@ -94,7 +94,21 @@ class TransactionApi {
       };
       final res = await api.get(ApiUrl.hold, queryParameters: params);
       final data = res.data['data'];
+      
+      final List validHolded = [];
+      if (data['data'] != null && data['data'] is List) {
+        for (var item in (data['data'] as List)) {
+          try {
+            validHolded.add(CartHolded.fromJson(item as Map<String, dynamic>));
+          } catch (e, stackTrace) {
+            log('Skipping invalid CartHolded: $e\n$stackTrace');
+          }
+        }
+        data['data'] = validHolded;
+      }
+
       final pagination = Pagination<CartHolded>.fromJson(data, (holded) {
+        if (holded is CartHolded) return holded;
         return CartHolded.fromJson(holded as Map<String, dynamic>);
       });
 
