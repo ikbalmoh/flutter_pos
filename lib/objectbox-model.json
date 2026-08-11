@@ -345,7 +345,7 @@
     },
     {
       "id": "10:1396131410230828223",
-      "lastPropertyId": "22:6079101941862474539",
+      "lastPropertyId": "24:4715374897923896707",
       "name": "Item",
       "properties": [
         {
@@ -460,6 +460,16 @@
           "id": "22:6079101941862474539",
           "name": "updatedAt",
           "type": 10
+        },
+        {
+          "id": "23:3360386864901767945",
+          "name": "idSubCategory",
+          "type": 9
+        },
+        {
+          "id": "24:4715374897923896707",
+          "name": "subCategoryName",
+          "type": 9
         }
       ],
       "relations": [

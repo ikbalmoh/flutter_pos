@@ -169,6 +169,8 @@ class Cart extends _$Cart {
       identifier: identifier,
       idItem: item.idItem,
       idCategory: item.idCategory,
+      idSubCategory: item.idSubCategory,
+      subCategoryName: item.subCategoryName,
       itemName: itemName,
       price: itemPrice,
       isPackage: item.isPackage,
@@ -197,7 +199,7 @@ class Cart extends _$Cart {
     );
 
     log(
-      'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}',
+      'ADD TO CART: $identifier: ${itemCart.itemName} - ${variant?.variantName}\n${item.toJson()}',
     );
     List<ItemCart> items = List<ItemCart>.from(state.items);
     items.add(itemCart);

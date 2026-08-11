@@ -30,6 +30,9 @@ abstract class Item with _$Item {
     required bool isManualPrice,
     @JsonKey(fromJson: ModelConverter.dynamicToBool) required bool stockControl,
     required String idCategory,
+    @JsonKey(name: 'sub_cat_id', fromJson: ModelConverter.dynamicToString)
+    String? idSubCategory,
+    @JsonKey(name: 'sub_category_name') String? subCategoryName,
     @JsonKey(fromJson: ModelConverter.dynamicToDouble)
     required double stockItem,
     String? sku,
@@ -59,10 +62,7 @@ abstract class Item with _$Item {
     Item? existItem = objectBox.getItem(json['id_item']);
     if (existItem != null) {
       final Map<String, dynamic> itemJson = existItem.toJson();
-      json = {
-        ...itemJson,
-        ...json,
-      };
+      json = {...itemJson, ...json};
     }
     json['promotions'] = json['promotions'] ?? [];
     json['has_promo'] = (json['promotions'] as List).isNotEmpty;
@@ -95,8 +95,9 @@ abstract class Item with _$Item {
 
   List<ItemPackage> itemsHasExpiredDate() {
     if (isPackage && packageItems.isNotEmpty) {
-      final expiredItems =
-          packageItems.where((pkg) => pkg.item()?.expiredDate != null).toList();
+      final expiredItems = packageItems
+          .where((pkg) => pkg.item()?.expiredDate != null)
+          .toList();
       return expiredItems;
     }
     return [];
@@ -104,8 +105,9 @@ abstract class Item with _$Item {
 
   List<ItemPackage> expiredItems() {
     if (isPackage && packageItems.isNotEmpty) {
-      final expiredItems =
-          packageItems.where((pkg) => pkg.item()?.isExpired() == true).toList();
+      final expiredItems = packageItems
+          .where((pkg) => pkg.item()?.isExpired() == true)
+          .toList();
       return expiredItems;
     }
     return [];
@@ -122,8 +124,9 @@ abstract class Item with _$Item {
 
   bool hasExpiredItems() {
     if (isPackage && packageItems.isNotEmpty) {
-      final expiredIndex =
-          packageItems.indexWhere((pkg) => pkg.item()?.isExpired() == true);
+      final expiredIndex = packageItems.indexWhere(
+        (pkg) => pkg.item()?.isExpired() == true,
+      );
       return expiredIndex >= 0;
     }
     return isExpired();
@@ -136,7 +139,8 @@ class VariantRelToManyConverter
 
   @override
   ToMany<ItemVariant> fromJson(List? json) => ToMany<ItemVariant>(
-      items: json?.map((e) => ItemVariant.fromJson(e)).toList());
+    items: json?.map((e) => ItemVariant.fromJson(e)).toList(),
+  );
 
   @override
   List<Map<String, dynamic>>? toJson(ToMany<ItemVariant> rel) =>
@@ -149,7 +153,8 @@ class PackageItemRelToManyConverter
 
   @override
   ToMany<ItemPackage> fromJson(List? json) => ToMany<ItemPackage>(
-      items: json?.map((e) => ItemPackage.fromJson(e)).toList());
+    items: json?.map((e) => ItemPackage.fromJson(e)).toList(),
+  );
 
   @override
   List<Map<String, dynamic>>? toJson(ToMany<ItemPackage> rel) =>
@@ -158,10 +163,8 @@ class PackageItemRelToManyConverter
 
 @freezed
 abstract class ScanItemResult with _$ScanItemResult {
-  const factory ScanItemResult({
-    Item? item,
-    ItemVariant? variant,
-  }) = _ScanItemResult;
+  const factory ScanItemResult({Item? item, ItemVariant? variant}) =
+      _ScanItemResult;
 }
 
 enum FilterStock { all, available, empty }

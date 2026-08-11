@@ -25,6 +25,8 @@ abstract class ItemCart with _$ItemCart {
     String? identifier,
     required String idItem,
     required String? idCategory,
+    @JsonKey(name: 'sub_cat_id', fromJson: ModelConverter.dynamicToString) String? idSubCategory,
+    @JsonKey(name: 'sub_category_name') String? subCategoryName,
     @Default('') String itemName,
     bool? isExtraItem,
     String? extraName,
