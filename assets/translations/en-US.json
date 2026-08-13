@@ -415,5 +415,6 @@
   "day": "Day",
   "hour": "Hour",
   "minute": "Minute",
-  "reason": "Reason"
+  "reason": "Reason",
+  "postal_code": "Postal Code"
 }

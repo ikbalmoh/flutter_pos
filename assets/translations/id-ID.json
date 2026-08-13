@@ -416,5 +416,6 @@
   "day": "Hari",
   "hour": "Jam",
   "minute": "Menit",
-  "reason": "Alasan"
+  "reason": "Alasan",
+  "postal_code": "Kode Pos"
 }

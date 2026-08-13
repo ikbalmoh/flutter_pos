@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide AppBar;
+import 'package:flutter/services.dart';
 import 'package:selleri/app/widget/app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -92,7 +93,8 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     if (pickedDate != null) {
       setState(() {
         customer = customer.copyWith(
-            expiredDate: DateTimeFormater.dateToString(pickedDate));
+          expiredDate: DateTimeFormater.dateToString(pickedDate),
+        );
       });
     }
   }
@@ -112,9 +114,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     if (vehicle != null) {
       setState(() {
         customer = customer.copyWith(
-            vehicles: customer.vehicles != null
-                ? [...customer.vehicles!, vehicle]
-                : [vehicle]);
+          vehicles: customer.vehicles != null
+              ? [...customer.vehicles!, vehicle]
+              : [vehicle],
+        );
       });
     }
   }
@@ -127,17 +130,20 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
 
     if (customerMandatory.contains('groups') &&
         (customer.groups == null || customer.groups!.isEmpty)) {
-      otherErrors['groups'] =
-          'field_required'.tr(args: ['groups'.tr().toLowerCase()]);
+      otherErrors['groups'] = 'field_required'.tr(
+        args: ['groups'.tr().toLowerCase()],
+      );
     }
     if (customerMandatory.contains('dob') && customer.dob == null) {
-      otherErrors['dob'] =
-          'field_required'.tr(args: ['dob'.tr().toLowerCase()]);
+      otherErrors['dob'] = 'field_required'.tr(
+        args: ['dob'.tr().toLowerCase()],
+      );
     }
     if (customerMandatory.contains('expired_date') &&
         customer.expiredDate == null) {
-      otherErrors['expired_date'] =
-          'field_required'.tr(args: ['expired_date'.tr().toLowerCase()]);
+      otherErrors['expired_date'] = 'field_required'.tr(
+        args: ['expired_date'.tr().toLowerCase()],
+      );
     }
     setState(() {
       errors = otherErrors;
@@ -161,9 +167,11 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
       }
       // ignore: use_build_context_synchronously
       context.pop();
-      AppAlert.toast(widget.customer == null
-          ? 'successfully_stored'.tr(args: ['customer'.tr()])
-          : 'successfully_updated'.tr(args: ['customer'.tr()]));
+      AppAlert.toast(
+        widget.customer == null
+            ? 'successfully_stored'.tr(args: ['customer'.tr()])
+            : 'successfully_updated'.tr(args: ['customer'.tr()]),
+      );
     } catch (e) {
       AppAlert.snackbar(e.toString(), alertType: AlertType.error);
     } finally {
@@ -188,8 +196,9 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
 
     if (fieldName == 'email' && value != null && value.isNotEmpty) {
       // ignore: deprecated_member_use
-      if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-          .hasMatch(value)) {
+      if (!RegExp(
+        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+      ).hasMatch(value)) {
         return 'invalid_email'.tr();
       }
     }
@@ -198,11 +207,17 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
   }
 
   void onSelectGroup(bool selected, CustomerGroup group) {
-    List<CustomerGroup> groups =
-        customer.groups != null ? List.from(customer.groups!) : [];
+    List<CustomerGroup> groups = customer.groups != null
+        ? List.from(customer.groups!)
+        : [];
     if (selected) {
-      groups.add(CustomerGroup(
-          id: group.id, groupId: group.groupId, groupName: group.groupName));
+      groups.add(
+        CustomerGroup(
+          id: group.id,
+          groupId: group.groupId,
+          groupName: group.groupName,
+        ),
+      );
     } else {
       groups.removeWhere((element) => element.groupId == group.groupId);
     }
@@ -214,9 +229,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
   void removeVehicle(int idVehicle) {
     setState(() {
       customer = customer.copyWith(
-          vehicles: customer.vehicles
-              ?.where((element) => element.idVehicle != idVehicle)
-              .toList());
+        vehicles: customer.vehicles
+            ?.where((element) => element.idVehicle != idVehicle)
+            .toList(),
+      );
     });
   }
 
@@ -228,12 +244,22 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     String label = fieldName.tr();
     bool isMandatory = customerMandatory.contains(fieldName);
 
-    return Text(
-      isMandatory ? '$label *' : label,
-      style: Theme.of(context)
-          .textTheme
-          .bodyMedium
-          ?.copyWith(color: Colors.blueGrey.shade600),
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: label.capitalize()),
+          if (isMandatory)
+            TextSpan(
+              text: " *",
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.red),
+            ),
+        ],
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: Colors.blueGrey.shade600),
+      ),
     );
   }
 
@@ -249,10 +275,9 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
           children: [
             Text(
               'data_x'.tr(args: ['customer'.tr()]),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             Divider(color: Colors.blueGrey.shade50),
             TextFormField(
@@ -270,49 +295,59 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
             ),
             Container(
               decoration: BoxDecoration(
-                  border: Border(
-                bottom: BorderSide(
-                  width: 1,
-                  color: Colors.blueGrey.shade100,
+                border: Border(
+                  bottom: BorderSide(width: 1, color: Colors.blueGrey.shade100),
                 ),
-              )),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   labelWidget('dob'),
                   TextButton.icon(
                     style: TextButton.styleFrom(foregroundColor: Colors.teal),
-                    icon: const Icon(
-                      Icons.calendar_month,
-                      size: 18,
-                    ),
+                    icon: const Icon(Icons.calendar_month, size: 18),
                     onPressed: pickDob,
-                    label: Text(customer.dob != null
-                        ? DateTimeFormater.dateToString(
-                            DateTime.parse(customer.dob!),
-                            format: 'dd MMM yyyy')
-                        : 'select'.tr()),
+                    label: Text(
+                      customer.dob != null
+                          ? DateTimeFormater.dateToString(
+                              DateTime.parse(customer.dob!),
+                              format: 'dd MMM yyyy',
+                            )
+                          : 'select'.tr(),
+                    ),
                   ),
                 ],
               ),
             ),
-            DropdownButton<Option>(
-              items:
-                  cardIdOptions.map<DropdownMenuItem<Option>>((Option option) {
-                return DropdownMenuItem<Option>(
-                  value: option,
-                  child: Text(option.text),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() {
-                customer = customer.copyWith(cardId: value?.id);
-              }),
-              value: cardIdOptions
-                  .firstWhereOrNull((option) => option.id == customer.cardId),
-              dropdownColor: Colors.white,
-              hint: Text('select_x'.tr(args: ['card_id'.tr()])),
-              underline: const SizedBox(),
-              style: Theme.of(context).textTheme.titleSmall,
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                labelWidget('card_id'),
+                Flexible(
+                  child: DropdownButton<Option>(
+                    items: cardIdOptions.map<DropdownMenuItem<Option>>((
+                      Option option,
+                    ) {
+                      return DropdownMenuItem<Option>(
+                        value: option,
+                        child: Text(option.text),
+                      );
+                    }).toList(),
+                    onChanged: (value) => setState(() {
+                      customer = customer.copyWith(cardId: value?.id);
+                    }),
+                    value: cardIdOptions.firstWhereOrNull(
+                      (option) => option.id == customer.cardId,
+                    ),
+                    dropdownColor: Colors.white,
+                    hint: Text('select_x'.tr(args: ['card_id'.tr()])),
+                    underline: const SizedBox(),
+                    style: Theme.of(context).textTheme.titleSmall,
+                    isDense: true,
+                  ),
+                ),
+              ],
             ),
             TextFormField(
               initialValue: customer.cardIdNumber,
@@ -384,10 +419,9 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
             SizedBox(height: 30),
             Text(
               'address'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             Divider(color: Colors.blueGrey.shade50),
             TextFormField(
@@ -428,6 +462,20 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               ),
               validator: (value) => validateField('address', value),
             ),
+            TextFormField(
+              initialValue: customer.postalCode,
+              onChanged: (value) => setState(() {
+                customer = customer.copyWith(postalCode: value);
+              }),
+              decoration: InputDecoration(
+                label: labelWidget('postal_code'),
+                hintText: 'add'.tr(args: ['postal_code'.tr()]),
+                alignLabelWithHint: true,
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              validator: (value) => validateField('postal_code', value),
+            ),
           ],
         ),
       ),
@@ -446,34 +494,30 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
           children: [
             Text(
               'membership'.tr(),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             Divider(color: Colors.blueGrey.shade50),
             Container(
               decoration: BoxDecoration(
-                  border: Border(
-                bottom: BorderSide(
-                  width: 1,
-                  color: Colors.blueGrey.shade100,
+                border: Border(
+                  bottom: BorderSide(width: 1, color: Colors.blueGrey.shade100),
                 ),
-              )),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   labelWidget('expired_date'),
                   TextButton.icon(
                     style: TextButton.styleFrom(foregroundColor: Colors.teal),
-                    icon: const Icon(
-                      Icons.calendar_month,
-                      size: 18,
-                    ),
+                    icon: const Icon(Icons.calendar_month, size: 18),
                     onPressed: picExpiredDate,
-                    label: Text(customer.expiredDate != null
-                        ? customer.expiredDate!
-                        : 'select'.tr()),
+                    label: Text(
+                      customer.expiredDate != null
+                          ? customer.expiredDate!
+                          : 'select'.tr(),
+                    ),
                   ),
                 ],
               ),
@@ -483,50 +527,51 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 padding: const EdgeInsets.only(top: 5),
                 child: Text(
                   errors['expired_date'] ?? '',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.red),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.red),
                 ),
               ),
-            SizedBox(
-              height: 15,
-            ),
+            SizedBox(height: 15),
             Column(
               spacing: 5,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 labelWidget('groups'),
-                ref.watch(customerGroupsProvider).when(
+                ref
+                    .watch(customerGroupsProvider)
+                    .when(
                       data: (data) => data.isEmpty
                           ? Container(
                               margin: EdgeInsets.only(top: 5),
                               child: Text(
                                 'no_data'.tr(args: ['groups'.tr()]),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
+                                style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(color: Colors.grey.shade500),
                               ),
                             )
                           : Wrap(
                               spacing: 5.0,
-                              children: List<Widget>.generate(data.length,
-                                  (int index) {
+                              children: List<Widget>.generate(data.length, (
+                                int index,
+                              ) {
                                 return ChoiceChip(
                                   label: Text(data[index].text),
                                   selected: customer.groups != null
-                                      ? customer.groups!.any((element) =>
-                                          element.groupId == data[index].id)
+                                      ? customer.groups!.any(
+                                          (element) =>
+                                              element.groupId == data[index].id,
+                                        )
                                       : false,
                                   onSelected: (selected) => onSelectGroup(
-                                      selected,
-                                      CustomerGroup(
-                                        id: data[index].id,
-                                        groupId: data[index].id,
-                                        groupName: data[index].text,
-                                      )),
+                                    selected,
+                                    CustomerGroup(
+                                      id: data[index].id,
+                                      groupId: data[index].id,
+                                      groupName: data[index].text,
+                                    ),
+                                  ),
                                 );
                               }).toList(),
                             ),
@@ -539,13 +584,12 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 if (errors.isNotEmpty && errors['groups'] != null)
                   Text(
                     errors['groups'] ?? '',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.red),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.red),
                   ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -575,33 +619,27 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               children: [
                 Text(
                   'vehicle'.tr(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 TextButton.icon(
                   style: TextButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                   onPressed: showVehicleForm,
-                  label: Text(
-                    'new_x'.tr(args: ['vehicle'.tr()]),
-                  ),
-                  icon: const Icon(
-                    CupertinoIcons.add,
-                    size: 16,
-                  ),
-                )
+                  label: Text('new_x'.tr(args: ['vehicle'.tr()])),
+                  icon: const Icon(CupertinoIcons.add, size: 16),
+                ),
               ],
             ),
-            Divider(
-              color: Colors.blueGrey.shade50,
-              height: 0,
-            ),
+            Divider(color: Colors.blueGrey.shade50, height: 0),
             customer.vehicles == null || customer.vehicles!.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 100, horizontal: 30),
+                      vertical: 100,
+                      horizontal: 30,
+                    ),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -614,12 +652,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                           ),
                           Text(
                             'no_x_added'.tr(args: ['vehicle'.tr()]),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
+                            style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(color: Colors.grey.shade500),
                             textAlign: TextAlign.center,
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -640,15 +676,15 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                                         .textTheme
                                         .labelLarge
                                         ?.copyWith(
-                                            color: Colors.blueGrey.shade700),
+                                          color: Colors.blueGrey.shade700,
+                                        ),
                                   ),
                                   Text(
                                     vehicle.licensePlate,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
+                                    style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
-                                            color: Colors.blueGrey.shade600),
+                                          color: Colors.blueGrey.shade600,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -656,9 +692,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                             SizedBox(width: 10),
                             Text(
                               vehicle.vehicleType,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(color: Colors.blueGrey.shade600),
                             ),
                             SizedBox(width: 10),
@@ -666,11 +700,11 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                               icon: const Icon(Icons.delete, size: 18),
                               onPressed: () => removeVehicle(vehicle.idVehicle),
                               color: Colors.red,
-                            )
+                            ),
                           ],
                         ),
                     ],
-                  )
+                  ),
           ],
         ),
       ),
@@ -701,17 +735,14 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ? const SizedBox(
                     width: 15,
                     height: 15,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 1,
-                    ))
+                    child: CircularProgressIndicator(strokeWidth: 1),
+                  )
                 : const Icon(Icons.check),
             label: Text(
               widget.customer == null ? 'submit'.tr() : 'update'.tr(),
             ),
           ),
-          SizedBox(
-            width: 15,
-          )
+          SizedBox(width: 15),
         ],
       ),
       body: SafeArea(
@@ -736,20 +767,24 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               ),
               isTablet
                   ? SizedBox(
-                      width: ResponsiveBreakpoints.of(context)
-                              .largerOrEqualTo(DESKTOP)
+                      width:
+                          ResponsiveBreakpoints.of(
+                            context,
+                          ).largerOrEqualTo(DESKTOP)
                           ? MediaQuery.of(context).size.width - 400
                           : MediaQuery.of(context).size.width * 0.5,
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
                         child: Column(
                           spacing: 10,
                           children: [customerMembership(), customerVehicle()],
                         ),
                       ),
                     )
-                  : Container()
+                  : Container(),
             ],
           ),
         ),

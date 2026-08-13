@@ -251,6 +251,10 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
           widget.customer.barcode!.isNotEmpty) {
         tiles.add(listTile('barcode'.tr(), widget.customer.barcode!));
       }
+      if (widget.customer.postalCode != null &&
+          widget.customer.postalCode!.isNotEmpty) {
+        tiles.add(listTile('postal_code'.tr(), widget.customer.postalCode!));
+      }
       if (widget.customer.expiredDate != null &&
           widget.customer.expiredDate!.isNotEmpty) {
         tiles.add(
