@@ -281,7 +281,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             Divider(color: Colors.blueGrey.shade50),
-            if (config.containsKey('customer_name'))
+            if (config.isNotEmpty && config.containsKey('customer_name'))
               TextFormField(
                 initialValue: customer.customerName,
                 onChanged: (value) {
@@ -295,7 +295,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                   alignLabelWithHint: true,
                 ),
               ),
-            if (config.containsKey('dob'))
+            if (config.isNotEmpty && config.containsKey('dob'))
               Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -326,7 +326,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ),
               ),
             SizedBox(height: 20),
-            if (config.containsKey('card_id'))
+            if (config.isNotEmpty && config.containsKey('card_id'))
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -356,7 +356,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                   ),
                 ],
               ),
-            if (config.containsKey('card_id_number'))
+            if (config.isNotEmpty && config.containsKey('card_id_number'))
               TextFormField(
                 initialValue: customer.cardIdNumber,
                 onChanged: (value) {
@@ -370,7 +370,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                   alignLabelWithHint: true,
                 ),
               ),
-            if (config.containsKey('email'))
+            if (config.isNotEmpty && config.containsKey('email'))
               TextFormField(
                 initialValue: customer.email,
                 onChanged: (value) {
@@ -385,7 +385,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                   alignLabelWithHint: true,
                 ),
               ),
-            if (config.containsKey('barcode'))
+            if (config.isNotEmpty && config.containsKey('barcode'))
               TextFormField(
                 initialValue: customer.barcode,
                 onChanged: (value) {
@@ -399,7 +399,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ),
                 validator: (value) => validateField('barcode', value),
               ),
-            if (config.containsKey('phone_number'))
+            if (config.isNotEmpty && config.containsKey('phone_number'))
               TextFormField(
                 initialValue: customer.phoneNumber,
                 onChanged: (value) {
@@ -414,7 +414,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ),
                 validator: (value) => validateField('phone_number', value),
               ),
-            if (config.containsKey('npwp'))
+            if (config.isNotEmpty && config.containsKey('npwp'))
               TextFormField(
                 initialValue: customer.npwp,
                 onChanged: (value) {
@@ -429,10 +429,10 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 validator: (value) => validateField('npwp', value),
               ),
             SizedBox(height: 30),
-            if (config.containsKey('province') ||
-                config.containsKey('city') ||
-                config.containsKey('address') ||
-                config.containsKey('postal_code'))
+            if (config.isNotEmpty && config.containsKey('province') ||
+                config.isNotEmpty && config.containsKey('city') ||
+                config.isNotEmpty && config.containsKey('address') ||
+                config.isNotEmpty && config.containsKey('postal_code'))
               Text(
                 'address'.tr(),
                 style: Theme.of(
@@ -440,7 +440,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
             Divider(color: Colors.blueGrey.shade50),
-            if (config.containsKey('province'))
+            if (config.isNotEmpty && config.containsKey('province'))
               TextFormField(
                 initialValue: customer.province,
                 onChanged: (value) {
@@ -454,7 +454,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ),
                 validator: (value) => validateField('province', value),
               ),
-            if (config.containsKey('city'))
+            if (config.isNotEmpty && config.containsKey('city'))
               TextFormField(
                 initialValue: customer.city,
                 onChanged: (value) {
@@ -468,7 +468,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ),
                 validator: (value) => validateField('city', value),
               ),
-            if (config.containsKey('address'))
+            if (config.isNotEmpty && config.containsKey('address'))
               TextFormField(
                 initialValue: customer.address,
                 onChanged: (value) => setState(() {
@@ -481,7 +481,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ),
                 validator: (value) => validateField('address', value),
               ),
-            if (config.containsKey('postal_code'))
+            if (config.isNotEmpty && config.containsKey('postal_code'))
               TextFormField(
                 initialValue: customer.postalCode,
                 onChanged: (value) => setState(() {
@@ -503,7 +503,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
   }
 
   Widget customerMembership(Map<String, bool> config) {
-    if (!config.containsKey('expired_date') && !config.containsKey('groups')) {
+    if (!config.isNotEmpty && config.containsKey('expired_date') && !config.isNotEmpty && config.containsKey('groups')) {
       return SizedBox.shrink();
     }
 
@@ -523,7 +523,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             Divider(color: Colors.blueGrey.shade50),
-            if (config.containsKey('expired_date'))
+            if (config.isNotEmpty && config.containsKey('expired_date'))
               Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -561,7 +561,7 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
                 ),
               ),
             SizedBox(height: 15),
-            if (config.containsKey('groups'))
+            if (config.isNotEmpty && config.containsKey('groups'))
               Column(
                 spacing: 5,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -626,8 +626,8 @@ class _CustomerFormState extends ConsumerState<CustomerForm> {
     );
   }
 
-  Widget customerVehicle(Map<String, bool> fieldConfig) {
-    if (!fieldConfig.containsKey('vehicle')) {
+  Widget customerVehicle(Map<String, bool> config) {
+    if (!config.isNotEmpty && config.containsKey('vehicle')) {
       return SizedBox.shrink();
     }
 

@@ -64,7 +64,10 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
     final customerMandatoryConfig =
         outletConfig.config.customMandatoryConfig.customers;
 
-    final bool vehicleEnabled = customerMandatoryConfig.containsKey('vehicle');
+    final bool vehicleEnabled =
+        customerMandatoryConfig.isNotEmpty &&
+        customerMandatoryConfig.containsKey('vehicle');
+        
     final bool customFieldEnabled =
         outletConfig.config.customFields?.modules.transaction?.isNotEmpty ??
         false;
@@ -228,25 +231,25 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
   Widget customerInformation(Map<String, bool> config) {
     List<Widget> informationTiles() {
       List<Widget> tiles = [];
-      if (config.containsKey('groups')) {
+      if (config.isNotEmpty && config.containsKey('groups')) {
         tiles.add(listTile('group'.tr(), widget.customer.groupNames ?? ''));
       }
-      if (config.containsKey('email')) {
+      if (config.isNotEmpty && config.containsKey('email')) {
         tiles.add(listTile('Email', widget.customer.email));
       }
-      if (config.containsKey('phone_number')) {
+      if (config.isNotEmpty && config.containsKey('phone_number')) {
         tiles.add(listTile('phone'.tr(), widget.customer.phoneNumber));
       }
-      if (config.containsKey('address')) {
+      if (config.isNotEmpty && config.containsKey('address')) {
         tiles.add(listTile('address'.tr(), widget.customer.address));
       }
-      if (config.containsKey('barcode')) {
+      if (config.isNotEmpty && config.containsKey('barcode')) {
         tiles.add(listTile('barcode'.tr(), widget.customer.barcode));
       }
-      if (config.containsKey('postal_code')) {
+      if (config.isNotEmpty && config.containsKey('postal_code')) {
         tiles.add(listTile('postal_code'.tr(), widget.customer.postalCode));
       }
-      if (config.containsKey('expired_date')) {
+      if (config.isNotEmpty && config.containsKey('expired_date')) {
         tiles.add(listTile('expired_date'.tr(), widget.customer.expiredDate));
       }
       return tiles;
