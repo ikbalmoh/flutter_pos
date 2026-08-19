@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/features/outlet/model/custom_mandatory.dart';
+import 'package:selleri/features/outlet/model/custom_mandatory_config.dart';
 import 'package:selleri/features/outlet/model/refund_reason.dart';
 import 'package:selleri/shared/model/custom_fields.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
@@ -52,7 +54,12 @@ abstract class OutletConfig with _$OutletConfig {
     List<Akun>? akunSetoran,
     List<PersonInCharge>? listUser,
     int? saldoAkunKas,
-    CustomMandatory? customMandatory,
+    @Default(CustomMandatory())
+    @JsonKey(name: 'custom_mandatory')
+    CustomMandatory customMandatory,
+    @Default(CustomMandatoryConfig())
+    @JsonKey(name: 'custom_mandatory_config')
+    CustomMandatoryConfig customMandatoryConfig,
     String? merchantCode,
     String? merchantId,
     @JsonKey(name: 'custom_fields') CustomFields? customFields,
@@ -97,23 +104,6 @@ abstract class AttributeReceipts with _$AttributeReceipts {
 
   factory AttributeReceipts.fromJson(Map<String, dynamic> json) =>
       _$AttributeReceiptsFromJson(json);
-
-  @override
-  String toString() {
-    final jsonData = toJson();
-    return json.encode(jsonData);
-  }
-}
-
-@freezed
-abstract class CustomMandatory with _$CustomMandatory {
-  @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory CustomMandatory({
-    List<String>? customers,
-  }) = _CustomMandatory;
-
-  factory CustomMandatory.fromJson(Map<String, dynamic> json) =>
-      _$CustomMandatoryFromJson(json);
 
   @override
   String toString() {
@@ -183,10 +173,8 @@ abstract class Subscriptions with _$Subscriptions {
 @freezed
 abstract class SubscriptionLimit with _$SubscriptionLimit {
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory SubscriptionLimit({
-    required int max,
-    required int current,
-  }) = _SubscriptionLimit;
+  const factory SubscriptionLimit({required int max, required int current}) =
+      _SubscriptionLimit;
 
   factory SubscriptionLimit.fromJson(Map<String, dynamic> json) =>
       _$SubscriptionLimitFromJson(json);
