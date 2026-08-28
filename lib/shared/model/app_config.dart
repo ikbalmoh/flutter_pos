@@ -29,17 +29,17 @@ abstract class AppConfig with _$AppConfig {
       _$AppConfigFromJson(json);
 
   factory AppConfig.empty() => AppConfig(
-        baseUrl: '',
-        clientId: '',
+        baseUrl: 'https://selleri.co.id/api',
+        clientId: '2',
         clientSecret: '',
-        grantType: '',
-        appId: '',
-        qrisHost: '',
-        qrisAppId: '',
-        qrisVendor: '',
+        grantType: 'password',
+        appId: 'selleri',
+        qrisHost: null,
+        qrisAppId: null,
+        qrisVendor: null,
         qrisPaymentType: null,
-        esHost: '',
-        esKey: '',
+        esHost: null,
+        esKey: null,
       );
 
   factory AppConfig.fromFirestore(
@@ -48,16 +48,17 @@ abstract class AppConfig with _$AppConfig {
   ) {
     var data = snapshot.data()!;
     return AppConfig(
-      baseUrl: data['API_HOST'] ?? '',
-      clientId: data['API_CLIENT_ID'] ?? '',
-      clientSecret: data['API_CLIENT_SECRET'] ?? '',
-      grantType: data['API_GRANT_TYPE'] ?? '',
-      appId: data['APP_ID'] ?? '',
-      qrisHost: data['QRIS_HOST'] ?? '',
-      qrisAppId: data['QRIS_APP_ID'] ?? '',
-      qrisVendor: data['QRIS_VENDOR'] ?? '',
-      esHost: data['ES_HOST'] ?? '',
-      esKey: data['ES_KEY'] ?? '',
+      baseUrl: data['API_HOST'] ?? AppConfig.empty().baseUrl,
+      clientId: data['API_CLIENT_ID'] ?? AppConfig.empty().clientId,
+      clientSecret: data['API_CLIENT_SECRET'] ?? AppConfig.empty().clientSecret,
+      grantType: data['API_GRANT_TYPE'] ?? AppConfig.empty().grantType,
+      appId: data['APP_ID'] ?? AppConfig.empty().appId,
+      qrisHost: data['QRIS_HOST'] ?? AppConfig.empty().qrisHost,
+      qrisAppId: data['QRIS_APP_ID'] ?? AppConfig.empty().qrisAppId,
+      qrisVendor: data['QRIS_VENDOR'] ?? AppConfig.empty().qrisVendor,
+      qrisPaymentType: data['QRIS_PAYMENT_TYPE'] ?? AppConfig.empty().qrisPaymentType,
+      esHost: data['ES_HOST'] ?? AppConfig.empty().esHost,
+      esKey: data['ES_KEY'] ?? AppConfig.empty().esKey,
     );
   }
 }

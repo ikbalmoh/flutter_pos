@@ -141,11 +141,14 @@ class ElasticRepository implements ElasticRepositoryInterface {
   }
 }
 
-final elasticRepositoryProvider = Provider<ElasticRepository>((ref) {
+final elasticRepositoryProvider = Provider<ElasticRepository?>((ref) {
   final config = ref.read(appConfigProvider).requireValue;
+  if (config.esHost == null || config.esHost!.isEmpty || config.esKey == null || config.esKey!.isEmpty) {
+    return null;
+  }
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: config.esHost ?? '',
+      baseUrl: config.esHost!,
       headers: {'Authorization': 'ApiKey ${config.esKey}'},
     ),
   );

@@ -78,7 +78,6 @@ class ItemRepository implements ItemRepositoryProtocol {
     String? idCategory,
     bool? fromLastSync,
     bool? fullSync = false,
-    List<Item> prevItems = const [],
     int? page,
     Function(int current, int total)? onProgress,
   }) async {
@@ -101,7 +100,9 @@ class ItemRepository implements ItemRepositoryProtocol {
       if (outlet == null) {
         return [];
       }
-      List<Item> items = List.from(prevItems);
+      
+      final List<Item> items = [];
+      
       final Pagination<Item> data = await api.items(
         outlet.idOutlet,
         idCategory: idCategory,
@@ -109,22 +110,33 @@ class ItemRepository implements ItemRepositoryProtocol {
         fullSync: fullSync,
         page: page,
       );
+      
       if (data.data != null && data.data!.isNotEmpty) {
         items.addAll(data.data!.toList());
       }
       if (onProgress != null) {
         onProgress(data.currentPage, data.lastPage);
       }
+      
       if (data.currentPage < data.lastPage) {
-        return fetchItems(
-          idCategory: idCategory,
-          fromLastSync: fromLastSync,
-          fullSync: fullSync,
-          prevItems: items,
-          page: data.currentPage + 1,
-          onProgress: onProgress,
-        );
+        final int extraPages = data.lastPage - data.currentPage;
+        for (int i = 0; i < extraPages; i++) {
+          final res = await api.items(
+            outlet.idOutlet,
+            idCategory: idCategory,
+            lastUpdate: lastUpdate,
+            fullSync: fullSync,
+            page: data.currentPage + i + 1,
+          );
+          if (res.data != null && res.data!.isNotEmpty) {
+            items.addAll(res.data!.toList());
+          }
+          if (onProgress != null) {
+            onProgress(res.currentPage, res.lastPage);
+          }
+        }
       }
+      
       storage.write(
         key: StoreKey.lastSync.name,
         value: DateTime.now().toLocal().millisecondsSinceEpoch.toString(),
@@ -188,6 +200,15 @@ class ItemRepository implements ItemRepositoryProtocol {
       const int pageSize = 200;
 
       // First page — also gives us the total count.
+      if (esRepo == null) {
+        return fetchItems(
+          idCategory: idCategory,
+          fromLastSync: fromLastSync,
+          fullSync: fullSync,
+          page: 0,
+          onProgress: onProgress,
+        );
+      }
       final firstRes = await esRepo.items(
         idCategory: idCategory,
         lastUpdate: lastUpdate,
@@ -241,7 +262,6 @@ class ItemRepository implements ItemRepositoryProtocol {
           idCategory: idCategory,
           fromLastSync: fromLastSync,
           fullSync: fullSync,
-          prevItems: [],
           page: 0,
           onProgress: onProgress,
         );
