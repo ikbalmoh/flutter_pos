@@ -415,5 +415,7 @@
   "work_duration": "Durasi Kerja",
   "day": "Hari",
   "hour": "Jam",
-  "minute": "Menit"
+  "minute": "Menit",
+  "reason": "Alasan",
+  "postal_code": "Kode Pos"
 }

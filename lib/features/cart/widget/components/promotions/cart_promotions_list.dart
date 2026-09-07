@@ -51,17 +51,13 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
 
   void onSelect(Promotion promo) {
     setState(() {
-      selected = ref
-          .read(promotionsProvider.notifier)
-          .resolveSelection(selected, promo);
+      selected = resolveSelection(selected, promo);
     });
   }
 
   void onSelectPromoByCode(Promotion promo) {
     setState(() {
-      selected = ref
-          .read(promotionsProvider.notifier)
-          .resolveSelection(selected, promo);
+      selected = resolveSelection(selected, promo);
     });
   }
 
@@ -70,8 +66,7 @@ class _CartPromotionsListState extends ConsumerState<CartPromotionsList> {
   }
 
   bool isPromoDisabled(Promotion promo) {
-    bool isEligible =
-        ref.read(promotionsProvider.notifier).isPromotionEligible(promo);
+    bool isEligible = isPromotionEligible(promo, ref.read(cartProvider));
     bool isDisabled = !isEligible ||
         promo.needCode ||
         (selected.where((p) => p.id != promo.id).isNotEmpty && !promo.policy) ||

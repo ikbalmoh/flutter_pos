@@ -5,7 +5,9 @@ part 'receiving_item.freezed.dart';
 part 'receiving_item.g.dart';
 
 @freezed
-class ReceivingItem with _$ReceivingItem {
+abstract class ReceivingItem with _$ReceivingItem {
+  const ReceivingItem._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ReceivingItem({
     required String itemId,

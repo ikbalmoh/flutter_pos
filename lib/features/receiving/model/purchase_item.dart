@@ -6,7 +6,9 @@ part 'purchase_item.freezed.dart';
 part 'purchase_item.g.dart';
 
 @freezed
-class PurchaseItem with _$PurchaseItem {
+abstract class PurchaseItem with _$PurchaseItem {
+  const PurchaseItem._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PurchaseItem({
     required String itemId,

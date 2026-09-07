@@ -5,7 +5,9 @@ part 'shift_summary.freezed.dart';
 part 'shift_summary.g.dart';
 
 @freezed
-class ShiftSummary with _$ShiftSummary {
+abstract class ShiftSummary with _$ShiftSummary {
+  const ShiftSummary._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ShiftSummary({
     required double startingCash,

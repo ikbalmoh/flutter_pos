@@ -6,7 +6,9 @@ part 'item_variant_adjustment.freezed.dart';
 part 'item_variant_adjustment.g.dart';
 
 @freezed
-class ItemVariantAdjustment with _$ItemVariantAdjustment {
+abstract class ItemVariantAdjustment with _$ItemVariantAdjustment {
+  const ItemVariantAdjustment._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ItemVariantAdjustment({
     required int idVariant,

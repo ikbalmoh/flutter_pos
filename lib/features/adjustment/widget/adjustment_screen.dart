@@ -97,7 +97,7 @@ class _AdjustmentScreenState extends ConsumerState<AdjustmentScreen> {
     });
   }
 
-  void onBarcodeScanned(barcode) {
+  void onBarcodeScanned(String barcode) {
     if (!canListenBarcode) return;
     log('barcode scanned: $barcode');
     textSearchController.text = barcode;

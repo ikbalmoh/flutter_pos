@@ -5,7 +5,7 @@ part 'cart_holded.freezed.dart';
 part 'cart_holded.g.dart';
 
 @freezed
-class CartHolded with _$CartHolded {
+abstract class CartHolded with _$CartHolded {
   const CartHolded._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

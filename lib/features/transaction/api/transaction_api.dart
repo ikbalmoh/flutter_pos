@@ -16,11 +16,11 @@ class TransactionApi {
   Future<List<Cart>> storeTransaction(List<Cart> transactions) async {
     try {
       final List<Map<String, dynamic>> transactionJsons = await Future.wait(
-          transactions.map((tr) => tr.toTransactionPayload()));
-      final FormData formData = FormData.fromMap(
-        {"transactions": transactionJsons},
-        ListFormat.multiCompatible,
+        transactions.map((tr) => tr.toTransactionPayload()),
       );
+      final FormData formData = FormData.fromMap({
+        "transactions": transactionJsons,
+      }, ListFormat.multiCompatible);
       log('TRANSACTIONS TO STORE: $transactionJsons');
       if (formData.files.isNotEmpty) {
         log('TRANSACTION FILES: ${formData.files}');
@@ -28,9 +28,7 @@ class TransactionApi {
       final res = await api.post(
         ApiUrl.storeTransaction,
         data: formData,
-        options: Options(
-          contentType: Headers.multipartFormDataContentType,
-        ),
+        options: Options(contentType: Headers.multipartFormDataContentType),
       );
 
       log('TRANSACTIONS STORED ${res.data}');
@@ -38,9 +36,9 @@ class TransactionApi {
       if (res.data is Map &&
           res.data['data'] is List &&
           res.data['data'] != null) {
-        return List<Map<String, dynamic>>.from(res.data['data'] as List)
-            .map((transaction) => Cart.fromTransaction(transaction))
-            .toList();
+        return List<Map<String, dynamic>>.from(
+          res.data['data'] as List,
+        ).map((transaction) => Cart.fromTransaction(transaction)).toList();
       }
 
       return [];
@@ -51,12 +49,13 @@ class TransactionApi {
     }
   }
 
-  Future<Pagination<Cart>> transactions(
-      {required String idOutlet,
-      int? page,
-      String? q,
-      String? shiftId,
-      String? table}) async {
+  Future<Pagination<Cart>> transactions({
+    required String idOutlet,
+    int? page,
+    String? q,
+    String? shiftId,
+    String? table,
+  }) async {
     try {
       final Map<String, dynamic> params = {
         'id_outlet': idOutlet,
@@ -65,7 +64,10 @@ class TransactionApi {
         'shift_id': shiftId,
         'q_table': table,
       };
-      final res = await api.get(ApiUrl.listTransactions, queryParameters: params);
+      final res = await api.get(
+        ApiUrl.listTransactions,
+        queryParameters: params,
+      );
       final data = res.data['data'];
       final pagination = Pagination<Cart>.fromJson(data, (transaction) {
         return Cart.fromTransaction(transaction as Map<String, dynamic>);
@@ -79,17 +81,34 @@ class TransactionApi {
     }
   }
 
-  Future<Pagination<CartHolded>> holdedTransactions(
-      {required String idOutlet, int? page, String? q}) async {
+  Future<Pagination<CartHolded>> holdedTransactions({
+    required String idOutlet,
+    int? page,
+    String? q,
+  }) async {
     try {
       final Map<String, dynamic> params = {
         'id_outlet': idOutlet,
         'q': q,
-        'page': page
+        'page': page,
       };
       final res = await api.get(ApiUrl.hold, queryParameters: params);
       final data = res.data['data'];
+      
+      final List validHolded = [];
+      if (data['data'] != null && data['data'] is List) {
+        for (var item in (data['data'] as List)) {
+          try {
+            validHolded.add(CartHolded.fromJson(item as Map<String, dynamic>));
+          } catch (e, stackTrace) {
+            log('Skipping invalid CartHolded: $e\n$stackTrace');
+          }
+        }
+        data['data'] = validHolded;
+      }
+
       final pagination = Pagination<CartHolded>.fromJson(data, (holded) {
+        if (holded is CartHolded) return holded;
         return CartHolded.fromJson(holded as Map<String, dynamic>);
       });
 
@@ -116,9 +135,16 @@ class TransactionApi {
     }
   }
 
-  Future deleteHoldedTransaction(String transactionId) async {
+  Future deleteHoldedTransaction(
+    String transactionId, {
+    required String reasonId,
+    required String notes,
+  }) async {
     try {
-      await api.delete('${ApiUrl.hold}/$transactionId');
+      await api.delete('${ApiUrl.hold}/$transactionId', data: {
+        'reason_id': reasonId,
+        'notes': notes,
+      });
     } on DioException catch (e) {
       throw e.message!;
     } catch (e) {

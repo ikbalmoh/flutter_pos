@@ -106,7 +106,7 @@ class _ReceivingScreenState extends ConsumerState<ReceivingScreen> {
         .loadInfo(search: codeController.text, type: int.parse(type));
   }
 
-  void onBarcodeScanned(barcode) {
+  void onBarcodeScanned(String barcode) {
     if (!canListenBarcode) return;
     log('barcode scanned: $barcode');
     codeController.text = barcode;

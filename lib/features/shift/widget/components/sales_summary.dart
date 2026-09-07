@@ -98,7 +98,7 @@ class SalesSummaryList extends ConsumerWidget {
         if (!isTablet && context.mounted) {
           context.pop();
         }
-        ref.read(shiftNotifierProvider.notifier).updateOpenAmount(newAmount);
+        ref.read(shiftProvider.notifier).updateOpenAmount(newAmount);
         AppAlert.toast('open_amount_updated_x'
             .tr(args: [CurrencyFormat.currency(newAmount)]));
       }

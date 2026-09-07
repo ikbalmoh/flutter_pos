@@ -36,4 +36,5 @@ class ApiUrl {
   static const String refreshToken = '/refresh-token';
   static const String resetPassword = '/password/email';
   static const String customerGroups = '/options/customer-groups';
+  static const String refundReasons = '/options/refund-reasons';
 }

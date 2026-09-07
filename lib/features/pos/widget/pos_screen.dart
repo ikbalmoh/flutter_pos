@@ -125,7 +125,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
     }
   }
 
-  void onBarcodeCaptured(barcode, cb) async {
+  void onBarcodeCaptured(String barcode, cb) async {
     await showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -139,7 +139,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
     cb();
   }
 
-  void onBarcodeScanned(barcode) {
+  void onBarcodeScanned(String barcode) {
     if (!canListenBarcode) return;
     log('barcodes canned: $barcode');
     ScanItemResult result = objectBox.getItemByBarcode(barcode);
@@ -272,7 +272,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
                     icon: const Icon(Icons.menu));
               }),
               actions: [
-                ...ref.watch(shiftNotifierProvider).value == null
+                ...ref.watch(shiftProvider).value == null
                     ? []
                     : [
                         IconButton(

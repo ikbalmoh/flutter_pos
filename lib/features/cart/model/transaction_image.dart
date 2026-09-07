@@ -4,7 +4,9 @@ part 'transaction_image.freezed.dart';
 part 'transaction_image.g.dart';
 
 @freezed
-class TransactionImage with _$TransactionImage {
+abstract class TransactionImage with _$TransactionImage {
+  const TransactionImage._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory TransactionImage({
     int? id,

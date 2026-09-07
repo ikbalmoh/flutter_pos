@@ -57,13 +57,13 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       ref
-          .read(shiftListNotifierProvider.notifier)
+          .read(shiftListProvider.notifier)
           .loadShifts(page: 1, search: query, from: from, to: to);
     });
   }
 
   void loadMore() {
-    final pagination = ref.read(shiftListNotifierProvider).asData?.value;
+    final pagination = ref.read(shiftListProvider).asData?.value;
     if (pagination == null ||
         pagination.to == null ||
         (pagination.to != null && pagination.currentPage >= pagination.to!)) {
@@ -74,7 +74,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
             _scrollController.position.maxScrollExtent &&
         !(pagination.loading ?? false)) {
       log('Load shifts... ${pagination.currentPage}/${pagination.to}');
-      ref.read(shiftListNotifierProvider.notifier).loadShifts(
+      ref.read(shiftListProvider.notifier).loadShifts(
             page: pagination.currentPage + 1,
             search: _searchController.text,
             from: from,
@@ -129,7 +129,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
           Expanded(
             child: RefreshIndicator(
               onRefresh: () => ref
-                  .read(shiftListNotifierProvider.notifier)
+                  .read(shiftListProvider.notifier)
                   .loadShifts(page: 1),
               child: Card(
                 elevation: 0,
@@ -205,7 +205,7 @@ class _ShiftHistoryScreenState extends ConsumerState<ShiftHistoryScreen>
                       ),
                     ),
                     Expanded(
-                      child: ref.watch(shiftListNotifierProvider).when(
+                      child: ref.watch(shiftListProvider).when(
                             data: (data) => data.data!.isNotEmpty
                                 ? ListView.builder(
                                     physics:

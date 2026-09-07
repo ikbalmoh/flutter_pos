@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/app/provider/app_start_provider.dart';

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:selleri/features/item/model/item.dart';
 import 'package:selleri/features/item/model/item_package.dart';
 import 'package:selleri/features/item/model/item_variant.dart';
+import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/promotion/model/promotion.dart';
 import 'package:selleri/shared/objectbox.dart';
 import 'package:selleri/features/item/provider/item_provider.dart';
@@ -12,6 +15,7 @@ import 'package:selleri/features/promotion/provider/promotions_provider.dart';
 import 'package:selleri/features/cart/widget/components/promotions/cart_promotion_item.dart';
 import 'package:selleri/features/cart/widget/components/stock_badge.dart';
 import 'package:selleri/shared/utils/formater.dart';
+import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ItemInfo extends ConsumerWidget {
@@ -20,15 +24,19 @@ class ItemInfo extends ConsumerWidget {
   final ScrollController scrollController;
   final Function() onSelect;
 
-  const ItemInfo(
-      {required this.item,
-      this.variant,
-      required this.scrollController,
-      required this.onSelect,
-      super.key});
+  const ItemInfo({
+    required this.item,
+    this.variant,
+    required this.scrollController,
+    required this.onSelect,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final outlet = ref.watch(outletProvider).value as OutletSelected;
+    final allowStockMinus = outlet.config.stockMinus == true;
+
     List<String> promotionsIds = variant != null
         ? List.from(variant!.promotions)
         : List.from(item.promotions);
@@ -41,7 +49,9 @@ class ItemInfo extends ConsumerWidget {
       }
     }
 
+
     List<Promotion> promotions = objectBox.getPromotions(promotionsIds) ?? [];
+    log('item promotions: $promotions');
     return Padding(
       padding: EdgeInsets.only(
         top: 10,
@@ -54,14 +64,15 @@ class ItemInfo extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding:
-                const EdgeInsets.only(top: 8, left: 5, right: 5, bottom: 15),
+            padding: const EdgeInsets.only(
+              top: 8,
+              left: 5,
+              right: 5,
+              bottom: 15,
+            ),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: Colors.blueGrey.shade100,
-                ),
+                bottom: BorderSide(width: 0.5, color: Colors.blueGrey.shade100),
               ),
             ),
             child: Row(
@@ -74,7 +85,7 @@ class ItemInfo extends ConsumerWidget {
                       Text(
                         [
                           item.itemName,
-                          variant != null ? variant!.variantName : ''
+                          variant != null ? variant!.variantName : '',
                         ].join(' - '),
                         style: Theme.of(context).textTheme.bodyLarge,
                         maxLines: 1,
@@ -88,16 +99,15 @@ class ItemInfo extends ConsumerWidget {
                               size: 16,
                               color: Colors.grey,
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                             Text(
-                              DateTimeFormater.dateToString(item.updatedAt!, format: 'dd/MM/y HH:mm:ss'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
+                              DateTimeFormater.dateToString(
+                                item.updatedAt!,
+                                format: 'dd/MM/y HH:mm:ss',
+                              ),
+                              style: Theme.of(context).textTheme.titleSmall
                                   ?.copyWith(color: Colors.grey.shade700),
-                            )
+                            ),
                           ],
                         ),
                       if (variant?.barcodeNumber != null ||
@@ -109,16 +119,12 @@ class ItemInfo extends ConsumerWidget {
                               size: 16,
                               color: Colors.grey,
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                             Text(
                               variant?.barcodeNumber ?? item.barcode!,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
+                              style: Theme.of(context).textTheme.titleSmall
                                   ?.copyWith(color: Colors.grey.shade700),
-                            )
+                            ),
                           ],
                         ),
                     ],
@@ -149,7 +155,8 @@ class ItemInfo extends ConsumerWidget {
                           stockControl: item.stockControl,
                         )
                       : ItemQtyInfo(
-                          stockItem: variant?.stockItem ?? item.stockItem),
+                          stockItem: variant?.stockItem ?? item.stockItem,
+                        ),
                   const SizedBox(height: 10),
                   promotions.isNotEmpty
                       ? Column(
@@ -166,12 +173,14 @@ class ItemInfo extends ConsumerWidget {
                               shrinkWrap: true,
                               itemBuilder: (context, idx) {
                                 Promotion promo = promotions[idx];
-                                bool isEligible = ref
-                                    .read(promotionsProvider.notifier)
-                                    .isPromotionEligible(promo);
+                                bool isEligible = isPromotionEligible(
+                                  promo,
+                                  ref.read(cartProvider),
+                                );
                                 return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 5,
+                                  ),
                                   child: CartPromotionItem(
                                     promo: promo,
                                     onSelect: null,
@@ -180,30 +189,29 @@ class ItemInfo extends ConsumerWidget {
                                 );
                               },
                               itemCount: promotions.length,
-                            )
+                            ),
                           ],
                         )
-                      : Container()
+                      : Container(),
                 ],
               ),
             ),
           ),
           TextButton.icon(
             style: TextButton.styleFrom(
-                backgroundColor: Colors.teal.shade50,
-                disabledBackgroundColor: Colors.grey.shade100),
-            onPressed: (variant != null
+              backgroundColor: Colors.teal.shade50,
+              disabledBackgroundColor: Colors.grey.shade100,
+            ),
+            onPressed:
+                (variant != null
                         ? variant!.stockItem <= 0
                         : item.stockItem <= 0) &&
-                    item.stockControl
+                    item.stockControl &&
+                    !allowStockMinus
                 ? null
                 : onSelect,
-            icon: Icon(
-              CupertinoIcons.cart_badge_plus,
-            ),
-            label: Text(
-              'add_to_cart'.tr(),
-            ),
+            icon: Icon(CupertinoIcons.cart_badge_plus),
+            label: Text('add_to_cart'.tr()),
           ),
         ],
       ),
@@ -224,53 +232,48 @@ class ItemPackagesQtyInfo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List<ItemPackage>.from(details).map((itemPackage) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${itemPackage.quantityItem} x',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.black87),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List<ItemPackage>.from(details).map((itemPackage) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${itemPackage.quantityItem} x',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.black87),
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  itemPackage.itemName,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.black87),
                 ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                  child: Text(
-                    itemPackage.itemName,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.black87,
-                        ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                StockBadge(
-                  stockItem: ref.read(itemsProvider().notifier).getItemStock(
-                        itemPackage.idItem,
-                        variantId: itemPackage.variantId,
-                      ),
-                  stockControl: true,
-                )
-              ],
-            ),
-          );
-        }).toList());
+              ),
+              const SizedBox(width: 5),
+              StockBadge(
+                stockItem: ref
+                    .read(itemsProvider().notifier)
+                    .getItemStock(
+                      itemPackage.idItem,
+                      variantId: itemPackage.variantId,
+                    ),
+                stockControl: true,
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
   }
 }
 
 class ItemQtyInfo extends StatelessWidget {
-  const ItemQtyInfo({
-    super.key,
-    required this.stockItem,
-  });
+  const ItemQtyInfo({super.key, required this.stockItem});
 
   final double stockItem;
 
@@ -286,15 +289,13 @@ class ItemQtyInfo extends StatelessWidget {
               size: 40,
               color: Colors.black54,
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Text(
               'out_of_stock'.tr(),
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.black54,
-                  ),
-            )
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.black54),
+            ),
           ],
         ),
       );
@@ -307,19 +308,18 @@ class ItemQtyInfo extends StatelessWidget {
         Text(
           CurrencyFormat.currency(stockItem, symbol: false),
           textAlign: TextAlign.center,
-          style: Theme.of(context)
-              .textTheme
-              .displayMedium
-              ?.copyWith(color: Colors.teal, fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.displayMedium?.copyWith(
+            color: Colors.teal,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 5),
         Text(
           'current_quantity'.tr(),
           textAlign: TextAlign.center,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.grey.shade700),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
         ),
         const SizedBox(height: 15),
       ],

@@ -16,6 +16,9 @@ class ModelConverter {
   }
 
   static bool dynamicToBool(dynamic value) {
+    if (value == null) {
+      return false;
+    }
     if (value is String) {
       return bool.parse(value);
     } else if (value is num) {
@@ -44,8 +47,10 @@ class ModelConverter {
     return value;
   }
 
-  static String? dynamicToString(dynamic value,
-      {bool? returnEmptyString = false}) {
+  static String? dynamicToString(
+    dynamic value, {
+    bool? returnEmptyString = false,
+  }) {
     if (value == null) {
       return returnEmptyString == true ? '' : null;
     }

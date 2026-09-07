@@ -133,7 +133,7 @@ class _TransactionDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-    final currentShift = ref.read(shiftNotifierProvider).value;
+    final currentShift = ref.read(shiftProvider).value;
     final transaction = ref
         .watch(transactionsProvider)
         .value

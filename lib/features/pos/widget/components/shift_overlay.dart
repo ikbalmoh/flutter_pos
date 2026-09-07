@@ -19,7 +19,7 @@ class ShiftOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(shiftNotifierProvider).when(
+    return ref.watch(shiftProvider).when(
           data: (data) {
             return data == null
                 ? Positioned.fill(

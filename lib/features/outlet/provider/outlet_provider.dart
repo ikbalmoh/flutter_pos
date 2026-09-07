@@ -128,6 +128,6 @@ class Outlet extends _$Outlet {
     if (state.value is! OutletNotSelected) {
       state = AsyncData(OutletNotSelected());
     }
-    ref.read(shiftNotifierProvider.notifier).offShift();
+    ref.read(shiftProvider.notifier).offShift();
   }
 }

@@ -6,7 +6,7 @@ part 'company.freezed.dart';
 part 'company.g.dart';
 
 @freezed
-class Company with _$Company {
+abstract class Company with _$Company {
   const Company._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

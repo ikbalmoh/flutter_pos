@@ -5,7 +5,9 @@ part 'receiving_form.freezed.dart';
 part 'receiving_form.g.dart';
 
 @freezed
-class ReceivingForm with _$ReceivingForm {
+abstract class ReceivingForm with _$ReceivingForm {
+  const ReceivingForm._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ReceivingForm({
     required String outletId,

@@ -5,7 +5,11 @@ import 'package:dio/dio.dart';
 import 'fetch.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'dart:convert';
 import 'package:open_file/open_file.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:selleri/shared/constants/store_key.dart';
+import 'package:selleri/shared/model/app_config.dart' as config_model;
 
 class FileDownload {
   Future<String> get localPath async {
@@ -23,9 +27,16 @@ class FileDownload {
     try {
       String savePath = await _getFilePath(fileName);
 
+      const storage = FlutterSecureStorage();
+      final localData = await storage.read(key: StoreKey.appConfig.name);
+      config_model.AppConfig? config;
+      if (localData != null) {
+        config = config_model.AppConfig.fromJson(jsonDecode(localData));
+      }
+
       log('Download: url => $urlPath\n fileName => $savePath');
 
-      await fetch().download(urlPath, savePath,
+      await fetch(config).download(urlPath, savePath,
           queryParameters: params,
           options: options, onReceiveProgress: (receive, total) {
         log('downloading: $receive/$total');

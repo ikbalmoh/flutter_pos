@@ -4,7 +4,9 @@ part 'shift_cashflow_image.freezed.dart';
 part 'shift_cashflow_image.g.dart';
 
 @freezed
-class ShiftCashflowImage with _$ShiftCashflowImage {
+abstract class ShiftCashflowImage with _$ShiftCashflowImage {
+  const ShiftCashflowImage._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ShiftCashflowImage({
     required int id,

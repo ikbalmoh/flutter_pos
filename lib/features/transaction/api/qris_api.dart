@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 
 class QRISApi {
   final Dio api;
+  final String vendor;
 
-  QRISApi({required this.api});
+  QRISApi({required this.api, required this.vendor});
 
   Future<String> requestQris({
     required String transactionNo,
@@ -18,7 +19,7 @@ class QRISApi {
         'amount': amount,
         'merchant_id': merchantId,
         'transaction_no': transactionNo,
-        'vendor': AppConfig.qrisVendor,
+        'vendor': vendor,
         'expired_at': '',
       };
       final res = await api.post(url, data: params);
@@ -39,7 +40,7 @@ class QRISApi {
       final params = {
         'merchant_id': merchantId,
         'transaction_no': transactionNo,
-        'vendor': AppConfig.qrisVendor,
+        'vendor': vendor,
       };
       final res = await api.post(url, data: params);
       return res.data['data']['transaction_status_code'] ?? '';
@@ -52,14 +53,15 @@ class QRISApi {
 }
 
 final qrisApiProvider = Provider<QRISApi>((ref) {
+  final appConfig = ref.read(appConfigProvider).requireValue;
   final dio = Dio(
     BaseOptions(
-      baseUrl: AppConfig.qrisHost,
+      baseUrl: appConfig.qrisHost!,
       headers: {
-        'X-App-ID': AppConfig.qrisAppId,
+        'X-App-ID': appConfig.qrisAppId,
       },
     ),
   );
 
-  return QRISApi(api: dio);
+  return QRISApi(api: dio, vendor: appConfig.qrisVendor!);
 });

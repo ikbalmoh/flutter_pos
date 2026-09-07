@@ -4,7 +4,9 @@ part 'fcm_subscribe.freezed.dart';
 part 'fcm_subscribe.g.dart';
 
 @freezed
-class FcmSubscribe with _$FcmSubscribe {
+abstract class FcmSubscribe with _$FcmSubscribe {
+  const FcmSubscribe._();
+
   const factory FcmSubscribe({
     required String companyTopic,
     required String outletTopic,

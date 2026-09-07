@@ -4,7 +4,9 @@ part 'purchase_item_variant.freezed.dart';
 part 'purchase_item_variant.g.dart';
 
 @freezed
-class PurchaseItemVariant with _$PurchaseItemVariant {
+abstract class PurchaseItemVariant with _$PurchaseItemVariant {
+  const PurchaseItemVariant._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PurchaseItemVariant({
     required String itemId,

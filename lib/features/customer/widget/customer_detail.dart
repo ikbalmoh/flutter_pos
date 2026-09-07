@@ -12,8 +12,13 @@ import 'package:selleri/shared/widget/custom_field_input.dart';
 class CustomerDetail extends ConsumerStatefulWidget {
   final Customer customer;
   final List<CustomField>? customFields;
-  final Function(Customer,
-      {CustomerVehicle? vehicle, List<CustomField>? customFields, bool skipCustomField}) onSelect;
+  final Function(
+    Customer, {
+    CustomerVehicle? vehicle,
+    List<CustomField>? customFields,
+    bool skipCustomField,
+  })
+  onSelect;
   final Function(Customer) onEdit;
   final bool isSelected;
   final CustomerVehicle? vehicle;
@@ -42,7 +47,8 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
   @override
   void initState() {
     setState(() {
-      selectedVehicle = widget.vehicle != null &&
+      selectedVehicle =
+          widget.vehicle != null &&
               widget.customer.vehicles?.contains(widget.vehicle) == true
           ? widget.vehicle
           : null;
@@ -55,17 +61,21 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
   @override
   Widget build(BuildContext context) {
     final outletConfig = ref.watch(outletProvider).value as OutletSelected;
-    List<String> customerMandatory =
-        outletConfig.config.customMandatory?.customers ?? [];
+    final customerMandatoryConfig =
+        outletConfig.config.customMandatoryConfig.customers;
 
-    final bool vehicleEnabled = customerMandatory.contains('vehicle');
+    final bool vehicleEnabled =
+        customerMandatoryConfig.isNotEmpty &&
+        customerMandatoryConfig.containsKey('vehicle');
+        
     final bool customFieldEnabled =
         outletConfig.config.customFields?.modules.transaction?.isNotEmpty ??
-            false;
+        false;
 
     bool isExpired = widget.customer.expiredDate != null
-        ? DateTimeFormater.stringToDateTime(widget.customer.expiredDate!)!
-            .isBefore(DateTime.now())
+        ? DateTimeFormater.stringToDateTime(
+            widget.customer.expiredDate!,
+          )!.isBefore(DateTime.now())
         : false;
 
     Widget selectButton() {
@@ -84,10 +94,7 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
             );
           }
         },
-        icon: const Icon(
-          Icons.check,
-          color: Colors.white,
-        ),
+        icon: const Icon(Icons.check, color: Colors.white),
         label: Text('select'.tr()),
       );
     }
@@ -101,7 +108,11 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
           children: [
             Container(
               padding: const EdgeInsets.only(
-                  top: 10, left: 12.5, right: 12.5, bottom: 10),
+                top: 10,
+                left: 12.5,
+                right: 12.5,
+                bottom: 10,
+              ),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
@@ -124,28 +135,21 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                       children: [
                         Text(
                           widget.customer.customerName.trim(),
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w800),
                         ),
                         Text(
                           widget.customer.code.trim(),
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: Colors.blueGrey.shade600,
-                                  ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: Colors.blueGrey.shade600),
                         ),
                       ],
                     ),
                   ),
                   IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.grey.shade500,
-                    ),
-                  )
+                    icon: Icon(Icons.close, color: Colors.grey.shade500),
+                  ),
                 ],
               ),
             ),
@@ -156,10 +160,8 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(15),
                   children: [
-                    customerInformation(),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    customerInformation(customerMandatoryConfig),
+                    SizedBox(height: 10),
                     Form(
                       key: _formKey,
                       child: Column(
@@ -174,13 +176,13 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                 ),
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).viewInsets.bottom,
-            ),
+            SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
             if (MediaQuery.of(context).viewInsets.bottom == 0)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border(
@@ -200,13 +202,10 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                         foregroundColor: Colors.blue.shade700,
                       ),
                       onPressed: () => widget.onEdit(widget.customer),
-                      icon: Icon(
-                        Icons.edit,
-                        color: Colors.blue.shade700,
-                      ),
+                      icon: Icon(Icons.edit, color: Colors.blue.shade700),
                       label: Text('edit'.tr(args: ['']).trim()),
                     ),
-                    if (!isExpired) selectButton()
+                    if (!isExpired) selectButton(),
                   ],
                 ),
               ),
@@ -222,43 +221,36 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
     color: Colors.blueGrey.shade100,
   );
 
-  Widget listTile(String title, String value) => ListTile(
-        dense: true,
-        visualDensity: VisualDensity.compact,
-        title: Text(title),
-        subtitle: Text(value),
-      );
+  Widget listTile(String title, String? value) => ListTile(
+    dense: true,
+    visualDensity: VisualDensity.compact,
+    title: Text(title),
+    subtitle: Text(value ?? '-'),
+  );
 
-  Widget customerInformation() {
+  Widget customerInformation(Map<String, bool> config) {
     List<Widget> informationTiles() {
       List<Widget> tiles = [];
-      if (widget.customer.groupNames != null &&
-          widget.customer.groupNames!.isNotEmpty) {
-        tiles.add(listTile('group'.tr(), widget.customer.groupNames!));
+      if (config.isNotEmpty && config.containsKey('groups')) {
+        tiles.add(listTile('group'.tr(), widget.customer.groupNames ?? ''));
       }
-      if (widget.customer.email != null && widget.customer.email!.isNotEmpty) {
-        tiles.add(listTile('Email', widget.customer.email!));
+      if (config.isNotEmpty && config.containsKey('email')) {
+        tiles.add(listTile('Email', widget.customer.email));
       }
-      if (widget.customer.phoneNumber != null &&
-          widget.customer.phoneNumber!.isNotEmpty) {
-        tiles.add(listTile('phone'.tr(), widget.customer.phoneNumber!));
+      if (config.isNotEmpty && config.containsKey('phone_number')) {
+        tiles.add(listTile('phone'.tr(), widget.customer.phoneNumber));
       }
-      if (widget.customer.address != null &&
-          widget.customer.address!.isNotEmpty) {
-        tiles.add(listTile('address'.tr(), widget.customer.address!));
+      if (config.isNotEmpty && config.containsKey('address')) {
+        tiles.add(listTile('address'.tr(), widget.customer.address));
       }
-      if (widget.customer.barcode != null &&
-          widget.customer.barcode!.isNotEmpty) {
-        tiles.add(listTile('barcode'.tr(), widget.customer.barcode!));
+      if (config.isNotEmpty && config.containsKey('barcode')) {
+        tiles.add(listTile('barcode'.tr(), widget.customer.barcode));
       }
-      if (widget.customer.expiredDate != null &&
-          widget.customer.expiredDate!.isNotEmpty) {
-        tiles.add(
-          listTile(
-            'expired_date'.tr(),
-            widget.customer.expiredDate!,
-          ),
-        );
+      if (config.isNotEmpty && config.containsKey('postal_code')) {
+        tiles.add(listTile('postal_code'.tr(), widget.customer.postalCode));
+      }
+      if (config.isNotEmpty && config.containsKey('expired_date')) {
+        tiles.add(listTile('expired_date'.tr(), widget.customer.expiredDate));
       }
       return tiles;
     }
@@ -267,17 +259,16 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
       elevation: 0,
       color: Colors.white,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(15),
-          side: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          )),
+        borderRadius: BorderRadiusGeometry.circular(15),
+        side: BorderSide(color: Colors.grey.shade200, width: 1),
+      ),
       child: ListView.separated(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => informationTiles()[index],
-          separatorBuilder: (context, idx) => divider,
-          itemCount: informationTiles().length),
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) => informationTiles()[index],
+        separatorBuilder: (context, idx) => divider,
+        itemCount: informationTiles().length,
+      ),
     );
   }
 
@@ -286,17 +277,19 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
       color: Colors.white,
       elevation: 0,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(15),
-          side: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          )),
+        borderRadius: BorderRadiusGeometry.circular(15),
+        side: BorderSide(color: Colors.grey.shade200, width: 1),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 8),
+            padding: const EdgeInsets.only(
+              left: 15,
+              right: 15,
+              top: 15,
+              bottom: 8,
+            ),
             child: Text('select_x'.tr(args: ['vehicle'.tr()])),
           ),
           ListView.builder(
@@ -309,22 +302,22 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                   onTap: () => setState(() {
                     selectedVehicle = null;
                   }),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 5,
+                    horizontal: 15,
+                  ),
                   dense: false,
                   title: Text('without_vehicle'.tr()),
                   horizontalTitleGap: 10,
-                  leading: Icon(
-                    Icons.person,
-                    size: 20,
-                  ),
+                  leading: Icon(Icons.person, size: 20),
                   trailing: Icon(
                     selectedVehicle == null
                         ? Icons.radio_button_checked
                         : Icons.radio_button_off_rounded,
                     size: 18,
-                    color:
-                        selectedVehicle == null ? Colors.teal : Colors.blueGrey,
+                    color: selectedVehicle == null
+                        ? Colors.teal
+                        : Colors.blueGrey,
                   ),
                   visualDensity: VisualDensity.compact,
                   minVerticalPadding: 0,
@@ -336,21 +329,21 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
                 onTap: () => setState(() {
                   selectedVehicle = vehicle;
                 }),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 15,
+                ),
                 dense: true,
                 title: Text(
                   vehicle.licensePlate.isNotEmpty
                       ? vehicle.licensePlate.toUpperCase()
                       : '-',
                 ),
-                subtitle:
-                    Text('${vehicle.vehicleType} - ${vehicle.vehicleBrand}'),
-                horizontalTitleGap: 10,
-                leading: Icon(
-                  Icons.drive_eta_rounded,
-                  size: 20,
+                subtitle: Text(
+                  '${vehicle.vehicleType} - ${vehicle.vehicleBrand}',
                 ),
+                horizontalTitleGap: 10,
+                leading: Icon(Icons.drive_eta_rounded, size: 20),
                 trailing: Icon(
                   selectedVehicle == vehicle
                       ? Icons.radio_button_checked_rounded
@@ -366,7 +359,7 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
               );
             },
             itemCount: widget.customer.vehicles!.length + 1,
-          )
+          ),
         ],
       ),
     );
@@ -377,17 +370,19 @@ class _CustomerDetailState extends ConsumerState<CustomerDetail> {
       color: Colors.white,
       elevation: 0,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(15),
-          side: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          )),
+        borderRadius: BorderRadiusGeometry.circular(15),
+        side: BorderSide(color: Colors.grey.shade200, width: 1),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 8),
+            padding: const EdgeInsets.only(
+              left: 15,
+              right: 15,
+              top: 15,
+              bottom: 8,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,

@@ -120,7 +120,7 @@ class OfflineTransactions extends _$OfflineTransactions {
     _syncNeeded = false;
 
     try {
-      final shift = await ref.read(shiftNotifierProvider.future);
+      final shift = await ref.read(shiftProvider.future);
       if (shift == null) {
         throw 'shift_inactive'.tr();
       }
@@ -162,7 +162,7 @@ class OfflineTransactions extends _$OfflineTransactions {
             .updateTransactions(syncedTransactions);
       }
 
-      ref.invalidate(currentShiftInfoNotifierProvider);
+      ref.invalidate(currentShiftInfoProvider);
 
       analytics.logEvent(
         name: 'sync_transaction_finish',

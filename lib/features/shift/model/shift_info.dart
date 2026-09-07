@@ -8,7 +8,7 @@ part 'shift_info.freezed.dart';
 part 'shift_info.g.dart';
 
 @freezed
-class ShiftInfo with _$ShiftInfo {
+abstract class ShiftInfo with _$ShiftInfo {
   const ShiftInfo._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

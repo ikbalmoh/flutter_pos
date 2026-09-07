@@ -18,10 +18,9 @@ part 'auth_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class Auth extends _$Auth {
-  late final AuthRepository _authRepoistory = ref.read(authRepositoryProvider);
+  AuthRepository get _authRepoistory => ref.read(authRepositoryProvider);
 
-  late final TokenRepository _tokenRepository =
-      ref.read(tokenRepositoryProvider);
+  TokenRepository get _tokenRepository => ref.read(tokenRepositoryProvider);
 
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -67,7 +66,7 @@ class Auth extends _$Auth {
   Future<void> logout({bool? skipLogout}) async {
     analytics.logEvent(name: 'logout');
     ref.read(fcmProvider.notifier).unsubscribe();
-    ref.read(shiftNotifierProvider.notifier).shiftLoading();
+    ref.read(shiftProvider.notifier).shiftLoading();
     try {
       log('API LOGOUT');
       if (skipLogout == true) {
@@ -87,7 +86,7 @@ class Auth extends _$Auth {
       ref.invalidate(itemsProvider);
       ref.invalidate(cartProvider);
       ref.invalidate(outletProvider);
-      ref.invalidate(shiftNotifierProvider);
+      ref.invalidate(shiftProvider);
     });
   }
 }

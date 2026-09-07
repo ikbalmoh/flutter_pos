@@ -4,7 +4,9 @@ part 'shift_payment.freezed.dart';
 part 'shift_payment.g.dart';
 
 @freezed
-class ShiftPayment with _$ShiftPayment {
+abstract class ShiftPayment with _$ShiftPayment {
+  const ShiftPayment._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory ShiftPayment({
     required String paymentMethodId,

@@ -14,7 +14,7 @@ DateTime? _dateTimeFromJson(dynamic value) {
 String? _dateTimeToJson(DateTime? dt) => dt?.toIso8601String();
 
 @freezed
-class Token with _$Token {
+abstract class Token with _$Token {
   const Token._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

@@ -50,7 +50,7 @@ class _TransactionHistoryScreenState
     _searchController.addListener(() => onSearchItems(page: 1));
     _scrollController.addListener(loadMore);
     setState(() {
-      currentShift = ref.read(shiftNotifierProvider).value != null;
+      currentShift = ref.read(shiftProvider).value != null;
     });
     super.initState();
   }
@@ -186,7 +186,7 @@ class _TransactionHistoryScreenState
         ),
       ],
     );
-    return ref.watch(shiftNotifierProvider).value != null
+    return ref.watch(shiftProvider).value != null
         ? Card(
             margin: const EdgeInsets.all(0),
             elevation: 1,

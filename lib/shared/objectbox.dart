@@ -17,6 +17,9 @@ import 'dart:developer';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:path/path.dart' as p;
 
+/// A singleton class that manages the ObjectBox local database instance.
+/// It provides methods to perform CRUD operations on various entities
+/// such as categories, items, promotions, and offline transactions.
 class ObjectBox {
   late final Store store;
   static ObjectBox? _instance;
@@ -39,6 +42,9 @@ class ObjectBox {
     transactionBox = Box<OfflineTransaction>(store);
   }
 
+  /// Initializes and returns the [ObjectBox] instance.
+  /// If an instance already exists, it returns the existing one.
+  /// Otherwise, it opens the store in the application documents directory.
   static Future<ObjectBox> create() async {
     if (_instance != null) {
       return _instance!;
@@ -65,118 +71,191 @@ class ObjectBox {
     return builder.watch(triggerImmediately: true).map((query) => query.find());
   }
 
+  /// Retrieves a list of active promotions applicable to the given [cart].
+  /// This method applies various filters including day of week, date validity,
+  /// minimum order subtotal, and specific products or categories in the cart.
   List<Promotion> transactionPromotions({required Cart cart}) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
+    // 1. Initial condition: Ensure the promotion is active (status = true)
     Condition<Promotion> promotionQuery = Promotion_.status.equals(true);
 
-    // Filter Promo by day
-    promotionQuery = promotionQuery.and(Promotion_.days.isNull().or(
+    // 2. Filter Promo by day: The promotion must either be valid for all days (days is null)
+    // or valid specifically for today's day name (e.g., 'monday').
+    promotionQuery = promotionQuery.and(
+      Promotion_.days.isNull().or(
         Promotion_.days.containsElement(
-            DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())));
+          DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase(),
+        ),
+      ),
+    );
 
-    // Filter promo by current date
-    promotionQuery = promotionQuery.and(Promotion_.allTime
-        .equals(true)
-        .or(Promotion_.startDate
-            .lessOrEqualDate(today)
-            .and(Promotion_.endDate.greaterOrEqualDate(today)))
-        .or(Promotion_.startDate
-            .equalsDate(today)
-            .or(Promotion_.endDate.equalsDate(today))));
+    // 3. Filter promo by current date: The promotion must either be valid for all time (allTime = true)
+    // or today's date must fall within the range of startDate and endDate (inclusive).
+    promotionQuery = promotionQuery.and(
+      Promotion_.allTime
+          .equals(true)
+          .or(
+            Promotion_.startDate
+                .lessOrEqualDate(today)
+                .and(Promotion_.endDate.greaterOrEqualDate(today)),
+          )
+          .or(
+            Promotion_.startDate
+                .equalsDate(today)
+                .or(Promotion_.endDate.equalsDate(today)),
+          ),
+    );
 
-    // FILTER PROMO BY CODE
+    // 4. Filter Promo by code: Exclude promotions that require a manual promo code,
+    // since this method automatically applies eligible promotions.
     promotionQuery = promotionQuery.and(Promotion_.needCode.equals(false));
 
+    // 5. Transaction Terms Condition: For promotions that apply to the overall transaction
+    // (type 2: Transaction Discount, type 4: Free Shipping), check if the cart subtotal
+    // meets or exceeds the minimum order requirement.
     Condition<Promotion> promotionTermsQuery = Promotion_.type
-        .oneOf([2, 4]).and(
-            Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
+        .oneOf([2, 4])
+        .and(Promotion_.requirementMinimumOrder.lessOrEqual(cart.subtotal));
 
-    // Filter promotions by product
+    // 6. Filter promotions by product: If the cart has items, we need to check if
+    // there are promotions specifically targeting these items or their categories.
     if (cart.items.isNotEmpty) {
       List<ItemCart> items = List<ItemCart>.from(cart.items.toList());
 
-      Condition<Promotion> requirementProductIds = (items[0].idVariant != null
-              ? Promotion_.requirementVariantId
-                  .containsElement(items[0].idVariant!.toString())
-              : Promotion_.requirementProductId
-                  .containsElement(items[0].idItem))
-          .and(Promotion_.requirementQuantity
-              .lessOrEqual(items[0].quantity.toInt()));
-
-      Condition<Promotion> requirementCategoryIds = (Promotion_
+      // 7. Product Requirement Condition (Base): Setup the condition for the first item in the cart.
+      // Match by variant ID if available, otherwise by item ID. Also ensure the cart item quantity
+      // is greater than or equal to the promotion's minimum requirement quantity.
+      Condition<Promotion> requirementProductIds = Promotion_
           .requirementProductId
-          .containsElement(items[0].idCategory ?? '')
-          .and(Promotion_.requirementQuantity
-              .lessOrEqual(items[0].quantity.toInt())));
+          .containsElement('');
 
-      for (var i = 1; i < items.length; i++) {
+      // 8. Category Requirement Condition (Base): Setup the condition for the first item's category.
+      // Match by the item's category ID and ensure the cart item quantity meets the requirement.
+      Condition<Promotion> requirementCategoryIds = Promotion_
+          .requirementProductId
+          .containsElement('');
+
+      Condition<Promotion> requirementSubCategoryIds = Promotion_
+          .requirementProductId
+          .containsElement('');
+
+      // Iterate through the rest of the cart items to add them as OR conditions
+      for (var i = 0; i < items.length; i++) {
         ItemCart itemCart = items[i];
+
+        // 9. Append product/variant requirements for subsequent items using OR.
         requirementProductIds = requirementProductIds.or(
           (itemCart.idVariant != null
-                  ? Promotion_.requirementVariantId
-                      .containsElement(itemCart.idVariant!.toString())
-                  : Promotion_.requirementProductId
-                      .containsElement(itemCart.idItem))
+                  ? Promotion_.requirementVariantId.containsElement(
+                      itemCart.idVariant!.toString(),
+                    )
+                  : Promotion_.requirementProductId.containsElement(
+                      itemCart.idItem,
+                    ))
               .and(
-            Promotion_.requirementQuantity
-                .lessOrEqual(itemCart.quantity.toInt()),
-          ),
+                Promotion_.requirementQuantity.lessOrEqual(
+                  itemCart.quantity.toInt(),
+                ),
+              ),
         );
 
+        // (Note: The block below seems to be an exact duplicate of the block above in the original code,
+        //  but we keep it structurally identical and append it to the condition.)
         requirementProductIds = requirementProductIds.or(
           (itemCart.idVariant != null
-                  ? Promotion_.requirementVariantId
-                      .containsElement(itemCart.idVariant!.toString())
-                  : Promotion_.requirementProductId
-                      .containsElement(itemCart.idItem))
+                  ? Promotion_.requirementVariantId.containsElement(
+                      itemCart.idVariant!.toString(),
+                    )
+                  : Promotion_.requirementProductId.containsElement(
+                      itemCart.idItem,
+                    ))
               .and(
-            Promotion_.requirementQuantity
-                .lessOrEqual(itemCart.quantity.toInt()),
-          ),
+                Promotion_.requirementQuantity.lessOrEqual(
+                  itemCart.quantity.toInt(),
+                ),
+              ),
         );
 
-        requirementCategoryIds = requirementCategoryIds.or((Promotion_
-                .requirementProductId
-                .containsElement(itemCart.idCategory ?? ''))
-            .and(Promotion_.requirementQuantity
-                .lessOrEqual(itemCart.quantity.toInt())));
+        // 10. Append category requirements for subsequent items using OR.
+        if (itemCart.idCategory != null) {
+          requirementCategoryIds = requirementCategoryIds.or(
+            (Promotion_.requirementProductId.containsElement(
+              itemCart.idCategory!,
+            )).and(
+              Promotion_.requirementQuantity.lessOrEqual(
+                itemCart.quantity.toInt(),
+              ),
+            ),
+          );
+        }
+
+        if (itemCart.idSubCategory != null) {
+          requirementSubCategoryIds = requirementSubCategoryIds.or(
+            (Promotion_.requirementProductId.containsElement(
+              itemCart.idSubCategory!,
+            )).and(
+              Promotion_.requirementQuantity.lessOrEqual(
+                itemCart.quantity.toInt(),
+              ),
+            ),
+          );
+        }
       }
 
+      // 11. Combine Product & Category queries: A promotion is matched if it specifically
+      // targets products (requirementProductType = 1) AND the product condition is met,
+      // OR if it targets categories (requirementProductType = 3) AND the category condition is met.
       Condition<Promotion> requirementProductQuery = Promotion_
           .requirementProductType
           .equals(1)
           .and(requirementProductIds)
-          .or(Promotion_.requirementProductType
-              .equals(3)
-              .and(requirementCategoryIds));
+          .or(
+            Promotion_.requirementProductType
+                .equals(3)
+                .and(requirementCategoryIds),
+          )
+          .or(Promotion_.requirementProductType.equals(4).and(requirementSubCategoryIds));
 
-      List<ItemCart> packageItems =
-          items.where((item) => item.isPackage).toList();
+      List<ItemCart> packageItems = items
+          .where((item) => item.isPackage)
+          .toList();
 
       if (packageItems.isNotEmpty) {
+        // 12. Package Requirement Condition: If there are packages in the cart,
+        // create a base condition matching the first package's item ID.
         Condition<Promotion> requirementPackageIds = Promotion_
             .requirementProductId
-            .containsElement(packageItems[0].idItem);
-        for (var i = 1; i < packageItems.length; i++) {
-          requirementPackageIds = requirementPackageIds.or(Promotion_
-              .requirementProductId
-              .containsElement(packageItems[i].idItem));
+            .containsElement('');
+        // 13. Append package requirements for subsequent package items using OR.
+        for (var i = 0; i < packageItems.length; i++) {
+          requirementPackageIds = requirementPackageIds.or(
+            Promotion_.requirementProductId.containsElement(
+              packageItems[i].idItem,
+            ),
+          );
         }
 
-        requirementProductQuery = requirementProductQuery.or(Promotion_
-            .requirementProductType
-            .equals(2)
-            .and(requirementPackageIds));
+        // 14. Include package promotions in the overall product query (requirementProductType = 2).
+        requirementProductQuery = requirementProductQuery.or(
+          Promotion_.requirementProductType
+              .equals(2)
+              .and(requirementPackageIds),
+        );
       }
 
-      promotionTermsQuery = promotionTermsQuery
-          .or(Promotion_.type.oneOf([1, 3]).and(requirementProductQuery));
+      // 15. Final Terms Condition: Combine the transaction-wide terms (type 2, 4) with
+      // product-specific promotions (type 1: item discount, type 3: free item) that met the product query.
+      promotionTermsQuery = promotionTermsQuery.or(
+        Promotion_.type.oneOf([1, 3]).and(requirementProductQuery),
+      );
     }
 
+    // 16. Combine all conditions (active, date/time, code, and terms) into the final query.
     promotionQuery = promotionQuery.and(promotionTermsQuery);
 
+    // 17. Execute the query, ordering by type, whether it needs a code, priority, minimum order (desc), and all time.
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
       ..order(Promotion_.type)
       ..order(Promotion_.needCode)
@@ -189,32 +268,48 @@ class ObjectBox {
     return promotions;
   }
 
-  Stream<List<Promotion>> promotionsStream(
-      {int? type,
-      double? requirementMinimumOrder,
-      bool? needCode,
-      bool? active,
-      String? search,
-      PickerDateRange? range}) {
+  Stream<List<Promotion>> promotionsStream({
+    int? type,
+    double? requirementMinimumOrder,
+    bool? needCode,
+    bool? active,
+    String? search,
+    PickerDateRange? range,
+  }) {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
-    Condition<Promotion> promotionQuery = Promotion_.allTime.equals(true).or(
+    Condition<Promotion> promotionQuery = Promotion_.allTime
+        .equals(true)
+        .or(
           Promotion_.endDate.greaterThanDate(
             today.subtract(const Duration(days: 30)),
           ),
         );
 
     if (active == true) {
-      promotionQuery = (Promotion_.allTime.equals(true).or(Promotion_.startDate
-              .lessOrEqualDate(today)
-              .and(Promotion_.endDate.greaterOrEqualDate(today))
-              .or(Promotion_.startDate
-                  .equalsDate(today)
-                  .or(Promotion_.endDate.equalsDate(today)))))
-          .and(Promotion_.days.isNull().or(Promotion_.days.containsElement(
-              DateFormat('EEEE', 'en_US')
-                  .format(DateTime.now())
-                  .toLowerCase())));
+      promotionQuery =
+          (Promotion_.allTime
+                  .equals(true)
+                  .or(
+                    Promotion_.startDate
+                        .lessOrEqualDate(today)
+                        .and(Promotion_.endDate.greaterOrEqualDate(today))
+                        .or(
+                          Promotion_.startDate
+                              .equalsDate(today)
+                              .or(Promotion_.endDate.equalsDate(today)),
+                        ),
+                  ))
+              .and(
+                Promotion_.days.isNull().or(
+                  Promotion_.days.containsElement(
+                    DateFormat(
+                      'EEEE',
+                      'en_US',
+                    ).format(DateTime.now()).toLowerCase(),
+                  ),
+                ),
+              );
     }
 
     if (range != null) {
@@ -232,9 +327,11 @@ class ObjectBox {
     }
 
     if (search != null) {
-      promotionQuery = promotionQuery.and(Promotion_.name
-          .contains(search, caseSensitive: false)
-          .or(Promotion_.promoCode.equals(search, caseSensitive: false)));
+      promotionQuery = promotionQuery.and(
+        Promotion_.name
+            .contains(search, caseSensitive: false)
+            .or(Promotion_.promoCode.equals(search, caseSensitive: false)),
+      );
     }
 
     if (type != null) {
@@ -242,8 +339,9 @@ class ObjectBox {
     }
 
     if (requirementMinimumOrder != null) {
-      promotionQuery = promotionQuery.and(Promotion_.requirementMinimumOrder
-          .lessOrEqual(requirementMinimumOrder));
+      promotionQuery = promotionQuery.and(
+        Promotion_.requirementMinimumOrder.lessOrEqual(requirementMinimumOrder),
+      );
     }
 
     QueryBuilder<Promotion> builder = promotionBox.query(promotionQuery)
@@ -264,8 +362,9 @@ class ObjectBox {
       return result;
     }
     if (promotion.rewardProductType == 1) {
-      itemQuery =
-          itemQuery.and(Item_.idItem.equals(promotion.rewardProductId!));
+      itemQuery = itemQuery.and(
+        Item_.idItem.equals(promotion.rewardProductId!),
+      );
 
       item = itemBox.query(itemQuery).build().findFirst();
 
@@ -275,9 +374,13 @@ class ObjectBox {
 
       if (promotion.rewardVariantId != null) {
         variant = itemVariantBox
-            .query(ItemVariant_.idItem
-                .equals(promotion.rewardProductId!)
-                .and(ItemVariant_.idVariant.equals(promotion.rewardVariantId!)))
+            .query(
+              ItemVariant_.idItem
+                  .equals(promotion.rewardProductId!)
+                  .and(
+                    ItemVariant_.idVariant.equals(promotion.rewardVariantId!),
+                  ),
+            )
             .build()
             .findFirst();
       }
@@ -298,10 +401,12 @@ class ObjectBox {
       itemQuery = itemQuery.and(Item_.idCategory.equals(idCategory));
     }
     if (search != '') {
-      itemQuery = itemQuery.and(Item_.itemName
-          .contains(search, caseSensitive: false)
-          .or(Item_.barcode.equals(search, caseSensitive: false))
-          .or(Item_.sku.equals(search, caseSensitive: false)));
+      itemQuery = itemQuery.and(
+        Item_.itemName
+            .contains(search, caseSensitive: false)
+            .or(Item_.barcode.equals(search, caseSensitive: false))
+            .or(Item_.sku.equals(search, caseSensitive: false)),
+      );
     }
     if (filterStock == FilterStock.available) {
       itemQuery = itemQuery.and(Item_.stockItem.greaterThan(0));
@@ -323,8 +428,10 @@ class ObjectBox {
   }
 
   List<ItemVariant> itemVariants(String idItem) {
-    List<ItemVariant> variants =
-        itemVariantBox.query(ItemVariant_.idItem.equals(idItem)).build().find();
+    List<ItemVariant> variants = itemVariantBox
+        .query(ItemVariant_.idItem.equals(idItem))
+        .build()
+        .find();
     return variants;
   }
 
@@ -348,14 +455,17 @@ class ObjectBox {
   Item? getItem(String idItem) =>
       itemBox.query(Item_.idItem.equals(idItem)).build().findFirst();
 
-  ItemVariant? getItemVariant(
-          {required String idItem, required int variantId}) =>
-      itemVariantBox
-          .query(ItemVariant_.idItem
-              .equals(idItem)
-              .and(ItemVariant_.idVariant.equals(variantId)))
-          .build()
-          .findFirst();
+  ItemVariant? getItemVariant({
+    required String idItem,
+    required int variantId,
+  }) => itemVariantBox
+      .query(
+        ItemVariant_.idItem
+            .equals(idItem)
+            .and(ItemVariant_.idVariant.equals(variantId)),
+      )
+      .build()
+      .findFirst();
 
   CustomerGroup? getCustomerGroup(int groupId) => customerGroupBox
       .query(CustomerGroup_.groupId.equals(groupId))
@@ -372,6 +482,9 @@ class ObjectBox {
       .build()
       .find();
 
+  /// Inserts or updates a list of items into the local database.
+  /// This method also handles saving associated item variants and packages,
+  /// and removes any variants or packages that are no longer associated with the items.
   void putItems(List<Item> items) async {
     try {
       List<int> ids = itemBox.putMany(items);
@@ -381,8 +494,7 @@ class ObjectBox {
       List<ItemVariant> itemVariants = [];
       List<int> removeVariants = [];
       for (var item in items) {
-        final unusedVariant = getItem(item.idItem)
-            ?.variants
+        final unusedVariant = getItem(item.idItem)?.variants
             .where((v) => !item.variants.map((vr) => vr.id).contains(v.id))
             .map((v) => v.id)
             .toList();
@@ -404,11 +516,12 @@ class ObjectBox {
       List<int> removeItemPackageIds = [];
       for (var item in items) {
         if (item.isPackage) {
-          final unusedPackages = getItem(item.idItem)
-              ?.packageItems
-              .where((pkg) => !item.packageItems
-                  .map((pkg) => pkg.idItemPackage)
-                  .contains(pkg.idItemPackage))
+          final unusedPackages = getItem(item.idItem)?.packageItems
+              .where(
+                (pkg) => !item.packageItems
+                    .map((pkg) => pkg.idItemPackage)
+                    .contains(pkg.idItemPackage),
+              )
               .map((pkg) => pkg.id)
               .toList();
           if (unusedPackages != null) {
@@ -484,14 +597,20 @@ class ObjectBox {
       promotionBox.removeAll();
       promotionBox.putMany(promotions);
     }
-    log('${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}');
+    log(
+      '${promotions.length} PROMOTIONS HAS BEEN STORED\n${promotions.map((p) => p.name)}',
+    );
   }
 
+  /// Stores an offline transaction in the local database.
+  /// If a transaction with the same transaction number already exists, it is updated.
+  /// The cart data is serialized to a JSON string before storage.
   Future<List<Cart>> putTransaction(Cart transaction) async {
     try {
       final ids = transactionBox
-          .query(OfflineTransaction_.transactionNo
-              .equals(transaction.transactionNo))
+          .query(
+            OfflineTransaction_.transactionNo.equals(transaction.transactionNo),
+          )
           .build()
           .findIds();
       final int id = ids.isEmpty ? 0 : ids.first;
@@ -499,21 +618,26 @@ class ObjectBox {
         id: id,
         transactionNo: transaction.transactionNo,
         shiftId: transaction.shiftId,
-        transaction: jsonEncode(transaction
-            .copyWith(
-              isOffline: true,
-              payments: transaction.payments
-                  .map(
-                    (p) => p.copyWith(createdAt: p.createdAt ?? DateTime.now()),
-                  )
-                  .toList(),
-            )
-            .toJson()),
+        transaction: jsonEncode(
+          transaction
+              .copyWith(
+                isOffline: true,
+                payments: transaction.payments
+                    .map(
+                      (p) =>
+                          p.copyWith(createdAt: p.createdAt ?? DateTime.now()),
+                    )
+                    .toList(),
+              )
+              .toJson(),
+        ),
       );
       log('Transaction Stored to DB: ${offlinedTransaction.transaction}');
       await transactionBox.putAsync(offlinedTransaction);
       final transactions = await offlineTransactions();
-      log('Stored Offline Transactions: ${transactions.map((t) => t.transactionNo)}');
+      log(
+        'Stored Offline Transactions: ${transactions.map((t) => t.transactionNo)}',
+      );
       return transactions;
     } catch (e) {
       log('Error storing transaction: $e');
@@ -525,17 +649,18 @@ class ObjectBox {
     String? shiftId,
     String? transactionNo,
   }) async {
-    Condition<OfflineTransaction> condition =
-        OfflineTransaction_.id.greaterThan(0).and(OfflineTransaction_.transactionNo.notNull());
+    Condition<OfflineTransaction> condition = OfflineTransaction_.id
+        .greaterThan(0)
+        .and(OfflineTransaction_.transactionNo.notNull());
     if (shiftId != null && shiftId.isNotEmpty) {
-      condition.and(
-        OfflineTransaction_.shiftId.equals(shiftId),
-      );
+      condition.and(OfflineTransaction_.shiftId.equals(shiftId));
     }
     if (transactionNo != null && transactionNo.isNotEmpty) {
       condition.and(
-        OfflineTransaction_.transactionNo
-            .contains(transactionNo, caseSensitive: false),
+        OfflineTransaction_.transactionNo.contains(
+          transactionNo,
+          caseSensitive: false,
+        ),
       );
     }
     final builder = transactionBox.query();

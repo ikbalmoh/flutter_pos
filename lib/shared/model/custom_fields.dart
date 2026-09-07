@@ -5,7 +5,9 @@ part 'custom_fields.freezed.dart';
 part 'custom_fields.g.dart';
 
 @freezed
-class CustomFields with _$CustomFields {
+abstract class CustomFields with _$CustomFields {
+  const CustomFields._();
+
   const factory CustomFields({
     @JsonKey(name: 'modules', fromJson: _modulesFromJson)
     required CustomFieldsModules modules,
@@ -16,7 +18,7 @@ class CustomFields with _$CustomFields {
 }
 
 @freezed
-class CustomFieldsModules with _$CustomFieldsModules {
+abstract class CustomFieldsModules with _$CustomFieldsModules {
   const factory CustomFieldsModules({
     @JsonKey(name: 'Transaction') @Default([]) List<CustomField>? transaction,
   }) = _CustomFieldsModules;

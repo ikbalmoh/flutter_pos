@@ -40,7 +40,7 @@ class QrisPaymentModal extends ConsumerWidget {
     final qrisAsync = ref.watch(qrisProvider(transactionNo, amount));
 
     ref.listen(qrisProvider(transactionNo, amount), (_, next) {
-      if (next.valueOrNull?.isPaid == true) {
+      if (next.value?.isPaid == true) {
         Navigator.of(context).pop(true);
       }
     });

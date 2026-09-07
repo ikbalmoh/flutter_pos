@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/item/model/item_adjustment.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/adjustment/api/adjustment_api.dart';

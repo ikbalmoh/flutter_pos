@@ -3,9 +3,11 @@ import 'dart:developer';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/cart/model/cart_holded.dart';
+import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/shared/model/pagination.dart';
 import 'package:selleri/features/transaction/api/transaction_api.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
+import 'package:selleri/shared/utils/authorization_helper.dart';
 
 part 'holded_provider.g.dart';
 
@@ -16,8 +18,9 @@ class Holded extends _$Holded {
     try {
       final api = ref.watch(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
-      final holded =
-          await api.holdedTransactions(idOutlet: outlet.outlet.idOutlet);
+      final holded = await api.holdedTransactions(
+        idOutlet: outlet.outlet.idOutlet,
+      );
       return holded;
     } catch (e, stackTrace) {
       log('HOLDED TRANSCATION ERROR: $e\n=> $stackTrace');
@@ -32,26 +35,58 @@ class Holded extends _$Holded {
       state = AsyncData(state.value!.copyWith(loading: true));
     }
     try {
-      final api = ref.watch(transactionApiProvider);
+      final api = ref.read(transactionApiProvider);
       final outlet = ref.read(outletProvider).value as OutletSelected;
       var holded = await api.holdedTransactions(
-          idOutlet: outlet.outlet.idOutlet, page: page, q: search);
-      List<CartHolded> data =
-          List.from(state.value?.data as Iterable<CartHolded>);
+        idOutlet: outlet.outlet.idOutlet,
+        page: page,
+        q: search,
+      );
+
+      if (!ref.mounted) return;
+
+      List<CartHolded> data = List.from(
+        state.value?.data as Iterable<CartHolded>,
+      );
       if (page > 1) {
         data = data..addAll(holded.data as Iterable<CartHolded>);
         holded = holded.copyWith(data: data, loading: false);
       }
       state = AsyncData(holded);
-    } on Exception catch (e, trace) {
-      state = AsyncError(e, trace);
+    } catch (e, trace) {
+      if (ref.mounted) {
+        state = AsyncError(e, trace);
+      }
     }
   }
 
-  Future<void> deleteHoldedTransaction(String transactionId) async {
+  Future<bool> deleteHoldedTransaction(
+    String transactionId, {
+    required String reasonId,
+    required String notes,
+    bool? createNewTransaciton = false,
+  }) async {
     try {
-      final api = ref.watch(transactionApiProvider);
-      await api.deleteHoldedTransaction(transactionId);
+      final api = ref.read(transactionApiProvider);
+      final cartNotifier = ref.read(cartProvider.notifier);
+
+      final isAuthorize = await AuthorizationHelper.authorize('remove-hold');
+      if (!isAuthorize) {
+        return false;
+      }
+
+      if (createNewTransaciton == true) {
+        cartNotifier.initCart();
+      }
+      
+      await api.deleteHoldedTransaction(
+        transactionId,
+        reasonId: reasonId,
+        notes: notes,
+      );
+
+      if (!ref.mounted) return true;
+
       state = AsyncData(
         state.value!.copyWith(
           data: state.value?.data
@@ -59,6 +94,7 @@ class Holded extends _$Holded {
               .toList(),
         ),
       );
+      return true;
     } catch (e) {
       rethrow;
     }

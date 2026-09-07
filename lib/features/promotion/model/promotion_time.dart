@@ -4,7 +4,9 @@ part 'promotion_time.freezed.dart';
 part 'promotion_time.g.dart';
 
 @freezed
-class PromotionTime with _$PromotionTime {
+abstract class PromotionTime with _$PromotionTime {
+  const PromotionTime._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PromotionTime({
     required String startTime,

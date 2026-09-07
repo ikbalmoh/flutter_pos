@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide AppBar;
 import 'package:selleri/app/widget/app_bar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:selleri/features/holded/widget/components/remove_hold_form.dart';
 import 'package:selleri/features/item/model/item_cart.dart';
 import 'package:selleri/features/cart/provider/cart_provider.dart';
 import 'package:selleri/features/cart/widget/components/cart_item.dart';
@@ -26,14 +27,17 @@ class CartScreen extends ConsumerWidget {
       if (context.canPop()) {
         context.pop();
       }
-      AppAlert.confirm(context,
-          title: "${'delete'.tr()} ${item.itemName}",
-          subtitle: 'are_you_sure'.tr(),
-          confirmLabel: 'delete'.tr(),
-          danger: true, onConfirm: () async {
-        await ref.read(cartProvider.notifier).removeItem(item.identifier!);
-        if (!context.mounted) return;
-      });
+      AppAlert.confirm(
+        context,
+        title: "${'delete'.tr()} ${item.itemName}",
+        subtitle: 'are_you_sure'.tr(),
+        confirmLabel: 'delete'.tr(),
+        danger: true,
+        onConfirm: () async {
+          await ref.read(cartProvider.notifier).removeItem(item.identifier!);
+          if (!context.mounted) return;
+        },
+      );
     }
 
     void onPressItem(ItemCart item) {
@@ -42,20 +46,32 @@ class CartScreen extends ConsumerWidget {
         isScrollControlled: true,
         backgroundColor: Colors.white,
         useSafeArea: true,
-        builder: (BuildContext context) => EditCartItemForm(
-          item: item,
-          onDelete: () => onDeleteItem(item),
-        ),
+        builder: (BuildContext context) =>
+            EditCartItemForm(item: item, onDelete: () => onDeleteItem(item)),
       );
     }
 
     void confirmDeleteTransaction(BuildContext context) {
-      AppAlert.confirm(
-        context,
-        title: 'delete_transaction'.tr(),
-        subtitle: 'delete_transaction_confirmation'.tr(),
-        confirmLabel: 'delete'.tr(),
-        onConfirm: () => ref.read(cartProvider.notifier).removeHoldedCart(),
+      final transaction = ref.read(cartProvider);
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isDismissible: false,
+        enableDrag: false,
+        isScrollControlled: true,
+        useSafeArea: true,
+        builder: (context) {
+          return RemoveHoldForm(
+            transactionId: transaction.idTransaction!,
+            transactionNo: transaction.transactionNo,
+            shouldCreateNewTransaciton: true,
+            onRemoved: () {
+              while (context.canPop()) {
+                context.pop();
+              }
+            },
+          );
+        },
       );
     }
 
@@ -68,34 +84,35 @@ class CartScreen extends ConsumerWidget {
           'cart'.tr(),
           style: asWidget == true
               ? Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  )
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                )
               : null,
         ),
         leading: asWidget == true
-            ? const Icon(
-                CupertinoIcons.shopping_cart,
-                size: 20,
-              )
+            ? const Icon(CupertinoIcons.shopping_cart, size: 20)
             : null,
         foregroundColor: asWidget == true ? Colors.black87 : Colors.teal,
         actionsPadding: EdgeInsets.only(right: 10),
         actions: [
           TextButton.icon(
             style: TextButton.styleFrom(
-                backgroundColor: cart.idCustomer != null
-                    ? Colors.teal.shade50.withValues(alpha: .4)
-                    : Colors.white,
-                foregroundColor: cart.idCustomer != null
-                    ? Colors.teal
-                    : Colors.grey.shade700,
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.only(
-                    right: cart.idCustomer != null ? 0 : 10, left: 10)),
+              backgroundColor: cart.idCustomer != null
+                  ? Colors.teal.shade50.withValues(alpha: .4)
+                  : Colors.white,
+              foregroundColor: cart.idCustomer != null
+                  ? Colors.teal
+                  : Colors.grey.shade700,
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.only(
+                right: cart.idCustomer != null ? 0 : 10,
+                left: 10,
+              ),
+            ),
             onPressed: () => context.push(Routes.customers),
             icon: Icon(
-                cart.vehicle != null ? Icons.drive_eta_rounded : Icons.person),
+              cart.vehicle != null ? Icons.drive_eta_rounded : Icons.person,
+            ),
             label: cart.idCustomer != null
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -110,26 +127,22 @@ class CartScreen extends ConsumerWidget {
                           if (cart.vehicle != null)
                             Text(
                               cart.vehicle!.licensePlate,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelSmall
+                              style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(color: Colors.teal.shade400),
-                            )
+                            ),
                         ],
                       ),
                       IconButton(
-                          style: IconButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            overlayColor: Colors.red,
-                          ),
-                          onPressed: () => ref
-                              .read(cartProvider.notifier)
-                              .selectCustomer(null),
-                          icon: Icon(
-                            Icons.clear,
-                            color: Colors.red,
-                          )),
+                        style: IconButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          overlayColor: Colors.red,
+                        ),
+                        onPressed: () => ref
+                            .read(cartProvider.notifier)
+                            .selectCustomer(null),
+                        icon: Icon(Icons.clear, color: Colors.red),
+                      ),
                     ],
                   )
                 : Text('walk_in'.tr()),
@@ -137,14 +150,12 @@ class CartScreen extends ConsumerWidget {
           if (cart.holdAt != null)
             IconButton(
               onPressed: () => confirmDeleteTransaction(context),
-              icon: const Icon(
-                CupertinoIcons.trash,
-              ),
+              icon: const Icon(CupertinoIcons.trash),
               color: Colors.red,
               iconSize: 18,
               tooltip: 'delete_transaction'.tr(),
               visualDensity: VisualDensity.compact,
-            )
+            ),
         ],
       ),
       body: cart.items.isNotEmpty
@@ -157,26 +168,20 @@ class CartScreen extends ConsumerWidget {
                   child: ListView.builder(
                     itemBuilder: (context, idx) {
                       ItemCart item = cart.items[idx];
-                      return CartItem(
-                        item: item,
-                        onPress: onPressItem,
-                      );
+                      return CartItem(item: item, onPress: onPressItem);
                     },
                     itemCount: cart.items.length,
                   ),
                 ),
-                CartActions(
-                  cart: cart,
-                ),
+                CartActions(cart: cart),
               ],
             )
           : Center(
               child: Text(
                 'cart_empty'.tr(),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: Colors.blueGrey.shade500),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.blueGrey.shade500,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),

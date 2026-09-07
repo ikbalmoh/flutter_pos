@@ -9,7 +9,7 @@ import 'package:selleri/features/elastic/model/elastic.dart';
 import 'package:selleri/features/outlet/model/outlet_config.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/outlet/repository/outlet_repository.dart';
-import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 import 'package:selleri/shared/utils/exception.dart';
 
 abstract class ElasticRepositoryInterface {
@@ -63,25 +63,21 @@ class ElasticRepository implements ElasticRepositoryInterface {
 
     if (activeCompanyId == null || activeOutletId == null) {
       throw Exception(
-          'Missing companyId ($activeCompanyId) or outletId ($activeOutletId)');
+        'Missing companyId ($activeCompanyId) or outletId ($activeOutletId)',
+      );
     }
 
     final index =
         '/selleri_tenant_${activeCompanyId}_outlet_${activeOutletId}_item';
 
     try {
-      final Map<String, dynamic> data = {
-        'size': size,
-        'from': from,
-      };
+      final Map<String, dynamic> data = {'size': size, 'from': from};
 
       final query = {};
 
       if (lastUpdate != null) {
         query['range'] = {
-          'updated_at_ms': {
-            'gt': lastUpdate,
-          },
+          'updated_at_ms': {'gt': lastUpdate},
         };
       }
 
@@ -110,8 +106,8 @@ class ElasticRepository implements ElasticRepositoryInterface {
     final data = {
       "query": {
         "term": {
-          "_id": {"value": outletId}
-        }
+          "_id": {"value": outletId},
+        },
       },
       "size": 1,
       "from": 0,
@@ -120,8 +116,9 @@ class ElasticRepository implements ElasticRepositoryInterface {
     try {
       final res = await api.post('$index/_search', data: data);
       final elastic = ElasticResponse.fromJson(res.data);
-      final List<OutletConfig> sources =
-          elastic.hits.sources(OutletConfig.fromJson);
+      final List<OutletConfig> sources = elastic.hits.sources(
+        OutletConfig.fromJson,
+      );
       if (sources.isEmpty) {
         throw NotFoundException();
       }
@@ -144,22 +141,28 @@ class ElasticRepository implements ElasticRepositoryInterface {
   }
 }
 
-final elasticRepositoryProvider = Provider<ElasticRepository>((ref) {
+final elasticRepositoryProvider = Provider<ElasticRepository?>((ref) {
+  final config = ref.read(appConfigProvider).requireValue;
+  if (config.esHost == null || config.esHost!.isEmpty || config.esKey == null || config.esKey!.isEmpty) {
+    return null;
+  }
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: AppConfig.esHost,
-      headers: {'Authorization': 'ApiKey ${AppConfig.esKey}'},
+      baseUrl: config.esHost!,
+      headers: {'Authorization': 'ApiKey ${config.esKey}'},
     ),
   );
 
-  final authState = ref.read(authProvider).value;
-  final outletState = ref.read(outletProvider).value;
+  final authState = ref.watch(authProvider).value;
+  final outletState = ref.watch(outletProvider).value;
 
-  final String? companyId =
-      authState is Authenticated ? authState.user.user.company.idCompany : null;
+  final String? companyId = authState is Authenticated
+      ? authState.user.user.company.idCompany
+      : null;
 
-  final String? outletId =
-      outletState is OutletSelected ? outletState.outlet.idOutlet : null;
+  final String? outletId = outletState is OutletSelected
+      ? outletState.outlet.idOutlet
+      : null;
 
   return ElasticRepository(
     api: dio,

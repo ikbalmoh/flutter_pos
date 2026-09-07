@@ -4,7 +4,9 @@ part 'item_suggestion.freezed.dart';
 part 'item_suggestion.g.dart';
 
 @freezed
-class ItemSuggestion with _$ItemSuggestion {
+abstract class ItemSuggestion with _$ItemSuggestion {
+  const ItemSuggestion._();
+
   const factory ItemSuggestion({
     @JsonKey(name: 'id_item') required String idItem,
     @JsonKey(name: 'item_name') required String itemName,

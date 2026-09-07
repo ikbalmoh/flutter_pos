@@ -4,7 +4,9 @@ part 'adjustment_history.freezed.dart';
 part 'adjustment_history.g.dart';
 
 @freezed
-class AdjustmentHistory with _$AdjustmentHistory {
+abstract class AdjustmentHistory with _$AdjustmentHistory {
+  const AdjustmentHistory._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory AdjustmentHistory({
     required String idAdjustment,

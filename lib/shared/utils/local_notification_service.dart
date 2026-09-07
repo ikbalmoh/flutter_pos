@@ -35,7 +35,7 @@ class LocalNotificationService {
     );
 
     _notificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       // to handle event when we receive notification
       onDidReceiveNotificationResponse: (details) async {
         log('onDidReceiveNotificationResponse: $details');
@@ -81,8 +81,11 @@ class LocalNotificationService {
           priority: Priority.high,
         ),
       );
-      await _notificationsPlugin.show(id, message.notification?.title,
-          message.notification?.body, notificationDetails,
+      await _notificationsPlugin.show(
+          id: id,
+          title: message.notification?.title,
+          body: message.notification?.body,
+          notificationDetails: notificationDetails,
           payload: message.data['link']);
     } catch (e) {
       log(e.toString());

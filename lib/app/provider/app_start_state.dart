@@ -3,7 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'app_start_state.freezed.dart';
 
 @freezed
-class AppStartState with _$AppStartState {
+abstract class AppStartState with _$AppStartState {
+  const AppStartState._();
+
   const factory AppStartState.initializing() = _Initializing;
 
   const factory AppStartState.unauthenticated() = Unauthenticated;

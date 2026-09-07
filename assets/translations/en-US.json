@@ -414,5 +414,7 @@
   "work_duration": "Work Duration",
   "day": "Day",
   "hour": "Hour",
-  "minute": "Minute"
+  "minute": "Minute",
+  "reason": "Reason",
+  "postal_code": "Postal Code"
 }

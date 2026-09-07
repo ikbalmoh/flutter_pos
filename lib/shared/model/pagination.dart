@@ -4,7 +4,7 @@ part 'pagination.freezed.dart';
 part 'pagination.g.dart';
 
 @Freezed(genericArgumentFactories: true)
-class Pagination<T> with _$Pagination<T> {
+abstract class Pagination<T> with _$Pagination<T> {
   @JsonSerializable(
       fieldRename: FieldRename.snake, genericArgumentFactories: true)
   const factory Pagination({

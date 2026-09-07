@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:selleri/features/outlet/model/custom_mandatory.dart';
+import 'package:selleri/features/outlet/model/custom_mandatory_config.dart';
+import 'package:selleri/features/outlet/model/refund_reason.dart';
 import 'package:selleri/shared/model/custom_fields.dart';
 import 'package:selleri/shared/utils/model_converter.dart';
 
@@ -10,7 +13,7 @@ part 'outlet_config.freezed.dart';
 part 'outlet_config.g.dart';
 
 @freezed
-class OutletConfig with _$OutletConfig {
+abstract class OutletConfig with _$OutletConfig {
   const OutletConfig._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)
@@ -51,7 +54,12 @@ class OutletConfig with _$OutletConfig {
     List<Akun>? akunSetoran,
     List<PersonInCharge>? listUser,
     int? saldoAkunKas,
-    CustomMandatory? customMandatory,
+    @Default(CustomMandatory())
+    @JsonKey(name: 'custom_mandatory')
+    CustomMandatory customMandatory,
+    @Default(CustomMandatoryConfig())
+    @JsonKey(name: 'custom_mandatory_config')
+    CustomMandatoryConfig customMandatoryConfig,
     String? merchantCode,
     String? merchantId,
     @JsonKey(name: 'custom_fields') CustomFields? customFields,
@@ -66,7 +74,7 @@ class OutletConfig with _$OutletConfig {
 }
 
 @freezed
-class Akun with _$Akun {
+abstract class Akun with _$Akun {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Akun({
     required int idAkun,
@@ -85,7 +93,7 @@ class Akun with _$Akun {
 }
 
 @freezed
-class AttributeReceipts with _$AttributeReceipts {
+abstract class AttributeReceipts with _$AttributeReceipts {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory AttributeReceipts({
     String? headers,
@@ -105,24 +113,7 @@ class AttributeReceipts with _$AttributeReceipts {
 }
 
 @freezed
-class CustomMandatory with _$CustomMandatory {
-  @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory CustomMandatory({
-    List<String>? customers,
-  }) = _CustomMandatory;
-
-  factory CustomMandatory.fromJson(Map<String, dynamic> json) =>
-      _$CustomMandatoryFromJson(json);
-
-  @override
-  String toString() {
-    final jsonData = toJson();
-    return json.encode(jsonData);
-  }
-}
-
-@freezed
-class PersonInCharge with _$PersonInCharge {
+abstract class PersonInCharge with _$PersonInCharge {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PersonInCharge({
     required String id,
@@ -143,7 +134,7 @@ class PersonInCharge with _$PersonInCharge {
 }
 
 @freezed
-class PinSetting with _$PinSetting {
+abstract class PinSetting with _$PinSetting {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PinSetting({
     required String name,
@@ -161,32 +152,8 @@ class PinSetting with _$PinSetting {
   }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class RefundReason {
-  String id;
-  String reason;
-  bool needNotes;
-
-  RefundReason({
-    required this.id,
-    required this.reason,
-    required this.needNotes,
-  });
-
-  factory RefundReason.fromJson(Map<String, dynamic> json) =>
-      _$RefundReasonFromJson(json);
-
-  Map<String, dynamic> toJson() => _$RefundReasonToJson(this);
-
-  @override
-  String toString() {
-    final jsonData = toJson();
-    return json.encode(jsonData);
-  }
-}
-
 @freezed
-class Subscriptions with _$Subscriptions {
+abstract class Subscriptions with _$Subscriptions {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Subscriptions({
     required SubscriptionLimit transaction,
@@ -204,12 +171,10 @@ class Subscriptions with _$Subscriptions {
 }
 
 @freezed
-class SubscriptionLimit with _$SubscriptionLimit {
+abstract class SubscriptionLimit with _$SubscriptionLimit {
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory SubscriptionLimit({
-    required int max,
-    required int current,
-  }) = _SubscriptionLimit;
+  const factory SubscriptionLimit({required int max, required int current}) =
+      _SubscriptionLimit;
 
   factory SubscriptionLimit.fromJson(Map<String, dynamic> json) =>
       _$SubscriptionLimitFromJson(json);
@@ -222,7 +187,7 @@ class SubscriptionLimit with _$SubscriptionLimit {
 }
 
 @freezed
-class Tax with _$Tax {
+abstract class Tax with _$Tax {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Tax({
     required String taxName,
@@ -240,7 +205,7 @@ class Tax with _$Tax {
 }
 
 @freezed
-class UserHasPin with _$UserHasPin {
+abstract class UserHasPin with _$UserHasPin {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory UserHasPin({
     required String userId,

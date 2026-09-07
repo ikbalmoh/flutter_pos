@@ -4,7 +4,9 @@ part 'customer_vehicle.freezed.dart';
 part 'customer_vehicle.g.dart';
 
 @freezed
-class CustomerVehicle with _$CustomerVehicle {
+abstract class CustomerVehicle with _$CustomerVehicle {
+  const CustomerVehicle._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory CustomerVehicle({
     required int idVehicle,

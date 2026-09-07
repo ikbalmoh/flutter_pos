@@ -6,6 +6,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'dart:developer';
 
+import 'package:selleri/shared/provider/app_config_provider.dart';
+
 part 'app_start_provider.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -19,6 +21,8 @@ class AppStart extends _$AppStart {
   @override
   FutureOr<AppStartState> build() async {
     ref.onDispose(() {});
+
+    await ref.read(appConfigProvider.future);
 
     final authState = ref.watch(authProvider);
     final outletState = ref.watch(outletProvider);
@@ -38,37 +42,49 @@ class AppStart extends _$AppStart {
 
       crashlytics.setCustomKey('company_id', auth.user.user.company.idCompany);
       crashlytics.setCustomKey(
-          'company_name', auth.user.user.company.companyName);
+        'company_name',
+        auth.user.user.company.companyName,
+      );
       crashlytics.setCustomKey('outlet_id', outlet.outlet.idOutlet);
       crashlytics.setCustomKey('outlet_name', outlet.outlet.outletName);
 
       analytics.setUserProperty(
-          name: 'outlet_name', value: outlet.outlet.outletName);
+        name: 'outlet_name',
+        value: outlet.outlet.outletName,
+      );
       analytics.setUserProperty(
-          name: 'outlet_id', value: outlet.outlet.idOutlet);
+        name: 'outlet_id',
+        value: outlet.outlet.idOutlet,
+      );
       analytics.setUserProperty(
-          name: 'company_name', value: auth.user.user.company.companyName);
+        name: 'company_name',
+        value: auth.user.user.company.companyName,
+      );
       analytics.setUserProperty(
-          name: 'company_id', value: auth.user.user.company.idCompany);
+        name: 'company_id',
+        value: auth.user.user.company.idCompany,
+      );
       return const AppStartState.selectedOutlet();
     }
 
     return authState.when(
-        data: (state) async {
-          if (state is Authenticated) {
-            analytics.setUserId(id: state.user.user.idUser);
-            analytics.setUserProperty(
-                name: 'name', value: state.user.user.name);
-            analytics.setUserProperty(
-                name: 'email', value: state.user.user.email);
-            crashlytics.setUserIdentifier(state.user.user.idUser);
-            crashlytics.setCustomKey('user_name', state.user.user.name);
-            crashlytics.setCustomKey('user_email', state.user.user.email);
-            return const AppStartState.authenticated();
-          }
-          return const AppStartState.unauthenticated();
-        },
-        error: (e, stack) => const AppStartState.unauthenticated(),
-        loading: () => const AppStartState.initializing());
+      data: (state) async {
+        if (state is Authenticated) {
+          analytics.setUserId(id: state.user.user.idUser);
+          analytics.setUserProperty(name: 'name', value: state.user.user.name);
+          analytics.setUserProperty(
+            name: 'email',
+            value: state.user.user.email,
+          );
+          crashlytics.setUserIdentifier(state.user.user.idUser);
+          crashlytics.setCustomKey('user_name', state.user.user.name);
+          crashlytics.setCustomKey('user_email', state.user.user.email);
+          return const AppStartState.authenticated();
+        }
+        return const AppStartState.unauthenticated();
+      },
+      error: (e, stack) => const AppStartState.unauthenticated(),
+      loading: () => const AppStartState.initializing(),
+    );
   }
 }

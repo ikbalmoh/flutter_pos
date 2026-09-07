@@ -6,7 +6,7 @@ part 'customer.freezed.dart';
 part 'customer.g.dart';
 
 @freezed
-class Customer with _$Customer {
+abstract class Customer with _$Customer {
   const Customer._();
 
   @JsonSerializable(fieldRename: FieldRename.snake)

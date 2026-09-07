@@ -27,12 +27,12 @@ class ShareFile {
     await File(filePath).writeAsBytes(imageBytes!.toList());
     final xFile = XFile(filePath);
     onReadyToShare();
-    final shareResult = await Share.shareXFiles(
-      [xFile],
+    final shareResult = await SharePlus.instance.share(ShareParams(
+      files: [xFile],
       subject: title,
       sharePositionOrigin:
           shareButtonBox!.localToGlobal(Offset.zero) & shareButtonBox.size,
-    );
-    onShared(onShared(shareResult.status));
+    ));
+    onShared(shareResult.status);
   }
 }

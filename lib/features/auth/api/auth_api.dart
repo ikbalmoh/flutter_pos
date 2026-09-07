@@ -1,25 +1,24 @@
 import 'package:dio/dio.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:selleri/features/auth/model/token.dart';
-import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
+import 'package:selleri/shared/model/app_config.dart' as config_model;
 import 'package:selleri/shared/utils/fetch.dart';
 import 'package:selleri/shared/router/api_url.dart';
 
 class AuthApi {
   final Dio api;
+  final config_model.AppConfig? config;
 
-  AuthApi({required this.api});
+  AuthApi({required this.api, required this.config});
 
-  Future<dynamic> login(
-    String username,
-    String password,
-  ) async {
+  Future<dynamic> login(String username, String password) async {
     final data = {
       'username': username,
       'password': password,
-      'grant_type': AppConfig.grantType,
-      'client_id': AppConfig.clientId,
-      'client_secret': AppConfig.clientSecret,
+      'grant_type': config?.grantType,
+      'client_id': config?.clientId,
+      'client_secret': config?.clientSecret,
     };
     final res = await api.post(ApiUrl.auth, data: data);
 
@@ -37,9 +36,7 @@ class AuthApi {
   }
 
   Future resetPassword(String email) async {
-    final res = await api.post(ApiUrl.resetPassword, data: {
-      'email': email,
-    });
+    final res = await api.post(ApiUrl.resetPassword, data: {'email': email});
     return res.data['success'] ?? false;
   }
 
@@ -58,5 +55,6 @@ class AuthApi {
 
 final authApiProvider = Provider<AuthApi>((ref) {
   final api = ref.watch(apiProvider);
-  return AuthApi(api: api);
+  final config = ref.read(appConfigProvider).requireValue;
+  return AuthApi(api: api, config: config);
 });

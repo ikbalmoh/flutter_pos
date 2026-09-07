@@ -6,7 +6,9 @@ part 'cart_payment.freezed.dart';
 part 'cart_payment.g.dart';
 
 @freezed
-class CartPayment with _$CartPayment {
+abstract class CartPayment with _$CartPayment {
+  const CartPayment._();
+
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory CartPayment({
     DateTime? createdAt,

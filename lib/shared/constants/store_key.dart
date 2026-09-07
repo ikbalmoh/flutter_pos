@@ -9,7 +9,8 @@ enum StoreKey {
   shiftInfo('SHIFT_INFO'),
   fcmSubscribe('FCM_SUBSCRIBE'),
   notification('NOTIFICATION'),
-  lastSync('LAST_SYNC');
+  lastSync('LAST_SYNC'),
+  appConfig('APP_CONFIG');
 
   final String name;
   const StoreKey(this.name);

@@ -20,13 +20,16 @@ class Promotions extends _$Promotions {
     final cart = ref.watch(cartProvider);
     List<Promotion> promotions = objectBox.transactionPromotions(cart: cart);
 
-    List<ItemCart> nonRewardItems =
-        cart.items.where((item) => item.isReward != true).toList();
+    log('promotions: ${promotions.map((e) => e.name)}');
+
+    List<ItemCart> nonRewardItems = cart.items
+        .where((item) => item.isReward != true)
+        .toList();
 
     return promotions.map((promo) {
       List<ItemCart> eligible = promo.type == 2
           ? []
-          : eligibleItems(promo, nonRewardItems);
+          : getEligibleItems(promo, nonRewardItems);
       return promo.copyWith(eligibleItems: eligible);
     }).toList();
   }
@@ -38,253 +41,316 @@ class Promotions extends _$Promotions {
       return objectBox.promotionsStream().first;
     }
     log('Load Promotions');
-    final PromotionRepository promotionRepository =
-        ref.read(promotionRepositoryProvider);
+    final PromotionRepository promotionRepository = ref.read(
+      promotionRepositoryProvider,
+    );
 
     final promotions = await promotionRepository.fetchPromotions();
     objectBox.putPromotions(promotions);
     return promotions;
   }
+}
 
-  Future<Promotion?> getPromotionByOrder(
-      {double? requirementMinimumOrder}) async {
-    log('GET PROMOTION BY ORDER');
-    List<Promotion> result = await objectBox
-        .promotionsStream(
-          type: 2,
-          active: true,
-          requirementMinimumOrder: requirementMinimumOrder,
-          needCode: false,
-        )
-        .first;
-    return result.isNotEmpty ? result.first : null;
+Future<Promotion?> getPromotionByOrder({
+  double? requirementMinimumOrder,
+}) async {
+  log('GET PROMOTION BY ORDER');
+  List<Promotion> result = await objectBox
+      .promotionsStream(
+        type: 2,
+        active: true,
+        requirementMinimumOrder: requirementMinimumOrder,
+        needCode: false,
+      )
+      .first;
+  return result.isNotEmpty ? result.first : null;
+}
+
+Future<Promotion?> getPromotionByCode(
+  PromotionRepository repo,
+  String code,
+) async {
+  try {
+    log('GET PROMOTION BY CODE: $code');
+    Promotion? promo = await repo.getPromoByCode(code);
+    return promo;
+  } catch (_) {
+    rethrow;
+  }
+}
+
+bool isPromotionEligible(Promotion? promo, model.Cart cart) {
+  if (promo == null) {
+    return false;
   }
 
-  Future<Promotion?> getPromotionByCode(String code) async {
-    try {
-      log('GET PROMOTION BY CODE: $code');
-      final PromotionRepository promotionRepository =
-          ref.read(promotionRepositoryProvider);
-      Promotion? promo = await promotionRepository.getPromoByCode(code);
-      return promo;
-    } catch (_) {
-      rethrow;
+  if (!promo.status) {
+    return false;
+  }
+
+  log('CHECK PROMO ELIGIBILITY: ${promo.name}');
+
+  final now = DateTime.now().millisecondsSinceEpoch;
+  final today = DateTimeFormater.dateToString(
+    DateTime.now(),
+    format: 'y-MM-dd',
+  );
+
+  // Check days
+  if (promo.days != null && promo.days!.isNotEmpty) {
+    if (!promo.days!.contains(
+      DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase(),
+    )) {
+      return false;
+    }
+  }
+  // Check date
+  if (!promo.allTime) {
+    int now = DateTime.now().millisecondsSinceEpoch;
+    int start = promo.startDate!.millisecondsSinceEpoch;
+    DateTime endDate = DateTime(
+      promo.endDate!.year,
+      promo.endDate!.month,
+      promo.endDate!.day + 1,
+      0,
+      0,
+      -1,
+    );
+    int end = endDate.millisecondsSinceEpoch;
+
+    bool dateIsValid = now >= start && now <= end;
+
+    if (!dateIsValid) {
+      return false;
     }
   }
 
-  bool isPromotionEligible(Promotion? promo) {
-    if (promo == null) {
-      return false;
-    }
-
-    if (!promo.status) {
-      return false;
-    }
-
-    log('CHECK PROMO ELIGIBILITY: ${promo.name}');
-
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final today =
-        DateTimeFormater.dateToString(DateTime.now(), format: 'y-MM-dd');
-
-    // Check days
-    if (promo.days != null && promo.days!.isNotEmpty) {
-      if (!promo.days!
-          .contains(DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase())) {
-        return false;
-      }
-    }
-    // Check date
-    if (!promo.allTime) {
-      int now = DateTime.now().millisecondsSinceEpoch;
-      int start = promo.startDate!.millisecondsSinceEpoch;
-      DateTime endDate = DateTime(promo.endDate!.year, promo.endDate!.month,
-          promo.endDate!.day + 1, 0, 0, -1);
-      int end = endDate.millisecondsSinceEpoch;
-
-      bool dateIsValid = now >= start && now <= end;
-
-      if (!dateIsValid) {
-        return false;
-      }
-    }
-
-    bool isTimeEligible = promo.times == null || promo.times!.isEmpty;
-    if (promo.times != null && promo.times!.isNotEmpty) {
-      for (var i = 0; i < promo.times!.length; i++) {
-        List<String> times = promo.times![i].split('-');
-        int? start = DateTimeFormater.stringToDateTime('$today ${times[0]}:00')
-            ?.millisecondsSinceEpoch;
-        int? end = DateTimeFormater.stringToDateTime('$today ${times[1]}:00')
-            ?.millisecondsSinceEpoch;
-        if (start != null && end != null) {
-          if (start <= now && now <= end) {
-            isTimeEligible = true;
-            break;
-          }
+  bool isTimeEligible = promo.times == null || promo.times!.isEmpty;
+  if (promo.times != null && promo.times!.isNotEmpty) {
+    for (var i = 0; i < promo.times!.length; i++) {
+      List<String> times = promo.times![i].split('-');
+      int? start = DateTimeFormater.stringToDateTime(
+        '$today ${times[0]}:00',
+      )?.millisecondsSinceEpoch;
+      int? end = DateTimeFormater.stringToDateTime(
+        '$today ${times[1]}:00',
+      )?.millisecondsSinceEpoch;
+      if (start != null && end != null) {
+        if (start <= now && now <= end) {
+          isTimeEligible = true;
+          break;
         }
       }
     }
-
-    if (!isTimeEligible) {
-      return false;
-    }
-
-    model.Cart cart = ref.read(cartProvider);
-
-    if (promo.assignCustomer == 2) {
-      if (cart.idCustomer == null) {
-        return false;
-      }
-    } else if (promo.assignCustomer == 3) {
-      if (cart.idCustomer != null) {
-        return false;
-      }
-    } else if (promo.assignCustomer == 4) {
-      final promoGroup =
-          promo.assignGroups.map((group) => group.groupId).toList();
-      bool hasPromoGroup = cart.customerGroup == null
-          ? false
-          : cart.customerGroup!
-                  .indexWhere((g) => promoGroup.contains(g.groupId)) >=
-              0;
-      if (!hasPromoGroup) {
-        return false;
-      }
-    }
-
-    // Promo by order
-    if (promo.type == 2 || promo.type == 4) {
-      return promo.requirementMinimumOrder == null
-          ? true
-          : promo.requirementMinimumOrder! <= cart.subtotal;
-    } else if (cart.items.isNotEmpty) {
-      List<ItemCart> eligibleItems = [];
-      switch (promo.requirementProductType) {
-        case 1:
-          eligibleItems = cart.items
-              .where((item) =>
-                  promo.requirementProductId.contains(item.idItem) &&
-                  item.quantity >= promo.requirementQuantity!)
-              .toList();
-          break;
-
-        case 2:
-          eligibleItems = cart.items
-              .where((item) =>
-                  promo.requirementProductId
-                      .contains(item.idVariant.toString()) &&
-                  item.quantity >= promo.requirementQuantity!)
-              .toList();
-          break;
-
-        default:
-          eligibleItems = cart.items
-              .where((item) =>
-                  promo.requirementProductId.contains(item.idCategory) &&
-                  item.quantity >= promo.requirementQuantity!)
-              .toList();
-          break;
-      }
-
-      log('ELIGIBLE ITEMS FOR PROMO 1 & 3: ${eligibleItems.map((e) => e.itemName)}');
-
-      if (eligibleItems.isEmpty) {
-        return false;
-      }
-    } else {
-      return false;
-    }
-
-    return true;
   }
 
-  List<ItemCart> eligibleItems(Promotion promo, List<ItemCart> items) {
-    if (promo.type == 2 || promo.type == 4) {
-      return [];
+  if (!isTimeEligible) {
+    return false;
+  }
+
+  if (promo.assignCustomer == 2) {
+    if (cart.idCustomer == null) {
+      return false;
     }
-    List<ItemCart> eligibleItems = items
-        .where((item) => item.isReward != true)
+  } else if (promo.assignCustomer == 3) {
+    if (cart.idCustomer != null) {
+      return false;
+    }
+  } else if (promo.assignCustomer == 4) {
+    final promoGroup = promo.assignGroups
+        .map((group) => group.groupId)
         .toList();
-
-    if (promo.requirementProductType == 1) {
-      // require product id
-      eligibleItems = eligibleItems
-          .where((item) =>
-              (item.idVariant != null && promo.requirementVariantId.isNotEmpty
-                  ? promo.requirementVariantId
-                      .contains(item.idVariant.toString())
-                  : promo.requirementProductId.contains(item.idItem)) &&
-              item.quantity >= promo.requirementQuantity!.toInt())
-          .toList();
-    } else if (promo.requirementProductType == 2) {
-      // require package id
-      eligibleItems = eligibleItems
-          .where((item) =>
-              promo.requirementProductId.contains(item.idItem) &&
-              item.quantity >= promo.requirementQuantity!.toInt())
-          .toList();
-    } else if (promo.requirementProductType == 3) {
-      // require category id
-      eligibleItems = eligibleItems
-          .where((item) =>
-              promo.requirementProductId.contains(item.idCategory) &&
-              item.quantity >= promo.requirementQuantity!.toInt())
-          .toList();
+    bool hasPromoGroup = cart.customerGroup == null
+        ? false
+        : cart.customerGroup!.indexWhere(
+                (g) => promoGroup.contains(g.groupId),
+              ) >=
+              0;
+    if (!hasPromoGroup) {
+      return false;
     }
-    return eligibleItems;
   }
 
-  /// Pure conflict resolver — takes current selection + toggled promo,
-  /// returns the new resolved selection list.
-  /// Selection state is NOT stored in the provider.
-  List<Promotion> resolveSelection(
-    List<Promotion> currentSelection,
-    Promotion promo,
-  ) {
-    // Toggle off if already selected
-    final int idx = currentSelection.indexWhere((p) => p.id == promo.id);
-    if (idx >= 0) {
-      return List.from(currentSelection)..removeAt(idx);
-    }
-
-    List<Promotion> result = List.from(currentSelection);
-
-    if (promo.type == 2 || promo.type == 4) {
-      // Transaction promos: only one per type
-      result.removeWhere((p) => p.type == promo.type);
-    } else if (promo.type == 1 || promo.type == 3) {
-      // Product promos: one promo per type per item
-      // Only conflict with same-type promos
-      result.removeWhere((p) {
-        if (p.type != promo.type) return false;
-
-        // Find overlapping items between p and the new promo
-        final bool hasOverlap = p.eligibleItems.any((item) =>
-            promo.eligibleItems.any((newItem) =>
-                newItem.idItem == item.idItem &&
-                newItem.idVariant == item.idVariant));
-
-        if (!hasOverlap) return false;
-
-        // Compute remaining eligible items for p (non-overlapping)
-        final remainingItems = p.eligibleItems
-            .where((item) => !promo.eligibleItems.any((newItem) =>
-                newItem.idItem == item.idItem &&
-                newItem.idVariant == item.idVariant))
+  // Promo by order
+  if (promo.type == 2 || promo.type == 4) {
+    return promo.requirementMinimumOrder == null
+        ? true
+        : promo.requirementMinimumOrder! <= cart.subtotal;
+  } else if (cart.items.isNotEmpty) {
+    List<ItemCart> eligibleItems = [];
+    switch (promo.requirementProductType) {
+      // require item id
+      case 1:
+        eligibleItems = cart.items
+            .where(
+              (item) =>
+                  promo.requirementProductId.contains(item.idItem) &&
+                  item.quantity >= promo.requirementQuantity!,
+            )
             .toList();
+        break;
 
-        final double remainingQty =
-            remainingItems.fold(0, (sum, item) => sum + item.quantity);
-        final double requiredQty =
-            (p.requirementQuantity ?? 1).toDouble();
+      // require variant id
+      case 2:
+        eligibleItems = cart.items
+            .where(
+              (item) =>
+                  promo.requirementProductId.contains(
+                    item.idVariant.toString(),
+                  ) &&
+                  item.quantity >= promo.requirementQuantity!,
+            )
+            .toList();
+        break;
 
-        // Remove if remaining items can't satisfy requirement
-        return remainingQty < requiredQty;
-      });
+      // require category id
+      case 3:
+        eligibleItems = cart.items
+            .where(
+              (item) =>
+                  promo.requirementProductId.contains(item.idCategory) &&
+                  item.quantity >= promo.requirementQuantity!,
+            )
+            .toList();
+        break;
+      // require sub category id
+      case 4:
+        eligibleItems = cart.items
+            .where(
+              (item) =>
+                  promo.requirementProductId.contains(item.idSubCategory.toString()) &&
+                  item.quantity >= promo.requirementQuantity!,
+            )
+            .toList();
+        break;
+      default:
+        eligibleItems = [];
+        break;
     }
 
-    result.add(promo);
-    return result;
+    log(
+      'ELIGIBLE ITEMS FOR PROMO 1 & 3: ${eligibleItems.map((e) => e.itemName)}',
+    );
+
+    if (eligibleItems.isEmpty) {
+      return false;
+    }
+  } else {
+    return false;
   }
+
+  return true;
+}
+
+List<ItemCart> getEligibleItems(Promotion promo, List<ItemCart> items) {
+  if (promo.type == 2 || promo.type == 4) {
+    return [];
+  }
+  List<ItemCart> eligibleItems = items
+      .where((item) => item.isReward != true)
+      .toList();
+
+  if (promo.requirementProductType == 1) {
+    // require product id
+    eligibleItems = eligibleItems
+        .where(
+          (item) =>
+              (item.idVariant != null && promo.requirementVariantId.isNotEmpty
+                  ? promo.requirementVariantId.contains(
+                      item.idVariant.toString(),
+                    )
+                  : promo.requirementProductId.contains(item.idItem)) &&
+              item.quantity >= promo.requirementQuantity!.toInt(),
+        )
+        .toList();
+  } else if (promo.requirementProductType == 2) {
+    // require package id
+    eligibleItems = eligibleItems
+        .where(
+          (item) =>
+              promo.requirementProductId.contains(item.idItem) &&
+              item.quantity >= promo.requirementQuantity!.toInt(),
+        )
+        .toList();
+  } else if (promo.requirementProductType == 3) {
+    // require category id
+    eligibleItems = eligibleItems
+        .where(
+          (item) =>
+              promo.requirementProductId.contains(item.idCategory) &&
+              item.quantity >= promo.requirementQuantity!.toInt(),
+        )
+        .toList();
+  } else if (promo.requirementProductType == 4) {
+    // require category id
+    eligibleItems = eligibleItems
+        .where(
+          (item) =>
+              promo.requirementProductId.contains(item.idSubCategory.toString()) &&
+              item.quantity >= promo.requirementQuantity!.toInt(),
+        )
+        .toList();
+  }
+  return eligibleItems;
+}
+
+/// Pure conflict resolver — takes current selection + toggled promo,
+/// returns the new resolved selection list.
+/// Selection state is NOT stored in the provider.
+List<Promotion> resolveSelection(
+  List<Promotion> currentSelection,
+  Promotion promo,
+) {
+  // Toggle off if already selected
+  final int idx = currentSelection.indexWhere((p) => p.id == promo.id);
+  if (idx >= 0) {
+    return List.from(currentSelection)..removeAt(idx);
+  }
+
+  List<Promotion> result = List.from(currentSelection);
+
+  if (promo.type == 2 || promo.type == 4) {
+    // Transaction promos: only one per type
+    result.removeWhere((p) => p.type == promo.type);
+  } else if (promo.type == 1 || promo.type == 3) {
+    // Product promos: one promo per type per item
+    // Only conflict with same-type promos
+    result.removeWhere((p) {
+      if (p.type != promo.type) return false;
+
+      // Find overlapping items between p and the new promo
+      final bool hasOverlap = p.eligibleItems.any(
+        (item) => promo.eligibleItems.any(
+          (newItem) =>
+              newItem.idItem == item.idItem &&
+              newItem.idVariant == item.idVariant,
+        ),
+      );
+
+      if (!hasOverlap) return false;
+
+      // Compute remaining eligible items for p (non-overlapping)
+      final remainingItems = p.eligibleItems
+          .where(
+            (item) => !promo.eligibleItems.any(
+              (newItem) =>
+                  newItem.idItem == item.idItem &&
+                  newItem.idVariant == item.idVariant,
+            ),
+          )
+          .toList();
+
+      final double remainingQty = remainingItems.fold(
+        0,
+        (sum, item) => sum + item.quantity,
+      );
+      final double requiredQty = (p.requirementQuantity ?? 1).toDouble();
+
+      // Remove if remaining items can't satisfy requirement
+      return remainingQty < requiredQty;
+    });
+  }
+
+  result.add(promo);
+  return result;
 }

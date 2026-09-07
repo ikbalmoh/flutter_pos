@@ -23,8 +23,7 @@ class _BarcodeScannerState extends State<BarcodeScanner>
     with WidgetsBindingObserver {
   final MobileScannerController controller = MobileScannerController(
       formats: const [BarcodeFormat.all],
-      autoStart: false,
-      useNewCameraSelector: true);
+      autoStart: false);
   StreamSubscription<Object?>? _subscription;
 
   @override
@@ -90,7 +89,7 @@ class _BarcodeScannerState extends State<BarcodeScanner>
                   fit: BoxFit.contain,
                   controller: controller,
                   scanWindow: isTablet ? null : scanWindow,
-                  errorBuilder: (context, error, child) {
+                  errorBuilder: (context, error) {
                     return ScannerErrorWidget(error: error);
                   },
                 ),

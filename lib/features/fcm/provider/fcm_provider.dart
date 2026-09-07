@@ -14,7 +14,7 @@ import 'package:selleri/features/item/provider/item_provider.dart';
 import 'package:selleri/features/notification/provider/notification_provider.dart';
 import 'package:selleri/features/outlet/api/outlet_api.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
-import 'package:selleri/shared/constants/app_config.dart';
+import 'package:selleri/shared/provider/app_config_provider.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:selleri/shared/utils/local_notification_service.dart';
@@ -162,7 +162,8 @@ class Fcm extends _$Fcm {
           await api.storeFcmToken(token: token, outletId: idOutlet);
         }
 
-        String prefix = AppConfig.appId.isNotEmpty ? AppConfig.appId : 'selleri';
+        final appConfig = await ref.read(appConfigProvider.future);
+        String prefix = (appConfig.appId?.isNotEmpty ?? false) ? appConfig.appId! : 'selleri';
 
         String companyTopic = '$prefix-$idCompany';
         String outletTopic = '$prefix-$idOutlet';

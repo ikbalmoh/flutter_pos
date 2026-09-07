@@ -29,14 +29,18 @@ class Qris extends _$Qris {
     return QrisState(qrContent: qrContent);
   }
 
-  void _startPolling(
-      {required String transactionNo, required String merchantId}) {
+  void _startPolling({
+    required String transactionNo,
+    required String merchantId,
+  }) {
     _statusTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
       final String successCode = 'SUCCESS';
+      final qrisApi = ref.read(qrisApiProvider);
       try {
-        final statusCode = await ref
-            .read(qrisApiProvider)
-            .checkStatus(transactionNo: transactionNo, merchantId: merchantId);
+        final statusCode = await qrisApi.checkStatus(
+          transactionNo: transactionNo,
+          merchantId: merchantId,
+        );
         if (statusCode == successCode) {
           _statusTimer?.cancel();
           state = AsyncData(state.requireValue.copyWith(isPaid: true));

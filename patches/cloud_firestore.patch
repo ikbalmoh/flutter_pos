@@ -1,0 +1,19 @@
+--- original.m	2026-08-05 15:54:13
++++ modified.m	2026-08-05 15:54:12
+@@ -967,8 +967,14 @@
+                             }
+                           }
+ 
+-                          NSNumber *executionTime =
+-                              FLTPipelineTimestampToMs([snapshot execution_time]);
++                          NSNumber *executionTime = nil;
++                          if ([snapshot respondsToSelector:@selector(execution_time)]) {
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
++                              id extime = [snapshot performSelector:@selector(execution_time)];
++                              executionTime = FLTPipelineTimestampToMs(extime);
++#pragma clang diagnostic pop
++                          }
+                           if (executionTime == nil) {
+                             executionTime =
+                                 @((int64_t)([[NSDate date] timeIntervalSince1970] * 1000));

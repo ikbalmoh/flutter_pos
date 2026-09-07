@@ -8,6 +8,7 @@ import 'package:selleri/features/cart/model/cart.dart';
 import 'package:selleri/features/fcm/provider/fcm_provider.dart';
 import 'package:selleri/features/outlet/provider/outlet_provider.dart';
 import 'package:selleri/features/transaction/provider/offline_transactions_provider.dart';
+
 import 'package:selleri/shared/provider/connectivity_status_provider.dart';
 import 'package:selleri/shared/router/app_router.dart';
 import 'package:selleri/shared/utils/app_alert.dart';
